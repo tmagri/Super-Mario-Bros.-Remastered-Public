@@ -436,10 +436,18 @@ func handle_directions() -> void:
 var use_big_collision := false
 
 func handle_power_up_states(delta) -> void:
+	var small_crouch := power_state.hitbox_size == "Small" and crouching
+	var big_crouch := power_state.hitbox_size == "Big" and crouching
+	for i in get_tree().get_nodes_in_group("SmallCollisions"):
+		if i.owner == self:
+			if i.name.begins_with("Crouch"):
+				i.set_deferred("disabled", power_state.hitbox_size == "Small" and !crouching)
+			else:
+				i.set_deferred("disabled", small_crouch or power_state.hitbox_size == "Big" and !crouching)
 	for i in get_tree().get_nodes_in_group("BigCollisions"):
 		if i.owner == self:
-			i.set_deferred("disabled", power_state.hitbox_size == "Small" or crouching)
-	$Checkpoint.position.y = -24 if power_state.hitbox_size == "Small" or crouching else -40
+			i.set_deferred("disabled", power_state.hitbox_size == "Small" or big_crouch)
+	$Checkpoint.position.y = -20 if small_crouch else -24 if power_state.hitbox_size == "Small" or big_crouch else -40
 	power_state.update(delta)
 
 func handle_wing_flight(delta: float) -> void:

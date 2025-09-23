@@ -1043,7 +1043,7 @@ mode = 1
 resource_json = ExtResource("10_xy8gq")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="CrouchCollision" type="CollisionPolygon2D" parent="." groups=["SmallCollisions"]]
+[node name="SmallCrouchCollision" type="CollisionPolygon2D" parent="." groups=["SmallCollisions"]]
 visible = false
 polygon = PackedVector2Array(4, -2, 4, -8, 1, -11, -1, -11, -4, -8, -4, -2, -2, 0, 2, 0)
 one_way_collision = true
@@ -1100,14 +1100,14 @@ hit_from_inside = true
 collision_layer = 0
 collision_mask = 4
 
-[node name="CrouchShape" type="CollisionShape2D" parent="BlockCollision" node_paths=PackedStringArray("link") groups=["SmallCollisions"]]
+[node name="SmallCrouchShape" type="CollisionShape2D" parent="BlockCollision" node_paths=PackedStringArray("link") groups=["SmallCollisions"]]
 visible = false
 position = Vector2(0, -12.75)
 shape = SubResource("RectangleShape2D_fqdtv")
 debug_color = Color(1, 0, 0, 0.419608)
 script = ExtResource("21_jl70t")
 offset = Vector2(0, 10.5)
-link = NodePath("../../CrouchCollision")
+link = NodePath("../../SmallCrouchCollision")
 
 [node name="SmallShape" type="CollisionShape2D" parent="BlockCollision" node_paths=PackedStringArray("link") groups=["SmallCollisions"]]
 visible = false

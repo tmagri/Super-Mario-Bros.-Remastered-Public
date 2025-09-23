@@ -440,7 +440,7 @@ func handle_power_up_states(delta) -> void:
 	var big_crouch := power_state.hitbox_size == "Big" and crouching
 	for i in get_tree().get_nodes_in_group("SmallCollisions"):
 		if i.owner == self:
-			if i.name.begins_with("Crouch"):
+			if i.name.begins_with("SmallCrouch"):
 				i.set_deferred("disabled", power_state.hitbox_size == "Small" and !crouching)
 			else:
 				i.set_deferred("disabled", small_crouch or power_state.hitbox_size == "Big" and !crouching)

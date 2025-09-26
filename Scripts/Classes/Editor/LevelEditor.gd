@@ -105,7 +105,7 @@ var undo_redo = UndoRedo.new()
 
 func _ready() -> void:
 	$TileMenu.hide()
-	Global.set_discord_status("In The Level Editor...")
+	DiscordManager.set_discord_status("In The Level Editor...")
 	Global.level_editor = self
 	playing_level = false
 	menu_open = $TileMenu.visible
@@ -131,6 +131,10 @@ func _ready() -> void:
 			$Info.hide()
 			%Grid.hide()
 			play_level()
+			_physics_process(0)
+			set_physics_process(false)
+			for i in [$TileMenu]:
+				i.queue_free()
 		else:
 			Global.current_game_mode = Global.GameMode.LEVEL_EDITOR
 	else:
@@ -147,7 +151,8 @@ func _physics_process(delta: float) -> void:
 		handle_tile_cursor()
 	if [EditorState.IDLE, EditorState.TRACK_EDITING].has(current_state):
 		handle_camera(delta)
-	%ThemeName.text = Global.level_theme
+	if is_instance_valid(%ThemeName):
+		%ThemeName.text = Global.level_theme
 	handle_hud()
 	if Input.is_action_just_pressed("editor_open_menu"):
 		if current_state == EditorState.IDLE:
@@ -155,7 +160,7 @@ func _physics_process(delta: float) -> void:
 		elif current_state == EditorState.TILE_MENU:
 			close_tile_menu()
 	if Input.is_action_just_pressed("editor_play") and (current_state == EditorState.IDLE or current_state == EditorState.PLAYTESTING) and Global.current_game_mode == Global.GameMode.LEVEL_EDITOR:
-		Checkpoint.passed = false
+		Checkpoint.passed_checkpoints.clear()
 		if current_state == EditorState.PLAYTESTING:
 			stop_testing()
 		else:
@@ -294,6 +299,8 @@ func return_to_editor() -> void:
 	return_editor_tiles()
 	%Camera.enabled = true
 	%Camera.make_current()
+	KeyItem.total_collected = 0
+	Door.unlocked_doors.clear()
 	editor_start.emit()
 	current_state = EditorState.IDLE
 	handle_hud()

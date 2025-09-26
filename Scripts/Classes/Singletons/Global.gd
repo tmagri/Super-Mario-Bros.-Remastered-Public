@@ -117,7 +117,7 @@ var can_time_tick := true:
 		if value == false:
 			pass
 
-var player_power_states := "1000"
+var player_power_states := "0000"
 
 var connected_players := 1
 
@@ -169,7 +169,6 @@ func _ready() -> void:
 	get_server_version()
 	if OS.is_debug_build():
 		debug_mode = false
-	setup_discord_rpc()
 	check_for_rom()
 
 func check_for_rom() -> void:
@@ -263,9 +262,10 @@ func activate_p_switch() -> void:
 
 func reset_values() -> void:
 	PlayerGhost.idx = 0
-	Checkpoint.passed = false
+	Checkpoint.passed_checkpoints.clear()
 	Checkpoint.sublevel_id = 0
 	Door.unlocked_doors = []
+	Checkpoint.unlocked_doors = []
 	KeyItem.total_collected = 0
 	Checkpoint.keys_collected = 0
 	Level.start_level_path = Level.get_scene_string(Global.world_num, Global.level_num)
@@ -332,32 +332,11 @@ func close_freeze() -> void:
 
 var recording_dir = "user://marathon_recordings/"
 
-func setup_discord_rpc() -> void:
-	DiscordRPC.app_id = 1331261692381757562
-	DiscordRPC.start_timestamp = int(Time.get_unix_time_from_system())
-	DiscordRPC.details = "In Title Screen.."
-	if DiscordRPC.get_is_discord_working():
-		DiscordRPC.refresh()
-
-func set_discord_status(details := "") -> void:
-	DiscordRPC.details = details
-	if DiscordRPC.get_is_discord_working():
-		DiscordRPC.refresh()
-
 func update_game_status() -> void:
 	var lives_str := str(Global.lives)
 	if Settings.file.difficulty.inf_lives == 1:
 		lives_str = "∞"
 	var string := "Coins = " + str(Global.coins) + " Lives = " + lives_str
-	DiscordRPC.large_image = (Global.level_theme + Global.theme_time).to_lower()
-	DiscordRPC.small_image = Global.current_campaign.to_lower()
-	DiscordRPC.state = string
-
-func refresh_discord_rpc() -> void:
-	if DiscordRPC.get_is_discord_working() == false:
-		return
-	update_game_status()
-	DiscordRPC.refresh()
 
 func open_marathon_results() -> void:
 	get_node("GameHUD/MarathonResults").open()

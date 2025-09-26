@@ -39,6 +39,8 @@ func open() -> void:
 	setup_visuals()
 	show()
 	await get_tree().process_frame
+	if Global.current_game_mode != Global.GameMode.CAMPAIGN:
+		selected_world = clamp(selected_world, 0, 7)
 	$%SlotContainer.get_child(selected_world).grab_focus()
 	active = true
 
@@ -80,6 +82,8 @@ func handle_input() -> void:
 
 func slot_focused(idx := 0) -> void:
 	selected_world = idx
+	if Settings.file.audio.extra_sfx == 1:
+		AudioManager.play_global_sfx("menu_move")
 
 func select_world() -> void:
 	if owner is Level:

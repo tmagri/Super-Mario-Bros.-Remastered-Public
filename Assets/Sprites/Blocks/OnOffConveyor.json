@@ -72,6 +72,42 @@
 				],
 				"mode": 0.0,
 				"speed": 30.0
+			},
+			"Tile:4": {
+				"frames": [
+					{
+						"duration": 1.0
+					},
+					{
+						"duration": 1.0
+					},
+					{
+						"duration": 1.0
+					},
+					{
+						"duration": 1.0
+					}
+				],
+				"mode": 0.0,
+				"speed": 30.0
+			},
+			"Tile:5": {
+				"frames": [
+					{
+						"duration": 1.0
+					},
+					{
+						"duration": 1.0
+					},
+					{
+						"duration": 1.0
+					},
+					{
+						"duration": 1.0
+					}
+				],
+				"mode": 0.0,
+				"speed": 30.0
 			}
 		}
 	},

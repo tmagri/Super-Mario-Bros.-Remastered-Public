@@ -26,6 +26,7 @@ func handle_main_hud() -> void:
 	$ModernHUD.visible = Settings.file.visuals.modern_hud
 	$Main/RedCoins.hide()
 	$Main/CoinCount.show()
+	%IGT.hide()
 	%Combo.hide()
 	$Timer.paused = Settings.file.difficulty.time_limit == 2
 	$%Time.show()
@@ -71,6 +72,7 @@ func handle_modern_hud() -> void:
 	$ModernHUD/TopLeft/RedCoins.hide()
 	$ModernHUD/TopLeft/CoinCount.show()
 	%ModernPB.hide()
+	%ModernIGT.hide()
 	%ModernCoinCount.text = "*" + str(Global.coins).pad_zeros(2)
 	%ModernScore.text = str(Global.score).pad_zeros(9)
 	%ModernTime.text = "⏲" + str(Global.time).pad_zeros(3)
@@ -147,6 +149,11 @@ func handle_yoshi_radar() -> void:
 func handle_speedrun_timer() -> void:
 	%Time.hide()
 	%Stopwatch.show()
+	%IGT.show()
+	%IGT.modulate.a = int([Global.GameMode.MARATHON, Global.GameMode.MARATHON_PRACTICE].has(Global.current_game_mode) and get_tree().get_first_node_in_group("Players") != null)
+	%IGT.text = "⏲" + (str(Global.time).pad_zeros(3))
+	%ModernIGT.visible = %IGT.modulate.a == 1
+	%ModernIGT.text = %IGT.text
 	var late = SpeedrunHandler.timer > SpeedrunHandler.best_time
 	var diff = SpeedrunHandler.best_time - SpeedrunHandler.timer
 	%PB.visible = SpeedrunHandler.best_time > 0 and (SpeedrunHandler.timer > 0 or Global.current_level != null)

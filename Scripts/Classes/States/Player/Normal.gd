@@ -84,7 +84,7 @@ func grounded(delta: float) -> void:
 func handle_ground_movement(delta: float) -> void:
 	if player.skidding:
 		ground_skid(delta)
-	elif (player.input_direction != player.velocity_direction) and player.input_direction != 0 and abs(player.velocity.x) > 100 and not player.crouching:
+	elif (player.input_direction != player.velocity_direction) and player.input_direction != 0 and abs(player.velocity.x) > player.SKID_THRESHOLD and not player.crouching:
 		print([player.input_direction, player.velocity_direction])
 		player.skidding = true
 	elif player.input_direction != 0 and not player.crouching:
@@ -112,9 +112,11 @@ func deceleration(delta: float) -> void:
 
 func ground_skid(delta: float) -> void:
 	var target_skid := player.RUN_SKID
+	player.skid_frames += 1
 	player.velocity.x = move_toward(player.velocity.x, 1 * player.input_direction, (target_skid / delta) * delta)
 	if abs(player.velocity.x) < 10 or player.input_direction == player.velocity_direction or player.input_direction == 0:
 		player.skidding = false
+		player.skid_frames = 0
 
 func in_air() -> void:
 	if Global.player_action_just_pressed("jump", player.player_id):
@@ -186,22 +188,47 @@ func get_animation_name() -> String:
 	if player.attacking:
 		if player.crouching:
 			return "CrouchAttack"
-		if player.is_actually_on_floor():
-			return "Attack"
-		elif player.in_water or player.flight_meter > 0:
-			return "SwimAttack"
+		elif player.is_actually_on_floor():
+			if player.skidding:
+				return "SkidAttack"
+			elif abs(player.velocity.x) >= 5 and not player.is_actually_on_wall():
+				if player.in_water:
+					return "SwimAttack"
+				elif player.flight_meter > 0:
+					return "FlyAttack"
+				elif abs(player.velocity.x) < player.RUN_SPEED - 10:
+					return "WalkAttack"
+				else:
+					return "RunAttack"
+			else:
+				return "IdleAttack"
 		else:
-			return "AirAttack"
+			if player.in_water:
+				return "SwimAttack"
+			elif player.flight_meter > 0:
+				return "FlyAttack"
+			else:
+				return "AirAttack"
 	if player.crouching and not wall_pushing:
-		if player.velocity.y > 0 and player.is_on_floor() == false:
-			return "CrouchFall"
+		if player.bumping and player.can_bump_crouch:
+			return "CrouchBump"
+		elif player.is_on_floor() == false:
+			if player.velocity.y > 0:
+				return "CrouchFall"
+			elif player.velocity.y < 0:
+				return "CrouchJump"
+		elif player.is_actually_on_floor():
+			if abs(player.velocity.x) >= 5 and not player.is_actually_on_wall():
+				return "CrouchMove"
 		return "Crouch"
 	if player.is_actually_on_floor():
 		if player.skidding:
 			return "Skid"
 		elif abs(player.velocity.x) >= 5 and not player.is_actually_on_wall():
-			if player.in_water or player.flight_meter > 0:
+			if player.in_water:
 				return "WaterMove"
+			elif player.flight_meter > 0:
+				return "FlyMove"
 			elif abs(player.velocity.x) < player.RUN_SPEED - 10:
 				return "Walk"
 			else:
@@ -213,13 +240,26 @@ func get_animation_name() -> String:
 				return "LookUp"
 			return "Idle"
 	else:
-		if player.in_water or player.flight_meter > 0:
+		if player.in_water:
 			if swim_up_meter > 0:
-				return "SwimUp"
+				if player.bumping and player.can_bump_swim:
+					return "SwimBump"
+				else:
+					return "SwimUp"
 			else:
 				return "SwimIdle"
+		elif player.flight_meter > 0:
+			if swim_up_meter > 0:
+				if player.bumping and player.can_bump_fly:
+					return "FlyBump"
+				else:
+					return "FlyUp"
+			else:
+				return "FlyIdle"
 		if player.has_jumped:
-			if player.velocity.y < 0:
+			if player.bumping and player.can_bump_jump:
+				return "JumpBump"
+			elif player.velocity.y < 0:
 				if player.is_invincible:
 					return "StarJump"
 				return "Jump"

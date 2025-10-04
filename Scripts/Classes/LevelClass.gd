@@ -104,15 +104,9 @@ func _enter_tree() -> void:
 	await get_tree().process_frame
 	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.NONE, true)
 
-const PLAYER = preload("res://Scenes/Prefabs/Entities/Player.tscn")
 
 func spawn_in_extra_players() -> void:
-	await ready
-	for i in Global.connected_players - 1:
-		var player_node = PLAYER.instantiate()
-		player_node.player_id = i + 1
-		player_node.global_position = get_tree().get_first_node_in_group("Players").global_position + Vector2(16 * (i + 1), 0)
-		add_child(player_node)
+	return
 
 func update_theme() -> void:
 	if auto_set_theme:

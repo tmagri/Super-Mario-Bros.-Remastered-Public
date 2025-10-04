@@ -168,7 +168,16 @@ func apply_properties(properties := {}) -> void:
 			if value is Array:
 				property_node.set(i, Vector2(value[0], value[1]))
 		else:
-			property_node.set(i, properties[i])
+			var obj = property_node
+			for p in i.split("."):
+				if not is_instance_valid(obj): continue
+				if obj.get(p) is Object:
+					if obj.has_method("duplicate"):
+						obj.set(p, obj[p].duplicate(true))
+					obj = obj[p]
+				else:
+					obj.set(p, properties[i])
+					continue
 
 func get_variation_json(json := {}) -> Dictionary:
 	var level_theme = Global.level_theme
@@ -276,8 +285,8 @@ func get_config_file(resource_pack := "") -> void:
 		print("resource pack to use: " + resource_pack)
 
 func get_resource_pack_path(res_path := "", resource_pack := "") -> String:
-	var user_path := res_path.replace("res://Assets", "user://resource_packs/" + resource_pack)
-	user_path = user_path.replace("user://custom_characters/", "user://resource_packs/" + resource_pack + "/Sprites/Players/CustomCharacters/")
+	var user_path := res_path.replace("res://Assets", Global.config_path.path_join("resource_packs/" + resource_pack))
+	user_path = user_path.replace(Global.config_path.path_join("custom_characters"), Global.config_path.path_join("resource_packs/" + resource_pack + "/Sprites/Players/CustomCharacters/"))
 	if FileAccess.file_exists(user_path):
 		return user_path
 	else:
@@ -306,7 +315,7 @@ func clear_cache() -> void:
 	cache.clear()
 	property_cache.clear()
 
-func load_image_from_path(path := "") -> ImageTexture:
+func load_image_from_path(path := "") -> Texture2D:
 	if path.contains("res://"):
 		if path.contains("NULL"):
 			return null

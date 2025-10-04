@@ -6,7 +6,6 @@ static var current_level_file := ""
 static var has_entered := false
 
 var selected_lvl_idx := 0
-const CUSTOM_LEVEL_PATH := "user://custom_levels/"
 const base64_charset := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 static var page_number_save := -1
 static var last_played_container = null
@@ -47,6 +46,7 @@ func _ready() -> void:
 		%LevelList.close()
 
 func clear_saved_stuff() -> void:
+	last_played_container = null
 	%LSSLevelInfo.saved_stuff.clear()
 	saved_search_values = [-1, -1, -1]
 	%LSSBrowser.number_of_pages = -1
@@ -78,7 +78,6 @@ func edit_level() -> void:
 
 func play_level() -> void:
 	Global.current_game_mode = Global.GameMode.CUSTOM_LEVEL
-	Settings.file.difficulty.inf_lives = 1
 	LevelEditor.load_play = true
 	$CharacterSelect.open()
 	await $CharacterSelect.selected
@@ -88,7 +87,6 @@ func play_level() -> void:
 func online_play() -> void:
 	lss_level_played()
 	Global.current_game_mode = Global.GameMode.CUSTOM_LEVEL
-	Settings.file.difficulty.inf_lives = 1
 	LevelEditor.load_play = true
 	$LSSCharacterSelect.open()
 	await $LSSCharacterSelect.selected

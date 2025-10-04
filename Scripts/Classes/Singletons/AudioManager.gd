@@ -113,7 +113,7 @@ func play_sfx(stream_name = "", position := Vector2.ZERO, pitch := 1.0) -> void:
 	var stream = stream_name
 	var is_custom = false
 	if stream_name is String:
-		is_custom = sfx_library[stream_name].contains("user://custom_characters")
+		is_custom = sfx_library[stream_name].contains(Global.config_path.path_join("custom_characters"))
 		stream = import_stream(sfx_library[stream_name])
 	if is_custom == false:
 		player.stream = ResourceSetter.get_resource(stream, player)
@@ -203,7 +203,17 @@ func load_sfx_map(json := {}) -> void:
 func handle_music() -> void:
 	if Global.in_title_screen:
 		current_level_theme = ""
-	AudioServer.set_bus_effect_enabled(1, 0, Global.game_paused)
+	
+	# guzlad: hack in the elif because it doesn't unpause itself like the normal music_player does
+	if Global.game_paused and Settings.file.audio.pause_bgm == 0:
+		AudioManager.music_player.stream_paused = true
+		AudioManager.music_override_player.stream_paused = true
+		return
+	elif AudioManager.music_override_player.stream_paused == true:
+		AudioManager.music_override_player.stream_paused = false
+	
+	AudioServer.set_bus_effect_enabled(1, 0, Global.game_paused and Settings.file.audio.pause_bgm == 1)
+	
 	if is_instance_valid(Global.current_level):
 		if Global.current_level.music == null or current_music_override != MUSIC_OVERRIDES.NONE:
 			music_player.stop()
@@ -236,7 +246,7 @@ func handle_music_override() -> void:
 func create_stream_from_json(json_path := "") -> AudioStream:
 	if json_path.contains(".json") == false:
 		var path = ResourceSetter.get_pure_resource_path(json_path)
-		if path.contains("user://"):
+		if path.contains(Global.config_path):
 			match json_path.get_slice(".", 1):
 				"wav":
 					return AudioStreamWAV.load_from_file(ResourceSetter.get_pure_resource_path(json_path))

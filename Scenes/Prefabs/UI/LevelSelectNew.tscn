@@ -221,12 +221,14 @@ metadata/_custom_type_script = "uid://364rywt44hy6"
 [node name="6" type="Sprite2D" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/SlotContainer/Slot1/ChallengeModeBits"]
 position = Vector2(41, 4)
 texture = ExtResource("11_sk22j")
-region_enabled = true
+hframes = 3
+vframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 script = ExtResource("6_x05vu")
 metadata/_custom_type_script = "uid://364rywt44hy6"
 
 [node name="Full" type="Sprite2D" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/SlotContainer/Slot1/ChallengeModeBits/6"]
+visible = false
 texture = ExtResource("11_sk22j")
 region_enabled = true
 region_rect = Rect2(8, 0, 8, 8)
@@ -417,14 +419,17 @@ metadata/_custom_type_script = "uid://364rywt44hy6"
 [node name="6" type="Sprite2D" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/SlotContainer/Slot2/ChallengeModeBits"]
 position = Vector2(41, 4)
 texture = ExtResource("11_sk22j")
-region_enabled = true
+hframes = 3
+vframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 script = ExtResource("6_x05vu")
 metadata/_custom_type_script = "uid://364rywt44hy6"
 
 [node name="Full" type="Sprite2D" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/SlotContainer/Slot2/ChallengeModeBits/6"]
 texture = ExtResource("11_sk22j")
-region_enabled = true
+hframes = 3
+vframes = 2
+frame = 2
 region_rect = Rect2(16, 0, 8, 8)
 script = ExtResource("6_x05vu")
 metadata/_custom_type_script = "uid://364rywt44hy6"
@@ -613,14 +618,17 @@ metadata/_custom_type_script = "uid://364rywt44hy6"
 [node name="6" type="Sprite2D" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/SlotContainer/Slot3/ChallengeModeBits"]
 position = Vector2(41, 4)
 texture = ExtResource("11_sk22j")
-region_enabled = true
+hframes = 3
+vframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 script = ExtResource("6_x05vu")
 metadata/_custom_type_script = "uid://364rywt44hy6"
 
 [node name="Full" type="Sprite2D" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/SlotContainer/Slot3/ChallengeModeBits/6"]
 texture = ExtResource("11_sk22j")
-region_enabled = true
+hframes = 3
+vframes = 2
+frame = 3
 region_rect = Rect2(0, 8, 8, 8)
 script = ExtResource("6_x05vu")
 metadata/_custom_type_script = "uid://364rywt44hy6"
@@ -809,14 +817,17 @@ metadata/_custom_type_script = "uid://364rywt44hy6"
 [node name="6" type="Sprite2D" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/SlotContainer/Slot4/ChallengeModeBits"]
 position = Vector2(41, 4)
 texture = ExtResource("11_sk22j")
-region_enabled = true
+hframes = 3
+vframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 script = ExtResource("6_x05vu")
 metadata/_custom_type_script = "uid://364rywt44hy6"
 
 [node name="Full" type="Sprite2D" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/SlotContainer/Slot4/ChallengeModeBits/6"]
 texture = ExtResource("11_sk22j")
-region_enabled = true
+hframes = 3
+vframes = 2
+frame = 4
 region_rect = Rect2(8, 8, 8, 8)
 script = ExtResource("6_x05vu")
 metadata/_custom_type_script = "uid://364rywt44hy6"

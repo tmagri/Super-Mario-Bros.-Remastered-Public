@@ -890,7 +890,7 @@ unique_name_in_owner = true
 [node name="CanvasLayer2" type="CanvasLayer" parent="."]
 layer = 0
 
-[node name="Label" type="Label" parent="CanvasLayer2"]
+[node name="VersionLabel" type="Label" parent="CanvasLayer2"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -901,7 +901,7 @@ text = "v1.0.0"
 uppercase = true
 script = SubResource("GDScript_8peil")
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer2/Label"]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer2/VersionLabel"]
 visible = false
 show_behind_parent = true
 custom_minimum_size = Vector2(0, 8)
@@ -913,8 +913,27 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="Timer" type="Timer" parent="CanvasLayer2/Label"]
+[node name="Timer" type="Timer" parent="CanvasLayer2/VersionLabel"]
 autostart = true
+
+[node name="DevBuildWarning" type="Label" parent="CanvasLayer2/VersionLabel"]
+layout_mode = 1
+offset_top = 16.0
+offset_right = 56.0
+offset_bottom = 32.0
+text = "DEVELOPMENT BUILD! EXPECT BUGS!"
+uppercase = true
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer2/VersionLabel/DevBuildWarning"]
+show_behind_parent = true
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
 [node name="DropShadow" parent="." instance=ExtResource("5_8t4ah")]
 
@@ -924,12 +943,12 @@ metadata/_custom_type_script = "uid://bdq0373j5n5o0"
 
 [node name="LabelFontChanger" type="Node" parent="." node_paths=PackedStringArray("labels")]
 script = ExtResource("21_qti1l")
-labels = [NodePath("../CanvasLayer/Options2/Story"), NodePath("../CanvasLayer/Options2/Challenges"), NodePath("../CanvasLayer/Options2/Marathon"), NodePath("../CanvasLayer/StoryMode/StoryOptions/New Game"), NodePath("../CanvasLayer/StoryMode/StoryOptions/Continue"), NodePath("../CanvasLayer/StoryMode/StoryOptions/HighScore"), NodePath("../CanvasLayer/Extras/Achiements"), NodePath("../CanvasLayer/Extras/Credits"), null, NodePath("../CanvasLayer/ChallengeOptions/BooRace"), NodePath("../CanvasLayer/ChallengeOptions/ChallengeHunt"), null, NodePath("../CanvasLayer2/Label"), NodePath("../CanvasLayer/Options1/PlayGame"), NodePath("../CanvasLayer/Options1/Settings"), NodePath("../CanvasLayer/Options1/Quit Game"), NodePath("../CanvasLayer2/Label")]
+labels = [NodePath("../CanvasLayer/Options2/Story"), NodePath("../CanvasLayer/Options2/Challenges"), NodePath("../CanvasLayer/Options2/Marathon"), NodePath("../CanvasLayer/StoryMode/StoryOptions/New Game"), NodePath("../CanvasLayer/StoryMode/StoryOptions/Continue"), NodePath("../CanvasLayer/StoryMode/StoryOptions/HighScore"), NodePath("../CanvasLayer/Extras/Achiements"), NodePath("../CanvasLayer/Extras/Credits"), null, NodePath("../CanvasLayer/ChallengeOptions/BooRace"), NodePath("../CanvasLayer/ChallengeOptions/ChallengeHunt"), null, NodePath("../CanvasLayer2/VersionLabel"), NodePath("../CanvasLayer/Options1/PlayGame"), NodePath("../CanvasLayer/Options1/Settings"), NodePath("../CanvasLayer/Options1/Quit Game"), NodePath("../CanvasLayer2/VersionLabel")]
 metadata/_custom_type_script = "uid://co6tjg3w6qpd8"
 
 [node name="TextShadowColourChanger" type="Node" parent="." node_paths=PackedStringArray("labels")]
 script = ExtResource("23_s06mt")
-labels = [NodePath("../CanvasLayer/Options2/Story"), NodePath("../CanvasLayer/Options2/Challenges"), NodePath("../CanvasLayer/Options2/Marathon"), NodePath("../CanvasLayer/StoryMode/StoryOptions/New Game"), NodePath("../CanvasLayer/StoryMode/StoryOptions/Continue"), NodePath("../CanvasLayer/StoryMode/StoryOptions/HighScore"), NodePath("../CanvasLayer/Extras/Achiements"), NodePath("../CanvasLayer/Extras/Credits"), null, NodePath("../CanvasLayer/ChallengeOptions/BooRace"), NodePath("../CanvasLayer/ChallengeOptions/ChallengeHunt"), null, NodePath("../CanvasLayer2/Label"), NodePath("../CanvasLayer/Options1/PlayGame"), NodePath("../CanvasLayer/Options1/Settings"), NodePath("../CanvasLayer/Options1/Quit Game"), NodePath("../CanvasLayer2/Label"), null]
+labels = [NodePath("../CanvasLayer/Options2/Story"), NodePath("../CanvasLayer/Options2/Challenges"), NodePath("../CanvasLayer/Options2/Marathon"), NodePath("../CanvasLayer/StoryMode/StoryOptions/New Game"), NodePath("../CanvasLayer/StoryMode/StoryOptions/Continue"), NodePath("../CanvasLayer/StoryMode/StoryOptions/HighScore"), NodePath("../CanvasLayer/Extras/Achiements"), NodePath("../CanvasLayer/Extras/Credits"), null, NodePath("../CanvasLayer/ChallengeOptions/BooRace"), NodePath("../CanvasLayer/ChallengeOptions/ChallengeHunt"), null, NodePath("../CanvasLayer2/VersionLabel"), NodePath("../CanvasLayer/Options1/PlayGame"), NodePath("../CanvasLayer/Options1/Settings"), NodePath("../CanvasLayer/Options1/Quit Game"), NodePath("../CanvasLayer2/VersionLabel"), null]
 
 [node name="Logo" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -120)
@@ -1534,6 +1553,7 @@ metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 [connection signal="cancelled" from="CanvasLayer/StoryMode/NewUnbeatenGame/NoBeatenCharSelect" to="CanvasLayer/StoryMode/StoryOptions" method="open"]
 [connection signal="selected" from="CanvasLayer/StoryMode/NewUnbeatenGame/NoBeatenCharSelect" to="." method="start_game"]
 [connection signal="selected" from="CanvasLayer/StoryMode/NewUnbeatenGame/NoBeatenCharSelect" to="." method="clear_stats"]
+[connection signal="selected" from="CanvasLayer/StoryMode/NewUnbeatenGame/NoBeatenCharSelect" to="." method="go_back_to_first_level"]
 [connection signal="cancelled" from="CanvasLayer/StoryMode/ContinueUnbeatenGame/CharacterSelect" to="CanvasLayer/StoryMode/StoryOptions" method="open"]
 [connection signal="selected" from="CanvasLayer/StoryMode/ContinueUnbeatenGame/CharacterSelect" to="." method="start_game"]
 [connection signal="closed" from="CanvasLayer/ChallengeOptions" to="CanvasLayer/Options2" method="open"]
@@ -1584,7 +1604,7 @@ metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 [connection signal="selected" from="CanvasLayer/CampaignSelect" to="." method="campaign_selected"]
 [connection signal="cancelled" from="CanvasLayer/SaveDeletionWarning" to="CanvasLayer/StoryMode/StoryOptions" method="open"]
 [connection signal="cancelled" from="CanvasLayer/QuitDialog" to="CanvasLayer/Options1" method="open"]
-[connection signal="timeout" from="CanvasLayer2/Label/Timer" to="CanvasLayer2/Label" method="update"]
+[connection signal="timeout" from="CanvasLayer2/VersionLabel/Timer" to="CanvasLayer2/VersionLabel" method="update"]
 [connection signal="updated" from="BGM/ResourceSetterNew" to="." method="play_bgm"]
 
 [editable path="CanvasLayer/SettingsMenu"]

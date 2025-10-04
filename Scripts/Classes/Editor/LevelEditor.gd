@@ -282,7 +282,8 @@ func parse_tiles() -> void:
 	for i in entity_layer_nodes:
 		if is_instance_valid(i) == false:
 			continue
-		saved_entity_layers[idx] = i.duplicate(DUPLICATE_USE_INSTANTIATION)
+		if load_play == false:
+			saved_entity_layers[idx] = i.duplicate(DUPLICATE_USE_INSTANTIATION)
 		if i is Player:
 			i.direction = 1
 			i.velocity = Vector2.ZERO
@@ -366,8 +367,6 @@ func close_save_menu() -> void:
 	menu_open = false
 	current_state = EditorState.TILE_MENU
 
-const CUSTOM_LEVEL_DIR := "user://custom_levels/"
-
 func handle_tile_cursor() -> void:
 	Input.set_custom_mouse_cursor(null)
 	var snapped_position = ((%TileCursor.get_global_mouse_position() - CURSOR_OFFSET).snapped(Vector2(16, 16))) + CURSOR_OFFSET
@@ -402,9 +401,9 @@ func handle_tile_cursor() -> void:
 	
 	if current_state == EditorState.IDLE:
 		if Input.is_action_just_pressed("scroll_up"):
-			selected_tile_index += 1
-		if Input.is_action_just_pressed("scroll_down"):
 			selected_tile_index -= 1
+		if Input.is_action_just_pressed("scroll_down"):
+			selected_tile_index += 1
 	
 		if Input.is_action_just_pressed("editor_copy"):
 			copy_node(tile_position)

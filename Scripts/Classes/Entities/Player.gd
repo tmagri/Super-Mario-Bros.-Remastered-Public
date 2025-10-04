@@ -23,6 +23,8 @@ var RUN_SPEED := 160.0                 # The player's speed while running, measu
 var GROUND_RUN_ACCEL := 1.25           # The player's acceleration while running, measured in px/frame
 var RUN_SKID := 8.0                    # The player's turning deceleration while running, measured in px/frame
 
+var SKID_THRESHOLD := 100.0            # The horizontal speed required, to be able to start skidding.
+
 var DECEL := 3.0                       # The player's deceleration while no buttons are pressed, measured in px/frame
 var AIR_ACCEL := 3.0                   # The player's acceleration while in midair, measured in px/frame
 var AIR_SKID := 1.5                    # The player's turning deceleration while in midair, measured in px/frame
@@ -65,7 +67,12 @@ var crouching := false:
 		return crouching
 var skidding := false
 
+var bumping := false
 var can_bump_sfx := true
+var can_bump_jump = false
+var can_bump_crouch = false
+var can_bump_swim = false
+var can_bump_fly = false
 
 @export var player_id := 0
 const ONE_UP_NOTE = preload("uid://dopxwjj37gu0l")
@@ -134,6 +141,7 @@ static var CHARACTER_PALETTES := [
 
 const ANIMATION_FALLBACKS := {
 	"JumpFall": "Jump", 
+	"JumpBump": "Bump",
 	"Fall": "Move", 
 	"Pipe": "Idle", 
 	"Walk": "Move", 
@@ -142,10 +150,24 @@ const ANIMATION_FALLBACKS := {
 	"LookUp": "Idle", 
 	"Crouch": "Idle",
 	"CrouchFall": "Crouch", 
-	"CrouchAttack": "Attack", 
+	"CrouchJump": "Crouch", 
+	"CrouchBump": "Bump",
+	"CrouchMove": "Crouch", 
+	"IdleAttack": "Attack", 
+	"CrouchAttack": "IdleAttack", 
+	"MoveAttack": "IdleAttack", 
+	"WalkAttack": "MoveAttack", 
+	"RunAttack": "MoveAttack", 
+	"SkidAttack": "MoveAttack",
+	"FlyIdle": "SwimIdle",
+	"FlyUp": "SwimUp",
+	"FlyMove": "SwimMove",
+	"FlyAttack": "SwimAttack",
+	"FlyBump": "SwimBump",
 	"FlagSlide": "Climb",
 	"WaterMove": "Move",
 	"WaterIdle": "Idle",
+	"SwimBump": "Bump",
 	"DieFreeze": "Die",
 	"StarJump": "Jump",
 	"StarFall": "StarJump"
@@ -165,6 +187,8 @@ var air_frames := 0
 static var classic_physics := false
 
 var swim_stroke := false
+
+var skid_frames := 0
 
 var simulated_velocity := Vector2.ZERO
 
@@ -192,13 +216,14 @@ func _ready() -> void:
 		camera.enabled = false
 	handle_power_up_states(0)
 	set_power_state_frame()
+	handle_invincible_palette()
 	if Global.level_editor == null:
 		recenter_camera()
 
 func apply_character_physics() -> void:
 	var path = "res://Assets/Sprites/Players/" + character + "/CharacterInfo.json"
 	if int(Global.player_characters[player_id]) > 3:
-		path = path.replace("res://Assets/Sprites/Players", "user://custom_characters")
+		path = path.replace("res://Assets/Sprites/Players", Global.config_path.path_join("custom_characters/"))
 	path = ResourceSetter.get_pure_resource_path(path)
 	var json = JSON.parse_string(FileAccess.open(path, FileAccess.READ).get_as_text())
 	for i in json.physics:
@@ -264,6 +289,8 @@ func _physics_process(delta: float) -> void:
 	elif velocity.y > 15:
 		can_bump_sfx = true
 	handle_water_detection()
+	%SkidParticles.visible = Settings.file.visuals.extra_particles == 1
+	%SkidParticles.emitting = ((skidding and skid_frames > 2) or crouching) and is_on_floor() and abs(velocity.x) > 25 and Settings.file.visuals.extra_particles == 1
 	if $SkidSFX.playing:
 		if (is_actually_on_floor() and skidding) == false:
 			$SkidSFX.stop()
@@ -327,7 +354,7 @@ func apply_character_sfx_map() -> void:
 	var custom_character := false
 	if int(Global.player_characters[player_id]) > 3:
 		custom_character = true
-		path = path.replace("res://Assets/Sprites/Players", "user://custom_characters")
+		path = path.replace("res://Assets/Sprites/Players", Global.config_path.path_join("custom_characters/"))
 	path = ResourceSetter.get_pure_resource_path(path)
 	var json = JSON.parse_string(FileAccess.open(path, FileAccess.READ).get_as_text())
 	
@@ -337,7 +364,7 @@ func apply_character_sfx_map() -> void:
 		if FileAccess.file_exists(res_path) == false or custom_character:
 			var directory = "res://Assets/Sprites/Players/" + character + "/" + json[i]
 			if int(Global.player_characters[player_id]) > 3:
-				directory = directory.replace("res://Assets/Sprites/Players", "user://custom_characters")
+				directory = directory.replace("res://Assets/Sprites/Players", Global.config_path.path_join("custom_characters/"))
 			directory = ResourceSetter.get_pure_resource_path(directory)
 			if FileAccess.file_exists(directory):
 				json[i] = directory
@@ -414,9 +441,12 @@ func bump_ceiling() -> void:
 	AudioManager.play_sfx("bump", global_position)
 	velocity.y = CEILING_BUMP_SPEED
 	can_bump_sfx = false
+	bumping = true
 	await get_tree().create_timer(0.1).timeout
 	AudioManager.kill_sfx("small_jump")
 	AudioManager.kill_sfx("big_jump")
+	await get_tree().create_timer(0.1).timeout
+	bumping = false
 
 func super_star() -> void:
 	DiscoLevel.combo_meter += 1
@@ -550,6 +580,7 @@ func die(pit := false) -> void:
 	Global.p_switch_active = false
 	Global.p_switch_timer = 0
 	stop_all_timers()
+	Global.total_deaths += 1
 	sprite.process_mode = Node.PROCESS_MODE_ALWAYS
 	state_machine.transition_to("Dead", {"Pit": pit})
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -574,7 +605,7 @@ func death_load() -> void:
 	Global.death_load = true
 
 	# Handle lives decrement for CAMPAIGN and MARATHON
-	if [Global.GameMode.CAMPAIGN, Global.GameMode.MARATHON].has(Global.current_game_mode):
+	if [Global.GameMode.CAMPAIGN, Global.GameMode.MARATHON, Global.GameMode.LEVEL_EDITOR, Global.GameMode.CUSTOM_LEVEL].has(Global.current_game_mode):
 		if Settings.file.difficulty.inf_lives == 0:
 			Global.lives -= 1
 
@@ -630,6 +661,10 @@ func set_power_state_frame() -> void:
 		$ResourceSetterNew.update_resource()
 	if %Sprite.sprite_frames != null:
 		can_pose = %Sprite.sprite_frames.has_animation("PoseDoor")
+		can_bump_jump = %Sprite.sprite_frames.has_animation("JumpBump")
+		can_bump_crouch = %Sprite.sprite_frames.has_animation("CrouchBump")
+		can_bump_swim = %Sprite.sprite_frames.has_animation("SwimBump")
+		can_bump_fly = %Sprite.sprite_frames.has_animation("FlyBump")
 
 func get_power_up(power_name := "") -> void:
 	if is_dead:
@@ -647,8 +682,7 @@ func get_power_up(power_name := "") -> void:
 		await power_up_animation(power_name)
 	else:
 		return
-	if new_power_state.hitbox_size == "Big" and power_state.hitbox_size == "Small":
-		check_for_block()
+	check_for_block()
 	power_state = new_power_state
 	Global.player_power_states[player_id] = str(power_state.get_index())
 	can_hurt = true
@@ -670,10 +704,18 @@ func power_up_animation(new_power_state := "") -> void:
 		if Settings.file.visuals.transform_style == 0:
 			sprite.speed_scale = 3
 			sprite.play("Grow")
+			var rainbow = new_power_state != "Big" and (power_state.state_name != "Big" and new_power_state != "Small")
+			if rainbow:
+				transforming = true
+				sprite.material.set_shader_parameter("enabled", true)
 			await get_tree().create_timer(0.4, true).timeout
+			power_state = get_node("PowerStates/" + new_power_state)
 			sprite.sprite_frames = new_frames
+			handle_invincible_palette()
 			sprite.play("Grow")
 			await get_tree().create_timer(0.4, true).timeout
+			if rainbow:
+				sprite.material.set_shader_parameter("enabled", false)
 			transforming = false
 		else:
 			sprite.speed_scale = 0
@@ -693,6 +735,7 @@ func power_up_animation(new_power_state := "") -> void:
 				sprite.sprite_frames = old_frames
 				await get_tree().create_timer(0.05).timeout
 		else:
+			handle_invincible_palette()
 			sprite.stop()
 			sprite.material.set_shader_parameter("enabled", true)
 			transforming = true
@@ -712,11 +755,12 @@ func dispense_stored_item() -> void:
 func get_character_sprite_path(power_stateto_use := power_state.state_name) -> String:
 	var path = "res://Assets/Sprites/Players/" + character + "/" + power_stateto_use + ".json"
 	if int(Global.player_characters[player_id]) > 3:
-		path = path.replace("res://Assets/Sprites/Players", "user://custom_characters")
+		path = path.replace("res://Assets/Sprites/Players", Global.config_path.path_join("custom_characters/"))
 	return path
 
 func enter_pipe(pipe: PipeArea, warp_to_level := true) -> void:
 	z_index = -10
+	can_bump_sfx = false
 	Global.can_pause = false
 	Global.can_time_tick = false
 	pipe_enter_direction = pipe.get_vector(pipe.enter_direction)
@@ -761,7 +805,7 @@ func exit_pipe(pipe: PipeArea) -> void:
 	pipe_enter_direction = -pipe.get_vector(pipe.enter_direction)
 	AudioManager.play_sfx("pipe", global_position)
 	state_machine.transition_to("Pipe")
-	await get_tree().create_timer(0.6, false).timeout
+	await get_tree().create_timer(0.65, false).timeout
 	Global.can_pause = true
 	state_machine.transition_to("Normal")
 	Global.can_time_tick = true

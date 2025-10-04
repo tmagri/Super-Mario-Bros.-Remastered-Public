@@ -26,11 +26,13 @@ var second_quest := false
 var extra_worlds_win := false
 const lang_codes := ["en", "fr", "es", "de", "it", "pt", "pl", "tr", "ru", "jp", "fil", "id", "ga"]
 
+var config_path : String = get_config_path()
+
 var rom_path := ""
 var rom_assets_exist := false
-const ROM_POINTER_PATH := "user://rom_pointer.smb"
-const ROM_PATH := "user://baserom.nes"
-const ROM_ASSETS_PATH := "user://resource_packs/BaseAssets"
+var ROM_POINTER_PATH = config_path.path_join("rom_pointer.smb")
+var ROM_PATH = config_path.path_join("baserom.nes")
+var ROM_ASSETS_PATH = config_path.path_join("resource_packs/BaseAssets")
 const ROM_PACK_NAME := "BaseAssets"
 const ROM_ASSETS_VERSION := 0
 
@@ -59,6 +61,8 @@ var debugged_in := true
 
 var score_tween = create_tween()
 var time_tween = create_tween()
+
+var total_deaths := 0
 
 var score := 0:
 	set(value):
@@ -169,7 +173,46 @@ func _ready() -> void:
 	get_server_version()
 	if OS.is_debug_build():
 		debug_mode = false
+	setup_config_dirs()
 	check_for_rom()
+
+func setup_config_dirs() -> void:
+	var dirs = [
+		"custom_characters",
+		"custom_levels",
+		"logs",
+		"marathon_recordings",
+		"resource_packs",
+		"saves",
+		"screenshots"
+	]
+
+	for d in dirs:
+		var full_path = Global.config_path.path_join(d)
+		if not DirAccess.dir_exists_absolute(full_path):
+			DirAccess.make_dir_recursive_absolute(full_path)
+
+func get_config_path() -> String:
+	var exe_path := OS.get_executable_path()
+	var exe_dir  := exe_path.get_base_dir()
+	var portable_flag := exe_dir.path_join("portable.txt")
+	
+	# Test that exe dir is writeable, if not fallback to user://
+	if FileAccess.file_exists(portable_flag):
+		var test_file = exe_dir.path_join("test.txt")
+		var f = FileAccess.open(test_file, FileAccess.WRITE)
+		if f:
+			f.close()
+			var dir = DirAccess.open(exe_dir)
+			if dir:
+				dir.remove(test_file.get_file())
+			var local_dir = exe_dir.path_join("config")
+			if not DirAccess.dir_exists_absolute(local_dir):
+				DirAccess.make_dir_recursive_absolute(local_dir)
+			return local_dir
+		else:
+			push_warning("Portable flag found but exe directory is not writeable. Falling back to user://")
+	return "user://"
 
 func check_for_rom() -> void:
 	rom_path = ""
@@ -202,6 +245,14 @@ func _process(delta: float) -> void:
 		AudioManager.play_global_sfx("switch")
 		debug_mode = true
 		log_comment("Debug Mode enabled! some bugs may occur!")
+		
+	if Input.is_action_just_pressed("ui_screenshot"):
+		take_screenshot()
+
+func take_screenshot() -> void:
+	var img: Image = get_viewport().get_texture().get_image()
+	var filename = Global.config_path.path_join("screenshots/screenshot_" + str(int(Time.get_unix_time_from_system())) + ".png")
+	var err = img.save_png(filename)
 
 func handle_p_switch(delta: float) -> void:
 	if p_switch_active and get_tree().paused == false:
@@ -264,6 +315,7 @@ func reset_values() -> void:
 	PlayerGhost.idx = 0
 	Checkpoint.passed_checkpoints.clear()
 	Checkpoint.sublevel_id = 0
+	Global.total_deaths = 0
 	Door.unlocked_doors = []
 	Checkpoint.unlocked_doors = []
 	KeyItem.total_collected = 0
@@ -304,6 +356,7 @@ func transition_to_scene(scene_path := "") -> void:
 		$Transition/AnimationPlayer.play("RESET")
 		$Transition.hide()
 	transitioning_scene = false
+	transition_finished.emit()
 
 
 
@@ -330,7 +383,7 @@ func close_freeze() -> void:
 	$Transition/Freeze.hide()
 	$Transition.hide()
 
-var recording_dir = "user://marathon_recordings/"
+var recording_dir = config_path.path_join("marathon_recordings")
 
 func update_game_status() -> void:
 	var lives_str := str(Global.lives)

@@ -65,11 +65,17 @@ func player_win_race() -> void:
 	TimedBooBlock.can_tick = false
 	
 	var cleared_boo: int = 0
-	for boo_time in boo.time_needed:
-		if SpeedrunHandler.timer < boo_time:
-			cleared_boo += 1
-		else:
-			break
+	
+	if boo_colour >= 4:
+		cleared_boo = 5
+	else:
+		var idx := 0
+		for boo_time in boo.time_needed:
+			if SpeedrunHandler.timer < boo_time and idx < 4:
+				cleared_boo += 1
+			else:
+				break
+			idx += 1
 	
 	if int(BooRaceHandler.cleared_boo_levels[level_id]) <= cleared_boo:
 		BooRaceHandler.cleared_boo_levels[level_id] = str(cleared_boo)

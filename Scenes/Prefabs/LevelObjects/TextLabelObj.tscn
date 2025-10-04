@@ -9,6 +9,8 @@
 script/source = "extends Node2D
 
 @export var text := \"\"
+@export_enum(\"Left\", \"Center\", \"Right\") var alignment := 0
+# guzlad: Do we even need the 4th option \"fill\"?
 
 @export_enum(\"Left\", \"Center\", \"Right\") var text_alignment := 0
 @export var colour := Color.WHITE

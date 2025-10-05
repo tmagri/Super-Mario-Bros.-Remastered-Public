@@ -327,6 +327,8 @@ func reset_values() -> void:
 	Level.in_vine_level = false
 	Level.vine_return_level = ""
 	Level.vine_warp_level = ""
+	p_switch_active = false
+	p_switch_timer = 0.0
 
 func clear_saved_values() -> void:
 	coins = 0

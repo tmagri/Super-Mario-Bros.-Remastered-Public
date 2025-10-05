@@ -425,7 +425,7 @@ func add_stomp_combo(award_score := true) -> void:
 				score_note_spawner.spawn_note(10000)
 			else:
 				Global.lives += 1
-				AudioManager.play_global_sfx("1_up")
+				AudioManager.play_sfx("1_up", global_position)
 				score_note_spawner.spawn_one_up_note()
 	else:
 		if award_score:
@@ -564,8 +564,6 @@ func die(pit := false) -> void:
 	visible = not pit
 	flight_meter = 0
 	dead.emit()
-	Global.p_switch_active = false
-	Global.p_switch_timer = 0
 	stop_all_timers()
 	Global.total_deaths += 1
 	sprite.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -803,8 +801,6 @@ func jump() -> void:
 	velocity.y = calculate_jump_height() * gravity_vector.y
 	gravity = JUMP_GRAVITY
 	AudioManager.play_sfx("small_jump" if power_state.hitbox_size == "Small" else "big_jump", global_position)
-	has_jumped = true
-	await get_tree().physics_frame
 	has_jumped = true
 
 func calculate_jump_height() -> float: # Thanks wye love you xxx

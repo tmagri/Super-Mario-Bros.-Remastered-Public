@@ -1,4 +1,4 @@
-@icon("res://Assets/Sprites/Editor/Level.png")
+@icon("res://Assets/Sprites/Editor/Level.svg")
 class_name Level
 extends Node
 

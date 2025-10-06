@@ -123,7 +123,8 @@ func update_theme() -> void:
 	Global.level_theme = theme
 	Global.theme_time = theme_time
 	TitleScreen.last_theme = theme
-	$LevelBG.update_visuals()
+	if get_node_or_null("LevelBG") != null:
+		$LevelBG.update_visuals()
 
 func update_next_level_info() -> void:
 	next_level = wrap(level_id + 1, 1, 5)

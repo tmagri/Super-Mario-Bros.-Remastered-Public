@@ -36,17 +36,18 @@ var update_on_spawn := true
 func _init() -> void:
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)
 
+func _ready() -> void:
+	Global.level_time_changed.connect(update_resource)
+	Global.level_theme_changed.connect(update_resource)
+
 func _enter_tree() -> void:
 	safety_check()
 	if update_on_spawn:
 		update_resource()
-	Global.level_time_changed.connect(update_resource)
-	Global.level_theme_changed.connect(update_resource)
-	
 
 func safety_check() -> void:
-	if Settings.file.visuals.resource_packs.has("BaseAssets") == false:
-		Settings.file.visuals.resource_packs.append("BaseAssets")
+	if Settings.file.visuals.resource_packs.has(Global.ROM_PACK_NAME) == false:
+		Settings.file.visuals.resource_packs.insert(Global.ROM_PACK_NAME, 0)
 
 func update_resource() -> void:
 	randomize()

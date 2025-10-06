@@ -425,7 +425,7 @@ func add_stomp_combo(award_score := true) -> void:
 				score_note_spawner.spawn_note(10000)
 			else:
 				Global.lives += 1
-				AudioManager.play_sfx("1_up", global_position)
+				AudioManager.play_global_sfx("1_up")
 				score_note_spawner.spawn_one_up_note()
 	else:
 		if award_score:
@@ -564,6 +564,8 @@ func die(pit := false) -> void:
 	visible = not pit
 	flight_meter = 0
 	dead.emit()
+	Global.p_switch_active = false
+	Global.p_switch_timer = 0
 	stop_all_timers()
 	Global.total_deaths += 1
 	sprite.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -590,7 +592,7 @@ func death_load() -> void:
 	Global.death_load = true
 
 	# Handle lives decrement for CAMPAIGN and MARATHON
-	if [Global.GameMode.CAMPAIGN, Global.GameMode.MARATHON, Global.GameMode.LEVEL_EDITOR, Global.GameMode.CUSTOM_LEVEL].has(Global.current_game_mode):
+	if [Global.GameMode.CAMPAIGN, Global.GameMode.MARATHON].has(Global.current_game_mode):
 		if Settings.file.difficulty.inf_lives == 0:
 			Global.lives -= 1
 
@@ -602,6 +604,7 @@ func death_load() -> void:
 
 		Global.GameMode.LEVEL_EDITOR: func():
 			owner.stop_testing(),
+			
 
 		Global.GameMode.CHALLENGE: func():
 			Global.transition_to_scene("res://Scenes/Levels/ChallengeMiss.tscn"),
@@ -626,12 +629,12 @@ func death_load() -> void:
 	}
 
 	# Determine which action to take
-	if death_actions.has(Global.current_game_mode):
-		death_actions[Global.current_game_mode].call()
 	if Global.lives <= 0 and Settings.file.difficulty.inf_lives == 0:
 		death_actions["game_over"].call()
 	elif Global.time <= 0:
 		death_actions["time_up"].call()
+	elif death_actions.has(Global.current_game_mode):
+		death_actions[Global.current_game_mode].call()
 	else:
 		death_actions["default_reload"].call()
 
@@ -667,11 +670,13 @@ func get_power_up(power_name := "") -> void:
 		await power_up_animation(power_name)
 	else:
 		return
-	check_for_block()
 	power_state = new_power_state
 	Global.player_power_states[player_id] = str(power_state.get_index())
+	handle_power_up_states(0)
 	can_hurt = true
 	refresh_hitbox()
+	await get_tree().physics_frame
+	check_for_block()
 
 func check_for_block() -> void:
 	if test_move(global_transform, (Vector2.UP * gravity_vector) * 4):
@@ -801,6 +806,8 @@ func jump() -> void:
 	velocity.y = calculate_jump_height() * gravity_vector.y
 	gravity = JUMP_GRAVITY
 	AudioManager.play_sfx("small_jump" if power_state.hitbox_size == "Small" else "big_jump", global_position)
+	has_jumped = true
+	await get_tree().physics_frame
 	has_jumped = true
 
 func calculate_jump_height() -> float: # Thanks wye love you xxx

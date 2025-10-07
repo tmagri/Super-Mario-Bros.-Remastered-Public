@@ -56,6 +56,7 @@ position = Vector2(1048, -72)
 
 [node name="Firebar6" parent="." instance=ExtResource("7_h1knk")]
 position = Vector2(472, -56)
+direction = 1
 
 [node name="Firebar7" parent="." instance=ExtResource("7_h1knk")]
 position = Vector2(312, -72)

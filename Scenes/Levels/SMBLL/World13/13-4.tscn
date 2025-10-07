@@ -16,7 +16,7 @@
 [ext_resource type="Script" uid="uid://bdq0373j5n5o0" path="res://Scripts/Parts/CameraRightLimit.gd" id="15_ovjnn"]
 [ext_resource type="Script" uid="uid://cybpwmw4ywoow" path="res://Scripts/Parts/TileMapConverter.gd" id="16_5epyp"]
 
-[node name="13-4" type="Node"]
+[node name="D-4" type="Node"]
 script = ExtResource("1_qfo7w")
 music = ExtResource("2_qfo7w")
 theme = "Castle"

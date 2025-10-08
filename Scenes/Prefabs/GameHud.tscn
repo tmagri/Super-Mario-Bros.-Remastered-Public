@@ -245,6 +245,7 @@ theme_override_fonts/font = ExtResource("17_2w8b3")
 text = "*03"
 
 [node name="CoinIcon" type="AnimatedSprite2D" parent="Main/CoinCount"]
+process_mode = 1
 sprite_frames = SubResource("SpriteFrames_40ba1")
 autoplay = "default"
 frame_progress = 0.132926

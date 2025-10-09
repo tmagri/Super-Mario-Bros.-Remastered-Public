@@ -231,12 +231,12 @@ func apply_character_physics() -> void:
 	
 	for i in get_tree().get_nodes_in_group("SmallCollisions"):
 		var hitbox_scale = json.get("small_hitbox_scale", [1, 1])
-		i.scale = Vector2(hitbox_scale[0], hitbox_scale[1])
-		i.update()
+		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("small_crouch_scale", 0.75))
+		i._physics_process(0)
 	for i in get_tree().get_nodes_in_group("BigCollisions"):
 		var hitbox_scale = json.get("big_hitbox_scale", [1, 1])
-		i.scale = Vector2(hitbox_scale[0], hitbox_scale[1])
-		i.update()
+		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("big_crouch_scale", 0.5))
+		i._physics_process(0)
 
 func apply_classic_physics() -> void:
 	var json = JSON.parse_string(FileAccess.open("res://Resources/ClassicPhysics.json", FileAccess.READ).get_as_text())
@@ -470,7 +470,15 @@ func handle_invincible_palette() -> void:
 
 func handle_block_collision_detection() -> void:
 	if ["Pipe"].has(state_machine.state.name): return
-	
+	match power_state.hitbox_size:
+		"Small":
+			var points: Array = $SmallCollision.polygon
+			points.sort_custom(func(a, b): return a.y < b.y)
+			$BlockCollision.position.y = points.front().y * $SmallCollision.scale.y
+		"Big":
+			var points: Array = $BigCollision.polygon
+			points.sort_custom(func(a, b): return a.y < b.y)
+			$BlockCollision.position.y = points.front().y * $BigCollision.scale.y
 	if velocity.y <= FALL_GRAVITY:
 		for i in $BlockCollision.get_overlapping_bodies():
 			if i is Block:
@@ -487,19 +495,15 @@ func handle_directions() -> void:
 var use_big_collision := false
 
 func handle_power_up_states(delta) -> void:
-	var small_crouch := power_state.hitbox_size == "Small" and crouching
-	var big_crouch := power_state.hitbox_size == "Big" and crouching
 	for i in get_tree().get_nodes_in_group("SmallCollisions"):
-		if i.name.begins_with("SmallCrouch"):
-			i.set_deferred("disabled", power_state.hitbox_size == "Small" and !crouching or power_state.hitbox_size == "Big")
-			i.visible = not i.disabled
-		else:
-			i.set_deferred("disabled", small_crouch or power_state.hitbox_size == "Big" and !crouching)
-			i.visible = not i.disabled
-	for i in get_tree().get_nodes_in_group("BigCollisions"):
-		i.set_deferred("disabled", power_state.hitbox_size == "Small" or big_crouch)
+		i.disabled = power_state.hitbox_size != "Small"
 		i.visible = not i.disabled
-	$Checkpoint.position.y = -20 if small_crouch else -24 if power_state.hitbox_size == "Small" or big_crouch else -40
+		i.crouching = crouching
+	for i in get_tree().get_nodes_in_group("BigCollisions"):
+		i.disabled = power_state.hitbox_size != "Big"
+		i.visible = not i.disabled
+		i.crouching = crouching
+	$Checkpoint.position.y = -24 if power_state.hitbox_size == "Small" else -40
 	power_state.update(delta)
 
 func handle_wing_flight(delta: float) -> void:

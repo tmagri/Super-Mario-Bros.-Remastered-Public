@@ -8,10 +8,13 @@ var bubble_meter := 0.0
 var wall_pushing := false
 var can_wall_push := false
 var last_air_frames := 0
+var run_charge_frames := 0
+const RUN_CHARGE_THRESHOLD = 10 # Approx. a full block at walk speed
 
 func enter(_msg := {}) -> void:
 	jump_queued = false
 	last_air_frames = 0
+	run_charge_frames = 0
 
 func physics_update(delta: float) -> void:
 	if player.is_actually_on_floor():
@@ -171,6 +174,14 @@ func ground_acceleration(delta: float) -> void:
 	var is_running = Global.player_action_pressed("run", player.player_id) and player.can_run
 	
 	if player.classic_physics: # Classic Physics
+		# --- Run Charge Logic ---
+		# Only charge up if moving in a consistent forward direction.
+		if is_running and player.input_direction != 0 and player.input_direction == player.velocity_direction:
+			run_charge_frames += 1
+		else:
+			run_charge_frames = 0
+		# ------------------------
+
 		var current_speed = abs(player.velocity.x)
 		# "Run-let-go" slide mechanic
 		if not is_running and current_speed > player.WALK_SPEED:
@@ -183,7 +194,8 @@ func ground_acceleration(delta: float) -> void:
 			target_move_speed = player.SWIM_GROUND_SPEED
 		var target_accel := player.GROUND_WALK_ACCEL
 		
-		if is_running and (not player.in_water and player.flight_meter <= 0):
+		# Only use run speed/accel after the charge threshold is met.
+		if is_running and run_charge_frames > RUN_CHARGE_THRESHOLD and (not player.in_water and player.flight_meter <= 0):
 			target_move_speed = player.RUN_SPEED
 			target_accel = player.GROUND_RUN_ACCEL
 
@@ -265,12 +277,15 @@ func air_acceleration(delta: float) -> void:
 	player.velocity.x = move_toward(player.velocity.x, target_speed * player.input_direction, (player.AIR_ACCEL / delta) * delta)
 
 func air_skid(delta: float) -> void:
-	var target_velocity = 0.0
-	
-	if player.classic_physics != true: # For Remastered
-		target_velocity = 1.0 * player.input_direction
-		
-	player.velocity.x = move_toward(player.velocity.x, target_velocity, (player.AIR_SKID / delta) * delta)
+	# For classic physics, use the strong AIR_SKID to move towards the new direction's walk speed.
+	# This simulates the strong counter-force of the original game.
+	if player.classic_physics:
+		var target_velocity = player.WALK_SPEED * player.input_direction
+		player.velocity.x = move_toward(player.velocity.x, target_velocity, (player.AIR_SKID / delta) * delta)
+	else: # For Remastered
+		var target_velocity = 1.0 * player.input_direction
+		player.velocity.x = move_toward(player.velocity.x, target_velocity, (player.AIR_SKID / delta) * delta)
+
 
 func handle_swimming(delta: float) -> void:
 	bubble_meter += delta

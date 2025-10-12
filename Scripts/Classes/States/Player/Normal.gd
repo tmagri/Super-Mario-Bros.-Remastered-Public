@@ -7,9 +7,11 @@ var walk_frame := 0
 var bubble_meter := 0.0
 var wall_pushing := false
 var can_wall_push := false
+var last_air_frames := 0
 
 func enter(_msg := {}) -> void:
 	jump_queued = false
+	last_air_frames = 0
 
 func physics_update(delta: float) -> void:
 	if player.is_actually_on_floor():
@@ -19,6 +21,7 @@ func physics_update(delta: float) -> void:
 	handle_movement(delta)
 	handle_animations()
 	handle_death_pits()
+	last_air_frames = player.air_frames
 
 func handle_death_pits() -> void:
 	if player.global_position.y > 64 and not Level.in_vine_level and player.auto_death_pit and player.gravity_vector == Vector2.DOWN:
@@ -127,9 +130,19 @@ func grounded(delta: float) -> void:
 
 
 func handle_ground_movement(delta: float) -> void:
-	
 	if player.classic_physics: # Classic Physics 
-		var starting_skid = (player.input_direction != player.velocity_direction) and player.input_direction != 0 and abs(player.velocity.x) > player.SKID_THRESHOLD and not player.crouching
+		var starting_skid = false
+		var just_landed = last_air_frames > 1
+		
+		if just_landed:
+			# On landing, skid if input is opposite to the direction we were facing.
+			# This covers both regular and crouch jump turns.
+			if player.input_direction != 0 and player.input_direction != player.direction:
+				starting_skid = true
+		else:
+			# Standard ground skid condition for when already on the ground.
+			starting_skid = (player.input_direction != player.velocity_direction) and player.input_direction != 0 and abs(player.velocity.x) > player.SKID_THRESHOLD and not player.crouching
+		
 		if starting_skid:
 			player.skidding = true
 
@@ -210,6 +223,11 @@ func deceleration(delta: float) -> void:
 func ground_skid(delta: float) -> void:
 	player.skid_frames += 1
 	var target_skid := player.RUN_SKID
+	
+	# If we just landed and are skidding, apply a much higher skid factor.
+	if player.classic_physics and last_air_frames > 1:
+		target_skid *= 10.0
+	
 	player.velocity.x = move_toward(player.velocity.x, 1 * player.input_direction, (target_skid / delta) * delta)
 	if abs(player.velocity.x) < 10 or player.input_direction == player.velocity_direction or player.input_direction == 0:
 		player.skidding = false

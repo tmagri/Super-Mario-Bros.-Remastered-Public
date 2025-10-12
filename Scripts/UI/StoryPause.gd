@@ -28,7 +28,7 @@ func handle_inputs() -> void:
 	selected_index = clamp(selected_index, 0, options.size() - 1)
 	if Input.is_action_just_pressed("ui_accept"):
 		option_selected()
-	if Input.is_action_just_pressed("pause") or Input.is_action_just_pressed("ui_back"):
+	if Input.is_action_just_pressed("pause"):
 		close()
 
 func option_selected() -> void:

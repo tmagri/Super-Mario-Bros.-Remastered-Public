@@ -65,7 +65,10 @@ var total_keys := 0
 		set_power_state_frame()
 var character := "Mario"
 
-var crouching := false
+var crouching := false:
+	get(): # You can't crouch if the animation somehow doesn't exist.
+		if not sprite.sprite_frames.has_animation("Crouch"): return false
+		return crouching
 var skidding := false
 
 var bumping := false
@@ -140,7 +143,7 @@ static var CHARACTER_PALETTES := [
 	preload("res://Assets/Sprites/Players/Toadette/ColourPalette.json")
 ]
 
-cconst ANIMATION_FALLBACKS := {
+const ANIMATION_FALLBACKS := {
 	"JumpFall": "Jump", 
 	"JumpBump": "Bump",
 	"Fall": "Move", 
@@ -335,8 +338,8 @@ func apply_character_physics() -> void:
 	
 	for i in get_tree().get_nodes_in_group("SmallCollisions"):
 		var hitbox_scale = json.get("small_hitbox_scale", [1, 1])
-		i.scale = Vector2(hitbox_scale[0], hitbox_scale[1])
-		i.update()
+		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("small_crouch_scale", 0.75))
+		i._physics_process(0)
 	for i in get_tree().get_nodes_in_group("BigCollisions"):
 		var hitbox_scale = json.get("big_hitbox_scale", [1, 1])
 		i.scale = Vector2(hitbox_scale[0], hitbox_scale[1])

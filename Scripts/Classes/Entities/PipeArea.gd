@@ -65,7 +65,6 @@ func update_visuals() -> void:
 
 func exit_pipe() -> void:
 	pipe_exited.emit()
-	await get_tree().physics_frame
 	for i in get_tree().get_nodes_in_group("Players"):
 		i.go_to_exit_pipe(self)
 	for i in get_tree().get_nodes_in_group("Players"):

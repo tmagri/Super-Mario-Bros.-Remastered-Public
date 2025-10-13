@@ -264,7 +264,7 @@ func apply_classic_physics() -> void: # https://docs.google.com/document/d/1XDWM
 	# Acceleration/Deceleration values updated to match original ratios.
 	GROUND_WALK_ACCEL = 2.0
 	GROUND_RUN_ACCEL = 3.5
-	WALK_SKID = 7.2			# Skid is the strongest force (original '4')
+	WALK_SKID = 4			# Skid is the strongest force (original '4')
 	RUN_SKID = 7.2
 	
 	SKID_THRESHOLD = 104.0 		# Scaled from original's $1A (26). e.g. 26 * 4 = 104.
@@ -279,7 +279,7 @@ func apply_classic_physics() -> void: # https://docs.google.com/document/d/1XDWM
 	SWIM_GRAVITY = 2.5
 	MAX_SWIM_FALL_SPEED = 200.0
 	
-	DEATH_JUMP_HEIGHT = 320.0
+	DEATH_JUMP_HEIGHT = 300.0
 	
 	FAST_REVERSE_ACCEL = 12.0
 

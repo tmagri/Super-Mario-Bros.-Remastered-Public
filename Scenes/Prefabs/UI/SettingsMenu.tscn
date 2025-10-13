@@ -687,7 +687,7 @@ settings_category = "difficulty"
 layout_mode = 2
 option_key = "physics_style"
 title = "PHYSICS STYLE"
-value_descs = Array[String](["MODERN PHYSICS.", "CLASSIC PHYSICS RECREATED."])
+value_descs = Array[String](["MODERN PHYSICS.", "CLASSIC PHYSICS."])
 values = ["REMASTERED", "CLASSIC"]
 settings_category = "difficulty"
 

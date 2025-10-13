@@ -140,7 +140,7 @@ static var CHARACTER_PALETTES := [
 	preload("res://Assets/Sprites/Players/Toadette/ColourPalette.json")
 ]
 
-const ANIMATION_FALLBACKS := {
+cconst ANIMATION_FALLBACKS := {
 	"JumpFall": "Jump", 
 	"JumpBump": "Bump",
 	"Fall": "Move", 
@@ -571,12 +571,21 @@ func handle_invincible_palette() -> void:
 
 func handle_block_collision_detection() -> void:
 	if ["Pipe"].has(state_machine.state.name): return
-	
+	match power_state.hitbox_size:
+		"Small":
+			var points: Array = $SmallCollision.polygon
+			points.sort_custom(func(a, b): return a.y < b.y)
+			$BlockCollision.position.y = points.front().y * $SmallCollision.scale.y
+		"Big":
+			var points: Array = $BigCollision.polygon
+			points.sort_custom(func(a, b): return a.y < b.y)
+			$BlockCollision.position.y = points.front().y * $BigCollision.scale.y
 	if velocity.y <= FALL_GRAVITY:
 		for i in $BlockCollision.get_overlapping_bodies():
 			if i is Block:
 				if is_on_ceiling():
 					i.player_block_hit.emit(self)
+
 func handle_directions() -> void:
 	input_direction = 0
 	if Global.player_action_pressed("move_right", player_id):
@@ -595,10 +604,15 @@ func get_reverse_acceleration() -> float:
 var use_big_collision := false
 
 func handle_power_up_states(delta) -> void:
+	for i in get_tree().get_nodes_in_group("SmallCollisions"):
+		i.disabled = power_state.hitbox_size != "Small"
+		i.visible = not i.disabled
+		i.crouching = crouching
 	for i in get_tree().get_nodes_in_group("BigCollisions"):
-		if i.owner == self:
-			i.set_deferred("disabled", power_state.hitbox_size == "Small" or crouching)
-	$Checkpoint.position.y = -24 if power_state.hitbox_size == "Small" or crouching else -40
+		i.disabled = power_state.hitbox_size != "Big"
+		i.visible = not i.disabled
+		i.crouching = crouching
+	$Checkpoint.position.y = -24 if power_state.hitbox_size == "Small" else -40
 	power_state.update(delta)
 
 func handle_wing_flight(delta: float) -> void:

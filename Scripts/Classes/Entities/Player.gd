@@ -245,13 +245,13 @@ func apply_classic_physics() -> void: # https://docs.google.com/document/d/1XDWM
 	# These values are scaled to fit the game's existing speed metrics.
 	# Base unit derived from AIR_ACCEL (3.6) corresponding to original's '2'. 1 unit = 1.8.
 	JUMP_GRAVITY = 11.0
-	JUMP_HEIGHT = 320.0
+	JUMP_HEIGHT = 300.0
 	JUMP_INCR = 8.0
 	JUMP_CANCEL_DIVIDE = 1.8
 	JUMP_HOLD_SPEED_THRESHOLD = 0.0
 	
 	BOUNCE_HEIGHT = 200.0
-	BOUNCE_JUMP_HEIGHT = 320.0
+	BOUNCE_JUMP_HEIGHT = 300.0
 	
 	FALL_GRAVITY = 25.0
 	MAX_FALL_SPEED = 288.0
@@ -925,14 +925,27 @@ func jump() -> void:
 func calculate_jump_height() -> float:
 	
 	if classic_physics:
-		if crouching:
-			return -(JUMP_HEIGHT - (JUMP_INCR * 3.0))
-		var speed_threshold := 40.0
-		if abs(velocity.x) >= speed_threshold:
+		# Preserve the unique crouch jump calculation.
+		#if crouching:
+		#	return -(JUMP_HEIGHT - (JUMP_INCR * 3.0))
+
+		# Get the absolute horizontal speed.
+		var speed = abs(velocity.x)
+
+		# These thresholds are scaled from the original smb.asm values.
+		# A scaling factor of 4 is used, consistent with other physics values.
+		# Original values: $09 (9), $10 (16), $19 (25), $1c (28).
+		if speed >= 112: # Corresponds to the fastest run speeds.
+			return -(JUMP_HEIGHT + (JUMP_INCR * 4.0))
+		elif speed >= 100:
+			return -(JUMP_HEIGHT + (JUMP_INCR * 3.0))
+		elif speed >= 64:
+			return -(JUMP_HEIGHT + (JUMP_INCR * 2.0))
+		elif speed >= 36:
 			return -(JUMP_HEIGHT + JUMP_INCR)
-		else:
+		else: # Base jump height for walking speeds.
 			return -JUMP_HEIGHT
-	else:
+	else: # Remastered physics logic remains unchanged.
 		return -(JUMP_HEIGHT + JUMP_INCR * int(abs(velocity.x) / 25))
 
 const SMOKE_PARTICLE = preload("res://Scenes/Prefabs/Particles/SmokeParticle.tscn")

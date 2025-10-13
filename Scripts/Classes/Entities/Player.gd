@@ -262,8 +262,8 @@ func apply_classic_physics() -> void: # https://docs.google.com/document/d/1XDWM
 	RUN_SPEED = 160.0
 	
 	# Acceleration/Deceleration values updated to match original ratios.
-	GROUND_WALK_ACCEL = 3.6 	# Corresponds to original's '2'
-	GROUND_RUN_ACCEL = 5.4  	# Correctly faster than walk accel (original ratio 3:2)
+	GROUND_WALK_ACCEL = 2.0
+	GROUND_RUN_ACCEL = 3.5
 	WALK_SKID = 7.2			# Skid is the strongest force (original '4')
 	RUN_SKID = 7.2
 	

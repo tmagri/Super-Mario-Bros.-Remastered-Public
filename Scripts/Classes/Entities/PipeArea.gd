@@ -64,6 +64,7 @@ func update_visuals() -> void:
 		hide()
 
 func exit_pipe() -> void:
+	can_enter = false
 	pipe_exited.emit()
 	for i in get_tree().get_nodes_in_group("Players"):
 		i.go_to_exit_pipe(self)
@@ -71,6 +72,7 @@ func exit_pipe() -> void:
 		await get_tree().create_timer(0.5, false).timeout
 		await i.exit_pipe(self)
 	exiting_pipe_id = -1
+	can_enter = true
 
 func get_vector(direction := 0) -> Vector2:
 	match direction:

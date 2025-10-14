@@ -686,9 +686,9 @@ settings_category = "difficulty"
 [node name="PhysicsStyle" parent="PanelContainer/MarginContainer/VBoxContainer/Difficulty" groups=["Options"] instance=ExtResource("3_dl6kk")]
 layout_mode = 2
 option_key = "physics_style"
-title = "PHYSICS STYLE"
-value_descs = Array[String](["MODERN PHYSICS.", "CLASSIC PHYSICS."])
-values = ["REMASTERED", "CLASSIC"]
+title = "DIFFI_PHYSICS"
+value_descs = Array[String](["DESC_PHYSICS_0", "DESC_PHYSICS_1"])
+values = ["DIFFI_PHYSICS_0", "DIFFI_PHYSICS_1"]
 settings_category = "difficulty"
 
 [node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/Difficulty"]

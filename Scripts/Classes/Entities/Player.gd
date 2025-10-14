@@ -230,100 +230,28 @@ func _ready() -> void:
 	if Global.level_editor == null:
 		recenter_camera()
 
-# This new function handles all physics style applications.
-# It can be called with a specific style (e.g. for certain game modes)
-# or with no arguments, in which case it reads from the settings file.
-# This makes it robust for signal connections like level_theme_changed.
-func apply_physics_style(physics_type = 0) -> void:
+# Applies a physics style from a JSON file.
+# Defaults to Remastered (0) if no type is specified.
+func apply_physics_style(physics_type: int = 0) -> void:
+	var json_path: String
 	match physics_type:
 		1:
-			apply_classic_physics()
-		0:
-			apply_remastered_physics()
+			json_path = "res://Resources/ClassicPhysics.json"
+		_: # Default case, includes 0 and any other value.
+			json_path = "res://Resources/RemasteredPhysics.json"
+	if not FileAccess.file_exists(json_path):
+		printerr("Physics file not found at path: ", json_path)
+		return # Exit the function to prevent a crash.
+	var file = FileAccess.open(json_path, FileAccess.READ)
+	var content = file.get_as_text()
+	var json_data = JSON.parse_string(content)
+	if json_data == null:
+		printerr("Failed to parse JSON from file: ", json_path)
+		return # Exit if the JSON is invalid.
+	for key in json_data:
+		set(key, json_data[key])
+	print("Successfully applied physics style from: ", json_path)
 
-# Classic Physics
-func apply_classic_physics() -> void: # https://docs.google.com/document/d/1XDWMzu2gdywSjhQgOSIK_YHmtX23BAcZOaGMoMbVNhU/edit?usp=sharing Conversion chart I made -syn
-	# Revised for accuracy based on smb.asm and engine research.
-	# Original effective values have a ratio of ~1:2:3:4 for Friction:WalkAccel:RunAccel:Skid.
-	# These values are scaled to fit the game's existing speed metrics.
-	# Base unit derived from AIR_ACCEL (3.6) corresponding to original's '2'. 1 unit = 1.8.
-	JUMP_GRAVITY = 11.0
-	JUMP_HEIGHT = 300.0
-	JUMP_INCR = 8.0
-	JUMP_CANCEL_DIVIDE = 1.8
-	JUMP_HOLD_SPEED_THRESHOLD = 0.0
-	
-	BOUNCE_HEIGHT = 200.0
-	BOUNCE_JUMP_HEIGHT = 300.0
-	
-	FALL_GRAVITY = 25.0
-	MAX_FALL_SPEED = 288.0
-	CEILING_BUMP_SPEED = 45.0
-	
-	# Speeds are scaled from original engine values ($18/24 for walk, $28/40 for run). The 96/160 ratio is correct.
-	WALK_SPEED = 96.0
-	RUN_SPEED = 160.0
-	
-	# Acceleration/Deceleration values updated to match original ratios.
-	GROUND_WALK_ACCEL = 2.0
-	GROUND_RUN_ACCEL = 3.5
-	WALK_SKID = 4			# Skid is the strongest force (original '4')
-	RUN_SKID = 7.2
-	
-	SKID_THRESHOLD = 104.0 		# Scaled from original's $1A (26). e.g. 26 * 4 = 104.
-	
-	DECEL = 1.8					# Deceleration/friction (original '1')
-	AIR_ACCEL = 3.6				# Air acceleration is similar to ground walk acceleration.
-	AIR_SKID = 7.2				# Air skid is strong, like ground skid.
-	
-	SWIM_SPEED = 95.0
-	SWIM_GROUND_SPEED = 45.0
-	SWIM_HEIGHT = 100.0
-	SWIM_GRAVITY = 2.5
-	MAX_SWIM_FALL_SPEED = 200.0
-	
-	DEATH_JUMP_HEIGHT = 300.0
-	
-	FAST_REVERSE_ACCEL = 12.0
-
-# Remastered Physics
-func apply_remastered_physics() -> void:
-	JUMP_GRAVITY = 11.0
-	JUMP_HEIGHT = 300.0
-	JUMP_INCR = 8.0
-	JUMP_CANCEL_DIVIDE = 1.5
-	JUMP_HOLD_SPEED_THRESHOLD = 0.0
-	
-	BOUNCE_HEIGHT = 200.0
-	BOUNCE_JUMP_HEIGHT = 300.0
-	
-	FALL_GRAVITY = 25.0
-	MAX_FALL_SPEED = 280.0
-	CEILING_BUMP_SPEED = 45.0
-	
-	WALK_SPEED = 96.0
-	GROUND_WALK_ACCEL = 4.0
-	WALK_SKID = 8.0
-	
-	RUN_SPEED = 160.0
-	GROUND_RUN_ACCEL = 1.25
-	RUN_SKID = 8.0
-	
-	SKID_THRESHOLD = 100.0
-	
-	DECEL = 3.0
-	AIR_ACCEL = 3.0
-	AIR_SKID = 1.5
-	
-	SWIM_SPEED = 95.0
-	SWIM_GROUND_SPEED = 45.0
-	SWIM_HEIGHT = 100.0
-	SWIM_GRAVITY = 2.5
-	MAX_SWIM_FALL_SPEED = 200.0
-	
-	DEATH_JUMP_HEIGHT = 300.0
-	
-	FAST_REVERSE_ACCEL = 0.0
 
 func apply_character_physics() -> void:
 	if classic_physics: 
@@ -937,10 +865,7 @@ func jump() -> void:
 func calculate_jump_height() -> float:
 	
 	if classic_physics:
-		# Preserve the unique crouch jump calculation.
-		#if crouching:
-		#	return -(JUMP_HEIGHT - (JUMP_INCR * 3.0))
-
+	
 		# Get the absolute horizontal speed.
 		var speed = abs(velocity.x)
 
@@ -948,11 +873,11 @@ func calculate_jump_height() -> float:
 		# A scaling factor of 4 is used, consistent with other physics values.
 		# Original values: $09 (9), $10 (16), $19 (25), $1c (28).
 		if speed >= 112: # Corresponds to the fastest run speeds.
-			return -(JUMP_HEIGHT + (JUMP_INCR * 4.0))
+			return -(JUMP_HEIGHT + (JUMP_INCR * 8.0))
 		elif speed >= 100:
-			return -(JUMP_HEIGHT + (JUMP_INCR * 3.0))
+			return -(JUMP_HEIGHT + (JUMP_INCR * 6.0))
 		elif speed >= 64:
-			return -(JUMP_HEIGHT + (JUMP_INCR * 2.0))
+			return -(JUMP_HEIGHT + (JUMP_INCR * 4.0))
 		elif speed >= 36:
 			return -(JUMP_HEIGHT + JUMP_INCR)
 		else: # Base jump height for walking speeds.

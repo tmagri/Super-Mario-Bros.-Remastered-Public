@@ -212,7 +212,7 @@ func deceleration(delta: float) -> void:
 	
 	if player.classic_physics: # Classic Physics
 		# Apply double friction if moving faster than walking speed.
-		if abs(player.velocity.x) > player.WALK_SPEED:
+		if abs(player.velocity.x) > player.WALK_SPEED and not player.crouching:
 			friction *= 2.0
 	
 	player.velocity.x = move_toward(player.velocity.x, 0, (friction / delta) * delta)

@@ -16,7 +16,7 @@
 	"WALK_SKID": 4,
 	"RUN_SKID": 7.2,
 	"SKID_THRESHOLD": 104.0,
-	"DECEL": 1.8,
+	"DECEL": 3,
 	"AIR_ACCEL": 3.6,
 	"AIR_SKID": 7.2,
 	"SWIM_SPEED": 95.0,

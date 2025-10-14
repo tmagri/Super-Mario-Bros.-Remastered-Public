@@ -171,7 +171,7 @@ func ground_acceleration(delta: float) -> void:
 		var current_speed = abs(player.velocity.x)
 		# "Run-let-go" slide mechanic
 		if not is_running and current_speed > player.WALK_SPEED and not player.attacking:
-			var friction = player.DECEL * 2.0
+			var friction = player.DECEL
 			player.velocity.x = move_toward(player.velocity.x, player.WALK_SPEED * player.input_direction, (friction / delta) * delta)
 			return
 
@@ -211,8 +211,8 @@ func deceleration(delta: float) -> void:
 	var friction = player.DECEL
 	
 	if player.classic_physics: # Classic Physics
-		# Apply double friction if moving faster than walking speed OR if crouched.
-		if abs(player.velocity.x) > player.WALK_SPEED or (player.crouching and not player.skidding):
+		# Apply double friction if moving faster than walking speed.
+		if abs(player.velocity.x) > player.WALK_SPEED:
 			friction *= 2.0
 	
 	player.velocity.x = move_toward(player.velocity.x, 0, (friction / delta) * delta)

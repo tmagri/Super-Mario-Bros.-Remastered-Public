@@ -908,7 +908,7 @@ func hide_pipe_animation() -> void:
 func go_to_exit_pipe(pipe: PipeArea) -> void:
 	Global.can_time_tick = false
 	pipe_enter_direction = Vector2.ZERO
-	state_machine.transition_to("Freeze")
+	state_machine.transition_to("Pipe")
 	global_position = pipe.global_position + (pipe.get_vector(pipe.enter_direction) * 32)
 	if pipe.enter_direction == 1:
 		global_position = pipe.global_position + Vector2(0, -8)

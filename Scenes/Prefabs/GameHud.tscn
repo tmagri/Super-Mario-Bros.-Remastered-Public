@@ -146,7 +146,6 @@ layer = 0
 script = ExtResource("1_f34v2")
 
 [node name="Main" type="HBoxContainer" parent="."]
-visible = false
 custom_minimum_size = Vector2(256, 32)
 anchors_preset = 10
 anchor_right = 1.0
@@ -242,7 +241,6 @@ offset_left = 4.0
 offset_top = -12.0
 offset_right = 36.0
 offset_bottom = 4.0
-theme_override_fonts/font = ExtResource("17_2w8b3")
 text = "*03"
 
 [node name="CoinIcon" type="AnimatedSprite2D" parent="Main/CoinCount"]
@@ -267,7 +265,6 @@ offset_left = 4.0
 offset_top = -4.0
 offset_right = 36.0
 offset_bottom = 12.0
-theme_override_fonts/font = ExtResource("17_2w8b3")
 text = "*00"
 
 [node name="RedCoins" type="Control" parent="Main"]
@@ -585,6 +582,7 @@ custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
 
 [node name="ModernHUD" type="Control" parent="."]
+visible = false
 custom_minimum_size = Vector2(256, 0)
 layout_mode = 3
 anchors_preset = 10

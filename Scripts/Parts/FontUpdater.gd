@@ -3,9 +3,11 @@ extends Node
 
 var main_font: Resource = null
 var score_font: Resource = null
+var ga_font: Resource = null
+var jp_font: Resource = null
 
 var FONT_MAIN = preload("uid://bl7sbw4nx3l1t")
-@onready var SCORE_FONT = load("uid://cflgloiossd8a")
+var SCORE_FONT = preload("uid://cflgloiossd8a")
 
 
 static var current_font: Font = null

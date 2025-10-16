@@ -10,6 +10,7 @@ var file := {
 		"visuals": 0,
 		"hud_size": 0, 
 		"frame_limit" : 0,
+		"window_size": [256, 240]
 	},
 	"audio": {
 		"master": 10,
@@ -94,6 +95,11 @@ func _enter_tree() -> void:
 	await get_tree().physics_frame
 	apply_settings()
 	TranslationServer.set_locale(Settings.file.game.lang)
+	get_window().size_changed.connect(update_window_size)
+
+func update_window_size() -> void:
+	var window_size = get_window().size
+	Settings.file.video.window_size = [window_size.x, window_size.y]
 
 func save_settings() -> void:
 	var cfg_file = ConfigFile.new()

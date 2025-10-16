@@ -3,8 +3,8 @@ extends Node
 
 @export var labels: Array[Label]
 
-const MAIN_FONT = preload("uid://bl7sbw4nx3l1t")
-const SCORE_FONT = preload("uid://bk0no5p6sifgu")
+const MAIN_FONT = preload("res://Resources/ThemedResources/FontMain.tres")
+const SCORE_FONT = preload("res://Resources/ThemedResources/ScoreFont.tres")
 
 @export var use_score_font := false
 

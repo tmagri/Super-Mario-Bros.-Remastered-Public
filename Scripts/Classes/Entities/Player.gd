@@ -354,7 +354,6 @@ func camera_make_current() -> void:
 func play_animation(animation_name := "") -> void:
 	if sprite.sprite_frames == null: return
 	animation_name = get_fallback_animation(animation_name)
-	print(animation_name)
 	if sprite.animation != animation_name:
 		sprite.play(animation_name)
 

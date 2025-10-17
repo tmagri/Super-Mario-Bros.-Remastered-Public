@@ -97,7 +97,17 @@ func grounded(delta: float) -> void:
 					player.velocity.x = original_vx
 				else:
 					player.jump()
-			jump_queued = false
+			jump_queued = false		
+		# Classic Plus: Allow Small Mario to crouch
+		if player.classic_plus_enabled and player.power_state.hitbox_size == "Small":
+			if not player.crouching:
+				if Global.player_action_pressed("move_down", player.player_id):
+					player.crouching = true
+			else: # is_crouching
+				if not Global.player_action_pressed("move_down", player.player_id):
+					player.crouching = false
+		
+
 	else: # Remastered Physics Logic 
 		if Global.player_action_just_pressed("jump", player.player_id):
 			player.handle_water_detection()

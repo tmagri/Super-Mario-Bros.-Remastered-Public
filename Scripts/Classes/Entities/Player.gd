@@ -8,8 +8,8 @@ var JUMP_INCR := 8.0                   # How much the player's X velocity affect
 var JUMP_CANCEL_DIVIDE := 1.5          # When the player cancels their jump, their Y velocity gets divided by this value
 var JUMP_HOLD_SPEED_THRESHOLD := 0.0   # When the player's Y velocity goes past this value while jumping, their gravity switches to FALL_GRAVITY
 
-var BOUNCE_HEIGHT := 200.0             # The strength at which the player bounces off enemies, measured in px/sec 
-var BOUNCE_JUMP_HEIGHT := 300.0        # The strength at which the player bounces off enemies while holding jump, measured in px/sec 
+var BOUNCE_HEIGHT := 200.0             # The strength at which the player bounces off enemies, measured in px/sec
+var BOUNCE_JUMP_HEIGHT := 300.0        # The strength at which the player bounces off enemies while holding jump, measured in px/sec
 
 var FALL_GRAVITY := 25.0               # The player's gravity while falling, measured in px/frame
 var MAX_FALL_SPEED := 280.0            # The player's maximum fall speed, measured in px/sec
@@ -148,28 +148,28 @@ static var CHARACTER_PALETTES := [
 ]
 
 const ANIMATION_FALLBACKS := {
-	"JumpFall": "Jump", 
+	"JumpFall": "Jump",
 	"JumpBump": "Bump",
-	"Fall": "Move", 
-	"Pipe": "Idle", 
-	"Walk": "Move", 
-	"Run": "Move", 
-	"PipeWalk": "Walk", 
-	"LookUp": "Idle", 
-	"WaterLookUp": "LookUp", 
-	"WingLookUp": "WaterLookUp", 
+	"Fall": "Move",
+	"Pipe": "Idle",
+	"Walk": "Move",
+	"Run": "Move",
+	"PipeWalk": "Walk",
+	"LookUp": "Idle",
+	"WaterLookUp": "LookUp",
+	"WingLookUp": "WaterLookUp",
 	"Crouch": "Idle",
 	"WaterCrouch": "Crouch",
 	"WingCrouch": "WaterCrouch",
-	"CrouchFall": "Crouch", 
-	"CrouchJump": "Crouch", 
+	"CrouchFall": "Crouch",
+	"CrouchJump": "Crouch",
 	"CrouchBump": "Bump",
-	"CrouchMove": "Crouch", 
-	"IdleAttack": "MoveAttack", 
-	"CrouchAttack": "IdleAttack", 
-	"MoveAttack": "Attack", 
-	"WalkAttack": "MoveAttack", 
-	"RunAttack": "MoveAttack", 
+	"CrouchMove": "Crouch",
+	"IdleAttack": "MoveAttack",
+	"CrouchAttack": "IdleAttack",
+	"MoveAttack": "Attack",
+	"WalkAttack": "MoveAttack",
+	"RunAttack": "MoveAttack",
 	"SkidAttack": "MoveAttack",
 	"WingIdle": "WaterIdle",
 	"FlyUp": "SwimUp",
@@ -201,6 +201,8 @@ var can_run := true
 var air_frames := 0
 
 static var classic_physics := false
+static var classic_plus_enabled := false
+
 
 var swim_stroke := false
 
@@ -219,12 +221,14 @@ func _ready() -> void:
 	Global.can_time_tick = true
 	var physics_style = Settings.file.difficulty.get("physics_style", 2);
 	if [Global.GameMode.BOO_RACE, Global.GameMode.MARATHON, Global.GameMode.MARATHON_PRACTICE, Global.GameMode.CUSTOM_LEVEL].has(Global.current_game_mode) == false:
-		classic_physics = physics_style == 1; #Is Classic
+		classic_physics = physics_style == 1 or physics_style == 2; #Is Classic Engine
+		classic_plus_enabled = physics_style == 2; #Is Classic Plus
 		apply_character_physics()
-		apply_physics_style(physics_style)	
+		apply_physics_style(physics_style)
 	else:
 		physics_style = 0  #Force Remastered
 		classic_physics = false
+		classic_plus_enabled = false
 		apply_physics_style(physics_style)
 	apply_character_sfx_map()
 	Global.level_theme_changed.connect(apply_character_sfx_map)
@@ -245,12 +249,9 @@ func _ready() -> void:
 # Applies a physics style from a JSON file.
 # Defaults to Remastered (0) if no type is specified.
 func apply_physics_style(physics_type: int = 0) -> void:
-	var json_path: String
-	match physics_type:
-		1:
-			json_path = "res://Resources/ClassicPhysics.json"
-		_: # Default case, includes 0 and any other value.
-			json_path = "res://Resources/RemasteredPhysics.json"
+	var json_path: String = "res://Resources/RemasteredPhysics.json"
+	if physics_type == 1 or physics_type == 2: # Classic or Classic Plus
+		json_path = "res://Resources/ClassicPhysics.json"
 	if not FileAccess.file_exists(json_path):
 		printerr("Physics file not found at path: ", json_path)
 		return # Exit the function to prevent a crash.
@@ -266,7 +267,7 @@ func apply_physics_style(physics_type: int = 0) -> void:
 
 
 func apply_character_physics() -> void:
-	if classic_physics: 
+	if classic_physics:
 		return
 	var path = "res://Assets/Sprites/Players/" + character + "/CharacterInfo.json"
 	if int(Global.player_characters[player_id]) > 3:
@@ -275,7 +276,7 @@ func apply_character_physics() -> void:
 	var json = JSON.parse_string(FileAccess.open(path, FileAccess.READ).get_as_text())
 	for i in json.physics:
 		set(i, json.physics[i])
-	
+
 	for i in get_tree().get_nodes_in_group("SmallCollisions"):
 		var hitbox_scale = json.get("small_hitbox_scale", [1, 1])
 		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("small_crouch_scale", 0.75))
@@ -368,8 +369,18 @@ func apply_gravity(delta: float) -> void:
 	elif spring_bouncing:
 		gravity = SPRING_GRAVITY
 	else:
-		if sign(gravity_vector.y) * velocity.y + JUMP_HOLD_SPEED_THRESHOLD > 0.0:
+		# Check if player is moving upwards (velocity is negative relative to gravity direction)
+		if velocity.y * gravity_vector.y < 0:
+			# CLASSIC PHYSICS LOGIC: If the jump button is released during ascent, apply strong gravity.
+			if classic_physics and not classic_plus_enabled and not Global.player_action_pressed("jump", player_id):
+				gravity = FALL_GRAVITY
+			else:
+				# Otherwise (jump button held or not classic physics), use the lighter jump gravity.
+				gravity = JUMP_GRAVITY
+		else:
+			# Player is falling, so apply normal fall gravity.
 			gravity = FALL_GRAVITY
+
 	velocity += (gravity_vector * ((gravity / (1.5 if low_gravity else 1.0)) / delta)) * delta
 	var target_fall: float = MAX_FALL_SPEED
 	if in_water:
@@ -378,6 +389,7 @@ func apply_gravity(delta: float) -> void:
 		velocity.y = clamp(velocity.y, -INF, (target_fall / (1.2 if low_gravity else 1.0)))
 	else:
 		velocity.y = clamp(velocity.y, -(target_fall / (1.2 if low_gravity else 1.0)), INF)
+
 
 func camera_make_current() -> void:
 	camera.enabled = true
@@ -403,7 +415,7 @@ func apply_character_sfx_map() -> void:
 		path = path.replace("res://Assets/Sprites/Players", Global.config_path.path_join("custom_characters/"))
 	path = ResourceSetter.get_pure_resource_path(path)
 	var json = JSON.parse_string(FileAccess.open(path, FileAccess.READ).get_as_text())
-	
+
 	for i in json:
 		var res_path = "res://Assets/Audio/SFX/" + json[i]
 		res_path = ResourceSetter.get_pure_resource_path(res_path)
@@ -418,7 +430,7 @@ func apply_character_sfx_map() -> void:
 				json[i] = res_path
 		else:
 			json[i] = res_path
-	
+
 	AudioManager.load_sfx_map(json)
 
 func refresh_hitbox() -> void:
@@ -458,14 +470,20 @@ func is_actually_on_ceiling() -> bool:
 func enemy_bounce_off(add_combo := true, award_score := true) -> void:
 	if add_combo:
 		add_stomp_combo(award_score)
-	jump_cancelled = not Global.player_action_pressed("jump", player_id)
-	await get_tree().physics_frame
-	if Global.player_action_pressed("jump", player_id): # classic_physics == false and
-		velocity.y = sign(gravity_vector.y) * -BOUNCE_JUMP_HEIGHT
-		gravity = JUMP_GRAVITY
-		has_jumped = true
-	else:
+	if classic_physics and not classic_plus_enabled:
+		# Classic physics uses a single initial bounce velocity.
 		velocity.y = sign(gravity_vector.y) * -BOUNCE_HEIGHT
+		gravity = JUMP_GRAVITY
+	else:
+		# This block handles Remastered and Classic Plus physics, which can remain as is.
+		jump_cancelled = not Global.player_action_pressed("jump", player_id)
+		await get_tree().physics_frame
+		if Global.player_action_pressed("jump", player_id):
+			velocity.y = sign(gravity_vector.y) * -BOUNCE_JUMP_HEIGHT
+			gravity = JUMP_GRAVITY
+			has_jumped = true
+		else:
+			velocity.y = sign(gravity_vector.y) * -BOUNCE_HEIGHT
 
 func add_stomp_combo(award_score := true) -> void:
 	if stomp_combo >= 10:
@@ -675,7 +693,7 @@ func death_load() -> void:
 
 		Global.GameMode.LEVEL_EDITOR: func():
 			owner.stop_testing(),
-			
+
 
 		Global.GameMode.CHALLENGE: func():
 			Global.transition_to_scene("res://Scenes/Levels/ChallengeMiss.tscn"),
@@ -845,7 +863,7 @@ func hide_pipe_animation() -> void:
 		await get_tree().create_timer(0.3, false).timeout
 		hide()
 	else:
-		await get_tree().create_timer(0.6, false).timeout
+		await get_tree().create_timer(0.65, false).timeout
 		hide()
 
 func go_to_exit_pipe(pipe: PipeArea) -> void:
@@ -884,9 +902,9 @@ func jump() -> void:
 	has_jumped = true
 
 func calculate_jump_height() -> float:
-	
+
 	if classic_physics:
-	
+
 		# Get the absolute horizontal speed.
 		var speed = abs(velocity.x)
 

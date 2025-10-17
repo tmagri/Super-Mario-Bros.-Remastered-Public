@@ -429,5 +429,5 @@ func get_animation_name() -> String:
 				return "Fall" # Fallback to a generic fall animation if specific one doesn't exist
 
 func exit() -> void:
-	player.on_hammer_timeout()
-	player.skidding = false
+	owner.on_hammer_timeout()
+	owner.skidding = false

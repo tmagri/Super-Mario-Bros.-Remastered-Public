@@ -34,7 +34,7 @@ var ROM_POINTER_PATH = config_path.path_join("rom_pointer.smb")
 var ROM_PATH = config_path.path_join("baserom.nes")
 var ROM_ASSETS_PATH = config_path.path_join("resource_packs/BaseAssets")
 const ROM_PACK_NAME := "BaseAssets"
-const ROM_ASSETS_VERSION := 0
+const ROM_ASSETS_VERSION := 1
 
 var server_version := -1
 var current_version := -1
@@ -235,6 +235,7 @@ func check_for_rom() -> void:
 		if pack_dict.get("version", -1) == ROM_ASSETS_VERSION:
 			rom_assets_exist = true 
 		else:
+			ResourceGenerator.updating = true
 			OS.move_to_trash(ROM_ASSETS_PATH)
 
 func _process(delta: float) -> void:
@@ -263,6 +264,10 @@ func take_screenshot() -> void:
 	var img: Image = get_viewport().get_texture().get_image()
 	var filename = Global.config_path.path_join("screenshots/screenshot_" + str(int(Time.get_unix_time_from_system())) + ".png")
 	var err = img.save_png(filename)
+	if !err:
+		log_comment("Screenshot Saved!")
+	else:
+		log_error(error_string(err))
 
 func handle_p_switch(delta: float) -> void:
 	if p_switch_active and get_tree().paused == false:
@@ -467,3 +472,11 @@ func sanitize_string(string := "") -> String:
 		if FONT.has_char(string.unicode_at(i)) == false and string[i] != "\n":
 			string = string.replace(string[i], " ")
 	return string
+
+func get_base_asset_version() -> int:
+	var json = JSON.parse_string(FileAccess.open("user://BaseAssets/pack_info.json", FileAccess.READ).get_as_text())
+	var version = json.version
+	return get_version_num_int(version)
+
+func get_version_num_int(ver_num := "0.0.0") -> int:
+	return int(ver_num.replace(".", ""))

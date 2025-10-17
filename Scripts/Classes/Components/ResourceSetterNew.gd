@@ -10,7 +10,7 @@ extends Node
 		resource_json = value
 		update_resource()
 
-enum ResourceMode {SPRITE_FRAMES, TEXTURE, AUDIO, RAW}
+enum ResourceMode {SPRITE_FRAMES, TEXTURE, AUDIO, RAW, FONT}
 @export var use_cache := true
 
 static var cache := {}
@@ -156,6 +156,9 @@ func get_resource(json_file: JSON) -> Resource:
 			resource = load_audio_from_path(source_resource_path)
 		ResourceMode.RAW:
 			pass
+		ResourceMode.FONT:
+			resource = FontFile.new()
+			resource.load_bitmap_font(source_resource_path)
 	if cache.has(json_file.resource_path) == false and use_cache and not is_random:
 		cache[json_file.resource_path] = resource
 	return resource

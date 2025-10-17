@@ -1,8 +1,8 @@
 class_name FontUpdater
 extends Node
 
-var main_font: Resource = null
-var score_font: Resource = null
+var main_font: FontFile = null
+var score_font: FontFile = null
 var ga_font: Resource = null
 var jp_font: Resource = null
 
@@ -17,5 +17,7 @@ func _ready() -> void:
 	Global.level_theme_changed.connect(update_fonts)
 
 func update_fonts() -> void:
-	FONT_MAIN.base_font = main_font
+	if FONT_MAIN.base_font.get_meta("base_path", "") != main_font.get_meta("base_path", "null"):
+		print([FONT_MAIN.base_font.get_meta("base_path"), main_font.get_meta("base_path")])
+		FONT_MAIN.base_font = main_font
 	SCORE_FONT.base_font = score_font

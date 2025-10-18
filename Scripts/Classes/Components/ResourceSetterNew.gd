@@ -113,10 +113,16 @@ func get_resource(json_file: JSON) -> Resource:
 	match mode:
 		ResourceMode.SPRITE_FRAMES:
 			var animation_json = {}
-			if json.has("animations"):
-				animation_json = json.get("animations")
-			elif source_json.has("animations"):
+			
+			if source_json.has("animations"):
 				animation_json = source_json.get("animations")
+			elif json.has("animations"):
+				animation_json = json.get("animations")
+			
+			if json.has("animation_overrides"):
+				for i in json.get("animation_overrides").keys():
+					animation_json[i] = json.get("animation_overrides")[i]
+					
 			if animation_json != {}:
 				resource = load_image_from_path(source_resource_path)
 				if json.has("rect"):
@@ -184,11 +190,12 @@ func apply_properties(properties := {}) -> void:
 					obj.set(p, properties[i])
 					continue
 
+
+
 func get_variation_json(json := {}) -> Dictionary:
 	var level_theme = Global.level_theme
 	if force_properties.has("Theme"):
 		level_theme = force_properties.Theme
-	
 	for i in json.keys().filter(func(key): return key.contains("config:")):
 		get_config_file(current_resource_pack)
 		if config_to_use != {}:

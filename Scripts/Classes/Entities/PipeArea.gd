@@ -68,7 +68,8 @@ func exit_pipe() -> void:
 	pipe_exited.emit()
 	await get_tree().physics_frame
 	for i in get_tree().get_nodes_in_group("Players"):
-		await i.ready
+		if i.is_node_ready() == false:
+			await i.ready
 		i.go_to_exit_pipe(self)
 	for i in get_tree().get_nodes_in_group("Players"):
 		await get_tree().create_timer(0.5, false).timeout

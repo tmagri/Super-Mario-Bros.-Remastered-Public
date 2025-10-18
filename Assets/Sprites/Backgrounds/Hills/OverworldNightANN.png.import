@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bmhnxinh358ql"
-path="res://.godot/imported/FontJPOld.png-7fc797be5045e04e8b21b55cfd2654c1.ctex"
+uid="uid://bc1nkboy3fr6k"
+path="res://.godot/imported/OverworldNightANN.png-98a6485e550acd4158fbc7898baf20e0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Sprites/UI/FontJPOld.png"
-dest_files=["res://.godot/imported/FontJPOld.png-7fc797be5045e04e8b21b55cfd2654c1.ctex"]
+source_file="res://Assets/Sprites/Backgrounds/Hills/OverworldNightANN.png"
+dest_files=["res://.godot/imported/OverworldNightANN.png-98a6485e550acd4158fbc7898baf20e0.ctex"]
 
 [params]
 

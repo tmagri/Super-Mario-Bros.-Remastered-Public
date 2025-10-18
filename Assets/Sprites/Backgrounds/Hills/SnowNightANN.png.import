@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bmhnxinh358ql"
-path="res://.godot/imported/FontJPOld.png-7fc797be5045e04e8b21b55cfd2654c1.ctex"
+uid="uid://cpssr0kuj5iyx"
+path="res://.godot/imported/SnowNightANN.png-880d870cd2c8b88c76dda7d4cf1467bf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Sprites/UI/FontJPOld.png"
-dest_files=["res://.godot/imported/FontJPOld.png-7fc797be5045e04e8b21b55cfd2654c1.ctex"]
+source_file="res://Assets/Sprites/Backgrounds/Hills/SnowNightANN.png"
+dest_files=["res://.godot/imported/SnowNightANN.png-880d870cd2c8b88c76dda7d4cf1467bf.ctex"]
 
 [params]
 

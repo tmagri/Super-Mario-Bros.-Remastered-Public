@@ -223,12 +223,13 @@ func _ready() -> void:
 	if [Global.GameMode.BOO_RACE, Global.GameMode.MARATHON, Global.GameMode.MARATHON_PRACTICE, Global.GameMode.CUSTOM_LEVEL].has(Global.current_game_mode) == false:
 		classic_physics = physics_style == 1 or physics_style == 2; #Is Classic Engine
 		classic_plus_enabled = physics_style == 2; #Is Classic Plus
-		apply_character_physics()
+		apply_character_physics(true)
 		apply_physics_style(physics_style)
 	else:
 		physics_style = 0  #Force Remastered
 		classic_physics = false
 		classic_plus_enabled = false
+		apply_character_physics(false)
 		apply_physics_style(physics_style)
 	apply_character_sfx_map()
 	Global.level_theme_changed.connect(apply_character_sfx_map)
@@ -266,7 +267,7 @@ func apply_physics_style(physics_type: int = 0) -> void:
 	print("Successfully applied physics style from: ", json_path)
 
 
-func apply_character_physics() -> void:
+func apply_character_physics(apply: bool) -> void:
 	if classic_physics:
 		return
 	var path = "res://Assets/Sprites/Players/" + character + "/CharacterInfo.json"
@@ -274,25 +275,17 @@ func apply_character_physics() -> void:
 		path = path.replace("res://Assets/Sprites/Players", Global.config_path.path_join("custom_characters/"))
 	path = ResourceSetter.get_pure_resource_path(path)
 	var json = JSON.parse_string(FileAccess.open(path, FileAccess.READ).get_as_text())
-	for i in json.physics:
-		set(i, json.physics[i])
-
+	if apply:
+		for i in json.physics:
+			set(i, json.physics[i])
 	for i in get_tree().get_nodes_in_group("SmallCollisions"):
-		var hitbox_scale = json.get("small_hitbox_scale", [1, 1])
-		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("small_crouch_scale", 0.75))
+		var hitbox_scale = json.get("small_hitbox_scale", [1, 1]) if apply else [1, 1]
+		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("small_crouch_scale", 0.75) if apply else 0.5)
 		i._physics_process(0)
 	for i in get_tree().get_nodes_in_group("BigCollisions"):
-		var hitbox_scale = json.get("big_hitbox_scale", [1, 1])
-		i.scale = Vector2(hitbox_scale[0], hitbox_scale[1])
-		i.update()
-	#for i in get_tree().get_nodes_in_group("SmallCollisions"):
-	#	var hitbox_scale = json.get("small_hitbox_scale", [1, 1]) if apply else [1, 1]
-	#	i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("small_crouch_scale", 0.75) if apply else 0.5)
-	#	i._physics_process(0)
-	#for i in get_tree().get_nodes_in_group("BigCollisions"):
-	#	var hitbox_scale = json.get("big_hitbox_scale", [1, 1]) if apply else [1, 1]
-	#	i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("big_crouch_scale", 0.5) if apply else 0.5)
-	#	i._physics_process(0)
+		var hitbox_scale = json.get("big_hitbox_scale", [1, 1]) if apply else [1, 1]
+		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("big_crouch_scale", 0.5) if apply else 0.5)
+		i._physics_process(0)
 
 func recenter_camera() -> void:
 	%CameraHandler.recenter_camera()

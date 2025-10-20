@@ -285,6 +285,14 @@ func apply_character_physics() -> void:
 		var hitbox_scale = json.get("big_hitbox_scale", [1, 1])
 		i.scale = Vector2(hitbox_scale[0], hitbox_scale[1])
 		i.update()
+	#for i in get_tree().get_nodes_in_group("SmallCollisions"):
+	#	var hitbox_scale = json.get("small_hitbox_scale", [1, 1]) if apply else [1, 1]
+	#	i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("small_crouch_scale", 0.75) if apply else 0.5)
+	#	i._physics_process(0)
+	#for i in get_tree().get_nodes_in_group("BigCollisions"):
+	#	var hitbox_scale = json.get("big_hitbox_scale", [1, 1]) if apply else [1, 1]
+	#	i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("big_crouch_scale", 0.5) if apply else 0.5)
+	#	i._physics_process(0)
 
 func recenter_camera() -> void:
 	%CameraHandler.recenter_camera()
@@ -753,12 +761,13 @@ func set_power_state_frame() -> void:
 		can_bump_fly = %Sprite.sprite_frames.has_animation("FlyBump")
 		can_kick_anim = %Sprite.sprite_frames.has_animation("Kick")
 
-func get_power_up(power_name := "") -> void:
+func get_power_up(power_name := "", give_points := true) -> void:
 	if is_dead:
 		return
-	Global.score += 1000
-	DiscoLevel.combo_amount += 1
-	score_note_spawner.spawn_note(1000)
+	if give_points:
+		Global.score += 1000
+		DiscoLevel.combo_amount += 1
+		score_note_spawner.spawn_note(1000)
 	AudioManager.play_sfx("power_up", global_position)
 	if Settings.file.difficulty.damage_style == 0 and power_state.state_name != power_name:
 		if power_name != "Big" and power_state.state_name != "Big":

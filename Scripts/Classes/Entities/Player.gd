@@ -376,17 +376,19 @@ func apply_gravity(delta: float) -> void:
 	elif spring_bouncing:
 		gravity = SPRING_GRAVITY
 	else:
-		# Check if player is moving upwards (velocity is negative relative to gravity direction)
-		if velocity.y * gravity_vector.y < 0:
-			# CLASSIC PHYSICS LOGIC: If the jump button is released during ascent, apply strong gravity.
+		# If player is falling, apply fall gravity.
+		if velocity.y * gravity_vector.y >= 0:
+			gravity = FALL_GRAVITY
+		# If player is moving upwards:
+		else:
+			# Classic (non-plus) physics has a special jump release mechanic
+			# where releasing the jump button immediately applies fall gravity.
 			if classic_physics and not classic_plus_enabled and not Global.player_action_pressed("jump", player_id):
 				gravity = FALL_GRAVITY
-			else:
-				# Otherwise (jump button held or not classic physics), use the lighter jump gravity.
-				gravity = JUMP_GRAVITY
-		else:
-			# Player is falling, so apply normal fall gravity.
-			gravity = FALL_GRAVITY
+			# For Remastered, Classic+, and Classic (while holding jump), we do not
+			# re-apply JUMP_GRAVITY here. This prevents overwriting the FALL_GRAVITY
+			# set by the jump cancellation logic in Normal.gd, fixing the "floaty" jump issue.
+			# The gravity is correctly initialized to JUMP_GRAVITY in the jump() function.
 
 	velocity += (gravity_vector * ((gravity / (1.5 if low_gravity else 1.0)) / delta)) * delta
 	var target_fall: float = MAX_FALL_SPEED

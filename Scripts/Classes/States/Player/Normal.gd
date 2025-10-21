@@ -233,10 +233,7 @@ func ground_skid(delta: float) -> void:
 	
 	# Apply a hard stop during a classic physics skid if the key is released.
 	if player.classic_physics and player.input_direction == 0:
-		# This stronger friction prevents the "moonwalking" slide.
-		var hard_stop_friction = player.DECEL * 4.0
-		player.velocity.x = move_toward(player.velocity.x, 0, (hard_stop_friction / delta) * delta)
-		
+		player.velocity.x = move_toward(player.velocity.x, 0, (player.RUN_SKID / delta) * delta)
 		# Once stopped, exit the skidding state.
 		if is_zero_approx(player.velocity.x):
 			player.skidding = false

@@ -483,7 +483,7 @@ func enemy_bounce_off(add_combo := true, award_score := true) -> void:
 	if classic_physics and not classic_plus_enabled:
 		# Classic physics uses a single initial bounce velocity.
 		velocity.y = sign(gravity_vector.y) * -BOUNCE_HEIGHT
-		gravity = JUMP_GRAVITY
+		#gravity = JUMP_GRAVITY 
 	else:
 		# This block handles Remastered and Classic Plus physics, which can remain as is.
 		jump_cancelled = not Global.player_action_pressed("jump", player_id)

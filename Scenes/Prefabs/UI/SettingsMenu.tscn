@@ -197,6 +197,7 @@ func regen_rom() -> void:
 
 [node name="SettingsMenu" type="Control" node_paths=PackedStringArray("containers")]
 process_mode = 4
+visible = false
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 3
 anchor_left = 0.1

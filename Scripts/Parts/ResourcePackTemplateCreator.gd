@@ -33,7 +33,7 @@ func create_template() -> void:
 		if i.contains(".fnt"):
 			data = await download_fnt_text(i) 
 			## Imagine being one of the best open source game engines, yet not able to get the FUCKING CONTENTS
-			## OF AN FNT FILE SO INSTEAD YOU HAVE TO WRITE THE MOST BULLSHIT CODzE TO DOWNLOAD THE FUCKING FILE
+			## OF AN FNT FILE SO INSTEAD YOU HAVE TO WRITE THE MOST BULLSHIT CODE TO DOWNLOAD THE FUCKING FILE
 			## FROM THE FUCKING GITHUB REPO. WHY? BECAUSE GODOT IS SHIT. FUCK GODOT.
 		elif i.contains(".svg"):
 			## DON'T import SVGs
@@ -48,12 +48,15 @@ func create_template() -> void:
 					"mp3":
 						if OS.is_debug_build(): print("mp3:" + i)
 						data = resource.get_data()
-                    "wav":
-                        ## guzlad: CAN NOT BE format FORMAT_IMA_ADPCM or FORMAT_QOA as they don't support the save function
-                        ## guzlad: Should be FORMAT_16_BITS like most of our other .wav files 
-                        if OS.is_debug_build(): print("wav:" + i)
-                        var wav_file: AudioStreamWAV = load(i)
-                        print(error_string(wav_file.save_to_wav(destination)))
+					"wav":
+						## guzlad: CAN NOT BE format FORMAT_IMA_ADPCM or FORMAT_QOA as they don't support the save function
+						## guzlad: Should be FORMAT_16_BITS like most of our other .wav files 
+						if OS.is_debug_build(): print("wav:" + i)
+						var wav_file: AudioStreamWAV = load(i)
+						if !OS.is_debug_build():
+							wav_file.save_to_wav(destination)
+						else:
+							print(error_string(wav_file.save_to_wav(destination)))
 					## guzlad: No OGG yet
 					_:
 						data = resource.get_data()
@@ -112,4 +115,3 @@ func get_files(base_dir := "", files := []) -> void:
 				files.append(rom_assets_path)
 			else:
 				files.append(target_path)
-#		elif i.contains(".bgm") == false and i.contains(".ctex") == false and i.contains(".json") == false and i.contains("res://") and i.contains(".fnt") == false:

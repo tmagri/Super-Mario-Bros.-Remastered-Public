@@ -7,6 +7,8 @@ signal fnt_file_downloaded(text: String)
 
 var downloaded_fnt_text := []
 
+signal pack_created
+
 const base_info_json := {
 	"name": "New Pack",
 	"description": "Template, give me a description!",
@@ -14,6 +16,7 @@ const base_info_json := {
 	}
 
 func create_template() -> void:
+	await get_tree().process_frame
 	get_directories("res://Assets", files, directories)
 	for i in directories:
 		DirAccess.make_dir_recursive_absolute(i.replace("res://Assets", Global.config_path.path_join("resource_packs/new_pack")))
@@ -50,6 +53,7 @@ func create_template() -> void:
 	file.store_string(JSON.stringify(base_info_json, "\t"))
 	file.close()
 	print("Done")
+	pack_created.emit()
 
 func download_fnt_text(file_path := "") -> PackedByteArray:
 	var http = HTTPRequest.new()

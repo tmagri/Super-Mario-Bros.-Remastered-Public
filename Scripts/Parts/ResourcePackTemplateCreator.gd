@@ -51,7 +51,7 @@ func create_template() -> void:
 					"wav":
 						## guzlad: CAN NOT BE format FORMAT_IMA_ADPCM or FORMAT_QOA as they don't support the save function
 						## guzlad: Should be FORMAT_16_BITS like most of our other .wav files 
-						if OS.is_debug_build(): print("wav:" + i)
+						print(error_string(wav_file.save_to_wav(destination)))
 						var wav_file: AudioStreamWAV = load(i)
 						if OS.is_debug_build(): print(error_string(wav_file.save_to_wav(destination)))
 					## guzlad: No OGG yet

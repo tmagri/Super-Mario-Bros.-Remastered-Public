@@ -17,6 +17,9 @@ func rise_tween() -> void:
 	can_rise = false
 	var tween = create_tween().set_trans(Tween.TRANS_CUBIC)
 	var dir = sign(target_player.global_position.x - global_position.x)
+	if dir != 0:
+		direction = dir
+	$Sprite.scale.x = direction
 	var target_position := Vector2(32 * dir, -32)
 	var final_position = global_position + target_position
 	var top_point = -176

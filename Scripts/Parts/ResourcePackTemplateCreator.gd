@@ -42,7 +42,9 @@ func create_template() -> void:
 			var resource = load(i)
 			if resource is Texture:
 				if OS.is_debug_build(): print("texture:" + i)
-				data = resource.get_image().save_png_to_buffer()
+				var image: Image = resource.get_image()
+				image.convert(Image.FORMAT_RGBA8)
+				data = image.save_png_to_buffer()
 			elif resource is AudioStream:
 				match i.get_extension():
 					"mp3":

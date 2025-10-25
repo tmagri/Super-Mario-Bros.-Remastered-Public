@@ -2372,9 +2372,9 @@ theme_override_styles/separator = SubResource("StyleBoxLine_g2gtw")
 
 [node name="Label2" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = -32.0
+offset_left = -40.0
 offset_top = 40.0
-offset_right = 32.0
+offset_right = 24.0
 offset_bottom = 56.0
 text = "JOEMAMA"
 uppercase = true
@@ -2394,9 +2394,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label3" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 56.0
+offset_left = 48.0
 offset_top = 40.0
-offset_right = 160.0
+offset_right = 152.0
 offset_bottom = 56.0
 text = "ALOELUCIDITY"
 uppercase = true
@@ -2416,9 +2416,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label4" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = -32.0
+offset_left = -40.0
 offset_top = 56.0
-offset_right = 24.0
+offset_right = 16.0
 offset_bottom = 72.0
 text = "GUZLAD"
 uppercase = true
@@ -2439,9 +2439,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label5" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 32.0
+offset_left = 24.0
 offset_top = 56.0
-offset_right = 128.0
+offset_right = 120.0
 offset_bottom = 72.0
 text = "KirbyKid256"
 uppercase = true
@@ -2462,9 +2462,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label6" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = -32.0
+offset_left = -40.0
 offset_top = 72.0
-offset_right = 72.0
+offset_right = 64.0
 offset_bottom = 88.0
 text = "kittenchilly"
 uppercase = true
@@ -2485,9 +2485,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label7" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 80.0
+offset_left = 72.0
 offset_top = 72.0
-offset_right = 168.0
+offset_right = 160.0
 offset_bottom = 88.0
 text = "skyanultra"
 uppercase = true
@@ -2507,9 +2507,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label8" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 136.0
+offset_left = 128.0
 offset_top = 56.0
-offset_right = 184.0
+offset_right = 176.0
 offset_bottom = 72.0
 text = "jeodc"
 uppercase = true
@@ -2529,9 +2529,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label9" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = -32.0
+offset_left = -40.0
 offset_top = 88.0
-offset_right = 24.0
+offset_right = 16.0
 offset_bottom = 104.0
 text = "Nabbup"
 uppercase = true
@@ -2551,9 +2551,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label10" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 48.0
+offset_left = 40.0
 offset_top = 88.0
-offset_right = 128.0
+offset_right = 120.0
 offset_bottom = 104.0
 text = "jdaster64"
 uppercase = true
@@ -2574,9 +2574,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label11" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 56.0
+offset_left = 48.0
 offset_top = 104.0
-offset_right = 120.0
+offset_right = 112.0
 offset_bottom = 120.0
 text = "amer241"
 uppercase = true
@@ -2596,9 +2596,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label12" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = -32.0
+offset_left = -40.0
 offset_top = 104.0
-offset_right = 48.0
+offset_right = 40.0
 offset_bottom = 120.0
 text = "falkimore"
 uppercase = true
@@ -2619,9 +2619,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label13" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 64.0
+offset_left = 56.0
 offset_top = 120.0
-offset_right = 160.0
+offset_right = 152.0
 offset_bottom = 136.0
 text = "kustaagames"
 uppercase = true
@@ -2642,9 +2642,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label15" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 136.0
+offset_left = 128.0
 offset_top = 88.0
-offset_right = 200.0
+offset_right = 192.0
 offset_bottom = 104.0
 text = "renhoex"
 uppercase = true
@@ -2665,9 +2665,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label16" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 144.0
+offset_left = 136.0
 offset_top = 104.0
-offset_right = 192.0
+offset_right = 184.0
 offset_bottom = 120.0
 text = "a2937"
 uppercase = true
@@ -2688,9 +2688,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label17" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = -32.0
+offset_left = -40.0
 offset_top = 136.0
-offset_right = 48.0
+offset_right = 40.0
 offset_bottom = 152.0
 text = "trsitan35"
 uppercase = true
@@ -2711,9 +2711,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label18" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 56.0
+offset_left = 48.0
 offset_top = 136.0
-offset_right = 136.0
+offset_right = 128.0
 offset_bottom = 152.0
 text = "basilicon"
 uppercase = true
@@ -2734,9 +2734,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label19" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = -32.0
+offset_left = -40.0
 offset_top = 152.0
-offset_right = 88.0
+offset_right = 80.0
 offset_bottom = 168.0
 text = "nathanmarioman"
 uppercase = true
@@ -2757,9 +2757,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label20" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 144.0
+offset_left = 136.0
 offset_top = 136.0
-offset_right = 208.0
+offset_right = 200.0
 offset_bottom = 152.0
 text = "cst1229"
 uppercase = true
@@ -2780,9 +2780,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label21" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 96.0
+offset_left = 88.0
 offset_top = 152.0
-offset_right = 184.0
+offset_right = 176.0
 offset_bottom = 168.0
 text = "dankcoffee"
 uppercase = true
@@ -2803,9 +2803,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label22" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = -32.0
+offset_left = -40.0
 offset_top = 168.0
-offset_right = 32.0
+offset_right = 24.0
 offset_bottom = 184.0
 text = "valham1"
 uppercase = true
@@ -2826,9 +2826,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label14" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = -32.0
+offset_left = -40.0
 offset_top = 120.0
-offset_right = 40.0
+offset_right = 32.0
 offset_bottom = 136.0
 text = "leanycat"
 uppercase = true
@@ -2848,9 +2848,9 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="Label23" type="Label" parent="Labels/Github/Label3"]
 layout_mode = 0
-offset_left = 32.0
+offset_left = 24.0
 offset_top = 168.0
-offset_right = 128.0
+offset_right = 120.0
 offset_bottom = 184.0
 text = "TheOliveOli"
 uppercase = true

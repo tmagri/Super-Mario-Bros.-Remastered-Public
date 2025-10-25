@@ -2692,7 +2692,7 @@ offset_left = -40.0
 offset_top = 136.0
 offset_right = 40.0
 offset_bottom = 152.0
-text = "trsitan35"
+text = "tristan35"
 uppercase = true
 
 [node name="TextureRect" type="TextureRect" parent="Labels/Github/Label3/Label17"]

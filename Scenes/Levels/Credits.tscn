@@ -2871,6 +2871,29 @@ stretch_mode = 2
 script = ExtResource("11_d4vu4")
 metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
+[node name="Label24" type="Label" parent="Labels/Github/Label3"]
+layout_mode = 0
+offset_left = -40.0
+offset_top = 184.0
+offset_right = 56.0
+offset_bottom = 200.0
+text = "yuriko-shimizu"
+uppercase = true
+
+[node name="TextureRect" type="TextureRect" parent="Labels/Github/Label3/Label24"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 0
+texture = SubResource("AtlasTexture_c51sb")
+stretch_mode = 2
+script = ExtResource("11_d4vu4")
+metadata/_custom_type_script = "uid://ca3bew33g45eq"
+
 [node name="SpecialThanks" type="Control" parent="Labels"]
 visible = false
 layout_mode = 3

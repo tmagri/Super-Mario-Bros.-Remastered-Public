@@ -640,7 +640,7 @@ settings_category = "difficulty"
 
 [node name="GameOverStyle" parent="PanelContainer/MarginContainer/VBoxContainer/Difficulty" groups=["Options"] instance=ExtResource("3_dl6kk")]
 layout_mode = 2
-option_key = "game_over"
+option_key = "game_over_behaviour"
 title = "DIFFI_GAME_OVER"
 value_descs = Array[String](["DESC_GAME_OVER_0", "DESC_GAME_OVER_1", "DESC_GAME_OVER_2"])
 values = ["DIFFI_GAME_OVER_WLD", "DIFFI_GAME_OVER_LVL", "DIFFI_GAME_OVER_GME"]

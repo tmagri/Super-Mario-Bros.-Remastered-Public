@@ -164,12 +164,14 @@ const ANIMATION_FALLBACKS := {
 	"CrouchFall": "Crouch",
 	"CrouchJump": "Crouch",
 	"CrouchBump": "Bump",
-	"CrouchMove": "Crouch",
-	"IdleAttack": "MoveAttack",
-	"CrouchAttack": "IdleAttack",
-	"MoveAttack": "Attack",
-	"WalkAttack": "MoveAttack",
-	"RunAttack": "MoveAttack",
+	"CrouchMove": "Crouch", 
+	"WaterCrouchMove": "CrouchMove",
+	"WingCrouchMove": "WaterCrouchMove",
+	"IdleAttack": "MoveAttack", 
+	"CrouchAttack": "IdleAttack", 
+	"MoveAttack": "Attack", 
+	"WalkAttack": "MoveAttack", 
+	"RunAttack": "MoveAttack", 
 	"SkidAttack": "MoveAttack",
 	"WingIdle": "WaterIdle",
 	"FlyUp": "SwimUp",
@@ -280,7 +282,7 @@ func apply_character_physics(apply: bool) -> void:
 			set(i, json.physics[i])
 	for i in get_tree().get_nodes_in_group("SmallCollisions"):
 		var hitbox_scale = json.get("small_hitbox_scale", [1, 1]) if apply else [1, 1]
-		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("small_crouch_scale", 0.75) if apply else 0.5)
+		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("small_crouch_scale", 0.75) if apply else 0.75)
 		i._physics_process(0)
 	for i in get_tree().get_nodes_in_group("BigCollisions"):
 		var hitbox_scale = json.get("big_hitbox_scale", [1, 1]) if apply else [1, 1]
@@ -963,7 +965,8 @@ func do_smoke_effect() -> void:
 func on_timeout() -> void:
 	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.STAR)
 	await get_tree().create_timer(1, false).timeout
-	is_invincible = false
+	if $StarTimer.is_stopped():
+		is_invincible = false
 
 
 func on_area_entered(area: Area2D) -> void:

@@ -87,7 +87,7 @@ func grounded(delta: float) -> void:
 				player.velocity.x = original_vx # Restore velocity
 			else:
 				player.jump()
-				
+
 		if jump_queued and not (player.in_water or player.flight_meter > 0):
 			if not player.spring_bouncing:
 				if player.crouching:
@@ -97,7 +97,7 @@ func grounded(delta: float) -> void:
 					player.velocity.x = original_vx
 				else:
 					player.jump()
-			jump_queued = false		
+			jump_queued = false
 		# Classic Plus: Allow Small Mario to crouch
 		if player.classic_plus_enabled and player.power_state.hitbox_size == "Small":
 			if not player.crouching:
@@ -106,9 +106,9 @@ func grounded(delta: float) -> void:
 			else: # is_crouching
 				if not Global.player_action_pressed("move_down", player.player_id):
 					player.crouching = false
-		
 
-	else: # Remastered Physics Logic 
+
+	else: # Remastered Physics Logic
 		if Global.player_action_just_pressed("jump", player.player_id):
 			player.handle_water_detection()
 			if player.in_water or player.flight_meter > 0:
@@ -120,7 +120,7 @@ func grounded(delta: float) -> void:
 			if not player.spring_bouncing:
 				player.jump()
 			jump_queued = false
-			
+
 		if not player.crouching:
 			if Global.player_action_pressed("move_down", player.player_id):
 				player.crouching = true
@@ -140,7 +140,7 @@ func grounded(delta: float) -> void:
 
 
 func handle_ground_movement(delta: float) -> void:
-	if player.classic_physics: # Classic Physics 
+	if player.classic_physics: # Classic Physics
 		var starting_skid = (player.input_direction != player.velocity_direction) and player.input_direction != 0 and abs(player.velocity.x) > player.SKID_THRESHOLD and not player.crouching
 		if starting_skid:
 			player.skidding = true
@@ -168,7 +168,7 @@ func handle_ground_movement(delta: float) -> void:
 
 func ground_acceleration(delta: float) -> void:
 	var is_running = Global.player_action_pressed("run", player.player_id) and player.can_run
-	
+
 	if player.classic_physics: # Classic Physics
 		# --- Run Charge Logic ---
 		# Only charge up if moving in a consistent forward direction.
@@ -189,48 +189,48 @@ func ground_acceleration(delta: float) -> void:
 		if player.in_water or player.flight_meter > 0:
 			target_move_speed = player.SWIM_GROUND_SPEED
 		var target_accel := player.GROUND_WALK_ACCEL
-		
+
 		# Only use run speed/accel after the charge threshold is met.
 		if is_running and run_charge_frames > RUN_CHARGE_THRESHOLD and (not player.in_water and player.flight_meter <= 0):
 			target_move_speed = player.RUN_SPEED
 			target_accel = player.GROUND_RUN_ACCEL
 
-		if player.input_direction != player.velocity_direction: 
+		if player.input_direction != player.velocity_direction:
 			target_accel = player.RUN_SKID if is_running else player.WALK_SKID
 			target_accel += player.get_reverse_acceleration()
-		
+
 		player.velocity.x = move_toward(player.velocity.x, target_move_speed * player.input_direction, (target_accel / delta) * delta)
 	else: # Remastered Physics
 		var target_move_speed := player.WALK_SPEED
 		if player.in_water or player.flight_meter > 0:
 			target_move_speed = player.SWIM_GROUND_SPEED
 		var target_accel := player.GROUND_WALK_ACCEL
-		
+
 		if is_running and abs(player.velocity.x) >= player.WALK_SPEED and (not player.in_water and player.flight_meter <= 0):
 			target_move_speed = player.RUN_SPEED
 			target_accel = player.GROUND_RUN_ACCEL
-			
-		if player.input_direction != player.velocity_direction: 
+
+		if player.input_direction != player.velocity_direction:
 			target_accel = player.RUN_SKID if is_running else player.WALK_SKID
 			target_accel += player.get_reverse_acceleration()
-			
+
 		player.velocity.x = move_toward(player.velocity.x, target_move_speed * player.input_direction, (target_accel / delta) * delta)
 
 
 func deceleration(delta: float) -> void:
 	var friction = player.DECEL
-	
+
 	if player.classic_physics: # Classic Physics
 		# Apply double friction if moving faster than walking speed.
 		if abs(player.velocity.x) > player.WALK_SPEED and not player.crouching:
 			friction *= 2.0
-	
+
 	player.velocity.x = move_toward(player.velocity.x, 0, (friction / delta) * delta)
 
 
 func ground_skid(delta: float) -> void:
 	player.skid_frames += 1
-	
+
 	# Apply a hard stop during a classic physics skid if the key is released.
 	if player.classic_physics and player.input_direction == 0:
 		player.velocity.x = move_toward(player.velocity.x, 0, (player.RUN_SKID / delta) * delta)
@@ -241,7 +241,7 @@ func ground_skid(delta: float) -> void:
 		return # Prevents the original skid logic from running.
 
 	var target_skid := player.RUN_SKID
-	
+
 	player.velocity.x = move_toward(player.velocity.x, 1 * player.input_direction, (target_skid / delta) * delta)
 	if abs(player.velocity.x) < 10 or player.input_direction == player.velocity_direction or player.input_direction == 0:
 		player.skidding = false
@@ -254,15 +254,30 @@ func in_air() -> void:
 		else:
 			jump_queued = true
 			jump_buffer = 4
-	
-	if not Global.player_action_pressed("jump", player.player_id) and player.has_jumped and not player.jump_cancelled:
-		player.jump_cancelled = true
-		if sign(player.gravity_vector.y * player.velocity.y) < 0.0:
+
+	# Handle Jump Cancellation / Gravity switching
+	if player.has_jumped and not player.jump_cancelled:
+		var upward_movement = sign(player.gravity_vector.y * player.velocity.y) < 0.0
+
+		# Jump button release check
+		if not Global.player_action_pressed("jump", player.player_id) and upward_movement:
+			player.jump_cancelled = true
 			player.velocity.y /= player.JUMP_CANCEL_DIVIDE
-			player.gravity = player.FALL_GRAVITY
+			player.gravity = player.FALL_GRAVITY # Switch to fall gravity immediately
+
+		# Classic non-plus has a specific behaviour: gravity immediately switches on release
+		elif player.classic_physics and not player.classic_plus_enabled and not Global.player_action_pressed("jump", player.player_id) and upward_movement:
+			player.jump_cancelled = true # Mark as cancelled conceptually
+			player.gravity = player.FALL_GRAVITY # Switch to fall gravity even if still moving up slightly
+
+		# Speed threshold check (applies to Remastered, Classic+, and Classic holding jump)
+		# Only applies if the jump hasn't already been cancelled by releasing the button.
+		elif upward_movement and player.velocity.y * player.gravity_vector.y >= player.JUMP_HOLD_SPEED_THRESHOLD:
+			player.gravity = player.FALL_GRAVITY # Switch to fall gravity when upward speed slows down
+
 
 func handle_air_movement(delta: float) -> void:
-	
+
 	if player.classic_physics and player.input_direction != 0 and player.velocity_direction != player.input_direction and player.velocity_direction != 0:
 		air_skid(delta)
 		return

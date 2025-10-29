@@ -180,10 +180,10 @@ func ground_acceleration(delta: float) -> void:
 
 		var current_speed = abs(player.velocity.x)
 		# "Run-let-go" slide mechanic
-		if not is_running and current_speed > player.WALK_SPEED and not player.attacking:
-			var friction = player.DECEL
-			player.velocity.x = move_toward(player.velocity.x, player.WALK_SPEED * player.input_direction, (friction / delta) * delta)
-			return
+		#if not is_running and current_speed > player.WALK_SPEED and not player.attacking:
+		#	var friction = player.DECEL
+		#	player.velocity.x = move_toward(player.velocity.x, player.WALK_SPEED * player.input_direction, (friction / delta) * delta)
+		#	return
 
 		var target_move_speed := player.WALK_SPEED
 		if player.in_water or player.flight_meter > 0:

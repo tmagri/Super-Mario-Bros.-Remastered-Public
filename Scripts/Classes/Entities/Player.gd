@@ -228,7 +228,7 @@ func _ready() -> void:
 	character = CHARACTERS[int(Global.player_characters[player_id])]
 	Global.can_time_tick = true
 	var physics_style = Settings.file.difficulty.get("physics_style", 2);
-	if [Global.GameMode.BOO_RACE, Global.GameMode.MARATHON, Global.GameMode.MARATHON_PRACTICE].has(Global.current_game_mode) == false:
+	if [Global.GameMode.BOO_RACE, Global.GameMode.MARATHON, Global.GameMode.MARATHON_PRACTICE,Global.GameMode.CUSTOM_LEVEL].has(Global.current_game_mode) == false:
 		classic_physics = physics_style == 1 or physics_style == 2; #Is Classic Engine
 		classic_plus_enabled = physics_style == 2; #Is Classic Plus
 		apply_physics_style(physics_style)
@@ -238,7 +238,10 @@ func _ready() -> void:
 		classic_physics = false
 		classic_plus_enabled = false
 		apply_physics_style(physics_style)
-		apply_character_physics(false)
+		if(Global.GameMode.CUSTOM_LEVEL == Global.current_game_mode) 
+			apply_character_physics(true)
+		else
+			apply_character_physics(false)
 	apply_character_sfx_map()
 	Global.level_theme_changed.connect(apply_character_sfx_map)
 	Global.level_theme_changed.connect(apply_physics_style)

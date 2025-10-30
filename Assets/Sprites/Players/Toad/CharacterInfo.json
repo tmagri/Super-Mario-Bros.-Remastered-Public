@@ -14,13 +14,12 @@
 				"FALL_GRAVITY": 25.0,
 				"MAX_FALL_SPEED": 280.0,
 				"CEILING_BUMP_SPEED": 45.0,
-				"WALK_SPEED": 115.2,
-				"GROUND_WALK_ACCEL": 1.5,
+				"WALK_SPEED": 120.0,
+				"GROUND_WALK_ACCEL": 4.0,
 				"WALK_SKID": 8.0,
 				"RUN_SPEED": 192.0,
-				"GROUND_RUN_ACCEL": 4.8,
+				"GROUND_RUN_ACCEL": 1.25,
 				"RUN_SKID": 8.0,
-				"SKID_THRESHOLD": 100.0,
 				"DECEL": 3.0,
 				"AIR_ACCEL": 3.0,
 				"AIR_SKID": 1.5,
@@ -30,8 +29,9 @@
 				"SWIM_GRAVITY": 2.5,
 				"MAX_SWIM_FALL_SPEED": 200.0,
 				"DEATH_JUMP_HEIGHT": 300.0,
-				"FAST_REVERSE_ACCEL": 0.0,
-				"can_air_turn": false
+				"can_air_turn": false,
+				"SKID_THRESHOLD": 100.0,
+				"FAST_REVERSE_ACCEL": 0.0
 			}
 		},
 		{

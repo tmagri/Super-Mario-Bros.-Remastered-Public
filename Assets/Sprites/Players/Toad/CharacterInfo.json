@@ -68,14 +68,8 @@
 			}
 		}
 	],
-	"small_hitbox_scale": [
-		1.0,
-		1.0
-	],
+	"small_hitbox_scale": [1.0,1.0],
 	"small_crouch_scale": 0.75,
-	"big_hitbox_scale": [
-		1.0,
-		1.0
-	],
+	"big_hitbox_scale": [1.0,1.0],
 	"big_crouch_scale": 0.5
 }

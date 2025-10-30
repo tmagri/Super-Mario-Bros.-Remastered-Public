@@ -228,17 +228,17 @@ func _ready() -> void:
 	character = CHARACTERS[int(Global.player_characters[player_id])]
 	Global.can_time_tick = true
 	var physics_style = Settings.file.difficulty.get("physics_style", 2);
-	if [Global.GameMode.BOO_RACE, Global.GameMode.MARATHON, Global.GameMode.MARATHON_PRACTICE, Global.GameMode.CUSTOM_LEVEL].has(Global.current_game_mode) == false:
+	if [Global.GameMode.BOO_RACE, Global.GameMode.MARATHON, Global.GameMode.MARATHON_PRACTICE].has(Global.current_game_mode) == false:
 		classic_physics = physics_style == 1 or physics_style == 2; #Is Classic Engine
 		classic_plus_enabled = physics_style == 2; #Is Classic Plus
-		apply_character_physics(true)
 		apply_physics_style(physics_style)
+		apply_character_physics(true)
 	else:
 		physics_style = 0  #Force Remastered
 		classic_physics = false
 		classic_plus_enabled = false
-		apply_character_physics(false)
 		apply_physics_style(physics_style)
+		apply_character_physics(false)
 	apply_character_sfx_map()
 	Global.level_theme_changed.connect(apply_character_sfx_map)
 	Global.level_theme_changed.connect(apply_physics_style)
@@ -284,16 +284,56 @@ func apply_physics_style(physics_type: int = 0) -> void:
 
 
 func apply_character_physics(apply: bool) -> void:
-	if classic_physics:
-		return
+	# Load the JSON file
 	var path = "res://Assets/Sprites/Players/" + character + "/CharacterInfo.json"
 	if int(Global.player_characters[player_id]) > 3:
 		path = path.replace("res://Assets/Sprites/Players", Global.config_path.path_join("custom_characters/"))
 	path = ResourceSetter.get_pure_resource_path(path)
-	var json = JSON.parse_string(FileAccess.open(path, FileAccess.READ).get_as_text())
+	
+	var file = FileAccess.open(path, FileAccess.READ)
+	if not file:
+		printerr("Failed to open character info: ", path)
+		return
+		
+	var json = JSON.parse_string(file.get_as_text())
+
+	# Determine which physics set to use
+	var physics_set_name = "classic" if classic_physics else "remastered"
+	var physics_values = null
+
+	# Find the correct physics set from the array
+	if json.physics is Array:
+		for physics_set in json.physics:
+			if physics_set is Dictionary and physics_set.get("name") == physics_set_name:
+				physics_values = physics_set.get("values")
+				break
+	
+	# Fallback if the expected set isn't found or structure is different
+	if physics_values == null:
+		printerr("Could not find physics set '", physics_set_name, "' in ", path, ". Checking for fallbacks.")
+		# Try to find "remastered" as a default if the target was missing
+		if json.physics is Array:
+			for physics_set in json.physics:
+				if physics_set is Dictionary and physics_set.get("name") == "remastered":
+					physics_values = physics_set.get("values")
+					printerr("Using 'remastered' set as a fallback.")
+					break
+		# Fallback for the old single-object format
+		elif json.physics is Dictionary:
+			printerr("Physics is old format, using directly.")
+			physics_values = json.physics
+		
+	# If we still have nothing, we can't proceed
+	if physics_values == null:
+		printerr("Failed to parse any physics from ", path)
+		return
+
+	# Apply the selected physics values
 	if apply:
-		for i in json.physics:
-			set(i, json.physics[i])
+		for i in physics_values:
+			set(i, physics_values[i])
+			
+	# Update hitboxes (this logic is unchanged as scales are top-level)
 	for i in get_tree().get_nodes_in_group("SmallCollisions"):
 		var hitbox_scale = json.get("small_hitbox_scale", [1, 1]) if apply else [1, 1]
 		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("small_crouch_scale", 0.75) if apply else 0.75)

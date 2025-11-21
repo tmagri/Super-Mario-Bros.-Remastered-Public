@@ -278,6 +278,19 @@ func in_air() -> void:
 
 func handle_air_movement(delta: float) -> void:
 
+	# Classic Physics: Low Speed Momentum Lock
+	# We use 'velocity_x_jump_stored' to check the speed AT THE START of the jump.
+	# If the jump STARTED slow (< 48.0), we restrict reverse inputs.
+	# ACCURACY NOTE: SMB uses current speed, not stored. We use stored here to prevent
+	# "regaining" snap-control if you slow down mid-air, ensuring the jump feels committed.
+	if player.classic_physics and player.has_jumped and abs(player.velocity_x_jump_stored) < 48.0:
+		if player.velocity_direction != 0 and player.input_direction != 0 and player.input_direction != player.velocity_direction:
+			# Instead of setting input to 0 (which causes coasting), we force a skid
+			# with 0 target velocity. This applies Drag (Friction) without Reverse Thrust.
+			var skid = player.AIR_SKID
+			player.velocity.x = move_toward(player.velocity.x, 0, (skid / delta) * delta)
+			return
+
 	if player.classic_physics and player.input_direction != 0 and player.velocity_direction != player.input_direction and player.velocity_direction != 0:
 		air_skid(delta)
 		return
@@ -297,8 +310,16 @@ func air_skid(delta: float) -> void:
 	# For classic physics, use the strong AIR_SKID to move towards the new direction's walk speed.
 	# This simulates the strong counter-force of the original game.
 	if player.classic_physics:
+		var skid = player.AIR_SKID
+		
+		# Linear Interpolation for Momentum Commitment (High Speeds)
+		# We use a lerp from 1.0 down to 0.2 based on speed.
+		var t = clamp(abs(player.velocity.x) / player.RUN_SPEED, 0.0, 1.0)
+		var skid_multiplier = lerp(1.0, 0.2, t)
+		skid *= skid_multiplier
+			
 		var target_velocity = player.WALK_SPEED * player.input_direction
-		player.velocity.x = move_toward(player.velocity.x, target_velocity, (player.AIR_SKID / delta) * delta)
+		player.velocity.x = move_toward(player.velocity.x, target_velocity, (skid / delta) * delta)
 	else: # For Remastered
 		var target_velocity = 1.0 * player.input_direction
 		player.velocity.x = move_toward(player.velocity.x, target_velocity, (player.AIR_SKID / delta) * delta)

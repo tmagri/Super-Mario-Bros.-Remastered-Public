@@ -11,6 +11,7 @@ const AIR_MOVE_SPEED := 64
 var combo := 0
 @export var colour := "Green"
 var flipped := false
+var nudging := false
 
 
 var can_kick := false
@@ -91,10 +92,44 @@ func get_kick_award(hit_player: Player) -> int:
 
 func kick(hit_player: Player) -> void:
 	update_hitbox()
+	
+	# Detect Staircase Context:
+	# 1. Wall must be within range (16px).
+	# 2. MUST be a ledge/gap behind the shell (to avoid triggering on pipes/flat walls).
+	var wall_in_range = test_move(global_transform, Vector2(16 * direction, 0))
+	
+	# Raycast to check for floor behind the shell
+	var space_state = get_world_2d().direct_space_state
+	var ledge_check_from = global_position - Vector2(12 * direction, 0)
+	var ledge_check_to = ledge_check_from + Vector2(0, 32)
+	var ledge_query = PhysicsRayQueryParameters2D.create(ledge_check_from, ledge_check_to)
+	ledge_query.collision_mask = collision_mask 
+	var ledge_result = space_state.intersect_ray(ledge_query)
+	var is_ledge = ledge_result.is_empty() # True if NO floor found (gap)
+	
+	print("Staircase Debug: Wall:", wall_in_range, " Ledge:", is_ledge, " Dir:", direction)
+
+	if wall_in_range and is_ledge:
+		# Staircase Glitch: Apply "Nudge" to the SHELL
+		# The shell moves slower (speed=40), allowing the player to land and stomp it again.
+		nudging = true
+		hit_player.enemy_bounce_off() 
+	else:
+		# Normal Kick
+		nudging = false
+		award_score(get_kick_award(hit_player))
+
 	DiscoLevel.combo_meter += 25
 	moving = true
 	moving_time = 0.0
 	hit_player.kick_anim()
+	if can_air_kick:
+		$ScoreNoteSpawner.spawn_note(8000)
+	else:
+		award_score(get_kick_award(hit_player))
+		# Staircase Glitch Check:
+		# Check if there is a wall (Collision Layer 2) immediately in front of the shell (16px).
+		# If so, apply stronger bounce to sustain the glitch loop.
 	if can_air_kick:
 		$ScoreNoteSpawner.spawn_note(8000)
 	else:
@@ -164,7 +199,10 @@ func handle_movement(delta: float) -> void:
 			direction *= -1
 			AudioManager.play_sfx("bump", global_position)
 		var speed = MOVE_SPEED
+		if nudging:
+			speed = 20 # Slow "nudge" speed for staircase glitch
 		if is_on_floor() == false:
+			nudging = false # Reset nudge if falling
 			speed = AIR_MOVE_SPEED
 		velocity.x = ((speed * direction))
 	elif is_on_floor():

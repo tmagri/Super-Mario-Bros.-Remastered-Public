@@ -45,7 +45,7 @@ func on_player_stomped_on(stomped_player: Player) -> void:
 		return
 	if not moving:
 		direction = sign(global_position.x - stomped_player.global_position.x)
-		kick(stomped_player)
+		kick(stomped_player, true) # is_stomp = true
 	else:
 		DiscoLevel.combo_meter += 10
 		moving = false
@@ -62,7 +62,7 @@ func on_player_hit(hit_player: Player) -> void:
 		return 
 	if not moving:
 		direction = sign(global_position.x - hit_player.global_position.x )
-		kick(hit_player)
+		kick(hit_player, false) # is_stomp = false
 	else:
 		hit_player.damage()
 		
@@ -90,12 +90,13 @@ func get_kick_award(hit_player: Player) -> int:
 		award_level = 3
 	return award_level
 
-func kick(hit_player: Player) -> void:
+func kick(hit_player: Player, is_stomp: bool = false) -> void:
 	update_hitbox()
 	
 	# Detect Staircase Context:
 	# 1. Wall must be within range (16px).
 	# 2. MUST be a ledge/gap behind the shell (to avoid triggering on pipes/flat walls).
+	# 3. MUST be a stomp (Hit from top). Hitting from side/bottom should be full speed.
 	var wall_in_range = test_move(global_transform, Vector2(16 * direction, 0))
 	
 	# Raycast to check for floor behind the shell
@@ -107,11 +108,11 @@ func kick(hit_player: Player) -> void:
 	var ledge_result = space_state.intersect_ray(ledge_query)
 	var is_ledge = ledge_result.is_empty() # True if NO floor found (gap)
 	
-	print("Staircase Debug: Wall:", wall_in_range, " Ledge:", is_ledge, " Dir:", direction)
+	print("Staircase Debug: Wall:", wall_in_range, " Ledge:", is_ledge, " Stomp:", is_stomp, " Dir:", direction)
 
-	if wall_in_range and is_ledge:
+	if wall_in_range and is_ledge and is_stomp:
 		# Staircase Glitch: Apply "Nudge" to the SHELL
-		# The shell moves slower (speed=40), allowing the player to land and stomp it again.
+		# The shell moves slower (speed=20), allowing the player to land and stomp it again.
 		nudging = true
 		hit_player.enemy_bounce_off() 
 	else:

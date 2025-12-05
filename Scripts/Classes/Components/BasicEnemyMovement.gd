@@ -58,8 +58,10 @@ func handle_movement(delta: float) -> void:
 	owner.velocity.x = (current_speed if can_move else 0) * owner.direction
 	owner.move_and_slide()
 
+@export var gravity_scale := 1.0
+
 func apply_gravity(delta: float) -> void:
-	owner.velocity.y += (Global.entity_gravity / delta) * delta
+	owner.velocity.y += (Global.entity_gravity / delta) * delta * gravity_scale
 	owner.velocity.y = clamp(owner.velocity.y, -INF, Global.entity_max_fall_speed)
 
 func player_direction_check() -> void:

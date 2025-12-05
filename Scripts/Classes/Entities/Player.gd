@@ -46,6 +46,37 @@ var DEATH_JUMP_HEIGHT := 300.0         # The strength of the player's "jump" dur
 var SPRING_GRAVITY := 11.0             # The player's gravity while spring bouncing, measured in px/frame
 
 var FAST_REVERSE_ACCEL := 0.0          # Additional deceleration when reversing direction, measured in px/frame
+
+const DEFAULT_CLASSIC_PHYSICS := {
+	"JUMP_GRAVITY": 11.0,
+	"JUMP_HEIGHT": 320.0,
+	"JUMP_INCR": 4.0,
+	"JUMP_CANCEL_DIVIDE": 1.8,
+	"JUMP_HOLD_SPEED_THRESHOLD": 0.0,
+	"BOUNCE_HEIGHT": 200.0,
+	"BOUNCE_JUMP_HEIGHT": 300.0,
+	"FALL_GRAVITY": 25.0,
+	"MAX_FALL_SPEED": 288.0,
+	"CEILING_BUMP_SPEED": 45.0,
+	"WALK_SPEED": 96.0,
+	"GROUND_WALK_ACCEL": 2.3,
+	"WALK_SKID": 6.1,
+	"RUN_SPEED": 160.0,
+	"GROUND_RUN_ACCEL": 3.5,
+	"RUN_SKID": 6.1,
+	"SKID_THRESHOLD": 104.0,
+	"DECEL": 3.05,
+	"AIR_ACCEL": 3.0,
+	"AIR_SKID": 14.0,
+	"SWIM_SPEED": 95.0,
+	"SWIM_GROUND_SPEED": 45.0,
+	"SWIM_HEIGHT": 100.0,
+	"SWIM_GRAVITY": 2.5,
+	"MAX_SWIM_FALL_SPEED": 200.0,
+	"DEATH_JUMP_HEIGHT": 300.0,
+	"FAST_REVERSE_ACCEL": 12.0,
+	"can_air_turn": false
+}
 #endregion
 
 @onready var camera_center_joint: Node2D = $CameraCenterJoint
@@ -323,8 +354,13 @@ func apply_character_physics(apply: bool) -> void:
 					break
 		# Fallback for the old single-object format
 		elif json.physics is Dictionary:
-			printerr("Physics is old format, using directly.")
-			physics_values = json.physics
+			printerr("Physics is old format.")
+			if classic_physics:
+				printerr("Using default classic physics for legacy file.")
+				physics_values = DEFAULT_CLASSIC_PHYSICS
+			else:
+				printerr("Using legacy values as remastered physics.")
+				physics_values = json.physics
 		
 	# If we still have nothing, we can't proceed
 	if physics_values == null:

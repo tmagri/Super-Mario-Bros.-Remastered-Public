@@ -108,6 +108,34 @@ func kick(hit_player: Player, is_stomp: bool = false) -> void:
 	var ledge_result = space_state.intersect_ray(ledge_query)
 	var is_ledge = ledge_result.is_empty() # True if NO floor found (gap)
 	
+	# Special Case: Allow glitch on specific tiles (like Cloud blocks/Bridges) even if they exist.
+	# User specified Source 0, Atlas Coords (4, 2).
+	if not is_ledge:
+		var collider = ledge_result.collider
+		print("Shell Collider Identified: ", collider.get_class(), " Name: ", collider.name)
+		
+		if collider is TileMap:
+			# Check slightly below collision point to get the tile
+			var map_pos = collider.local_to_map(collider.to_local(ledge_result.position + Vector2(0, 4)))
+			var debug_source = collider.get_cell_source_id(0, map_pos)
+			var debug_atlas = collider.get_cell_atlas_coords(0, map_pos)
+			print("Shell Floor Check: Source:", debug_source, " Atlas:", debug_atlas, " Pos:", map_pos)
+			
+			# Check Layer 0 (Assumption: Terrain is on Layer 0)
+			if debug_source == 0 and debug_atlas == Vector2i(4, 2):
+				is_ledge = true
+				print("Staircase Glitch: Special Tile (4,2) detected. Forcing Ledge Context.")
+		
+		elif collider.get_class() == "TileMapLayer":
+			var map_pos = collider.local_to_map(collider.to_local(ledge_result.position + Vector2(0, 4)))
+			var debug_source = collider.get_cell_source_id(map_pos)
+			var debug_atlas = collider.get_cell_atlas_coords(map_pos)
+			print("Shell Floor Check (Layer): Source:", debug_source, " Atlas:", debug_atlas, " Pos:", map_pos)
+			
+			if debug_source == 0 and debug_atlas == Vector2i(4, 2):
+				is_ledge = true
+				print("Staircase Glitch: Special Tile (4,2) detected. Forcing Ledge Context.")
+	
 	print("Staircase Debug: Wall:", wall_in_range, " Ledge:", is_ledge, " Stomp:", is_stomp, " Dir:", direction)
 
 	if wall_in_range and is_ledge and is_stomp:

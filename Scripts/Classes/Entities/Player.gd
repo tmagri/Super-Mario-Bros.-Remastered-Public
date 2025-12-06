@@ -48,7 +48,7 @@ var SPRING_GRAVITY := 11.0             # The player's gravity while spring bounc
 var FAST_REVERSE_ACCEL := 0.0          # Additional deceleration when reversing direction, measured in px/frame
 
 const DEFAULT_CLASSIC_PHYSICS := {
-	"JUMP_GRAVITY": 11.0,
+	"JUMP_GRAVITY": 7.5,
 	"JUMP_HEIGHT": 320.0,
 	"JUMP_INCR": 4.0,
 	"JUMP_CANCEL_DIVIDE": 1.8,

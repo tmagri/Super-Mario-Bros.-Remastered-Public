@@ -3,7 +3,7 @@ extends PowerUpItem
 const MOVE_SPEED := 60
 
 func _ready() -> void:
-	$BasicEnemyMovement.gravity_scale = 3.8 # Matches NES relative to Global base (10 vs 38)
+	$BasicEnemyMovement.gravity_scale = 1.0 # Matches NES relative to Global base (10 vs 38)
 	$BasicEnemyMovement.move_speed = 60.0 # Matches NES 1.0 px/frame
 
 func _physics_process(delta: float) -> void:

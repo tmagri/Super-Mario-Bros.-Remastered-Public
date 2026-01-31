@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bn1kect7h2dlp"]
+[gd_scene format=3 uid="uid://bn1kect7h2dlp"]
 
 [ext_resource type="Script" uid="uid://bq0pc2vhp35t2" path="res://Scripts/Parts/EntityGenerator.gd" id="1_k54ss"]
 [ext_resource type="PackedScene" uid="uid://c1wl10xa3jara" path="res://Scenes/Prefabs/Entities/Enemies/BulletBill.tscn" id="2_8rftf"]
@@ -9,24 +9,24 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_558ys"]
 size = Vector2(20, 2048)
 
-[node name="EntityGenerator" type="Node2D" groups=["EntityGenerators"]]
+[node name="EntityGenerator" type="Node2D" unique_id=1679083796 groups=["EntityGenerators"]]
 script = ExtResource("1_k54ss")
 entity_scene = ExtResource("2_8rftf")
 
-[node name="LevelEditorVisibleNode" type="Node2D" parent="."]
+[node name="LevelEditorVisibleNode" type="Node2D" parent="." unique_id=793544344]
 script = ExtResource("2_558ys")
 metadata/_custom_type_script = "uid://cpwloakvp672a"
 
-[node name="Sprite" type="Sprite2D" parent="LevelEditorVisibleNode"]
+[node name="Sprite" type="Sprite2D" parent="LevelEditorVisibleNode" unique_id=70570037]
 texture = ExtResource("3_8rftf")
 
-[node name="PlayerDetection" type="Area2D" parent="."]
+[node name="PlayerDetection" type="Area2D" parent="." unique_id=366929406]
 visible = false
 priority = 1
 script = ExtResource("4_wggyr")
 metadata/_custom_type_script = "uid://cnheej0sxmoxg"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetection"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetection" unique_id=1356078381]
 shape = SubResource("RectangleShape2D_558ys")
 
 [connection signal="player_entered" from="PlayerDetection" to="." method="activate" unbinds=1]

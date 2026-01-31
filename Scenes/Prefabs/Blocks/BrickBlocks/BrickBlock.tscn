@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dsa8lpl7n8ge0"]
+[gd_scene format=3 uid="uid://dsa8lpl7n8ge0"]
 
 [ext_resource type="Script" uid="uid://y53avulrmfx1" path="res://Scripts/Classes/Blocks/BrickBlock.gd" id="1_ci56s"]
 [ext_resource type="PackedScene" uid="uid://55lw62f6ol33" path="res://Scenes/Prefabs/Particles/BrickDestructionParticles.tscn" id="2_x80g6"]
@@ -14,7 +14,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_b3g5f"]
 size = Vector2(16, 16)
 
-[node name="BrickBlock" type="AnimatableBody2D" node_paths=PackedStringArray("visuals") groups=["Blocks"]]
+[node name="BrickBlock" type="AnimatableBody2D" unique_id=2000611185 node_paths=PackedStringArray("visuals") groups=["Blocks"]]
 z_index = -1
 disable_mode = 1
 collision_layer = 6
@@ -24,47 +24,47 @@ visuals = NodePath("Sprite")
 destruction_particle_scene = ExtResource("2_x80g6")
 metadata/_custom_type_script = "uid://b5ejlbl0vp1gm"
 
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=550682211]
 process_mode = 1
 script = ExtResource("3_x80g6")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Sprite" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Sprite" unique_id=1252377744 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_j224x")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("4_b3g5f")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=1421877669]
 visible = false
 shape = SubResource("RectangleShape2D_b3g5f")
 
-[node name="BlockAnimations" parent="." instance=ExtResource("3_nyd82")]
+[node name="BlockAnimations" parent="." unique_id=1526008931 instance=ExtResource("3_nyd82")]
 
-[node name="EditorPropertyExposer" type="Node" parent="."]
+[node name="EditorPropertyExposer" type="Node" parent="." unique_id=854720002]
 script = ExtResource("6_e3l5j")
 properties = Array[String](["item", "item_amount", "mushroom_if_small"])
 filters = Dictionary[String, String]({
 "item": "can_be_stored"
 })
 
-[node name="PSwitcher" type="Node" parent="."]
+[node name="PSwitcher" type="Node" parent="." unique_id=484067551]
 script = ExtResource("7_43oa6")
 new_scene = "uid://chjxyhlwohmi6"
 
-[node name="TrackJoint" type="Node" parent="."]
+[node name="TrackJoint" type="Node" parent="." unique_id=337965212]
 script = ExtResource("8_7ej1a")
 offset = Vector2(0, 0)
 disable_physics = false
 metadata/_custom_type_script = "uid://d4a7yp6e55u8t"
 
-[node name="LevelPersistance" type="Node" parent="."]
+[node name="LevelPersistance" type="Node" parent="." unique_id=2133989030]
 script = ExtResource("9_10eph")
 metadata/_custom_type_script = "uid://maqpreddu5kg"
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=2013403351]
 
 [connection signal="block_destroyed" from="." to="LevelPersistance" method="set_as_active_2"]
 [connection signal="block_emptied" from="." to="LevelPersistance" method="set_as_active"]

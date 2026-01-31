@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://0q874wkbxcrr"]
+[gd_scene format=3 uid="uid://0q874wkbxcrr"]
 
 [ext_resource type="PackedScene" uid="uid://d2ainv86lt68a" path="res://Scenes/Prefabs/Blocks/SwitchSpikeBlock.tscn" id="1_nuql5"]
 [ext_resource type="Texture2D" uid="uid://cv27sth0k3amk" path="res://Assets/Sprites/Blocks/SwitchSpike.png" id="2_s2uey"]
@@ -85,7 +85,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="SwitchSpikeBlock" instance=ExtResource("1_nuql5")]
+[node name="SwitchSpikeBlock" unique_id=1544224456 instance=ExtResource("1_nuql5")]
 active = true
 
 [node name="Sprite" parent="." index="0"]
@@ -94,5 +94,5 @@ sprite_frames = SubResource("SpriteFrames_twrdj")
 [node name="ResourceSetter" parent="Sprite" index="0"]
 resource_json = ExtResource("3_s2uey")
 
-[node name="CollisionShape2D" parent="PlayerHurtBox" index="0"]
+[node name="CollisionShape2D" parent="PlayerHurtBox" parent_id_path=PackedInt32Array(986646042) index="0" unique_id=592906935]
 disabled = false

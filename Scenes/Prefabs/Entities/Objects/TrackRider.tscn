@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dvmr3r2uub283"]
+[gd_scene format=3 uid="uid://dvmr3r2uub283"]
 
 [ext_resource type="Script" uid="uid://cpwloakvp672a" path="res://Scripts/Parts/EditorVisibleNode.gd" id="1_n5i2x"]
 [ext_resource type="Script" uid="uid://dg16ltpjq1r4r" path="res://Scripts/Classes/Entities/Objects/TrackRider.gd" id="1_xlgar"]
@@ -9,33 +9,33 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xlgar"]
 size = Vector2(12, 12)
 
-[node name="TrackRider" type="Node2D"]
+[node name="TrackRider" type="Node2D" unique_id=1110772854]
 z_index = -1
 script = ExtResource("1_xlgar")
 
-[node name="LevelEditorVisibleNode" type="Node2D" parent="."]
+[node name="LevelEditorVisibleNode" type="Node2D" parent="." unique_id=1924927371]
 script = ExtResource("1_n5i2x")
 metadata/_custom_type_script = "uid://cpwloakvp672a"
 
-[node name="Sprite" type="Sprite2D" parent="LevelEditorVisibleNode"]
+[node name="Sprite" type="Sprite2D" parent="LevelEditorVisibleNode" unique_id=1847057228]
 texture = ExtResource("2_qkkla")
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="." unique_id=1075364654]
 collision_mask = 61
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=384496311]
 shape = SubResource("RectangleShape2D_xlgar")
 
-[node name="LevelEditorToggleDetection" type="Node" parent="."]
+[node name="LevelEditorToggleDetection" type="Node" parent="." unique_id=912648138]
 script = ExtResource("4_yiejl")
 metadata/_custom_type_script = "uid://b8vmbtoaaq5nc"
 
-[node name="EditorPropertyExposer" type="Node" parent="."]
+[node name="EditorPropertyExposer" type="Node" parent="." unique_id=1057590873]
 script = ExtResource("5_yiejl")
 properties = Array[String](["speed", "direction"])
 metadata/_custom_type_script = "uid://ctfbuoxtnnl0q"
 
-[node name="Joint" type="Node2D" parent="."]
+[node name="Joint" type="Node2D" parent="." unique_id=1137975318]
 z_as_relative = false
 
 [connection signal="toggled" from="LevelEditorToggleDetection" to="." method="start"]

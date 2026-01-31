@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://4gxhnql5bjk6"]
+[gd_scene format=3 uid="uid://4gxhnql5bjk6"]
 
 [ext_resource type="Texture2D" uid="uid://50hm4xgnw8ks" path="res://Assets/Sprites/Tilesets/Tracks.png" id="1_84p4k"]
 [ext_resource type="Script" uid="uid://chhr6kgvstkod" path="res://Scripts/Classes/Entities/Objects/TrackPiece.gd" id="1_t2c2l"]
@@ -14,51 +14,51 @@ size = Vector2(12, 12)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5xalo"]
 size = Vector2(12, 12)
 
-[node name="TrackPiece" type="Node2D"]
+[node name="TrackPiece" type="Node2D" unique_id=1078949641]
 physics_interpolation_mode = 2
 script = ExtResource("1_t2c2l")
 
-[node name="Start" type="Sprite2D" parent="."]
+[node name="Start" type="Sprite2D" parent="." unique_id=1268210212]
 texture = ExtResource("2_5cc87")
 region_enabled = true
 region_rect = Rect2(64, 16, 16, 16)
 region_filter_clip_enabled = true
 
-[node name="Connect" type="Sprite2D" parent="."]
+[node name="Connect" type="Sprite2D" parent="." unique_id=1068743338]
 texture = ExtResource("2_5cc87")
 region_enabled = true
 region_rect = Rect2(64, 16, 16, 16)
 region_filter_clip_enabled = true
 
-[node name="End" type="Sprite2D" parent="."]
+[node name="End" type="Sprite2D" parent="." unique_id=897884664]
 texture = ExtResource("1_84p4k")
 hframes = 2
 frame = 1
 region_enabled = true
 region_rect = Rect2(0, 16, 32, 16)
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="." unique_id=1234442712]
 
-[node name="Shape" type="CollisionShape2D" parent="Hitbox"]
+[node name="Shape" type="CollisionShape2D" parent="Hitbox" unique_id=536253959]
 shape = SubResource("RectangleShape2D_4k6gi")
 
-[node name="PlacePreview" type="Node2D" parent="."]
+[node name="PlacePreview" type="Node2D" parent="." unique_id=1265949937]
 visible = false
 z_index = 1
 
-[node name="NW" type="Sprite2D" parent="PlacePreview"]
+[node name="NW" type="Sprite2D" parent="PlacePreview" unique_id=1003704197]
 position = Vector2(-16, -16)
 texture = ExtResource("1_84p4k")
 hframes = 2
 region_enabled = true
 region_rect = Rect2(32, 16, 32, 16)
 
-[node name="MouseArea" type="Area2D" parent="PlacePreview/NW"]
+[node name="MouseArea" type="Area2D" parent="PlacePreview/NW" unique_id=1489283453]
 
-[node name="Shape" type="CollisionShape2D" parent="PlacePreview/NW/MouseArea"]
+[node name="Shape" type="CollisionShape2D" parent="PlacePreview/NW/MouseArea" unique_id=497517343]
 shape = SubResource("RectangleShape2D_5xalo")
 
-[node name="ResourceSetterNew" type="Node" parent="PlacePreview/NW" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="PlacePreview/NW" unique_id=347367703 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_4ie33")
 node_to_affect = NodePath("..")
 property_name = "texture"
@@ -66,19 +66,19 @@ mode = 1
 resource_json = ExtResource("4_5cc87")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="N" type="Sprite2D" parent="PlacePreview"]
+[node name="N" type="Sprite2D" parent="PlacePreview" unique_id=1155676365]
 position = Vector2(0, -16)
 texture = ExtResource("1_84p4k")
 hframes = 2
 region_enabled = true
 region_rect = Rect2(32, 16, 32, 16)
 
-[node name="MouseArea" type="Area2D" parent="PlacePreview/N"]
+[node name="MouseArea" type="Area2D" parent="PlacePreview/N" unique_id=1996977607]
 
-[node name="Shape" type="CollisionShape2D" parent="PlacePreview/N/MouseArea"]
+[node name="Shape" type="CollisionShape2D" parent="PlacePreview/N/MouseArea" unique_id=194160302]
 shape = SubResource("RectangleShape2D_5xalo")
 
-[node name="ResourceSetterNew" type="Node" parent="PlacePreview/N" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="PlacePreview/N" unique_id=1863617901 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_4ie33")
 node_to_affect = NodePath("..")
 property_name = "texture"
@@ -86,19 +86,19 @@ mode = 1
 resource_json = ExtResource("4_5cc87")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="NE" type="Sprite2D" parent="PlacePreview"]
+[node name="NE" type="Sprite2D" parent="PlacePreview" unique_id=416158240]
 position = Vector2(16, -16)
 texture = ExtResource("1_84p4k")
 hframes = 2
 region_enabled = true
 region_rect = Rect2(32, 16, 32, 16)
 
-[node name="MouseArea" type="Area2D" parent="PlacePreview/NE"]
+[node name="MouseArea" type="Area2D" parent="PlacePreview/NE" unique_id=803895430]
 
-[node name="Shape" type="CollisionShape2D" parent="PlacePreview/NE/MouseArea"]
+[node name="Shape" type="CollisionShape2D" parent="PlacePreview/NE/MouseArea" unique_id=195194397]
 shape = SubResource("RectangleShape2D_5xalo")
 
-[node name="ResourceSetterNew" type="Node" parent="PlacePreview/NE" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="PlacePreview/NE" unique_id=1752511872 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_4ie33")
 node_to_affect = NodePath("..")
 property_name = "texture"
@@ -106,19 +106,19 @@ mode = 1
 resource_json = ExtResource("4_5cc87")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="E" type="Sprite2D" parent="PlacePreview"]
+[node name="E" type="Sprite2D" parent="PlacePreview" unique_id=1320043526]
 position = Vector2(16, 0)
 texture = ExtResource("1_84p4k")
 hframes = 2
 region_enabled = true
 region_rect = Rect2(32, 16, 32, 16)
 
-[node name="MouseArea" type="Area2D" parent="PlacePreview/E"]
+[node name="MouseArea" type="Area2D" parent="PlacePreview/E" unique_id=2085038154]
 
-[node name="Shape" type="CollisionShape2D" parent="PlacePreview/E/MouseArea"]
+[node name="Shape" type="CollisionShape2D" parent="PlacePreview/E/MouseArea" unique_id=1863402789]
 shape = SubResource("RectangleShape2D_5xalo")
 
-[node name="ResourceSetterNew" type="Node" parent="PlacePreview/E" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="PlacePreview/E" unique_id=747389122 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_4ie33")
 node_to_affect = NodePath("..")
 property_name = "texture"
@@ -126,19 +126,19 @@ mode = 1
 resource_json = ExtResource("4_5cc87")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="SE" type="Sprite2D" parent="PlacePreview"]
+[node name="SE" type="Sprite2D" parent="PlacePreview" unique_id=692284348]
 position = Vector2(16, 16)
 texture = ExtResource("1_84p4k")
 hframes = 2
 region_enabled = true
 region_rect = Rect2(32, 16, 32, 16)
 
-[node name="MouseArea" type="Area2D" parent="PlacePreview/SE"]
+[node name="MouseArea" type="Area2D" parent="PlacePreview/SE" unique_id=1854580495]
 
-[node name="Shape" type="CollisionShape2D" parent="PlacePreview/SE/MouseArea"]
+[node name="Shape" type="CollisionShape2D" parent="PlacePreview/SE/MouseArea" unique_id=64194727]
 shape = SubResource("RectangleShape2D_5xalo")
 
-[node name="ResourceSetterNew" type="Node" parent="PlacePreview/SE" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="PlacePreview/SE" unique_id=291315127 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_4ie33")
 node_to_affect = NodePath("..")
 property_name = "texture"
@@ -146,19 +146,19 @@ mode = 1
 resource_json = ExtResource("4_5cc87")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="S" type="Sprite2D" parent="PlacePreview"]
+[node name="S" type="Sprite2D" parent="PlacePreview" unique_id=752070968]
 position = Vector2(0, 16)
 texture = ExtResource("1_84p4k")
 hframes = 2
 region_enabled = true
 region_rect = Rect2(32, 16, 32, 16)
 
-[node name="MouseArea" type="Area2D" parent="PlacePreview/S"]
+[node name="MouseArea" type="Area2D" parent="PlacePreview/S" unique_id=1679781959]
 
-[node name="Shape" type="CollisionShape2D" parent="PlacePreview/S/MouseArea"]
+[node name="Shape" type="CollisionShape2D" parent="PlacePreview/S/MouseArea" unique_id=1402538976]
 shape = SubResource("RectangleShape2D_5xalo")
 
-[node name="ResourceSetterNew" type="Node" parent="PlacePreview/S" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="PlacePreview/S" unique_id=378588997 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_4ie33")
 node_to_affect = NodePath("..")
 property_name = "texture"
@@ -166,19 +166,19 @@ mode = 1
 resource_json = ExtResource("4_5cc87")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="SW" type="Sprite2D" parent="PlacePreview"]
+[node name="SW" type="Sprite2D" parent="PlacePreview" unique_id=1404782799]
 position = Vector2(-16, 16)
 texture = ExtResource("1_84p4k")
 hframes = 2
 region_enabled = true
 region_rect = Rect2(32, 16, 32, 16)
 
-[node name="MouseArea" type="Area2D" parent="PlacePreview/SW"]
+[node name="MouseArea" type="Area2D" parent="PlacePreview/SW" unique_id=1987989607]
 
-[node name="Shape" type="CollisionShape2D" parent="PlacePreview/SW/MouseArea"]
+[node name="Shape" type="CollisionShape2D" parent="PlacePreview/SW/MouseArea" unique_id=2122707027]
 shape = SubResource("RectangleShape2D_5xalo")
 
-[node name="ResourceSetterNew" type="Node" parent="PlacePreview/SW" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="PlacePreview/SW" unique_id=1678592075 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_4ie33")
 node_to_affect = NodePath("..")
 property_name = "texture"
@@ -186,19 +186,19 @@ mode = 1
 resource_json = ExtResource("4_5cc87")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="W" type="Sprite2D" parent="PlacePreview"]
+[node name="W" type="Sprite2D" parent="PlacePreview" unique_id=1476837088]
 position = Vector2(-16, 0)
 texture = ExtResource("1_84p4k")
 hframes = 2
 region_enabled = true
 region_rect = Rect2(32, 16, 32, 16)
 
-[node name="MouseArea" type="Area2D" parent="PlacePreview/W"]
+[node name="MouseArea" type="Area2D" parent="PlacePreview/W" unique_id=1381602086]
 
-[node name="Shape" type="CollisionShape2D" parent="PlacePreview/W/MouseArea"]
+[node name="Shape" type="CollisionShape2D" parent="PlacePreview/W/MouseArea" unique_id=1383190371]
 shape = SubResource("RectangleShape2D_5xalo")
 
-[node name="ResourceSetterNew" type="Node" parent="PlacePreview/W" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="PlacePreview/W" unique_id=1687662377 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_4ie33")
 node_to_affect = NodePath("..")
 property_name = "texture"
@@ -206,11 +206,11 @@ mode = 1
 resource_json = ExtResource("4_5cc87")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="DirectionArrow" type="Node2D" parent="."]
+[node name="DirectionArrow" type="Node2D" parent="." unique_id=1043236818]
 script = ExtResource("6_yu1nf")
 metadata/_custom_type_script = "uid://cpwloakvp672a"
 
-[node name="Arrow" type="Sprite2D" parent="DirectionArrow"]
+[node name="Arrow" type="Sprite2D" parent="DirectionArrow" unique_id=193402318]
 modulate = Color(0, 1, 1, 1)
 rotation = -1.5707964
 texture = ExtResource("7_br4q4")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bi1hb03wk001p"]
+[gd_scene format=3 uid="uid://bi1hb03wk001p"]
 
 [ext_resource type="Script" uid="uid://bpydbpyjk1mt4" path="res://Scripts/Classes/Entities/Enemy.gd" id="1_cgdwi"]
 [ext_resource type="Texture2D" uid="uid://dg7yxoq44gaae" path="res://Assets/Sprites/Enemies/Muncher.png" id="2_ad4wf"]
@@ -40,7 +40,7 @@ size = Vector2(17, 18.5)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3kryf"]
 size = Vector2(16, 16)
 
-[node name="Muncher" type="CharacterBody2D" node_paths=PackedStringArray("on_screen_enabler", "score_note_adder") groups=["Enemies"]]
+[node name="Muncher" type="CharacterBody2D" unique_id=1672045389 node_paths=PackedStringArray("on_screen_enabler", "score_note_adder") groups=["Enemies"]]
 disable_mode = 1
 collision_layer = 20
 collision_mask = 4114
@@ -50,7 +50,7 @@ score_note_adder = NodePath("ScoreNoteSpawner")
 metadata/_custom_type_script = "uid://bpydbpyjk1mt4"
 metadata/block_spawn_offset = Vector2(0, -8)
 
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=269134597]
 process_mode = 1
 sprite_frames = SubResource("SpriteFrames_6tj01")
 frame_progress = 0.602985
@@ -58,41 +58,41 @@ script = ExtResource("2_fcan1")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Sprite" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Sprite" unique_id=1841945169 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_6tj01")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_cgdwi")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=1532606945]
 shape = SubResource("RectangleShape2D_cgdwi")
 one_way_collision = true
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="." unique_id=968700125]
 
-[node name="Shape" type="CollisionShape2D" parent="Hitbox"]
+[node name="Shape" type="CollisionShape2D" parent="Hitbox" unique_id=763644245]
 position = Vector2(0, -0.75)
 shape = SubResource("RectangleShape2D_r7ue2")
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=1419097575]
 
-[node name="ScoreNoteSpawner" type="Node" parent="."]
+[node name="ScoreNoteSpawner" type="Node" parent="." unique_id=219487428]
 script = ExtResource("5_r7ue2")
 metadata/_custom_type_script = "uid://5octqlf4ohel"
 
-[node name="Movement" type="Node" parent="."]
+[node name="Movement" type="Node" parent="." unique_id=64336498]
 script = ExtResource("8_3kryf")
 
-[node name="AnimatableBody2D" type="AnimatableBody2D" parent="."]
+[node name="AnimatableBody2D" type="AnimatableBody2D" parent="." unique_id=1514152043]
 collision_layer = 33
 collision_mask = 0
 sync_to_physics = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AnimatableBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AnimatableBody2D" unique_id=1631974904]
 shape = SubResource("RectangleShape2D_3kryf")
 
-[node name="EnemyPlayerDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="EnemyPlayerDetection" type="Node" parent="." unique_id=1846672937 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("8_cgdwi")
 hitbox = NodePath("../Hitbox")
 metadata/_custom_type_script = "uid://chj8hu207lrh"

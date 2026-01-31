@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://beggmeixrin75"]
+[gd_scene format=3 uid="uid://beggmeixrin75"]
 
 [ext_resource type="Script" uid="uid://b1b6aiai213ci" path="res://Scripts/Classes/Entities/Enemies/Pokey.gd" id="1_b54ls"]
 [ext_resource type="Texture2D" uid="uid://dj46y8vhqlqjw" path="res://Assets/Sprites/Enemies/Pokey.png" id="2_8aome"]
@@ -61,7 +61,7 @@ func _process(delta: float) -> void:
 		node.play(\"Head\" if i == owner.length - 1 else \"Body\")
 "
 
-[node name="Pokey" type="CharacterBody2D" node_paths=PackedStringArray("on_screen_enabler", "score_note_adder") groups=["Enemies"]]
+[node name="Pokey" type="CharacterBody2D" unique_id=859699779 node_paths=PackedStringArray("on_screen_enabler", "score_note_adder") groups=["Enemies"]]
 collision_layer = 16
 collision_mask = 50
 script = ExtResource("1_b54ls")
@@ -69,12 +69,12 @@ on_screen_enabler = NodePath("VisibleOnScreenEnabler2D")
 score_note_adder = NodePath("ScoreNoteSpawner")
 metadata/_custom_type_script = "uid://bpydbpyjk1mt4"
 
-[node name="Parts" type="Node2D" parent="."]
+[node name="Parts" type="Node2D" parent="." unique_id=1848136765]
 unique_name_in_owner = true
 position = Vector2(0, -8)
 scale = Vector2(-1, 1)
 
-[node name="Part1" type="AnimatedSprite2D" parent="Parts"]
+[node name="Part1" type="AnimatedSprite2D" parent="Parts" unique_id=1636211906]
 sprite_frames = SubResource("SpriteFrames_86hsc")
 animation = &"Body"
 flip_h = true
@@ -82,19 +82,19 @@ script = ExtResource("3_b54ls")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Parts/Part1" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Parts/Part1" unique_id=730928265 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_bjt0v")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_rjgwh")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="GibSpawner" type="Node" parent="Parts/Part1" node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="Parts/Part1" unique_id=1316103942 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_30hxr")
 visuals = NodePath("..")
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="Part2" type="AnimatedSprite2D" parent="Parts"]
+[node name="Part2" type="AnimatedSprite2D" parent="Parts" unique_id=1570478462]
 position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_86hsc")
 animation = &"Body"
@@ -103,20 +103,20 @@ script = ExtResource("3_b54ls")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Parts/Part2" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Parts/Part2" unique_id=1356190330 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_bjt0v")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_rjgwh")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="GibSpawner" type="Node" parent="Parts/Part2" node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="Parts/Part2" unique_id=201444608 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_30hxr")
 visuals = NodePath("..")
 play_death_sfx = false
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="Part3" type="AnimatedSprite2D" parent="Parts"]
+[node name="Part3" type="AnimatedSprite2D" parent="Parts" unique_id=344079658]
 position = Vector2(0, -32)
 sprite_frames = SubResource("SpriteFrames_86hsc")
 animation = &"Head"
@@ -125,20 +125,20 @@ script = ExtResource("3_b54ls")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Parts/Part3" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Parts/Part3" unique_id=566593948 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_bjt0v")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_rjgwh")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="GibSpawner" type="Node" parent="Parts/Part3" node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="Parts/Part3" unique_id=1282201043 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_30hxr")
 visuals = NodePath("..")
 play_death_sfx = false
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="Part4" type="AnimatedSprite2D" parent="Parts"]
+[node name="Part4" type="AnimatedSprite2D" parent="Parts" unique_id=1007209757]
 visible = false
 position = Vector2(0, -48)
 sprite_frames = SubResource("SpriteFrames_86hsc")
@@ -148,20 +148,20 @@ script = ExtResource("3_b54ls")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Parts/Part4" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Parts/Part4" unique_id=2109015376 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_bjt0v")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_rjgwh")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="GibSpawner" type="Node" parent="Parts/Part4" node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="Parts/Part4" unique_id=1503926720 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_30hxr")
 visuals = NodePath("..")
 play_death_sfx = false
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="Part5" type="AnimatedSprite2D" parent="Parts"]
+[node name="Part5" type="AnimatedSprite2D" parent="Parts" unique_id=2026215609]
 visible = false
 position = Vector2(0, -64)
 sprite_frames = SubResource("SpriteFrames_86hsc")
@@ -171,20 +171,20 @@ script = ExtResource("3_b54ls")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Parts/Part5" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Parts/Part5" unique_id=1321995996 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_bjt0v")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_rjgwh")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="GibSpawner" type="Node" parent="Parts/Part5" node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="Parts/Part5" unique_id=1071014225 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_30hxr")
 visuals = NodePath("..")
 play_death_sfx = false
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="Part6" type="AnimatedSprite2D" parent="Parts"]
+[node name="Part6" type="AnimatedSprite2D" parent="Parts" unique_id=420534853]
 visible = false
 position = Vector2(0, -80)
 sprite_frames = SubResource("SpriteFrames_86hsc")
@@ -194,20 +194,20 @@ script = ExtResource("3_b54ls")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Parts/Part6" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Parts/Part6" unique_id=951186379 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_bjt0v")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_rjgwh")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="GibSpawner" type="Node" parent="Parts/Part6" node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="Parts/Part6" unique_id=341562795 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_30hxr")
 visuals = NodePath("..")
 play_death_sfx = false
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="Part7" type="AnimatedSprite2D" parent="Parts"]
+[node name="Part7" type="AnimatedSprite2D" parent="Parts" unique_id=766814348]
 visible = false
 position = Vector2(0, -96)
 sprite_frames = SubResource("SpriteFrames_86hsc")
@@ -217,20 +217,20 @@ script = ExtResource("3_b54ls")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Parts/Part7" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Parts/Part7" unique_id=1705375789 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_bjt0v")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_rjgwh")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="GibSpawner" type="Node" parent="Parts/Part7" node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="Parts/Part7" unique_id=889953627 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_30hxr")
 visuals = NodePath("..")
 play_death_sfx = false
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="Part8" type="AnimatedSprite2D" parent="Parts"]
+[node name="Part8" type="AnimatedSprite2D" parent="Parts" unique_id=128923756]
 visible = false
 position = Vector2(0, -112)
 sprite_frames = SubResource("SpriteFrames_86hsc")
@@ -240,20 +240,20 @@ script = ExtResource("3_b54ls")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Parts/Part8" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Parts/Part8" unique_id=1424172071 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_bjt0v")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_rjgwh")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="GibSpawner" type="Node" parent="Parts/Part8" node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="Parts/Part8" unique_id=1966899525 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_30hxr")
 visuals = NodePath("..")
 play_death_sfx = false
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="Part9" type="AnimatedSprite2D" parent="Parts"]
+[node name="Part9" type="AnimatedSprite2D" parent="Parts" unique_id=1219535754]
 visible = false
 position = Vector2(0, -128)
 sprite_frames = SubResource("SpriteFrames_86hsc")
@@ -263,20 +263,20 @@ script = ExtResource("3_b54ls")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Parts/Part9" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Parts/Part9" unique_id=1538094607 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_bjt0v")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_rjgwh")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="GibSpawner" type="Node" parent="Parts/Part9" node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="Parts/Part9" unique_id=179797982 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_30hxr")
 visuals = NodePath("..")
 play_death_sfx = false
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="Part10" type="AnimatedSprite2D" parent="Parts"]
+[node name="Part10" type="AnimatedSprite2D" parent="Parts" unique_id=1514852578]
 visible = false
 position = Vector2(0, -144)
 sprite_frames = SubResource("SpriteFrames_86hsc")
@@ -286,79 +286,79 @@ script = ExtResource("3_b54ls")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Parts/Part10" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Parts/Part10" unique_id=1492129486 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_bjt0v")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_rjgwh")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="GibSpawner" type="Node" parent="Parts/Part10" node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="Parts/Part10" unique_id=2049962844 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_30hxr")
 visuals = NodePath("..")
 play_death_sfx = false
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=1111807613]
 position = Vector2(0, -8)
 shape = SubResource("RectangleShape2D_rjgwh")
 
-[node name="FireballDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="FireballDetection" type="Node" parent="." unique_id=413945789 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("5_t1h12")
 hitbox = NodePath("../HeadHitbox")
 play_sfx_on_hit = true
 metadata/_custom_type_script = "uid://dri2d5jtu0fbq"
 
-[node name="FireballDetection2" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="FireballDetection2" type="Node" parent="." unique_id=602027618 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("5_t1h12")
 hitbox = NodePath("../BodyHitbox")
 play_sfx_on_hit = true
 metadata/_custom_type_script = "uid://dri2d5jtu0fbq"
 
-[node name="EnemyPlayerDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="EnemyPlayerDetection" type="Node" parent="." unique_id=1360874311 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("6_bjt0v")
 hitbox = NodePath("../BodyHitbox")
 metadata/_custom_type_script = "uid://chj8hu207lrh"
 
-[node name="ShellDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="ShellDetection" type="Node" parent="." unique_id=778785477 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("7_rjgwh")
 hitbox = NodePath("../BodyHitbox")
 metadata/_custom_type_script = "uid://bbww34oiexbx2"
 
-[node name="IcicleDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="IcicleDetection" type="Node" parent="." unique_id=557954727 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("8_1jb5g")
 hitbox = NodePath("../HeadHitbox")
 metadata/_custom_type_script = "uid://dq860i312isk"
 
-[node name="BlockBouncingDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="BlockBouncingDetection" type="Node" parent="." unique_id=2119676546 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("9_klwvr")
 detection_type = 1
 hitbox = NodePath("../BodyHitbox")
 metadata/_custom_type_script = "uid://cmg61722ktg2m"
 
-[node name="ExplosionDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="ExplosionDetection" type="Node" parent="." unique_id=1923823724 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("10_wuthq")
 hitbox = NodePath("../BodyHitbox")
 metadata/_custom_type_script = "uid://ba18grqjixded"
 
-[node name="BodyHitbox" type="Area2D" parent="."]
+[node name="BodyHitbox" type="Area2D" parent="." unique_id=1639869173]
 position = Vector2(0, -8)
 scale = Vector2(0.9, 1)
 
-[node name="Collision" type="CollisionShape2D" parent="BodyHitbox"]
+[node name="Collision" type="CollisionShape2D" parent="BodyHitbox" unique_id=1390018304]
 shape = SubResource("RectangleShape2D_rjgwh")
 
-[node name="HeadHitbox" type="Area2D" parent="."]
+[node name="HeadHitbox" type="Area2D" parent="." unique_id=1361966651]
 position = Vector2(0, -8)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HeadHitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HeadHitbox" unique_id=2146559818]
 shape = SubResource("RectangleShape2D_mpg4k")
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=1750037319]
 position = Vector2(0, -168)
 rect = Rect2(-10, 0, 20, 176)
 
-[node name="BasicEnemyMovement" type="Node" parent="." node_paths=PackedStringArray("ledge_detection_cast", "visuals")]
+[node name="BasicEnemyMovement" type="Node" parent="." unique_id=519413009 node_paths=PackedStringArray("ledge_detection_cast", "visuals")]
 script = ExtResource("11_8aome")
 ledge_detection_cast = NodePath("../LedgeDetectionCast")
 move_speed = 16
@@ -366,20 +366,20 @@ second_quest_speed = 20
 visuals = NodePath("../Parts")
 metadata/_custom_type_script = "uid://dlq6o2rg1x7in"
 
-[node name="ScoreNoteSpawner" type="Node" parent="."]
+[node name="ScoreNoteSpawner" type="Node" parent="." unique_id=2089749143]
 script = ExtResource("12_b54ls")
 add_score = true
 metadata/_custom_type_script = "uid://5octqlf4ohel"
 
-[node name="EditorPropertyExposer" type="Node" parent="."]
+[node name="EditorPropertyExposer" type="Node" parent="." unique_id=505908606]
 script = ExtResource("13_30hxr")
 properties = Array[String](["length"])
 
-[node name="PartHandler" type="Node" parent="."]
+[node name="PartHandler" type="Node" parent="." unique_id=1866034569]
 process_mode = 3
 script = SubResource("GDScript_30hxr")
 
-[node name="LedgeDetectionCast" type="RayCast2D" parent="."]
+[node name="LedgeDetectionCast" type="RayCast2D" parent="." unique_id=561035701]
 position = Vector2(-4, -5)
 target_position = Vector2(0, 8)
 collision_mask = 2

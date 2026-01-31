@@ -1,23 +1,23 @@
-[gd_scene load_steps=4 format=3 uid="uid://cwv4ic558ayun"]
+[gd_scene format=3 uid="uid://cwv4ic558ayun"]
 
 [ext_resource type="AudioStream" uid="uid://chknkfu4c0gsp" path="res://Assets/Audio/BGM/Overworld.mp3" id="1_6s2eu"]
 [ext_resource type="Script" uid="uid://db0uolj5jvlca" path="res://Scripts/Classes/Singletons/AudioManager.gd" id="1_gwo7i"]
 [ext_resource type="Script" uid="uid://cbal8ms2oe1ik" path="res://Scripts/Classes/Components/ResourceSetterNew.gd" id="3_yp3lf"]
 
-[node name="AudioManager" type="Node"]
+[node name="AudioManager" type="Node" unique_id=190663956]
 process_mode = 3
 script = ExtResource("1_gwo7i")
 
-[node name="Music" type="AudioStreamPlayer" parent="."]
+[node name="Music" type="AudioStreamPlayer" parent="." unique_id=255782791]
 process_mode = 3
 stream = ExtResource("1_6s2eu")
 bus = &"Music"
 parameters/looping = true
 
-[node name="MusicOverride" type="AudioStreamPlayer" parent="."]
+[node name="MusicOverride" type="AudioStreamPlayer" parent="." unique_id=1295412055]
 bus = &"Music"
 
-[node name="ResourceSetterNew" type="Node" parent="."]
+[node name="ResourceSetterNew" type="Node" parent="." unique_id=984687966]
 script = ExtResource("3_yp3lf")
 mode = 3
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"

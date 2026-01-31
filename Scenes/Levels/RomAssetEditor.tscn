@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://cabk5huwjo06p"]
+[gd_scene format=3 uid="uid://cabk5huwjo06p"]
 
 [ext_resource type="Script" uid="uid://bhplwsmbalqng" path="res://Scripts/UI/RomAssetEditor.gd" id="1_rj2ho"]
 [ext_resource type="Texture2D" uid="uid://biikrttwchk12" path="res://Assets/Sprites/UI/EditorGridSmall.png" id="2_ayc5w"]
@@ -16,11 +16,11 @@ font_names = PackedStringArray("Monospace")
 font_weight = 600
 font_stretch = 50
 
-[node name="RomAssetEditor" type="Node"]
+[node name="RomAssetEditor" type="Node" unique_id=667555047]
 script = ExtResource("1_rj2ho")
 metadata/_custom_type_script = "uid://bcqr1v25ygedb"
 
-[node name="FileDialog" type="FileDialog" parent="."]
+[node name="FileDialog" type="FileDialog" parent="." unique_id=891478961]
 unique_name_in_owner = true
 oversampling_override = 1.0
 title = "Open a File"
@@ -29,7 +29,7 @@ access = 2
 filters = PackedStringArray("*.nes;NES ROMs")
 use_native_dialog = true
 
-[node name="BG" type="ColorRect" parent="."]
+[node name="BG" type="ColorRect" parent="." unique_id=1962266520]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -38,7 +38,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="RomRequired" type="Label" parent="."]
+[node name="RomRequired" type="Label" parent="." unique_id=1660977379]
 unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0
@@ -56,7 +56,7 @@ provide a ROM."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Buttons" type="HBoxContainer" parent="."]
+[node name="Buttons" type="HBoxContainer" parent="." unique_id=1857712147]
 unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0
@@ -66,25 +66,25 @@ grow_vertical = 2
 theme = SubResource("Theme_0rwsj")
 alignment = 2
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="Buttons"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="Buttons" unique_id=1890022354]
 custom_minimum_size = Vector2(215, 240)
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 alignment = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Buttons/VBoxContainer2"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Buttons/VBoxContainer2" unique_id=1042532265]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 210)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ImageContainer" type="BoxContainer" parent="Buttons/VBoxContainer2/ScrollContainer"]
+[node name="ImageContainer" type="BoxContainer" parent="Buttons/VBoxContainer2/ScrollContainer" unique_id=341910893]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="ImagePreview" type="TextureRect" parent="Buttons/VBoxContainer2/ScrollContainer/ImageContainer"]
+[node name="ImagePreview" type="TextureRect" parent="Buttons/VBoxContainer2/ScrollContainer/ImageContainer" unique_id=954019084]
 unique_name_in_owner = true
 self_modulate = Color(1, 1, 1, 0.5019608)
 layout_mode = 2
@@ -93,21 +93,21 @@ size_flags_vertical = 0
 mouse_filter = 2
 stretch_mode = 2
 
-[node name="GreenPreview" type="TextureRect" parent="Buttons/VBoxContainer2/ScrollContainer/ImageContainer/ImagePreview"]
+[node name="GreenPreview" type="TextureRect" parent="Buttons/VBoxContainer2/ScrollContainer/ImageContainer/ImagePreview" unique_id=267711958]
 unique_name_in_owner = true
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 stretch_mode = 2
 
-[node name="TilesPreview" type="TextureRect" parent="Buttons/VBoxContainer2/ScrollContainer/ImageContainer/ImagePreview"]
+[node name="TilesPreview" type="TextureRect" parent="Buttons/VBoxContainer2/ScrollContainer/ImageContainer/ImagePreview" unique_id=1645874707]
 unique_name_in_owner = true
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 stretch_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="Buttons/VBoxContainer2/ScrollContainer/ImageContainer/ImagePreview/TilesPreview"]
+[node name="TextureRect" type="TextureRect" parent="Buttons/VBoxContainer2/ScrollContainer/ImageContainer/ImagePreview/TilesPreview" unique_id=1997364275]
 modulate = Color(0.50928617, 0.50928617, 0.50928617, 0.4392157)
 layout_mode = 1
 anchors_preset = 15
@@ -120,30 +120,30 @@ size_flags_vertical = 3
 texture = ExtResource("2_ayc5w")
 stretch_mode = 1
 
-[node name="Preview" type="Sprite2D" parent="Buttons/VBoxContainer2/ScrollContainer/ImageContainer/ImagePreview"]
+[node name="Preview" type="Sprite2D" parent="Buttons/VBoxContainer2/ScrollContainer/ImageContainer/ImagePreview" unique_id=2010227061]
 unique_name_in_owner = true
 centered = false
 region_enabled = true
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="JSONContainer" type="VBoxContainer" parent="Buttons/VBoxContainer2"]
+[node name="JSONContainer" type="VBoxContainer" parent="Buttons/VBoxContainer2" unique_id=687875598]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="JSONEdit" type="TextEdit" parent="Buttons/VBoxContainer2/JSONContainer"]
+[node name="JSONEdit" type="TextEdit" parent="Buttons/VBoxContainer2/JSONContainer" unique_id=1656077152]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 8
 
-[node name="Update" type="Button" parent="Buttons/VBoxContainer2/JSONContainer"]
+[node name="Update" type="Button" parent="Buttons/VBoxContainer2/JSONContainer" unique_id=1186681]
 layout_mode = 2
 focus_mode = 0
 text = "Update"
 
-[node name="CurSprite" type="Label" parent="Buttons/VBoxContainer2"]
+[node name="CurSprite" type="Label" parent="Buttons/VBoxContainer2" unique_id=1959271243]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -154,32 +154,32 @@ text = "CURRENT SPRITE:
 MARIO.PNG"
 horizontal_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Buttons"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Buttons" unique_id=2069088091]
 layout_mode = 2
 alignment = 2
 
-[node name="PaletteOverride" type="LineEdit" parent="Buttons/VBoxContainer"]
+[node name="PaletteOverride" type="LineEdit" parent="Buttons/VBoxContainer" unique_id=54679166]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 6
 placeholder_text = "Palette"
 
-[node name="LastImage" type="Button" parent="Buttons/VBoxContainer"]
+[node name="LastImage" type="Button" parent="Buttons/VBoxContainer" unique_id=1244824485]
 layout_mode = 2
 focus_mode = 0
 text = "Last"
 
-[node name="NextImage" type="Button" parent="Buttons/VBoxContainer"]
+[node name="NextImage" type="Button" parent="Buttons/VBoxContainer" unique_id=166269437]
 layout_mode = 2
 focus_mode = 0
 text = "Next"
 
-[node name="SaveImage" type="Button" parent="Buttons/VBoxContainer"]
+[node name="SaveImage" type="Button" parent="Buttons/VBoxContainer" unique_id=1948144332]
 layout_mode = 2
 focus_mode = 0
 text = "Save"
 
-[node name="JSON" type="Button" parent="Buttons/VBoxContainer"]
+[node name="JSON" type="Button" parent="Buttons/VBoxContainer" unique_id=1403589105]
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true

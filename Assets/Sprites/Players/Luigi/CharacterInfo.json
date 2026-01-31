@@ -52,7 +52,7 @@
                 "WALK_SKID": 4.17,
                 "RUN_SPEED": 160.0,
                 "GROUND_RUN_ACCEL": 3.5,
-                "RUN_SKID": 4.7,
+                "RUN_SKID": 5.9,
                 "SKID_THRESHOLD": 104.0,
                 "DECEL": 2.35,
                 "AIR_ACCEL": 3.0,

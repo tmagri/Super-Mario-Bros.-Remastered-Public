@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://d075e1520ngrv"]
+[gd_scene format=3 uid="uid://d075e1520ngrv"]
 
 [ext_resource type="Texture2D" uid="uid://c7g10h3o7nevn" path="res://Assets/Sprites/Enemies/BobOmb.png" id="1_etkhh"]
 [ext_resource type="Script" uid="uid://baie518kyfenr" path="res://Scripts/Classes/Entities/Objects/BobOmbHeld.gd" id="1_j3rs3"]
@@ -148,14 +148,14 @@ _data = {
 &"RESET": SubResource("Animation_yf454")
 }
 
-[node name="BobOmbHeld" type="CharacterBody2D"]
+[node name="BobOmbHeld" type="CharacterBody2D" unique_id=109517658]
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("1_j3rs3")
 
-[node name="ScaleJoint" type="Node2D" parent="."]
+[node name="ScaleJoint" type="Node2D" parent="." unique_id=354440979]
 
-[node name="Sprite" type="AnimatedSprite2D" parent="ScaleJoint"]
+[node name="Sprite" type="AnimatedSprite2D" parent="ScaleJoint" unique_id=1856937892]
 unique_name_in_owner = true
 position = Vector2(0, -8)
 scale = Vector2(-1, 1)
@@ -166,20 +166,18 @@ flip_h = true
 script = ExtResource("2_dd5rd")
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="ScaleJoint/Sprite" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="ScaleJoint/Sprite" unique_id=931199273 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_hgi3d")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_pn2vf")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="FlashAnimation" type="AnimationPlayer" parent="ScaleJoint/Sprite"]
+[node name="FlashAnimation" type="AnimationPlayer" parent="ScaleJoint/Sprite" unique_id=331786341]
 unique_name_in_owner = true
-libraries = {
-&"": SubResource("AnimationLibrary_tv0mo")
-}
+libraries/ = SubResource("AnimationLibrary_tv0mo")
 
-[node name="FlashSprite" type="AnimatedSprite2D" parent="ScaleJoint/Sprite"]
+[node name="FlashSprite" type="AnimatedSprite2D" parent="ScaleJoint/Sprite" unique_id=62360404]
 visible = false
 position = Vector2(-2, 0)
 scale = Vector2(-1, 1)
@@ -190,64 +188,62 @@ script = ExtResource("2_dd5rd")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="ScaleJoint/Sprite/FlashSprite" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="ScaleJoint/Sprite/FlashSprite" unique_id=534190290 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_hgi3d")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("6_pn2vf")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=1181753223]
 position = Vector2(0, -4)
 shape = SubResource("RectangleShape2D_70th7")
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="." unique_id=918305389]
 collision_mask = 5
 
-[node name="Shape" type="CollisionShape2D" parent="Hitbox"]
+[node name="Shape" type="CollisionShape2D" parent="Hitbox" unique_id=719037347]
 position = Vector2(0, -6)
 shape = SubResource("RectangleShape2D_hagok")
 
-[node name="EnemyPlayerDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="EnemyPlayerDetection" type="Node" parent="." unique_id=1943894062 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("3_5qjsg")
 hitbox = NodePath("../Hitbox")
 metadata/_custom_type_script = "uid://chj8hu207lrh"
 
-[node name="Movement" type="Node" parent="." node_paths=PackedStringArray("visuals")]
+[node name="Movement" type="Node" parent="." unique_id=2060328620 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_70th7")
 visuals = NodePath("../ScaleJoint/Sprite")
 
-[node name="FireballDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="FireballDetection" type="Node" parent="." unique_id=372481464 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("5_t0tau")
 hitbox = NodePath("../Hitbox")
 metadata/_custom_type_script = "uid://dri2d5jtu0fbq"
 
-[node name="ShellDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="ShellDetection" type="Node" parent="." unique_id=1562585741 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("6_j3rs3")
 hitbox = NodePath("../Hitbox")
 metadata/_custom_type_script = "uid://bbww34oiexbx2"
 
-[node name="BlockBouncingDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="BlockBouncingDetection" type="Node" parent="." unique_id=206751263 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("7_yf454")
 detection_type = 1
 hitbox = NodePath("../Hitbox")
 can_change_direction = true
 metadata/_custom_type_script = "uid://cmg61722ktg2m"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_ll0jm")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=192238918]
+libraries/ = SubResource("AnimationLibrary_ll0jm")
 
-[node name="GibSpawner" type="Node" parent="." node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="." unique_id=1458529382 node_paths=PackedStringArray("visuals")]
 script = ExtResource("9_yf454")
 visuals = NodePath("../ScaleJoint/Sprite")
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=587834125]
 position = Vector2(0, -8)
 
-[node name="ExplosionDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="ExplosionDetection" type="Node" parent="." unique_id=1119184995 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("13_tv0mo")
 hitbox = NodePath("../Hitbox")
 metadata/_custom_type_script = "uid://ba18grqjixded"

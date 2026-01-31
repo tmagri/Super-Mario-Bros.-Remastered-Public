@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://b526l00ycqca3"]
+[gd_scene format=3 uid="uid://b526l00ycqca3"]
 
 [ext_resource type="Script" uid="uid://dv18do583a3x0" path="res://Scripts/Classes/Entities/Enemies/Goomba.gd" id="1_ngqvx"]
 [ext_resource type="Texture2D" uid="uid://dtqjo5uvw6s0g" path="res://Assets/Sprites/Enemies/Sigebou.png" id="2_jkcbp"]
@@ -63,14 +63,14 @@ script = ExtResource("4_6tape")
 Overworld = SubResource("SpriteFrames_eg68x")
 metadata/_custom_type_script = "uid://cmvlgsjmsk0v5"
 
-[node name="Sigebou" type="CharacterBody2D" node_paths=PackedStringArray("on_screen_enabler", "score_note_adder") groups=["Enemies"]]
+[node name="Sigebou" type="CharacterBody2D" unique_id=1613369729 node_paths=PackedStringArray("on_screen_enabler", "score_note_adder") groups=["Enemies"]]
 collision_layer = 16
 collision_mask = 50
 script = ExtResource("1_ngqvx")
 on_screen_enabler = NodePath("VisibleOnScreenEnabler2D")
 score_note_adder = NodePath("ScoreNoteSpawner")
 
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=67331923]
 position = Vector2(0, -8)
 scale = Vector2(-1, 1)
 sprite_frames = SubResource("SpriteFrames_g6e7j")
@@ -80,64 +80,64 @@ flip_h = true
 script = ExtResource("3_fqftj")
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Sprite" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Sprite" unique_id=1272380141 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_bhka3")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("5_7b1wr")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=2120376532]
 visible = false
 position = Vector2(0, -6)
 shape = SubResource("RectangleShape2D_e62ic")
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="." unique_id=2053580592]
 position = Vector2(0, -8)
 
-[node name="Shape" type="CollisionShape2D" parent="Hitbox"]
+[node name="Shape" type="CollisionShape2D" parent="Hitbox" unique_id=1351796603]
 shape = SubResource("RectangleShape2D_qm5my")
 
-[node name="EnemyPlayerDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="EnemyPlayerDetection" type="Node" parent="." unique_id=124492498 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("5_bhka3")
 hitbox = NodePath("../Hitbox")
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=1733928512]
 self_modulate = Color(1, 1, 1, 0)
 position = Vector2(0, -8)
 
-[node name="GibSpawner" type="Node" parent="." node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="." unique_id=907585438 node_paths=PackedStringArray("visuals")]
 script = ExtResource("6_7b1wr")
 visuals = NodePath("../Sprite")
 gib_type = 2
 
-[node name="BlockBouncingDetection" type="Node" parent="."]
+[node name="BlockBouncingDetection" type="Node" parent="." unique_id=1517066578]
 script = ExtResource("7_g6e7j")
 
-[node name="FireballDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="FireballDetection" type="Node" parent="." unique_id=1245494110 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("8_eg68x")
 hitbox = NodePath("../Hitbox")
 play_sfx_on_hit = true
 
-[node name="ShellDetection" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="ShellDetection" type="Node" parent="." unique_id=1033395731 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("9_rqo8s")
 hitbox = NodePath("../Hitbox")
 metadata/_custom_type_script = "uid://bbww34oiexbx2"
 
-[node name="ScoreNoteSpawner" type="Node" parent="."]
+[node name="ScoreNoteSpawner" type="Node" parent="." unique_id=44861185]
 script = ExtResource("10_y7r83")
 add_score = true
 
-[node name="Node" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="Node" type="Node" parent="." unique_id=1477829642 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("11_i4utn")
 hitbox = NodePath("../Hitbox")
 
-[node name="BasicEnemyMovement" type="Node" parent="." node_paths=PackedStringArray("visuals")]
+[node name="BasicEnemyMovement" type="Node" parent="." unique_id=1217141036 node_paths=PackedStringArray("visuals")]
 script = ExtResource("12_n4k0p")
 visuals = NodePath("../Sprite")
 metadata/_custom_type_script = "uid://dlq6o2rg1x7in"
 
-[node name="ThemedToJSONConverter" type="Node" parent="."]
+[node name="ThemedToJSONConverter" type="Node" parent="." unique_id=1009115778]
 script = ExtResource("12_6tape")
 resource = SubResource("Resource_rqo8s")
 json_file_path = "res://Assets/Sprites/Enemies/Sigebou.json"

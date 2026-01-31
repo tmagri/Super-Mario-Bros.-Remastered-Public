@@ -26,6 +26,10 @@ boot_splash/use_filter=false
 config/icon="res://icon.png"
 use_discord=true
 
+[audio]
+
+buses/default_bus_layout="uid://bc65qkbkya885"
+
 [autoload]
 
 ModLoaderStore="*res://addons/mod_loader/mod_loader_store.gd"
@@ -38,6 +42,7 @@ AudioManager="*res://Scenes/Prefabs/Autoload/AudioManager.tscn"
 BetterTerrain="*res://addons/better-terrain/BetterTerrain.gd"
 GameBanana="*res://Scripts/Classes/Singletons/GameBananaManager.gd"
 SpeedrunHandler="*res://Scripts/Classes/Singletons/SpeedrunHandler.gd"
+ControllerManager="*res://Scripts/Classes/Singletons/ControllerManager.gd"
 
 [debug]
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://da31n0jwfyjo0"]
+[gd_scene format=3 uid="uid://da31n0jwfyjo0"]
 
 [ext_resource type="Script" uid="uid://cpwloakvp672a" path="res://Scripts/Parts/EditorVisibleNode.gd" id="1_4di0c"]
 [ext_resource type="Script" uid="uid://omwcucf0uvvj" path="res://Scripts/Parts/PipeGenerator.gd" id="1_amwyv"]
@@ -92,44 +92,42 @@ _data = {
 &"Up": SubResource("Animation_amwyv")
 }
 
-[node name="PipeGenerator" type="Node2D"]
+[node name="PipeGenerator" type="Node2D" unique_id=1919654331]
 script = ExtResource("1_amwyv")
 
-[node name="Icon" type="Node2D" parent="."]
+[node name="Icon" type="Node2D" parent="." unique_id=1946370215]
 z_index = 50
 z_as_relative = false
 script = ExtResource("1_4di0c")
 
-[node name="Sprite2D" type="Sprite2D" parent="Icon"]
+[node name="Sprite2D" type="Sprite2D" parent="Icon" unique_id=87091808]
 texture = ExtResource("2_amwyv")
 
-[node name="ColorRect" type="TextureRect" parent="Icon"]
+[node name="ColorRect" type="TextureRect" parent="Icon" unique_id=1269117649]
 offset_left = -16.0
 offset_bottom = 16.0
 texture = ExtResource("4_xu70c")
 
-[node name="Joint" type="RemoteTransform2D" parent="."]
+[node name="Joint" type="RemoteTransform2D" parent="." unique_id=814375767]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_6pkd4")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=89894211]
+libraries/ = SubResource("AnimationLibrary_6pkd4")
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=1705962587]
 wait_time = 3.0
 
-[node name="EditorPropertyExposer" type="Node" parent="."]
+[node name="EditorPropertyExposer" type="Node" parent="." unique_id=2038883493]
 script = ExtResource("4_f1jdk")
 properties = Array[String](["item", "direction"])
 filters = Dictionary[String, String]({
 "item": "can_pipe_gen"
 })
 
-[node name="Check" type="RayCast2D" parent="."]
+[node name="Check" type="RayCast2D" parent="." unique_id=442530122]
 target_position = Vector2(0, 16)
 collision_mask = 6
 hit_from_inside = true
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=503487301]
 
 [connection signal="timeout" from="Timer" to="." method="on_timeout"]

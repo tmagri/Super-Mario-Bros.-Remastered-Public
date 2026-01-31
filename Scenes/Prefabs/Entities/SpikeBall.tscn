@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://c7il83r4ab05d"]
+[gd_scene format=3 uid="uid://c7il83r4ab05d"]
 
 [ext_resource type="Script" uid="uid://dlq222ogmfken" path="res://Scripts/Classes/Entities/Objects/SpikeBall.gd" id="1_orfe8"]
 [ext_resource type="Texture2D" uid="uid://dtn3el3cobo42" path="res://Assets/Sprites/Items/SpikeBall.png" id="2_2juko"]
@@ -37,7 +37,7 @@ script = ExtResource("6_1nkq5")
 Overworld = SubResource("Resource_dkcgl")
 metadata/_custom_type_script = "uid://cmvlgsjmsk0v5"
 
-[node name="SpikeBall" type="CharacterBody2D"]
+[node name="SpikeBall" type="CharacterBody2D" unique_id=199846264]
 collision_layer = 32
 collision_mask = 2
 floor_constant_speed = true
@@ -45,10 +45,10 @@ floor_max_angle = 1.37881
 floor_snap_length = 8.0
 script = ExtResource("1_orfe8")
 
-[node name="Sprite" type="Sprite2D" parent="."]
+[node name="Sprite" type="Sprite2D" parent="." unique_id=349643072]
 texture = ExtResource("2_2juko")
 
-[node name="ResourceSetterNew" type="Node" parent="Sprite" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Sprite" unique_id=2108258449 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_d8yxl")
 node_to_affect = NodePath("..")
 property_name = "texture"
@@ -56,30 +56,30 @@ mode = 1
 resource_json = ExtResource("4_vgefa")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="CollisionShape" type="CollisionShape2D" parent="."]
+[node name="CollisionShape" type="CollisionShape2D" parent="." unique_id=649035122]
 shape = SubResource("CircleShape2D_wpvvo")
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="." unique_id=518027410]
 collision_mask = 5
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1937429303]
 shape = SubResource("CircleShape2D_d8yxl")
 
-[node name="BlockHitbox" type="Area2D" parent="."]
+[node name="BlockHitbox" type="Area2D" parent="." unique_id=742024939]
 collision_mask = 4
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="BlockHitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BlockHitbox" unique_id=1002177217]
 shape = SubResource("CircleShape2D_dtofu")
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=384772526]
 
-[node name="ThemedToJSONConverter" type="Node" parent="."]
+[node name="ThemedToJSONConverter" type="Node" parent="." unique_id=1344297480]
 script = ExtResource("3_a2kgo")
 resource = SubResource("Resource_os7rd")
 json_file_path = "res://Assets/Sprites/Particles/SpikeBallDestructionParticles.json"
 metadata/_custom_type_script = "uid://cqif1li7otvpl"
 
-[node name="BlockHitter" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+[node name="BlockHitter" type="Node" parent="." unique_id=1470596741 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("9_d8yxl")
 hitbox = NodePath("../BlockHitbox")
 can_break_bricks = true

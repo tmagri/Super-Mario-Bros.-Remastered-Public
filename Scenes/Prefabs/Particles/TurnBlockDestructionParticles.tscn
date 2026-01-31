@@ -1,30 +1,30 @@
-[gd_scene load_steps=3 format=3 uid="uid://fqeqexyd7j0j"]
+[gd_scene format=3 uid="uid://fqeqexyd7j0j"]
 
 [ext_resource type="PackedScene" uid="uid://cyw7kk1em8h16" path="res://Scenes/Parts/Particles/BlockDestructionParticles.tscn" id="1_yiy81"]
 [ext_resource type="JSON" path="res://Assets/Sprites/Particles/FlipBlockDestructionParticles.json" id="2_8wiln"]
 
-[node name="BlockDestructionParticles" instance=ExtResource("1_yiy81")]
+[node name="BlockDestructionParticles" unique_id=1215738524 instance=ExtResource("1_yiy81")]
 
-[node name="Sprite" parent="TL" index="0"]
+[node name="Sprite" parent="TL" parent_id_path=PackedInt32Array(2077462659) index="0" unique_id=567096500]
 region_enabled = false
 
-[node name="ResourceSetterNew" parent="TL/Sprite" index="0"]
+[node name="ResourceSetterNew" parent="TL/Sprite" index="0" unique_id=919090533]
 resource_json = ExtResource("2_8wiln")
 
-[node name="Sprite" parent="TR" index="0"]
+[node name="Sprite" parent="TR" parent_id_path=PackedInt32Array(1719786407) index="0" unique_id=2025363795]
 region_enabled = false
 
-[node name="ResourceSetterNew" parent="TR/Sprite" index="0"]
+[node name="ResourceSetterNew" parent="TR/Sprite" index="0" unique_id=535210352]
 resource_json = ExtResource("2_8wiln")
 
-[node name="Sprite" parent="BL" index="0"]
+[node name="Sprite" parent="BL" parent_id_path=PackedInt32Array(422534213) index="0" unique_id=689330152]
 region_enabled = false
 
-[node name="ResourceSetterNew" parent="BL/Sprite" index="0"]
+[node name="ResourceSetterNew" parent="BL/Sprite" index="0" unique_id=260331770]
 resource_json = ExtResource("2_8wiln")
 
-[node name="Sprite" parent="BR" index="0"]
+[node name="Sprite" parent="BR" parent_id_path=PackedInt32Array(1950783851) index="0" unique_id=871364342]
 region_enabled = false
 
-[node name="ResourceSetterNew" parent="BR/Sprite" index="0"]
+[node name="ResourceSetterNew" parent="BR/Sprite" index="0" unique_id=1126350267]
 resource_json = ExtResource("2_8wiln")

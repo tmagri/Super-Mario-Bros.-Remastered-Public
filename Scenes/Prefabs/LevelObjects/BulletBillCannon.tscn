@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bqhtste1il47d"]
+[gd_scene format=3 uid="uid://bqhtste1il47d"]
 
 [ext_resource type="Script" uid="uid://0btfo4kjnnrg" path="res://Scripts/Parts/BulletBillCannon.gd" id="1_je07o"]
 [ext_resource type="Script" uid="uid://cpwloakvp672a" path="res://Scripts/Parts/EditorVisibleNode.gd" id="2_vkq2x"]
@@ -10,27 +10,27 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mi286"]
 size = Vector2(48, 48)
 
-[node name="BulletBillCannon" type="Node2D" groups=["Enemies"]]
+[node name="BulletBillCannon" type="Node2D" unique_id=925846484 groups=["Enemies"]]
 visibility_layer = 2
 script = ExtResource("1_je07o")
 
-[node name="PlayerDetect" type="Area2D" parent="."]
+[node name="PlayerDetect" type="Area2D" parent="." unique_id=1165973969]
 
-[node name="Shape" type="CollisionShape2D" parent="PlayerDetect"]
+[node name="Shape" type="CollisionShape2D" parent="PlayerDetect" unique_id=1648418366]
 shape = SubResource("RectangleShape2D_mi286")
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=17774607]
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="Node2D" type="Node2D" parent="." unique_id=1611662164]
 script = ExtResource("2_vkq2x")
 
-[node name="Sprite2D" type="Sprite2D" parent="Node2D"]
+[node name="Sprite2D" type="Sprite2D" parent="Node2D" unique_id=1923283255]
 texture = ExtResource("3_xxt5v")
 region_enabled = true
 region_rect = Rect2(0, 0, 16, 16)
 region_filter_clip_enabled = true
 
-[node name="ResourceSetter" type="Node" parent="Node2D/Sprite2D" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetter" type="Node" parent="Node2D/Sprite2D" unique_id=619222498 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("4_guvwn")
 node_to_affect = NodePath("..")
 property_name = "texture"
@@ -38,16 +38,16 @@ mode = 1
 resource_json = ExtResource("5_84pyo")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="EditorPropertyExposer" type="Node" parent="."]
+[node name="EditorPropertyExposer" type="Node" parent="." unique_id=1787327058]
 script = ExtResource("6_guvwn")
 properties = Array[String](["item"])
 filters = Dictionary[String, String]({
 "item": "can_be_stored"
 })
 
-[node name="BlockCheck" type="Node2D" parent="."]
+[node name="BlockCheck" type="Node2D" parent="." unique_id=1355401559]
 
-[node name="RayCast2D" type="RayCast2D" parent="BlockCheck"]
+[node name="RayCast2D" type="RayCast2D" parent="BlockCheck" unique_id=510789134]
 position = Vector2(9, 0)
 target_position = Vector2(8, 0)
 collision_mask = 6

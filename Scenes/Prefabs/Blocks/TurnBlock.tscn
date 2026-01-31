@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bn651dli8j2rj"]
+[gd_scene format=3 uid="uid://bn651dli8j2rj"]
 
 [ext_resource type="Script" uid="uid://dm44kedpj4m80" path="res://Scripts/Classes/Blocks/TurnBlock.gd" id="1_keywi"]
 [ext_resource type="Texture2D" uid="uid://btt618edhifoj" path="res://Assets/Sprites/Blocks/TurnBlock.png" id="2_2j2lx"]
@@ -48,7 +48,7 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_b3g5f"]
 size = Vector2(16, 16)
 
-[node name="TurnBlock" type="AnimatableBody2D" node_paths=PackedStringArray("visuals") groups=["Blocks"]]
+[node name="TurnBlock" type="AnimatableBody2D" unique_id=246644069 node_paths=PackedStringArray("visuals") groups=["Blocks"]]
 z_index = -1
 collision_layer = 6
 collision_mask = 0
@@ -57,31 +57,31 @@ visuals = NodePath("Sprite")
 destruction_particle_scene = ExtResource("2_rlxbk")
 metadata/_custom_type_script = "uid://b5ejlbl0vp1gm"
 
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=81809848]
 sprite_frames = SubResource("SpriteFrames_rlxbk")
 speed_scale = 0.0
 
-[node name="ResourceSetterNew" type="Node" parent="Sprite" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Sprite" unique_id=1914034159 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_wx1p4")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("4_keywi")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=786190408]
 visible = false
 shape = SubResource("RectangleShape2D_b3g5f")
 
-[node name="BlockAnimations" parent="." instance=ExtResource("5_xbwt3")]
+[node name="BlockAnimations" parent="." unique_id=1707658973 instance=ExtResource("5_xbwt3")]
 
-[node name="EditorPropertyExposer" type="Node" parent="."]
+[node name="EditorPropertyExposer" type="Node" parent="." unique_id=1520619082]
 script = ExtResource("6_2qcru")
 properties = Array[String](["item", "item_amount", "mushroom_if_small"])
 filters = Dictionary[String, String]({
 "item": "can_be_stored"
 })
 
-[node name="TrackJoint" type="Node" parent="."]
+[node name="TrackJoint" type="Node" parent="." unique_id=823232292]
 script = ExtResource("7_2j2lx")
 offset = Vector2(0, 0)
 metadata/_custom_type_script = "uid://d4a7yp6e55u8t"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://d2ainv86lt68a"]
+[gd_scene format=3 uid="uid://d2ainv86lt68a"]
 
 [ext_resource type="PackedScene" uid="uid://by6ndsjhlkmbt" path="res://Scenes/Prefabs/Blocks/BooRaceBlocks/BooOnOffBlock.tscn" id="1_qn0kk"]
 [ext_resource type="Texture2D" uid="uid://cv27sth0k3amk" path="res://Assets/Sprites/Blocks/SwitchSpike.png" id="2_kmalu"]
@@ -92,7 +92,7 @@ size = Vector2(17, 18)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fe1rr"]
 size = Vector2(16, 16)
 
-[node name="SwitchSpikeBlock" node_paths=PackedStringArray("hurtbox") instance=ExtResource("1_qn0kk")]
+[node name="SwitchSpikeBlock" unique_id=232009375 node_paths=PackedStringArray("hurtbox") instance=ExtResource("1_qn0kk")]
 hurtbox = NodePath("PlayerHurtBox/CollisionShape2D")
 
 [node name="Sprite" parent="." index="0"]
@@ -106,21 +106,21 @@ resource_json = ExtResource("3_gfl4j")
 [node name="Collision" parent="." index="1"]
 visible = true
 
-[node name="PlayerHurtBox" type="Area2D" parent="." index="3"]
+[node name="PlayerHurtBox" type="Area2D" parent="." index="3" unique_id=986646042]
 script = ExtResource("3_kmalu")
 metadata/_custom_type_script = "uid://cnheej0sxmoxg"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerHurtBox" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerHurtBox" index="0" unique_id=592906935]
 shape = SubResource("RectangleShape2D_gfl4j")
 disabled = true
 
-[node name="StaticBody2D" type="StaticBody2D" parent="." index="4"]
+[node name="StaticBody2D" type="StaticBody2D" parent="." index="4" unique_id=221963165]
 
-[node name="StaticBody2D2" type="StaticBody2D" parent="." index="5"]
+[node name="StaticBody2D2" type="StaticBody2D" parent="." index="5" unique_id=1536253690]
 collision_layer = 6
 collision_mask = 0
 
-[node name="Collision" type="CollisionShape2D" parent="StaticBody2D2" index="0"]
+[node name="Collision" type="CollisionShape2D" parent="StaticBody2D2" index="0" unique_id=1780187501]
 shape = SubResource("RectangleShape2D_fe1rr")
 
 [connection signal="player_entered" from="PlayerHurtBox" to="." method="damage_player"]

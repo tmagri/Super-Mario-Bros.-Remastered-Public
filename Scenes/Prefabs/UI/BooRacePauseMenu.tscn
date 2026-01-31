@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://b4fv851s0h11f"]
+[gd_scene format=3 uid="uid://b4fv851s0h11f"]
 
 [ext_resource type="PackedScene" uid="uid://dekuqrdjmnr1m" path="res://Scenes/Prefabs/UI/BasePauseMenu.tscn" id="1_rf1ii"]
 
@@ -19,18 +19,18 @@ func quit_to_menu() -> void:
 	get_tree().paused = false
 "
 
-[node name="PauseMenu" instance=ExtResource("1_rf1ii")]
+[node name="PauseMenu" unique_id=450854188 instance=ExtResource("1_rf1ii")]
 
-[node name="Label2" parent="Control/PanelContainer/MarginContainer/VBoxContainer" index="1"]
+[node name="Label2" parent="Control/PanelContainer/MarginContainer/VBoxContainer" parent_id_path=PackedInt32Array(376157311) index="1" unique_id=1052603756]
 text = "PAUSE_RACE_RESTART"
 
-[node name="Cursor" parent="Control" index="1"]
+[node name="Cursor" parent="Control" parent_id_path=PackedInt32Array(962756235) index="1" unique_id=229494855]
 offset_left = 0.0
 offset_top = 0.0
 offset_right = 8.0
 offset_bottom = 8.0
 
-[node name="Handler" type="Node" parent="." index="2"]
+[node name="Handler" type="Node" parent="." index="2" unique_id=243417364]
 script = SubResource("GDScript_3lwy2")
 
 [connection signal="option_1_selected" from="." to="." method="close"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://4pi0tdru3c4v"]
+[gd_scene format=3 uid="uid://4pi0tdru3c4v"]
 
 [sub_resource type="GDScript" id="GDScript_ok74a"]
 script/source = "extends TilePropertyContainer
@@ -13,27 +13,27 @@ func _process(_delta: float) -> void:
 	%Value.text = str(int($HSlider.value))
 "
 
-[node name="TilePropertyIntRange" type="HBoxContainer"]
+[node name="TilePropertyIntRange" type="HBoxContainer" unique_id=306056887]
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 16.0
 grow_horizontal = 2
 script = SubResource("GDScript_ok74a")
 
-[node name="Label" type="Label" parent="."]
+[node name="Label" type="Label" parent="." unique_id=1792075304]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 2
 text = "PROPERTY_NAME:"
 uppercase = true
 
-[node name="HSlider" type="HSlider" parent="."]
+[node name="HSlider" type="HSlider" parent="." unique_id=640492730]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
 size_flags_horizontal = 10
 
-[node name="Value" type="Label" parent="HSlider"]
+[node name="Value" type="Label" parent="HSlider" unique_id=606251248]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15

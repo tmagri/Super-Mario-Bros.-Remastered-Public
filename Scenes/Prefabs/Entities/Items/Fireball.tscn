@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dutrlpq47wguf"]
+[gd_scene format=3 uid="uid://dutrlpq47wguf"]
 
 [ext_resource type="Script" uid="uid://yh4pop7sm56c" path="res://Scripts/Classes/Entities/Items/Fireball.gd" id="1_00jom"]
 [ext_resource type="Script" uid="uid://cbal8ms2oe1ik" path="res://Scripts/Classes/Components/ResourceSetterNew.gd" id="2_gfqet"]
@@ -49,38 +49,36 @@ size = Vector2(6, 8)
 [sub_resource type="CircleShape2D" id="CircleShape2D_dhdpv"]
 radius = 8.0
 
-[node name="Fireball" type="CharacterBody2D"]
+[node name="Fireball" type="CharacterBody2D" unique_id=788814141]
 collision_layer = 0
 collision_mask = 2
 slide_on_ceiling = false
 script = ExtResource("1_00jom")
 
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=2002138498]
 z_index = 2
 
-[node name="Animation" type="AnimationPlayer" parent="Sprite"]
-libraries = {
-&"": SubResource("AnimationLibrary_an01s")
-}
-autoplay = "Spin"
+[node name="Animation" type="AnimationPlayer" parent="Sprite" unique_id=1751787426]
+libraries/ = SubResource("AnimationLibrary_an01s")
+autoplay = &"Spin"
 speed_scale = 2.0
 
-[node name="ResourceSetter" type="Node" parent="Sprite" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetter" type="Node" parent="Sprite" unique_id=696934017 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("2_gfqet")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("3_an01s")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=250978860]
 shape = SubResource("RectangleShape2D_ajyso")
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="." unique_id=600288081]
 visible = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1222164353]
 shape = SubResource("CircleShape2D_dhdpv")
 
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=1955159109]
 
 [connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="queue_free"]

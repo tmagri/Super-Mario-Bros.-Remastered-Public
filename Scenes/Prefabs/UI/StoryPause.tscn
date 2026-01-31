@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://do28cwi8t6ptt"]
+[gd_scene format=3 uid="uid://do28cwi8t6ptt"]
 
 [ext_resource type="PackedScene" uid="uid://dekuqrdjmnr1m" path="res://Scenes/Prefabs/UI/BasePauseMenu.tscn" id="1_ywuni"]
 [ext_resource type="Texture2D" uid="uid://3p2l7rec0gh5" path="res://Assets/Sprites/UI/Cursor.png" id="2_r6hlk"]
@@ -33,16 +33,16 @@ func quit_to_menu() -> void:
 	$\"..\".close()
 "
 
-[node name="PauseMenu" instance=ExtResource("1_ywuni")]
+[node name="PauseMenu" unique_id=979995761 instance=ExtResource("1_ywuni")]
 
-[node name="Cursor" parent="Control" index="1"]
+[node name="Cursor" parent="Control" parent_id_path=PackedInt32Array(962756235) index="1" unique_id=229494855]
 offset_left = 8.0
 offset_top = 4.0
 offset_right = 16.0
 offset_bottom = 12.0
 texture = SubResource("AtlasTexture_eud56")
 
-[node name="Handler" type="Node" parent="." index="2"]
+[node name="Handler" type="Node" parent="." index="2" unique_id=524686551]
 script = SubResource("GDScript_r6hlk")
 
 [connection signal="option_1_selected" from="." to="." method="close"]

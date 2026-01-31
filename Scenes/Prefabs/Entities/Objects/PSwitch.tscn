@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://ciddq8ctlj453"]
+[gd_scene format=3 uid="uid://ciddq8ctlj453"]
 
 [ext_resource type="Script" uid="uid://df20kjawaoqcl" path="res://Scripts/Classes/Entities/Objects/PSwitch.gd" id="1_v4mdn"]
 [ext_resource type="Texture2D" uid="uid://y81rhybgt7kb" path="res://Assets/Sprites/Items/PSwitch.png" id="1_x602l"]
@@ -155,12 +155,12 @@ _data = {
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v4mdn"]
 size = Vector2(12, 12)
 
-[node name="PSwitch" type="CharacterBody2D"]
+[node name="PSwitch" type="CharacterBody2D" unique_id=259038877]
 collision_layer = 33
 collision_mask = 6
 script = ExtResource("1_v4mdn")
 
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=1861583666]
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_eeyhw")
 animation = &"Idle"
@@ -169,50 +169,48 @@ offset = Vector2(0, 1)
 script = ExtResource("2_6jgcs")
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Sprite" node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Sprite" unique_id=863279410 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_mnfbm")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("4_1w7q1")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="PressedCollision" type="CollisionShape2D" parent="."]
+[node name="PressedCollision" type="CollisionShape2D" parent="." unique_id=1854772281]
 position = Vector2(0, -2.5)
 shape = SubResource("RectangleShape2D_12hsl")
 one_way_collision = true
 
-[node name="PlayerDetection" type="Area2D" parent="."]
+[node name="PlayerDetection" type="Area2D" parent="." unique_id=1718023645]
 script = ExtResource("3_05vv4")
 metadata/_custom_type_script = "uid://cnheej0sxmoxg"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetection"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetection" unique_id=1414371240]
 position = Vector2(0, -13)
 shape = SubResource("RectangleShape2D_ofd0i")
 
-[node name="BasicStaticMovement" type="Node" parent="." node_paths=PackedStringArray("visuals")]
+[node name="BasicStaticMovement" type="Node" parent="." unique_id=30517503 node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_6jgcs")
 visuals = NodePath("../Sprite")
 metadata/_custom_type_script = "uid://bx6r8sjar6cwr"
 
-[node name="GibSpawner" type="Node" parent="." node_paths=PackedStringArray("visuals")]
+[node name="GibSpawner" type="Node" parent="." unique_id=1772398093 node_paths=PackedStringArray("visuals")]
 script = ExtResource("7_1w7q1")
 visuals = NodePath("../Sprite")
 gib_type = 2
 play_death_sfx = false
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_eeyhw")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=494717843]
+libraries/ = SubResource("AnimationLibrary_eeyhw")
 
-[node name="LCollision" type="CollisionShape2D" parent="."]
+[node name="LCollision" type="CollisionShape2D" parent="." unique_id=833447796]
 position = Vector2(0, -6)
 rotation = 1.5708
 shape = SubResource("RectangleShape2D_v4mdn")
 one_way_collision = true
 
-[node name="RCollision" type="CollisionShape2D" parent="."]
+[node name="RCollision" type="CollisionShape2D" parent="." unique_id=884586847]
 position = Vector2(0, -6)
 rotation = -1.5708
 shape = SubResource("RectangleShape2D_v4mdn")

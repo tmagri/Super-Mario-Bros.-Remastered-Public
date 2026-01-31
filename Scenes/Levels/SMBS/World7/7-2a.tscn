@@ -1,4 +1,4 @@
-[gd_scene load_steps=50 format=4 uid="uid://d3hqqssb721f5"]
+[gd_scene format=4 uid="uid://d3hqqssb721f5"]
 
 [ext_resource type="Script" uid="uid://bcqr1v25ygedb" path="res://Scripts/Classes/LevelClass.gd" id="1_sh56m"]
 [ext_resource type="JSON" path="res://Assets/Audio/BGM/Mountain.json" id="2_5v4dr"]
@@ -1027,7 +1027,7 @@ metadata/_better_terrain = {
 &"version": "0.2"
 }
 
-[node name="7-2a" type="Node"]
+[node name="7-2a" type="Node" unique_id=395909578]
 script = ExtResource("1_sh56m")
 music = ExtResource("2_5v4dr")
 theme = "Mountain"
@@ -1037,33 +1037,33 @@ world_id = 7
 level_id = 2
 metadata/_custom_type_script = "uid://bcqr1v25ygedb"
 
-[node name="LevelBG" parent="." instance=ExtResource("3_at23f")]
+[node name="LevelBG" parent="." unique_id=353400404 instance=ExtResource("3_at23f")]
 time_of_day = 1
 liquid_layer = 1
 
-[node name="Tiles" parent="." instance=ExtResource("4_dwe2j")]
+[node name="Tiles" parent="." unique_id=704031450 instance=ExtResource("4_dwe2j")]
 tile_map_data = PackedByteArray("AADy/wAAAAAIAAEAAADz/wAAAAAJAAEAAADy/wEAAAAIAAEAAADz/wEAAAAJAAEAAADy/wIAAAAIAAEAAADz/wIAAAAJAAEAAAAgAAAAAAABAAAAAAAhAAAAAAACAAAAAAAiAAAAAAACAAAAAAAjAAAAAAACAAAAAAAkAAAAAAACAAAAAAAlAAAAAAACAAAAAAAmAAAAAAACAAAAAAAnAAAAAAACAAAAAAAoAAAAAAACAAAAAAApAAAAAAACAAAAAAAqAAAAAAACAAAAAAArAAAAAAACAAAAAAAsAAAAAAACAAAAAAAtAAAAAAACAAAAAAAuAAAAAAACAAAAAAAvAAAAAAACAAAAAAAwAAAAAAACAAAAAAAxAAAAAAACAAAAAAAyAAAAAAACAAAAAAAzAAAAAAACAAAAAAA0AAAAAAACAAAAAAA1AAAAAAADAAAAAAAgAAEAAAABAAEAAAAhAAEAAAACAAEAAAAiAAEAAAACAAEAAAAjAAEAAAACAAEAAAAkAAEAAAACAAEAAAAlAAEAAAACAAEAAAAmAAEAAAACAAEAAAAnAAEAAAACAAEAAAAoAAEAAAACAAEAAAApAAEAAAACAAEAAAAqAAEAAAACAAEAAAArAAEAAAACAAEAAAAsAAEAAAACAAEAAAAtAAEAAAACAAEAAAAuAAEAAAACAAEAAAAvAAEAAAACAAEAAAAwAAEAAAACAAEAAAAxAAEAAAACAAEAAAAyAAEAAAACAAEAAAAzAAEAAAACAAEAAAA0AAEAAAACAAEAAAA1AAEAAAADAAEAAAAgAAIAAAABAAIAAAAhAAIAAAACAAIAAAAiAAIAAAACAAIAAAAjAAIAAAACAAIAAAAkAAIAAAACAAIAAAAlAAIAAAACAAIAAAAmAAIAAAACAAIAAAAnAAIAAAACAAIAAAAoAAIAAAACAAIAAAApAAIAAAACAAIAAAAqAAIAAAACAAIAAAArAAIAAAACAAIAAAAsAAIAAAACAAIAAAAtAAIAAAACAAIAAAAuAAIAAAACAAIAAAAvAAIAAAACAAIAAAAwAAIAAAACAAIAAAAxAAIAAAACAAIAAAAyAAIAAAACAAIAAAAzAAIAAAACAAIAAAA0AAIAAAACAAIAAAA1AAIAAAADAAIAAADy//z/AAAIAAAAAADy//3/AAAIAAEAAADz//z/AAAJAAAAAADz//3/AAAJAAEAAADy//7/AAAIAAEAAADz//7/AAAJAAEAAADy////AAAIAAEAAADz////AAAJAAEAAAD3//z/AAAEAAEAAAD4//z/AAAEAAEAAAD7//3/AAAEAAEAAAD8//3/AAAEAAEAAAD///7/AAAEAAEAAAAAAP7/AAAEAAEAAAADAP3/AAAEAAEAAAAHAPz/AAAEAAEAAAALAPv/AAAEAAEAAAAPAPr/AAAEAAEAAAATAPn/AAAEAAEAAAAWAPj/AAAEAAEAAAAXAPj/AAAEAAEAAAAgAP//AAAEAAIAAAA=")
 tile_set = SubResource("TileSet_rlwa0")
 
-[node name="Player" parent="." instance=ExtResource("5_2sfe6")]
+[node name="Player" parent="." unique_id=1482981241 instance=ExtResource("5_2sfe6")]
 position = Vector2(-208, -64)
 
-[node name="EndFlagpole" parent="." instance=ExtResource("7_giabg")]
+[node name="EndFlagpole" parent="." unique_id=1713115283 instance=ExtResource("7_giabg")]
 position = Vector2(520, 0)
 
-[node name="EndSmallCastle" parent="EndFlagpole" instance=ExtResource("8_fmns0")]
+[node name="EndSmallCastle" parent="EndFlagpole" unique_id=1184432173 instance=ExtResource("8_fmns0")]
 position = Vector2(96, 0)
 
-[node name="DropShadow" parent="." instance=ExtResource("9_5v4dr")]
+[node name="DropShadow" parent="." unique_id=444332401 instance=ExtResource("9_5v4dr")]
 
-[node name="PipeArea" parent="." instance=ExtResource("9_at23f")]
+[node name="PipeArea" parent="." unique_id=1521218809 instance=ExtResource("9_at23f")]
 position = Vector2(-208, -64)
 exit_only = true
 
-[node name="ChallengeNodes" type="Node" parent="."]
+[node name="ChallengeNodes" type="Node" parent="." unique_id=1622258072]
 script = ExtResource("36_utmuf")
 metadata/_custom_type_script = "uid://cgm3opb5qudc1"
 
-[node name="RedCoin" parent="ChallengeNodes" instance=ExtResource("37_rlwa0")]
+[node name="RedCoin" parent="ChallengeNodes" unique_id=365732384 instance=ExtResource("37_rlwa0")]
 position = Vector2(8, -104)
 id = 4

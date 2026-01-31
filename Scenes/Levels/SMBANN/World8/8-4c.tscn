@@ -1,11 +1,11 @@
-[gd_scene load_steps=5 format=4 uid="uid://ctyblojrhejbx"]
+[gd_scene format=4 uid="uid://ctyblojrhejbx"]
 
 [ext_resource type="PackedScene" uid="uid://m5tqelw47oet" path="res://Scenes/Levels/SMBLL/World8/8-4c.tscn" id="1_mgp80"]
 [ext_resource type="PackedScene" uid="uid://1rxw4k4wq3ni" path="res://Scenes/Prefabs/Entities/Enemies/PiranhaPlant.tscn" id="2_3gxa8"]
 [ext_resource type="Script" uid="uid://bjs5mlc3xrxud" path="res://Scripts/Parts/DiscoLevel.gd" id="2_c3i6d"]
 [ext_resource type="PackedScene" uid="uid://n7nskl10ouem" path="res://Scenes/Prefabs/Entities/Items/PoisonMushroom.tscn" id="4_83l7a"]
 
-[node name="8-4c" instance=ExtResource("1_mgp80")]
+[node name="8-4c" unique_id=453492547 instance=ExtResource("1_mgp80")]
 campaign = "SMBANN"
 
 [node name="Tiles" parent="." index="1"]
@@ -20,13 +20,13 @@ position = Vector2(64, 216)
 [node name="RedPirannhaPlant3" parent="Enemies" index="2"]
 position = Vector2(320, 216)
 
-[node name="PirannhaPlant" parent="Enemies" index="8" instance=ExtResource("2_3gxa8")]
+[node name="PirannhaPlant" parent="Enemies" index="8" unique_id=1406201889 instance=ExtResource("2_3gxa8")]
 position = Vector2(-192, -32)
 
-[node name="PirannhaPlant2" parent="Enemies" index="9" instance=ExtResource("2_3gxa8")]
+[node name="PirannhaPlant2" parent="Enemies" index="9" unique_id=1067808054 instance=ExtResource("2_3gxa8")]
 position = Vector2(64, -32)
 
-[node name="PirannhaPlant3" parent="Enemies" index="10" instance=ExtResource("2_3gxa8")]
+[node name="PirannhaPlant3" parent="Enemies" index="10" unique_id=1847302400 instance=ExtResource("2_3gxa8")]
 position = Vector2(320, -32)
 
 [node name="PipeArea2" parent="." index="9"]
@@ -35,7 +35,7 @@ target_level = "uid://bq355ycinib3p"
 [node name="PipeArea3" parent="." index="10"]
 target_level = "uid://bmk3afhnnr7m5"
 
-[node name="DiscoLevel" type="Node" parent="." index="16"]
+[node name="DiscoLevel" type="Node" parent="." index="16" unique_id=2146585415]
 script = ExtResource("2_c3i6d")
 combo_meter_rate = 0.5
 metadata/_custom_type_script = "uid://bjs5mlc3xrxud"
@@ -50,13 +50,13 @@ item = ExtResource("4_83l7a")
 [connection signal="player_block_hit" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock/BlockAnimations" method="bounce_block" unbinds=1]
 [connection signal="shell_block_hit" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock" method="dispense_item" unbinds=1]
 [connection signal="shell_block_hit" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock/BlockAnimations" method="bounce_block" unbinds=1]
-[connection signal="block_destroyed" from="Tiles/@AnimatableBody2D@83999" to="Tiles/@AnimatableBody2D@83999/LevelPersistance" method="set_as_active_2"]
-[connection signal="block_emptied" from="Tiles/@AnimatableBody2D@83999" to="Tiles/@AnimatableBody2D@83999/LevelPersistance" method="set_as_active"]
-[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@83999" to="Tiles/@AnimatableBody2D@83999" method="player_mushroom_check"]
-[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@83999" to="Tiles/@AnimatableBody2D@83999" method="dispense_item" unbinds=1]
-[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@83999" to="Tiles/@AnimatableBody2D@83999/BlockAnimations" method="bounce_block" unbinds=1]
-[connection signal="shell_block_hit" from="Tiles/@AnimatableBody2D@83999" to="Tiles/@AnimatableBody2D@83999" method="dispense_item" unbinds=1]
-[connection signal="shell_block_hit" from="Tiles/@AnimatableBody2D@83999" to="Tiles/@AnimatableBody2D@83999/BlockAnimations" method="bounce_block" unbinds=1]
+[connection signal="block_destroyed" from="Tiles/@AnimatableBody2D@112218" to="Tiles/@AnimatableBody2D@112218/LevelPersistance" method="set_as_active_2"]
+[connection signal="block_emptied" from="Tiles/@AnimatableBody2D@112218" to="Tiles/@AnimatableBody2D@112218/LevelPersistance" method="set_as_active"]
+[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@112218" to="Tiles/@AnimatableBody2D@112218" method="player_mushroom_check"]
+[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@112218" to="Tiles/@AnimatableBody2D@112218" method="dispense_item" unbinds=1]
+[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@112218" to="Tiles/@AnimatableBody2D@112218/BlockAnimations" method="bounce_block" unbinds=1]
+[connection signal="shell_block_hit" from="Tiles/@AnimatableBody2D@112218" to="Tiles/@AnimatableBody2D@112218" method="dispense_item" unbinds=1]
+[connection signal="shell_block_hit" from="Tiles/@AnimatableBody2D@112218" to="Tiles/@AnimatableBody2D@112218/BlockAnimations" method="bounce_block" unbinds=1]
 [connection signal="block_destroyed" from="Tiles/InvisibleQuestionBlock" to="Tiles/InvisibleQuestionBlock/LevelPersistance" method="set_as_active_2"]
 [connection signal="block_emptied" from="Tiles/InvisibleQuestionBlock" to="Tiles/InvisibleQuestionBlock/LevelPersistance" method="set_as_active"]
 [connection signal="player_block_hit" from="Tiles/InvisibleQuestionBlock" to="Tiles/InvisibleQuestionBlock" method="player_mushroom_check"]
@@ -65,11 +65,11 @@ item = ExtResource("4_83l7a")
 [connection signal="shell_block_hit" from="Tiles/InvisibleQuestionBlock" to="Tiles/InvisibleQuestionBlock" method="dispense_item" unbinds=1]
 [connection signal="shell_block_hit" from="Tiles/InvisibleQuestionBlock" to="Tiles/InvisibleQuestionBlock/BlockAnimations" method="bounce_block" unbinds=1]
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@84000" to="Tiles/@Node2D@84000/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@84001" to="Tiles/@Node2D@84001/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@84002" to="Tiles/@Node2D@84002/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@84003" to="Tiles/@Node2D@84003/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@84004" to="Tiles/@Node2D@84004/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@84005" to="Tiles/@Node2D@84005/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@84006" to="Tiles/@Node2D@84006/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@84007" to="Tiles/@Node2D@84007/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@112219" to="Tiles/@Node2D@112219/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@112220" to="Tiles/@Node2D@112220/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@112221" to="Tiles/@Node2D@112221/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@112222" to="Tiles/@Node2D@112222/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@112223" to="Tiles/@Node2D@112223/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@112224" to="Tiles/@Node2D@112224/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@112225" to="Tiles/@Node2D@112225/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@112226" to="Tiles/@Node2D@112226/LevelPersistance" method="set_as_active"]

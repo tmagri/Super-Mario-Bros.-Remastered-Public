@@ -317,7 +317,7 @@ func apply_physics_style(physics_type: int = 0) -> void:
 	print("Successfully applied physics style from: ", json_path)
 
 
-func apply_character_physics(apply: bool) -> void:
+func apply_character_physics(apply: bool = true) -> void:
 	# Load the JSON file
 	var path = "res://Assets/Sprites/Players/" + character + "/CharacterInfo.json"
 	if int(Global.player_characters[player_id]) > 3:

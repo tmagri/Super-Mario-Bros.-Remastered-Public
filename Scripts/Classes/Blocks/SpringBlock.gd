@@ -3,7 +3,7 @@ extends StaticBody2D
 @export var is_super := false
 
 func on_player_entered(player: Player) -> void:
-	player.enemy_bounce_off(false)
+	player.enemy_bounce_off(self, false)
 	play_animation()
 	AudioManager.play_sfx("spring", global_position)
 	if is_super:

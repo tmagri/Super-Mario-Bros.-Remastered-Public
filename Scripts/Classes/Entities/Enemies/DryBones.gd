@@ -8,7 +8,7 @@ func _physics_process(_delta: float) -> void:
 	$Sprite.scale.x = direction
 
 func stomped_on(player: Player) -> void:
-	player.enemy_bounce_off(false)
+	player.enemy_bounce_off(self, false)
 	$Sprite.play("Crumble")
 	AudioManager.play_sfx("dry_bones_crumble", global_position)
 	$BasicEnemyMovement.can_move = false

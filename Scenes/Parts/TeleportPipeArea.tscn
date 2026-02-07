@@ -39,7 +39,7 @@ update_scale = false
 position = Vector2(0, 32)
 
 [node name="Node2D" type="Node2D" parent="." unique_id=19888750]
-position = Vector2(0, 8)
+position = Vector2(-3.496911e-07, 8)
 script = ExtResource("3_40l7q")
 
 [node name="CenterContainer" type="CenterContainer" parent="Node2D" unique_id=1421869085]

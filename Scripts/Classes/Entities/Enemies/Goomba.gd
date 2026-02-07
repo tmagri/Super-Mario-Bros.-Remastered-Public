@@ -18,7 +18,7 @@ func stomped_on(player: Player) -> void:
 	can_move = false
 	DiscoLevel.combo_amount += 1
 	$BasicEnemyMovement.can_move = false
-	player.enemy_bounce_off()
+	player.enemy_bounce_off(self)
 	$Sprite.play("Stomped")
 	$Hitbox.queue_free()
 	await get_tree().create_timer(0.5, false).timeout

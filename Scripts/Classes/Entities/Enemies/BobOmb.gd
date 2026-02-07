@@ -3,7 +3,7 @@ extends Enemy
 @export var held_scene: PackedScene = null
 
 func stomped_on(player: Player) -> void:
-	player.enemy_bounce_off()
+	player.enemy_bounce_off(self)
 	AudioManager.play_sfx("enemy_stomp", global_position)
 	summon_held()
 

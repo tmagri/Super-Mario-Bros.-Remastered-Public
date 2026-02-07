@@ -264,20 +264,27 @@ func _ready() -> void:
 	character = CHARACTERS[int(Global.player_characters[player_id])]
 	Global.can_time_tick = true
 	var physics_style = Settings.file.difficulty.get("physics_style", 2);
-	if [Global.GameMode.BOO_RACE, Global.GameMode.MARATHON, Global.GameMode.MARATHON_PRACTICE, Global.GameMode.CUSTOM_LEVEL].has(Global.current_game_mode) == false:
+	if [Global.GameMode.BOO_RACE, Global.GameMode.MARATHON, Global.GameMode.MARATHON_PRACTICE, Global.GameMode.CUSTOM_LEVEL, Global.GameMode.MARIO_35].has(Global.current_game_mode) == false:
 		classic_physics = physics_style == 1 or physics_style == 2; #Is Classic Engine
 		classic_plus_enabled = physics_style == 2; #Is Classic Plus
 		apply_physics_style(physics_style)
 		apply_character_physics(true)
 	else:
-		physics_style = 0  #Force Remastered
-		classic_physics = false
-		classic_plus_enabled = false
-		apply_physics_style(physics_style)
-		if Global.current_game_mode == Global.GameMode.CUSTOM_LEVEL:
-			apply_character_physics(true)
+		if Global.current_game_mode == Global.GameMode.MARIO_35:
+			physics_style = Mario35Handler.physics_mode
+			classic_physics = physics_style == 1
+			classic_plus_enabled = false # Usually MARIO 35 is strictly Classic or Remastered
+			apply_physics_style(physics_style)
+			apply_character_physics(false) # Force default physics for stability/fairness
 		else:
-			apply_character_physics(false)
+			physics_style = 0  #Force Remastered
+			classic_physics = false
+			classic_plus_enabled = false
+			apply_physics_style(physics_style)
+			if Global.current_game_mode == Global.GameMode.CUSTOM_LEVEL:
+				apply_character_physics(true)
+			else:
+				apply_character_physics(false)
 	apply_character_sfx_map()
 	Global.level_theme_changed.connect(apply_character_sfx_map)
 	Global.level_theme_changed.connect(apply_physics_style)
@@ -596,25 +603,36 @@ func is_actually_on_ceiling() -> bool:
 				return true
 	return false
 
-func enemy_bounce_off(add_combo := true, award_score := true) -> void:
+func enemy_bounce_off(enemy: Node = null, add_combo := true, award_score := true) -> void:
 	if add_combo:
-		add_stomp_combo(award_score)
-	jump_cancelled = not Global.player_action_pressed("jump", player_id)
-	await get_tree().physics_frame
-
-	if classic_physics:
-		set_classic_jump_parameters(true)
-	elif Global.player_action_pressed("jump", player_id):
-		velocity.y = sign(gravity_vector.y) * -BOUNCE_JUMP_HEIGHT
-		gravity = JUMP_GRAVITY
-		has_jumped = true
-	else:
+		add_stomp_combo(enemy, award_score)
+	if classic_physics and not classic_plus_enabled:
+		# Classic physics uses a single initial bounce velocity.
 		velocity.y = sign(gravity_vector.y) * -BOUNCE_HEIGHT
-		# Gravity becomes FALL_GRAVITY immediately after bounce if jump not held
-		gravity = FALL_GRAVITY
+	else:
+		# This block handles Remastered and Classic Plus physics
+		jump_cancelled = not Global.player_action_pressed("jump", player_id)
+		await get_tree().physics_frame
+		if Global.player_action_pressed("jump", player_id):
+			velocity.y = sign(gravity_vector.y) * -BOUNCE_JUMP_HEIGHT
+			# Determine correct gravity based on initial jump speed for Classic+
+			gravity = JUMP_GRAVITY
+			has_jumped = true
+		else:
+			velocity.y = sign(gravity_vector.y) * -BOUNCE_HEIGHT
+			# Gravity becomes FALL_GRAVITY immediately after bounce if jump not held
+			gravity = FALL_GRAVITY
 
 
-func add_stomp_combo(award_score := true) -> void:
+func add_stomp_combo(enemy: Node = null, award_score := true) -> void:
+	# Award time in Mario 35 mode
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		var reward = Mario35Handler.COMBO_TIME_REWARDS[clampi(stomp_combo, 0, Mario35Handler.COMBO_TIME_REWARDS.size() - 1)]
+		if enemy:
+			Mario35Handler.on_enemy_killed(enemy, reward)
+		else:
+			Mario35Handler.add_time(reward)
+
 	if stomp_combo >= 10:
 		if award_score:
 			if [Global.GameMode.CHALLENGE, Global.GameMode.BOO_RACE].has(Global.current_game_mode) or Settings.file.difficulty.inf_lives:
@@ -789,6 +807,8 @@ func die(pit := false) -> void:
 	sprite.process_mode = Node.PROCESS_MODE_ALWAYS
 	state_machine.transition_to("Dead", {"Pit": pit})
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.on_local_player_death()
 	get_tree().paused = true
 	Level.can_set_time = true
 	Level.first_load = true
@@ -1120,7 +1140,7 @@ func on_timeout() -> void:
 func on_area_entered(area: Area2D) -> void:
 	if area.owner is Player and area.owner != self:
 		if area.owner.velocity.y > 0 and area.owner.is_actually_on_floor() == false:
-			area.owner.enemy_bounce_off(false)
+			area.owner.enemy_bounce_off(self, false)
 			velocity.y = 50
 			AudioManager.play_sfx("bump", global_position)
 

@@ -21,7 +21,7 @@ func stomped_on(player: Player) -> void:
 	AudioManager.play_sfx("enemy_stomp", global_position)
 	$BasicEnemyMovement.can_move = false
 	Global.combo_amount += 1
-	player.enemy_bounce_off()
+	player.enemy_bounce_off(self)
 	$Sprite.play("Stomped")
 	$Hitbox.queue_free()
 	await get_tree().create_timer(0.5, false).timeout

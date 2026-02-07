@@ -9,9 +9,9 @@ signal killed(direction: int)
 
 var direction := -1
 
-func _check_br_kill() -> void:
+func _check_br_kill(time_reward: int = 2) -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
-		Mario35Handler.on_enemy_killed(self)
+		Mario35Handler.on_enemy_killed(self, time_reward)
 
 func damage_player(player: Player) -> void:
 	player.damage()
@@ -21,7 +21,7 @@ func apply_enemy_gravity(delta: float) -> void:
 	velocity.y = clamp(velocity.y, -INF, Global.entity_max_fall_speed)
 
 func die() -> void:
-	_check_br_kill()
+	_check_br_kill(2)
 	killed.emit([-1, 1].pick_random())
 	DiscoLevel.combo_amount += 1
 	DiscoLevel.combo_meter = 100
@@ -31,7 +31,10 @@ func die_from_object(obj: Node2D) -> void:
 	var dir = sign(global_position.x - obj.global_position.x)
 	if dir == 0:
 		dir = [-1, 1].pick_random()
-	_check_br_kill()
+	
+	# If killed by a shell or player stomp, time is handled by the attacker to allow combos
+	var reward = 0 if (obj is Shell or obj is Player) else 2
+	_check_br_kill(reward)
 	DiscoLevel.combo_amount += 1
 	killed.emit(dir)
 	queue_free()

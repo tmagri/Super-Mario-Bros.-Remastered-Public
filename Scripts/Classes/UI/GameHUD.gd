@@ -18,7 +18,9 @@ func _ready() -> void:
 		Mario35Handler.target_changed.connect(update_br_target)
 		Mario35Handler.incoming_enemy.connect(add_incoming_enemy_icon)
 		Mario35Handler.incoming_item_roulette.connect(show_item_roulette)
+		Mario35Handler.game_over.connect(_on_game_over)
 		update_br_target(Mario35Handler.current_target_mode)
+		update_br_leaderboard()
 
 func _process(delta: float) -> void:
 	if not get_tree().paused and $Timer.paused:
@@ -39,6 +41,13 @@ func handle_main_hud() -> void:
 		
 		# Watch out warning
 		%WarningLabel.visible = Mario35Handler.enemy_queue.size() >= 3
+		
+		# Spectating status
+		var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
+		if my_id in Mario35Handler.player_statuses:
+			if not Mario35Handler.player_statuses[my_id].alive:
+				%BRTimer.text = "ELIMINATED"
+				%BRTimer.modulate = Color.GRAY
 		
 		return
 	%BattleRoyaleHUD.visible = false
@@ -218,7 +227,7 @@ func handle_speedrun_timer() -> void:
 	%ModernPB.modulate = %PB.modulate
 
 func handle_pausing() -> void:
-	if get_tree().get_first_node_in_group("Players") != null and Global.can_pause and (Global.current_game_mode != Global.GameMode.LEVEL_EDITOR):
+	if get_tree().get_first_node_in_group("Players") != null and Global.can_pause and (Global.current_game_mode != Global.GameMode.LEVEL_EDITOR) and (Global.current_game_mode != Global.GameMode.MARIO_35):
 		if get_tree().paused == false and Global.game_paused == false:
 			if Input.is_action_just_pressed("pause"):
 				activate_pause_menu()
@@ -321,3 +330,58 @@ func show_item_roulette() -> void:
 	label.text = "ITEM USED!"
 	await get_tree().create_timer(1.0).timeout
 	label.queue_free()
+
+func update_br_leaderboard() -> void:
+	# Clear existing
+	for child in %IncomingBar.get_parent().get_children():
+		if child.name.begins_with("LRB_"):
+			child.queue_free()
+	
+	# Create a simple vertical list of players
+	var statuses = Mario35Handler.player_statuses
+	var sorted_ids = statuses.keys()
+	sorted_ids.sort_custom(func(a, b):
+		if statuses[a].alive != statuses[b].alive:
+			return statuses[a].alive
+		return statuses[a].rank < statuses[b].rank
+	)
+	
+	var y_offset = 64
+	for id in sorted_ids:
+		var s = statuses[id]
+		var label = Label.new()
+		label.name = "LRB_" + str(id)
+		label.text = "%s : %s" % [s.name, "ALIVE" if s.alive else "RANK %d" % s.rank]
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		label.add_theme_font_size_override("font_size", 8)
+		label.add_theme_color_override("font_color", Color.WHITE if s.alive else Color.DARK_GRAY)
+		label.position = Vector2(400 - 80, y_offset) # Position on right side
+		%BattleRoyaleHUD.add_child(label)
+		y_offset += 12
+
+func _on_game_over(winner_id: int) -> void:
+	update_br_leaderboard()
+	
+	var message = "GAME OVER"
+	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
+	if winner_id == my_id:
+		message = "VICTORY!"
+	elif winner_id != 0:
+		var winner_name = Mario35Handler.player_statuses.get(winner_id, {}).get("name", "Unknown")
+		message = "WINNER: " + winner_name
+		
+	var label = Label.new()
+	label.text = message
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 32)
+	label.add_theme_color_override("font_outline_color", Color.BLACK)
+	label.add_theme_constant_override("outline_size", 8)
+	label.position = Vector2(0, 100)
+	label.size = Vector2(400, 32)
+	%BattleRoyaleHUD.add_child(label)
+	
+	# Play victory/loss sfx
+	if winner_id == my_id:
+		AudioManager.play_global_sfx("level_clear")
+	else:
+		AudioManager.play_global_sfx("game_over")

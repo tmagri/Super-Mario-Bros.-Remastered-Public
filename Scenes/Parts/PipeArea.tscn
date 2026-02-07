@@ -44,7 +44,7 @@ position = Vector2(0, 32)
 [node name="Node2D" type="Node2D" parent="." unique_id=487090647]
 z_index = 50
 z_as_relative = false
-position = Vector2(0, 8)
+position = Vector2(-3.496911e-07, 8)
 
 [node name="CenterContainer" type="CenterContainer" parent="Node2D" unique_id=1081718232]
 use_top_left = true

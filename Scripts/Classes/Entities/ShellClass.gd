@@ -50,7 +50,7 @@ func on_player_stomped_on(stomped_player: Player) -> void:
 		DiscoLevel.combo_meter += 10
 		moving = false
 		AudioManager.play_sfx("enemy_stomp", global_position)
-		stomped_player.enemy_bounce_off(true, moving_time > 0.1)
+		stomped_player.enemy_bounce_off(self, true, moving_time > 0.1)
 
 func block_bounced(_block: Block) -> void:
 	velocity.y = -200
@@ -80,8 +80,8 @@ func award_score(award_level: int) -> void:
 			$ScoreNoteSpawner.spawn_one_up_note()
 	else:
 		if Global.current_game_mode == Global.GameMode.MARIO_35:
-			# In BR, add coins for combo steps?
-			pass
+			var reward = Mario35Handler.COMBO_TIME_REWARDS[clampi(award_level, 0, Mario35Handler.COMBO_TIME_REWARDS.size() - 1)]
+			Mario35Handler.add_time(reward)
 		$ScoreNoteSpawner.spawn_note(COMBO_VALS[award_level])
 		
 func get_kick_award(hit_player: Player) -> int:
@@ -149,7 +149,7 @@ func kick(hit_player: Player, is_stomp: bool = false) -> void:
 		# Staircase Glitch: Apply "Nudge" to the SHELL
 		# The shell moves slower (speed=20), allowing the player to land and stomp it again.
 		nudging = true
-		hit_player.enemy_bounce_off() 
+		hit_player.enemy_bounce_off(self) 
 	else:
 		# Normal Kick
 		nudging = false

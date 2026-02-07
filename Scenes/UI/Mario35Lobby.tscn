@@ -57,71 +57,91 @@ offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="BG/Border/Content" unique_id=1528656957]
+[node name="ScrollContainer" type="ScrollContainer" parent="BG/Border/Content" unique_id=999999]
 layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -215.0
 grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/separation = 5
+grow_vertical = 2
+follow_focus = true
+horizontal_scroll_mode = 0
 
-[node name="Title" type="Label" parent="BG/Border/Content/VBoxContainer" unique_id=1244503449]
+[node name="VBoxContainer" type="VBoxContainer" parent="BG/Border/Content/ScrollContainer" unique_id=1528656957]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 5
+alignment = 1
+
+[node name="Title" type="Label" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=1244503449]
 layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "BATTLE ROYALE"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="BG/Border/Content/VBoxContainer" unique_id=299677368]
+[node name="HSeparator" type="HSeparator" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=299677368]
 layout_mode = 2
 
-[node name="NameInput" type="LineEdit" parent="BG/Border/Content/VBoxContainer" unique_id=151462485]
+[node name="NameInput" type="LineEdit" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=151462485]
 layout_mode = 2
 placeholder_text = "ENTER NAME"
 alignment = 1
 
-[node name="IPInput" type="LineEdit" parent="BG/Border/Content/VBoxContainer" unique_id=205563528]
+[node name="IPInput" type="LineEdit" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=205563528]
 layout_mode = 2
 text = "127.0.0.1"
 placeholder_text = "HOST IP"
 alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="BG/Border/Content/VBoxContainer" unique_id=2002901664]
+[node name="RoomKeyInput" type="LineEdit" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=1711149245]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "ROOM KEY (OPTIONAL)"
+alignment = 1
+max_length = 8
+context_menu_enabled = false
+shortcut_keys_enabled = false
+middle_mouse_paste_enabled = false
+selecting_enabled = false
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+virtual_keyboard_enabled = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=2002901664]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="HostButton" type="Button" parent="BG/Border/Content/VBoxContainer/HBoxContainer" unique_id=1717025384]
+[node name="HostButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1717025384]
 layout_mode = 2
 text = "HOST"
 
-[node name="JoinButton" type="Button" parent="BG/Border/Content/VBoxContainer/HBoxContainer" unique_id=1393456898]
+[node name="JoinButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1393456898]
 layout_mode = 2
 text = "JOIN"
 
-[node name="StatusLabel" type="Label" parent="BG/Border/Content/VBoxContainer" unique_id=1452149734]
+[node name="StatusLabel" type="Label" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=1452149734]
 layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 horizontal_alignment = 1
 
-[node name="PlayerList" type="ItemList" parent="BG/Border/Content/VBoxContainer" unique_id=361297900]
+[node name="PlayerList" type="ItemList" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=361297900]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 
-[node name="StartButton" type="Button" parent="BG/Border/Content/VBoxContainer" unique_id=910970228]
+[node name="StartButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=910970228]
 visible = false
 layout_mode = 2
 text = "START GAME"
 
-[node name="SettingsButton" type="Button" parent="BG/Border/Content/VBoxContainer" unique_id=888888888]
+[node name="SettingsButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=888888888]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 text = "SETTINGS"
 
-[node name="BackButton" type="Button" parent="BG/Border/Content/VBoxContainer" unique_id=1238572278]
+[node name="BackButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=1238572278]
 layout_mode = 2
 text = "BACK"
 
@@ -141,75 +161,110 @@ offset_bottom = 120.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="SettingsPopup"]
+[node name="VBox" type="VBoxContainer" parent="SettingsPopup" unique_id=2012578718]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="SettingsPopup/VBox"]
+[node name="Title" type="Label" parent="SettingsPopup/VBox" unique_id=97681201]
 layout_mode = 2
 text = "ROOM SETTINGS"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="SettingsPopup/VBox"]
+[node name="HSeparator" type="HSeparator" parent="SettingsPopup/VBox" unique_id=1694212309]
 layout_mode = 2
 
-[node name="Grid" type="GridContainer" parent="SettingsPopup/VBox"]
+[node name="Grid" type="GridContainer" parent="SettingsPopup/VBox" unique_id=2083791130]
 layout_mode = 2
 columns = 2
 
-[node name="LabelTime" type="Label" parent="SettingsPopup/VBox/Grid"]
+[node name="LabelTime" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=1882600765]
 layout_mode = 2
-text = "START TIME"
+text = "START"
 
-[node name="StartTimeInput" type="SpinBox" parent="SettingsPopup/VBox/Grid"]
+[node name="StartTimeInput" type="SpinBox" parent="SettingsPopup/VBox/Grid" unique_id=165352490]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 10.0
 max_value = 400.0
 value = 35.0
 
-[node name="LabelMax" type="Label" parent="SettingsPopup/VBox/Grid"]
+[node name="LabelMax" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=277431956]
 layout_mode = 2
-text = "MAX TIME"
+text = "MAX"
 
-[node name="MaxTimeInput" type="SpinBox" parent="SettingsPopup/VBox/Grid"]
+[node name="MaxTimeInput" type="SpinBox" parent="SettingsPopup/VBox/Grid" unique_id=262424150]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 30.0
 max_value = 999.0
 value = 400.0
 
-[node name="LabelItems" type="Label" parent="SettingsPopup/VBox/Grid"]
+[node name="LabelItems" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=623987702]
 layout_mode = 2
 text = "ITEMS"
 
-[node name="ItemOption" type="OptionButton" parent="SettingsPopup/VBox/Grid"]
+[node name="ItemOption" type="OptionButton" parent="SettingsPopup/VBox/Grid" unique_id=1576485282]
 unique_name_in_owner = true
 layout_mode = 2
-item_count = 2
 selected = 0
-popup/item_0/text = "ALL SMB1"
+item_count = 3
+popup/item_0/text = "STANDARD"
 popup/item_0/id = 0
-popup/item_1/text = "LIMITED"
+popup/item_1/text = "CLASSIC"
 popup/item_1/id = 1
+popup/item_2/text = "REMASTERED"
+popup/item_2/id = 2
 
-[node name="LabelLevels" type="Label" parent="SettingsPopup/VBox/Grid"]
+[node name="LabelLevels" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=1247002715]
 layout_mode = 2
 text = "LEVELS"
 
-[node name="LevelOption" type="OptionButton" parent="SettingsPopup/VBox/Grid"]
+[node name="LevelOption" type="OptionButton" parent="SettingsPopup/VBox/Grid" unique_id=15434008]
 unique_name_in_owner = true
 layout_mode = 2
-item_count = 2
 selected = 0
+item_count = 2
 popup/item_0/text = "ALL"
 popup/item_0/id = 0
-popup/item_1/text = "SMB1 ONLY"
+popup/item_1/text = "SMB1"
 popup/item_1/id = 1
 
-[node name="HSeparator2" type="HSeparator" parent="SettingsPopup/VBox"]
+[node name="LabelNetwork" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=1889075894]
+layout_mode = 2
+text = "NET"
+
+[node name="NetworkOption" type="OptionButton" parent="SettingsPopup/VBox/Grid" unique_id=1126016423]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "GLOBAL"
+popup/item_0/id = 0
+popup/item_1/text = "LOCAL"
+popup/item_1/id = 1
+
+[node name="LabelKey" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=989126478]
+visible = false
+layout_mode = 2
+text = "ROOM KEY"
+
+[node name="LabelPhysics" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=114592518]
+layout_mode = 2
+text = "PHYSICS"
+
+[node name="PhysicsOption" type="OptionButton" parent="SettingsPopup/VBox/Grid" unique_id=1786640728]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "REMASTERED"
+popup/item_0/id = 0
+popup/item_1/text = "CLASSIC"
+popup/item_1/id = 1
+
+[node name="HSeparator2" type="HSeparator" parent="SettingsPopup/VBox" unique_id=191166437]
 layout_mode = 2
 
-[node name="CloseSettingsButton" type="Button" parent="SettingsPopup/VBox"]
+[node name="CloseSettingsButton" type="Button" parent="SettingsPopup/VBox" unique_id=1687543956]
 unique_name_in_owner = true
 layout_mode = 2
 text = "CLOSE"

@@ -9,13 +9,13 @@
 COIN_SPARKLE = ExtResource("2_mibmr")
 spinning_coin_scene = ExtResource("2_4rq0g")
 
-[node name="Sprite" parent="." index="0"]
+[node name="Sprite" parent="." index="0" unique_id=554485672]
 animation = &"Idle"
 autoplay = "Idle"
 frame_progress = 0.0
 
-[node name="ResourceSetterNew" parent="Sprite" index="0"]
+[node name="ResourceSetterNew" parent="Sprite" index="0" unique_id=1215625720]
 resource_json = ExtResource("2_r2p65")
 
-[node name="PSwitcher" parent="." index="4"]
+[node name="PSwitcher" parent="." index="4" unique_id=1950714048]
 new_scene = "uid://rjs2k335jmb5"

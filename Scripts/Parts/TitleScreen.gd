@@ -266,3 +266,7 @@ func check_for_unlocked_achievements() -> void:
 
 func get_room_type() -> Global.Room:
 	return Global.Room.TITLE_SCREEN
+
+func mario_35_selected() -> void:
+	$CanvasLayer/Options2.close()
+	Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")

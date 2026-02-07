@@ -68,15 +68,12 @@ position = Vector2(2392, -88)
 [node name="Bowser" parent="." unique_id=2024121310 instance=ExtResource("9_lpixx")]
 position = Vector2(2424, -48)
 
-[node name="DeathSprite" parent="Bowser/SpriteScaleJoint" index="2"]
+[node name="DeathSprite" parent="Bowser/SpriteScaleJoint" parent_id_path=PackedInt32Array(2024121310, 2142786864) index="2" unique_id=405721964]
 sprite_frames = SubResource("SpriteFrames_0fnbe")
 animation = &"Walk"
 
-[node name="ResourceSetterNew" parent="Bowser/SpriteScaleJoint/DeathSprite" index="0"]
+[node name="ResourceSetterNew" parent="Bowser/SpriteScaleJoint/DeathSprite" index="0" unique_id=1126679210]
 resource_json = ExtResource("8_0fnbe")
-
-[node name="MoveAnimation" parent="Bowser" index="2"]
-autoplay = &"Move"
 
 [node name="CastleToad" parent="." unique_id=278578959 instance=ExtResource("10_ice7i")]
 position = Vector2(2688, 0)
@@ -84,28 +81,28 @@ position = Vector2(2688, 0)
 [node name="CastleBridge" parent="." unique_id=1183726053 instance=ExtResource("11_ayiq6")]
 position = Vector2(2312, -40)
 
-[node name="Firebar5" parent="CastleBridge/Bridge/CastleBridgeSegment11" index="2" unique_id=951412215 instance=ExtResource("7_ice7i")]
+[node name="Firebar5" parent="CastleBridge/Bridge/CastleBridgeSegment11" parent_id_path=PackedInt32Array(1183726053, 1720206887) index="2" unique_id=951412215 instance=ExtResource("7_ice7i")]
 direction = 1
 
-[node name="CastleBridgeSegment14" parent="CastleBridge/Bridge" index="13"]
+[node name="CastleBridgeSegment14" parent="CastleBridge/Bridge" parent_id_path=PackedInt32Array(1183726053, 2118152730) index="13" unique_id=579080672]
 position = Vector2(-3311, 0)
 
-[node name="CastleBridgeSegment15" parent="CastleBridge/Bridge" index="14"]
+[node name="CastleBridgeSegment15" parent="CastleBridge/Bridge" parent_id_path=PackedInt32Array(1183726053, 2118152730) index="14" unique_id=309399430]
 position = Vector2(-3311, 0)
 
-[node name="CastleBridgeSegment16" parent="CastleBridge/Bridge" index="15"]
+[node name="CastleBridgeSegment16" parent="CastleBridge/Bridge" parent_id_path=PackedInt32Array(1183726053, 2118152730) index="15" unique_id=143666553]
 position = Vector2(-3311, 0)
 
-[node name="CastleBridgeSegment17" parent="CastleBridge/Bridge" index="16"]
+[node name="CastleBridgeSegment17" parent="CastleBridge/Bridge" parent_id_path=PackedInt32Array(1183726053, 2118152730) index="16" unique_id=1007009655]
 position = Vector2(-3311, 0)
 
-[node name="CastleBridgeSegment18" parent="CastleBridge/Bridge" index="17"]
+[node name="CastleBridgeSegment18" parent="CastleBridge/Bridge" parent_id_path=PackedInt32Array(1183726053, 2118152730) index="17" unique_id=51554744]
 position = Vector2(-3311, 0)
 
-[node name="CastleBridgeSegment19" parent="CastleBridge/Bridge" index="18"]
+[node name="CastleBridgeSegment19" parent="CastleBridge/Bridge" parent_id_path=PackedInt32Array(1183726053, 2118152730) index="18" unique_id=705695142]
 position = Vector2(-3311, 0)
 
-[node name="CastleBridgeSegment20" parent="CastleBridge/Bridge" index="19"]
+[node name="CastleBridgeSegment20" parent="CastleBridge/Bridge" parent_id_path=PackedInt32Array(1183726053, 2118152730) index="19" unique_id=1456920553]
 position = Vector2(-3311, 0)
 
 [node name="PirannhaPlant" parent="." unique_id=1010007659 instance=ExtResource("12_lpixx")]
@@ -176,15 +173,15 @@ position = Vector2(2688, 0)
 particles = 3
 
 [connection signal="area_entered" from="Tiles/DeathPit" to="Tiles/DeathPit" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@30839" to="Tiles/@Area2D@30839" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@30840" to="Tiles/@Area2D@30840" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@30841" to="Tiles/@Area2D@30841" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@30842" to="Tiles/@Area2D@30842" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@30843" to="Tiles/@Area2D@30843" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@30844" to="Tiles/@Area2D@30844" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@30845" to="Tiles/@Area2D@30845" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@30846" to="Tiles/@Area2D@30846" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@30847" to="Tiles/@Area2D@30847" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@30572" to="Tiles/@Area2D@30572" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@30573" to="Tiles/@Area2D@30573" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@30574" to="Tiles/@Area2D@30574" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@30575" to="Tiles/@Area2D@30575" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@30576" to="Tiles/@Area2D@30576" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@30577" to="Tiles/@Area2D@30577" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@30578" to="Tiles/@Area2D@30578" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@30579" to="Tiles/@Area2D@30579" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@30580" to="Tiles/@Area2D@30580" method="area_entered"]
 [connection signal="axe_touched" from="CastleBridge" to="Bowser" method="bridge_fall"]
 [connection signal="victory_begin" from="CastleBridge" to="CastleToad" method="begin"]
 [connection signal="victory_begin" from="CastleBridge" to="ChallengeNodes/CastleChallengeEnd" method="begin"]

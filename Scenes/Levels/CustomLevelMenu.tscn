@@ -360,11 +360,11 @@ unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 
-[node name="ScrollContainer" parent="BG/Border/Levels/VBoxContainer/LevelInfo/SelectedLevel/MarginContainer/HBoxContainer/HSplitContainer/LeftHalf/LevelInfo" index="0"]
+[node name="ScrollContainer" parent="BG/Border/Levels/VBoxContainer/LevelInfo/SelectedLevel/MarginContainer/HBoxContainer/HSplitContainer/LeftHalf/LevelInfo" parent_id_path=PackedInt32Array(1969519298, 538958165) index="0" unique_id=957303912]
 scroll_horizontal = 100
 is_active = true
 
-[node name="ScrollContainer2" parent="BG/Border/Levels/VBoxContainer/LevelInfo/SelectedLevel/MarginContainer/HBoxContainer/HSplitContainer/LeftHalf/LevelInfo" index="1"]
+[node name="ScrollContainer2" parent="BG/Border/Levels/VBoxContainer/LevelInfo/SelectedLevel/MarginContainer/HBoxContainer/HSplitContainer/LeftHalf/LevelInfo" parent_id_path=PackedInt32Array(1969519298, 538958165) index="1" unique_id=323265936]
 is_active = true
 
 [node name="Panel" type="PanelContainer" parent="BG/Border/Levels/VBoxContainer/LevelInfo" unique_id=1562152217]
@@ -401,7 +401,7 @@ unique_name_in_owner = true
 layout_mode = 2
 focus_neighbor_right = NodePath("../Edit")
 
-[node name="Label" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Play" index="2"]
+[node name="Label" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Play" index="2" unique_id=1065599705]
 text = "EDITOR_MAIN_LEVEL_PLAY"
 
 [node name="Edit" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer" unique_id=1271454428 instance=ExtResource("19_hvf3u")]
@@ -409,14 +409,14 @@ unique_name_in_owner = true
 layout_mode = 2
 focus_neighbor_right = NodePath("../Delete")
 
-[node name="Button" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Edit" index="0"]
+[node name="Button" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Edit" index="0" unique_id=1356426785]
 theme_override_styles/pressed = SubResource("StyleBoxTexture_otk5o")
 theme_override_styles/focus = SubResource("StyleBoxTexture_otk5o")
 
-[node name="Icon" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Edit" index="1"]
+[node name="Icon" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Edit" index="1" unique_id=996244603]
 texture = SubResource("AtlasTexture_hvf3u")
 
-[node name="Label" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Edit" index="2"]
+[node name="Label" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Edit" index="2" unique_id=1065599705]
 text = "EDITOR_MAIN_LEVEL_EDIT"
 
 [node name="Delete" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer" unique_id=2067166744 instance=ExtResource("19_hvf3u")]
@@ -424,14 +424,14 @@ unique_name_in_owner = true
 layout_mode = 2
 focus_neighbor_left = NodePath("../Edit")
 
-[node name="Button" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Delete" index="0"]
+[node name="Button" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Delete" index="0" unique_id=1356426785]
 theme_override_styles/pressed = SubResource("StyleBoxTexture_paqvc")
 theme_override_styles/focus = SubResource("StyleBoxTexture_paqvc")
 
-[node name="Icon" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Delete" index="1"]
+[node name="Icon" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Delete" index="1" unique_id=996244603]
 texture = SubResource("AtlasTexture_otk5o")
 
-[node name="Label" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Delete" index="2"]
+[node name="Label" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/Delete" index="2" unique_id=1065599705]
 text = "EDITOR_MAIN_LEVEL_DELETE"
 
 [node name="DeleteConfirm" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer" unique_id=1586633964 instance=ExtResource("19_hvf3u")]
@@ -440,14 +440,14 @@ layout_mode = 2
 focus_neighbor_left = NodePath("../Edit")
 focus_previous = NodePath("../Edit")
 
-[node name="Button" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/DeleteConfirm" index="0"]
+[node name="Button" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/DeleteConfirm" index="0" unique_id=1356426785]
 theme_override_styles/pressed = SubResource("StyleBoxTexture_paqvc")
 theme_override_styles/focus = SubResource("StyleBoxTexture_paqvc")
 
-[node name="Icon" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/DeleteConfirm" index="1"]
+[node name="Icon" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/DeleteConfirm" index="1" unique_id=996244603]
 texture = SubResource("AtlasTexture_otk5o")
 
-[node name="Label" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/DeleteConfirm" index="2"]
+[node name="Label" parent="BG/Border/Levels/VBoxContainer/LevelInfo/HBoxContainer/DeleteConfirm" index="2" unique_id=1065599705]
 text = "EDITOR_MAIN_LEVEL_CONFIRM"
 
 [node name="LSSBrowser" type="VBoxContainer" parent="BG/Border/Levels/VBoxContainer" unique_id=848781499]
@@ -561,15 +561,12 @@ unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 
-[node name="AnimationPlayer" parent="BG/Border/Levels/VBoxContainer/LSSLevelInfo/SelectedOnlineLevel/MarginContainer/HBoxContainer/HSplitContainer/LeftHalf/LevelIcon/Label" index="0"]
-autoplay = &"Load"
-
-[node name="ScrollContainer" parent="BG/Border/Levels/VBoxContainer/LSSLevelInfo/SelectedOnlineLevel/MarginContainer/HBoxContainer/HSplitContainer/LeftHalf/LevelInfo" index="0"]
+[node name="ScrollContainer" parent="BG/Border/Levels/VBoxContainer/LSSLevelInfo/SelectedOnlineLevel/MarginContainer/HBoxContainer/HSplitContainer/LeftHalf/LevelInfo" parent_id_path=PackedInt32Array(1716647580, 737696790) index="0" unique_id=875153151]
 scroll_horizontal = 9
 is_active = true
 auto_connect_focus = false
 
-[node name="ScrollContainer2" parent="BG/Border/Levels/VBoxContainer/LSSLevelInfo/SelectedOnlineLevel/MarginContainer/HBoxContainer/HSplitContainer/LeftHalf/LevelInfo" index="1"]
+[node name="ScrollContainer2" parent="BG/Border/Levels/VBoxContainer/LSSLevelInfo/SelectedOnlineLevel/MarginContainer/HBoxContainer/HSplitContainer/LeftHalf/LevelInfo" parent_id_path=PackedInt32Array(1716647580, 737696790) index="1" unique_id=805905061]
 is_active = true
 auto_connect_focus = false
 

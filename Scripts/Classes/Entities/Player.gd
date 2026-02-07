@@ -85,6 +85,11 @@ const DEFAULT_CLASSIC_PHYSICS := {
 @onready var camera: Camera2D = $Camera
 @onready var score_note_spawner: ScoreNoteSpawner = $ScoreNoteSpawner
 
+# Used for handling different jump arcs in classic physics.
+enum JumpType { STANDARD, TRAMPOLINE, CLASSIC, CLASSIC_WALK, CLASSIC_RUN }
+var jump_type := JumpType.STANDARD
+var jump_fall_gravity := FALL_GRAVITY
+
 var has_jumped := false
 
 var direction := 1
@@ -466,17 +471,11 @@ func _process(delta: float) -> void:
 	%Hammer.visible = has_hammer
 	%HammerHitbox.collision_layer = has_hammer
 
-# Helper function for classic jump gravity interpolation
-func _get_classic_jump_gravity(initial_speed: float) -> float:
-	var speed = abs(initial_speed)
-	# Clamp speed between thresholds for interpolation
-	var clamped_speed = clamp(speed, MIN_GRAVITY_SPEED_THRESHOLD, MAX_GRAVITY_SPEED_THRESHOLD)
-	# Interpolate linearly between min and max gravity based on speed
-	var t = remap(clamped_speed, MIN_GRAVITY_SPEED_THRESHOLD, MAX_GRAVITY_SPEED_THRESHOLD, 0.0, 1.0)
-	# Interpolate between MIN (stronger) and MAX (weaker)
-	return lerp(MIN_JUMP_GRAVITY_CLASSIC, MAX_JUMP_GRAVITY_CLASSIC, t)
+
 
 func apply_gravity(delta: float) -> void:
+
+
 	var current_gravity := FALL_GRAVITY # Default to fall gravity
 
 	if in_water or flight_meter > 0:
@@ -484,26 +483,29 @@ func apply_gravity(delta: float) -> void:
 	elif spring_bouncing:
 		current_gravity = SPRING_GRAVITY
 	else:
-		# If player is falling (or on ground), apply fall gravity.
-		if velocity.y * gravity_vector.y >= 0:
-			current_gravity = FALL_GRAVITY
-		# If player is moving upwards (jumping):
-		else:
-			if classic_physics:
-				# Classic non-plus immediately applies FALL_GRAVITY on jump release.
-				if not classic_plus_enabled and not Global.player_action_pressed("jump", player_id):
-					current_gravity = FALL_GRAVITY
-				# Classic (holding jump) & Classic Plus use interpolated gravity.
-				else:
-					current_gravity = _get_classic_jump_gravity(velocity_x_jump_stored)
-			# Remastered physics
+		if sign(gravity_vector.y) * velocity.y + JUMP_HOLD_SPEED_THRESHOLD > 0.0:
+			if jump_type >= JumpType.CLASSIC:
+				current_gravity = jump_fall_gravity
 			else:
-				# Apply JUMP_GRAVITY unless jump cancelled logic applies (handled in Normal.gd)
-				# Check if jump was cancelled - if so, FALL_GRAVITY is likely already set.
-				# Only apply JUMP_GRAVITY if not cancelled.
+				current_gravity = FALL_GRAVITY
+			
+		# Remastered physics fallback if needed or just use current_gravity
+		# Reference code sets "gravity" member.
+		# My code uses "current_gravity" local then applies.
+		# I must ensure gravity stays same if jumping (not falling).
+		
+		# If jumping (else block of falling check):
+		if not (sign(gravity_vector.y) * velocity.y + JUMP_HOLD_SPEED_THRESHOLD > 0.0):
+			if classic_physics:
+				# Do nothing? Reference sets gravity inside jump().
+				# But here apply_gravity uses 'gravity' member in calculation.
+				# My code calculates 'current_gravity'.
+				# I should assign current_gravity = gravity (member) if jumping.
+				current_gravity = gravity
+			else:
 				if not jump_cancelled:
 					current_gravity = JUMP_GRAVITY
-				# If jump was cancelled, keep whatever gravity was set (likely FALL_GRAVITY)
+				# else current_gravity remains FALL_GRAVITY
 
 	# Apply the determined gravity
 	velocity += (gravity_vector * ((current_gravity / (1.5 if low_gravity else 1.0)) / delta)) * delta
@@ -597,27 +599,19 @@ func is_actually_on_ceiling() -> bool:
 func enemy_bounce_off(add_combo := true, award_score := true) -> void:
 	if add_combo:
 		add_stomp_combo(award_score)
-	if classic_physics and not classic_plus_enabled:
-		# Classic physics uses a single initial bounce velocity.
-		velocity.y = sign(gravity_vector.y) * -BOUNCE_HEIGHT
-		# Determine correct gravity based on initial jump speed using interpolation
-		gravity = _get_classic_jump_gravity(velocity_x_jump_stored)
+	jump_cancelled = not Global.player_action_pressed("jump", player_id)
+	await get_tree().physics_frame
+
+	if classic_physics:
+		set_classic_jump_parameters(true)
+	elif Global.player_action_pressed("jump", player_id):
+		velocity.y = sign(gravity_vector.y) * -BOUNCE_JUMP_HEIGHT
+		gravity = JUMP_GRAVITY
+		has_jumped = true
 	else:
-		# This block handles Remastered and Classic Plus physics
-		jump_cancelled = not Global.player_action_pressed("jump", player_id)
-		await get_tree().physics_frame
-		if Global.player_action_pressed("jump", player_id):
-			velocity.y = sign(gravity_vector.y) * -BOUNCE_JUMP_HEIGHT
-			# Determine correct gravity based on initial jump speed for Classic+
-			if classic_physics: # Only Classic+ reaches here
-				gravity = _get_classic_jump_gravity(velocity_x_jump_stored)
-			else: # Remastered
-				gravity = JUMP_GRAVITY
-			has_jumped = true
-		else:
-			velocity.y = sign(gravity_vector.y) * -BOUNCE_HEIGHT
-			# Gravity becomes FALL_GRAVITY immediately after bounce if jump not held
-			gravity = FALL_GRAVITY
+		velocity.y = sign(gravity_vector.y) * -BOUNCE_HEIGHT
+		# Gravity becomes FALL_GRAVITY immediately after bounce if jump not held
+		gravity = FALL_GRAVITY
 
 
 func add_stomp_combo(award_score := true) -> void:
@@ -1029,13 +1023,58 @@ func exit_pipe(pipe: PipeArea) -> void:
 func jump() -> void:
 	if spring_bouncing:
 		return
-	velocity.y = calculate_jump_height() * gravity_vector.y
-	velocity_x_jump_stored = velocity.x # Store precise speed
-	# Set initial gravity based on classic physics rules if applicable
+
 	if classic_physics:
-		gravity = _get_classic_jump_gravity(velocity_x_jump_stored)
-	else: # Remastered
+		set_classic_jump_parameters(false)
+	else:
+		velocity.y = calculate_jump_height() * gravity_vector.y
 		gravity = JUMP_GRAVITY
+
+	velocity_x_jump_stored = velocity.x # Store precise speed
+
+	AudioManager.play_sfx("small_jump" if power_state.hitbox_size == "Small" else "big_jump", global_position)
+	has_jumped = true
+	jump_cancelled = false # Reset jump cancelled flag on new jump
+	await get_tree().physics_frame
+	has_jumped = true
+
+func set_classic_jump_parameters(enemy_bounce := false) -> void:
+	if abs(velocity.x) < 60.0:
+		jump_type = JumpType.CLASSIC
+		gravity = 7.5
+		jump_fall_gravity = 26.25
+	elif abs(velocity.x) < 135.0:
+		jump_type = JumpType.CLASSIC_WALK
+		gravity = 7.03
+		jump_fall_gravity = 22.5
+	else:
+		jump_type = JumpType.CLASSIC_RUN
+		gravity = 9.375
+		jump_fall_gravity = 33.75
+
+	if enemy_bounce:
+		has_jumped = true
+		# Only allow controlling height of jumps if you hit enemy from below,
+		# recreating the original game's "super jumps".
+		if not classic_plus_enabled:
+			jump_cancelled = true
+		
+		# If Classic+, we respect the 'jump_cancelled' state set by Input in enemy_bounce_off.
+		# If Classic, we force it to true (fixed bounce).
+		if jump_cancelled:
+			gravity = jump_fall_gravity
+
+		# The original game has slightly different starting jump speeds
+		# depending on the enemy, but most enemies in each use these values.
+		if Global.current_campaign == "SMBLL":
+			velocity.y = -370.0 * gravity_vector.y
+		else:
+			velocity.y = -248.0 * gravity_vector.y
+	else:
+		if jump_type == JumpType.CLASSIC_RUN:
+			velocity.y = -310.0 * gravity_vector.y
+		else:
+			velocity.y = -248.0 * gravity_vector.y
 
 	AudioManager.play_sfx("small_jump" if power_state.hitbox_size == "Small" else "big_jump", global_position)
 	has_jumped = true
@@ -1044,29 +1083,7 @@ func jump() -> void:
 	has_jumped = true
 
 func calculate_jump_height() -> float:
-
-	if classic_physics:
-
-		# Get the absolute horizontal speed.
-		var speed = abs(velocity.x)
-
-		# These thresholds are scaled from the original smb.asm values.
-		# A scaling factor of 4 is used, consistent with other physics values.
-		# Original values: $09 (9 -> 36), $10 (16 -> 64), $19 (25 -> 100), $1c (28 -> 112).
-		# Note: JUMP_INCR in ClassicPhysics.json is 4.0, matching asm logic more closely.
-		# We add JUMP_INCR multiplied by a factor based on speed thresholds.
-		if speed >= 112: # Corresponds to the fastest run speeds ($1c)
-			return -(JUMP_HEIGHT + (JUMP_INCR * 4.0)) # JumpForceData y=4 -> $28 -> 40 -> Adds 4 * JUMP_INCR?
-		elif speed >= 100: # ($19)
-			return -(JUMP_HEIGHT + (JUMP_INCR * 3.0)) # JumpForceData y=3 -> $28 -> 40 -> Adds 3 * JUMP_INCR? (Original code suggests 4* here too?)
-		elif speed >= 64: # ($10)
-			return -(JUMP_HEIGHT + (JUMP_INCR * 2.0)) # JumpForceData y=2 -> $1e -> 30 -> Adds 2 * JUMP_INCR?
-		elif speed >= 36: # ($09)
-			return -(JUMP_HEIGHT + JUMP_INCR) # JumpForceData y=1 -> $20 -> 32 -> Adds 1 * JUMP_INCR?
-		else: # Base jump height for walking speeds. (y=0 -> $20)
-			return -JUMP_HEIGHT
-	else: # Remastered physics logic remains unchanged.
-		return -(JUMP_HEIGHT + JUMP_INCR * int(abs(velocity.x) / 25))
+	return -(JUMP_HEIGHT + JUMP_INCR * int(abs(velocity.x) / 25))
 
 const SMOKE_PARTICLE = preload("res://Scenes/Prefabs/Particles/SmokeParticle.tscn")
 
@@ -1130,7 +1147,7 @@ func water_exited() -> void:
 	if Global.player_action_pressed("move_up", player_id):
 		# Set initial gravity based on classic physics rules if applicable
 		if classic_physics:
-			gravity = _get_classic_jump_gravity(velocity_x_jump_stored)
+			set_classic_jump_parameters(false)
 		else: # Remastered
 			gravity = JUMP_GRAVITY
 	else:

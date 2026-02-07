@@ -13,6 +13,7 @@ var selected_index := 0
 signal option_1_selected
 signal option_2_selected
 signal option_3_selected
+signal option_4_selected
 
 signal closed
 

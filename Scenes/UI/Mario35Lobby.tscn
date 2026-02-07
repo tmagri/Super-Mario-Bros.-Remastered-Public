@@ -1,0 +1,215 @@
+[gd_scene format=3 uid="uid://mario35lobby"]
+
+[ext_resource type="Script" uid="uid://cx37qsk1iae7a" path="res://Scripts/UI/Mario35Lobby.gd" id="1_script"]
+[ext_resource type="Theme" uid="uid://dtn507x2b5de7" path="res://Resources/Theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" uid="uid://bhuybr2gtuco5" path="res://Assets/Sprites/UI/MenuBG.png" id="3_bg"]
+[ext_resource type="Texture2D" uid="uid://3ai0ggxah360" path="res://Assets/Sprites/UI/MenuBorder.png" id="4_border"]
+
+[node name="Mario35Lobby" type="Control" unique_id=461849937]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="BG" type="NinePatchRect" parent="." unique_id=421909333]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_bg")
+region_rect = Rect2(0, 0, 16, 16)
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="Border" type="NinePatchRect" parent="BG" unique_id=1762768922]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_right = 0.95
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_border")
+region_rect = Rect2(0, 0, 32, 32)
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+
+[node name="Content" type="Control" parent="BG/Border" unique_id=118826961]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BG/Border/Content" unique_id=1528656957]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -215.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="BG/Border/Content/VBoxContainer" unique_id=1244503449]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "BATTLE ROYALE"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="BG/Border/Content/VBoxContainer" unique_id=299677368]
+layout_mode = 2
+
+[node name="NameInput" type="LineEdit" parent="BG/Border/Content/VBoxContainer" unique_id=151462485]
+layout_mode = 2
+placeholder_text = "ENTER NAME"
+alignment = 1
+
+[node name="IPInput" type="LineEdit" parent="BG/Border/Content/VBoxContainer" unique_id=205563528]
+layout_mode = 2
+text = "127.0.0.1"
+placeholder_text = "HOST IP"
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BG/Border/Content/VBoxContainer" unique_id=2002901664]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="HostButton" type="Button" parent="BG/Border/Content/VBoxContainer/HBoxContainer" unique_id=1717025384]
+layout_mode = 2
+text = "HOST"
+
+[node name="JoinButton" type="Button" parent="BG/Border/Content/VBoxContainer/HBoxContainer" unique_id=1393456898]
+layout_mode = 2
+text = "JOIN"
+
+[node name="StatusLabel" type="Label" parent="BG/Border/Content/VBoxContainer" unique_id=1452149734]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+horizontal_alignment = 1
+
+[node name="PlayerList" type="ItemList" parent="BG/Border/Content/VBoxContainer" unique_id=361297900]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="StartButton" type="Button" parent="BG/Border/Content/VBoxContainer" unique_id=910970228]
+visible = false
+layout_mode = 2
+text = "START GAME"
+
+[node name="SettingsButton" type="Button" parent="BG/Border/Content/VBoxContainer" unique_id=888888888]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "SETTINGS"
+
+[node name="BackButton" type="Button" parent="BG/Border/Content/VBoxContainer" unique_id=1238572278]
+layout_mode = 2
+text = "BACK"
+
+[node name="SettingsPopup" type="PanelContainer" parent="." unique_id=777777777]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -80.0
+offset_right = 100.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="SettingsPopup"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="SettingsPopup/VBox"]
+layout_mode = 2
+text = "ROOM SETTINGS"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="SettingsPopup/VBox"]
+layout_mode = 2
+
+[node name="Grid" type="GridContainer" parent="SettingsPopup/VBox"]
+layout_mode = 2
+columns = 2
+
+[node name="LabelTime" type="Label" parent="SettingsPopup/VBox/Grid"]
+layout_mode = 2
+text = "START TIME"
+
+[node name="StartTimeInput" type="SpinBox" parent="SettingsPopup/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 10.0
+max_value = 400.0
+value = 35.0
+
+[node name="LabelMax" type="Label" parent="SettingsPopup/VBox/Grid"]
+layout_mode = 2
+text = "MAX TIME"
+
+[node name="MaxTimeInput" type="SpinBox" parent="SettingsPopup/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 30.0
+max_value = 999.0
+value = 400.0
+
+[node name="LabelItems" type="Label" parent="SettingsPopup/VBox/Grid"]
+layout_mode = 2
+text = "ITEMS"
+
+[node name="ItemOption" type="OptionButton" parent="SettingsPopup/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 2
+selected = 0
+popup/item_0/text = "ALL SMB1"
+popup/item_0/id = 0
+popup/item_1/text = "LIMITED"
+popup/item_1/id = 1
+
+[node name="LabelLevels" type="Label" parent="SettingsPopup/VBox/Grid"]
+layout_mode = 2
+text = "LEVELS"
+
+[node name="LevelOption" type="OptionButton" parent="SettingsPopup/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 2
+selected = 0
+popup/item_0/text = "ALL"
+popup/item_0/id = 0
+popup/item_1/text = "SMB1 ONLY"
+popup/item_1/id = 1
+
+[node name="HSeparator2" type="HSeparator" parent="SettingsPopup/VBox"]
+layout_mode = 2
+
+[node name="CloseSettingsButton" type="Button" parent="SettingsPopup/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CLOSE"

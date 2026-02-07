@@ -78,6 +78,8 @@ var score := 0:
 var coins := 0:
 	set(value):
 		coins = value
+		if Global.current_game_mode == Global.GameMode.MARIO_35:
+			return
 		if coins >= 100:#
 			if Settings.file.difficulty.inf_lives == 0 and (Global.current_game_mode != Global.GameMode.CHALLENGE and Global.current_campaign != "SMBANN"):
 				lives += floor(coins / 100.0)
@@ -159,9 +161,9 @@ var can_pause := true
 
 var fade_transition := true
 
-enum GameMode{NONE, CAMPAIGN, BOO_RACE, CHALLENGE, MARATHON, MARATHON_PRACTICE, LEVEL_EDITOR, CUSTOM_LEVEL, DISCO}
+enum GameMode{NONE, CAMPAIGN, BOO_RACE, CHALLENGE, MARATHON, MARATHON_PRACTICE, LEVEL_EDITOR, CUSTOM_LEVEL, DISCO, MARIO_35}
 
-const game_mode_strings := ["Default", "Campaign", "BooRace", "Challenge", "Marathon", "MarathonPractice", "LevelEditor", "CustomLevel", "Disco"]
+const game_mode_strings := ["Default", "Campaign", "BooRace", "Challenge", "Marathon", "MarathonPractice", "LevelEditor", "CustomLevel", "Disco", "Mario35"]
 
 var current_game_mode: GameMode = GameMode.NONE
 

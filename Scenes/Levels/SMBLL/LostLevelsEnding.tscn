@@ -406,50 +406,32 @@ process_callback = 0
 modulate = Color(1, 1, 1, 0)
 primary_layer = 1
 
-[node name="TopEdge" parent="DayBG/PrimaryLayer" index="2"]
+[node name="TopEdge" parent="DayBG/PrimaryLayer" parent_id_path=PackedInt32Array(1637106963, 101487177) index="2" unique_id=922818942]
 color = Color(0, 0, 0, 0)
-
-[node name="AnimationPlayer" parent="DayBG/DiscoBits/Rainbow/Joint/DiscoRainbow" index="0"]
-autoplay = &"Rainbow"
-
-[node name="Rhythm" parent="DayBG/DiscoBits/Rainbow/Joint/DiscoRainbow" index="1"]
-autoplay = &"Bob"
-
-[node name="AnimationPlayer" parent="DayBG/DiscoBits/SpotLights" index="2"]
-autoplay = &"Turn"
 
 [node name="LevelBG" parent="." unique_id=1680036694 instance=ExtResource("10_iab5g")]
 time_of_day = 1
 primary_layer = 1
 
-[node name="ResourceSetter" parent="LevelBG/SkyLayer/Sky" index="0"]
+[node name="ResourceSetter" parent="LevelBG/SkyLayer/Sky" parent_id_path=PackedInt32Array(1680036694, 1741376702) index="0" unique_id=1632146193]
 force_properties = {
 "Time": "Night"
 }
 
-[node name="ResourceSetter" parent="LevelBG/PrimaryLayer/Bush" index="0"]
+[node name="ResourceSetter" parent="LevelBG/PrimaryLayer/Bush" parent_id_path=PackedInt32Array(1680036694, 1696159403) index="0" unique_id=170646129]
 process_mode = 3
 force_properties = {
 "Time": "Night"
 }
 
-[node name="Bush2" type="Sprite2D" parent="LevelBG/PrimaryLayer" index="2" unique_id=104274273]
+[node name="Bush2" type="Sprite2D" parent="LevelBG/PrimaryLayer" parent_id_path=PackedInt32Array(1680036694, 101487177) index="2" unique_id=104274273]
 process_mode = 1
 position = Vector2(0, -512)
 texture = ExtResource("5_wr0ye")
 centered = false
 
-[node name="TopEdge" parent="LevelBG/PrimaryLayer" index="3"]
+[node name="TopEdge" parent="LevelBG/PrimaryLayer" parent_id_path=PackedInt32Array(1680036694, 101487177) index="3" unique_id=922818942]
 color = Color(0, 0, 0, 0)
-
-[node name="AnimationPlayer" parent="LevelBG/DiscoBits/Rainbow/Joint/DiscoRainbow" index="0"]
-autoplay = &"Rainbow"
-
-[node name="Rhythm" parent="LevelBG/DiscoBits/Rainbow/Joint/DiscoRainbow" index="1"]
-autoplay = &"Bob"
-
-[node name="AnimationPlayer" parent="LevelBG/DiscoBits/SpotLights" index="2"]
-autoplay = &"Turn"
 
 [node name="Node2D" type="Node2D" parent="." unique_id=1243365020]
 position = Vector2(0, 1)

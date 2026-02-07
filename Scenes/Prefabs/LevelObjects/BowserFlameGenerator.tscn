@@ -9,5 +9,5 @@ y_pos = 1
 direction = 0
 entity_scene = ExtResource("2_fevce")
 
-[node name="Sprite" parent="LevelEditorVisibleNode" index="0"]
+[node name="Sprite" parent="LevelEditorVisibleNode" parent_id_path=PackedInt32Array(793544344) index="0" unique_id=70570037]
 texture = ExtResource("3_fevce")

@@ -7,15 +7,12 @@ size = Vector2(32, 8)
 
 [node name="SidewaysPlatform" unique_id=749409518 instance=ExtResource("1_wmghi")]
 
-[node name="Sprite" parent="AnimatableBody2D" index="0"]
+[node name="Sprite" parent="AnimatableBody2D" parent_id_path=PackedInt32Array(2141167026) index="0" unique_id=2051384286]
 offset_left = -16.0
 offset_right = 16.0
 
-[node name="Collision" parent="AnimatableBody2D" index="1"]
+[node name="Collision" parent="AnimatableBody2D" parent_id_path=PackedInt32Array(2141167026) index="1" unique_id=1824019346]
 shape = SubResource("RectangleShape2D_kwmma")
 
-[node name="AnimationPlayer" parent="." index="1"]
-autoplay = &"Move"
-
-[node name="SecondQuestReplacer" parent="." index="3"]
+[node name="SecondQuestReplacer" parent="." index="3" unique_id=1617122144]
 new_scene = ""

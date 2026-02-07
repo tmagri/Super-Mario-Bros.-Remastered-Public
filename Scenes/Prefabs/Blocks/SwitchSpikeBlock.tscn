@@ -95,15 +95,15 @@ size = Vector2(16, 16)
 [node name="SwitchSpikeBlock" unique_id=232009375 node_paths=PackedStringArray("hurtbox") instance=ExtResource("1_qn0kk")]
 hurtbox = NodePath("PlayerHurtBox/CollisionShape2D")
 
-[node name="Sprite" parent="." index="0"]
+[node name="Sprite" parent="." index="0" unique_id=1589557580]
 sprite_frames = SubResource("SpriteFrames_cjipk")
 animation = &"Rest"
 autoplay = "Rest"
 
-[node name="ResourceSetter" parent="Sprite" index="0"]
+[node name="ResourceSetter" parent="Sprite" index="0" unique_id=1616432816]
 resource_json = ExtResource("3_gfl4j")
 
-[node name="Collision" parent="." index="1"]
+[node name="Collision" parent="." index="1" unique_id=1278376217]
 visible = true
 
 [node name="PlayerHurtBox" type="Area2D" parent="." index="3" unique_id=986646042]

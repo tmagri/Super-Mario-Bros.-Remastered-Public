@@ -7,7 +7,7 @@
 [node name="OneUp" unique_id=1691785018 instance=ExtResource("1_g2ftd")]
 metadata/is_oneup = true
 
-[node name="ResourceSetterNew" parent="Mushroom" index="0"]
+[node name="ResourceSetterNew" parent="Mushroom" parent_id_path=PackedInt32Array(707843590) index="0" unique_id=2027091343]
 resource_json = ExtResource("3_iusab")
 
 [node name="ScoreNoteSpawner" type="Node" parent="." index="4" unique_id=2143297885]

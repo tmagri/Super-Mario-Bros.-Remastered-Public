@@ -372,16 +372,16 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -36.0
-offset_top = -64.0
+offset_top = -68.0
 offset_right = 320.0
 grow_horizontal = 2
 grow_vertical = 0
 size_flags_horizontal = 4
 size_flags_vertical = 10
-theme_override_constants/separation = 0
+theme_override_constants/separation = -4
 alignment = 2
 script = ExtResource("9_dsf7o")
-options = [NodePath("Story"), NodePath("Challenges"), NodePath("Marathon")]
+options = [NodePath("Story"), NodePath("Challenges"), NodePath("Marathon"), NodePath("Mario35")]
 
 [node name="Story" type="Label" parent="CanvasLayer/Options2" unique_id=512728098]
 layout_mode = 2
@@ -402,6 +402,13 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "MENU_MARATHON"
+uppercase = true
+
+[node name="Mario35" type="Label" parent="CanvasLayer/Options2" unique_id=987654321]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "BATTLE ROYALE"
 uppercase = true
 
 [node name="Buffer" type="Control" parent="CanvasLayer/Options2" unique_id=2144391536]
@@ -884,7 +891,7 @@ unique_name_in_owner = true
 offset_left = 0.0
 offset_right = 0.0
 
-[node name="LabelFontChanger" parent="CanvasLayer/SettingsMenu" index="1" node_paths=PackedStringArray("labels")]
+[node name="LabelFontChanger" parent="CanvasLayer/SettingsMenu" index="1" unique_id=170114839 node_paths=PackedStringArray("labels")]
 labels = [NodePath("../PanelContainer/MarginContainer/VBoxContainer/Title"), NodePath("../PanelContainer/MarginContainer/VBoxContainer/CategorySelect/HBoxContainer/Category"), null, null, null, null, null, null, null, NodePath("../PanelContainer/MarginContainer/VBoxContainer/Audio/SelectableOptionNode/Value"), null, NodePath("../PanelContainer/MarginContainer/VBoxContainer/Audio/SelectableOptionNode2/Value"), null, NodePath("../PanelContainer/MarginContainer/VBoxContainer/Audio/SelectableOptionNode3/Value"), NodePath("../PanelContainer/MarginContainer/VBoxContainer/Difficulty/Description/AutoScrollContainer/MarginContainer/Desc")]
 
 [node name="CampaignSelect" parent="CanvasLayer" unique_id=1817202451 instance=ExtResource("14_1wnbq")]
@@ -1564,6 +1571,7 @@ metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 [connection signal="option_2_selected" from="CanvasLayer/Options2" to="CanvasLayer/Options2" method="close"]
 [connection signal="option_2_selected" from="CanvasLayer/Options2" to="CanvasLayer/ChallengeOptions" method="open"]
 [connection signal="option_3_selected" from="CanvasLayer/Options2" to="CanvasLayer/MarathonMode/MarathonSelect" method="open"]
+[connection signal="option_4_selected" from="CanvasLayer/Options2" to="." method="mario_35_selected"]
 [connection signal="closed" from="CanvasLayer/Options2Stripped" to="CanvasLayer/Options1" method="open"]
 [connection signal="option_1_selected" from="CanvasLayer/Options2Stripped" to="." method="get_highscore"]
 [connection signal="option_1_selected" from="CanvasLayer/Options2Stripped" to="CanvasLayer/AllNightNippon/WorldSelect" method="open"]

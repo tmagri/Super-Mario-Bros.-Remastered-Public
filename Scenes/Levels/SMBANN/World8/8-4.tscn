@@ -7,31 +7,31 @@
 [node name="8-4" unique_id=829231374 instance=ExtResource("1_2usat")]
 campaign = "SMBANN"
 
-[node name="RedPirannhaPlant" parent="Enemies" index="2"]
+[node name="RedPirannhaPlant" parent="Enemies" parent_id_path=PackedInt32Array(543247512) index="2" unique_id=969752905]
 position = Vector2(512, 336)
 
-[node name="RedPirannhaPlant2" parent="Enemies" index="3"]
+[node name="RedPirannhaPlant2" parent="Enemies" parent_id_path=PackedInt32Array(543247512) index="3" unique_id=1737726887]
 position = Vector2(576, 336)
 
-[node name="RedPirannhaPlant3" parent="Enemies" index="4"]
+[node name="RedPirannhaPlant3" parent="Enemies" parent_id_path=PackedInt32Array(543247512) index="4" unique_id=556557524]
 position = Vector2(704, 272)
 
-[node name="RedPirannhaPlant4" parent="Enemies" index="5"]
+[node name="RedPirannhaPlant4" parent="Enemies" parent_id_path=PackedInt32Array(543247512) index="5" unique_id=1569121468]
 position = Vector2(832, 336)
 
-[node name="PirannhaPlant" parent="Enemies" index="6" unique_id=1949966571 instance=ExtResource("2_hlpec")]
+[node name="PirannhaPlant" parent="Enemies" parent_id_path=PackedInt32Array(543247512) index="6" unique_id=1949966571 instance=ExtResource("2_hlpec")]
 position = Vector2(512, -32)
 
-[node name="PirannhaPlant2" parent="Enemies" index="7" unique_id=74952705 instance=ExtResource("2_hlpec")]
+[node name="PirannhaPlant2" parent="Enemies" parent_id_path=PackedInt32Array(543247512) index="7" unique_id=74952705 instance=ExtResource("2_hlpec")]
 position = Vector2(576, -32)
 
-[node name="PirannhaPlant3" parent="Enemies" index="8" unique_id=699486482 instance=ExtResource("2_hlpec")]
+[node name="PirannhaPlant3" parent="Enemies" parent_id_path=PackedInt32Array(543247512) index="8" unique_id=699486482 instance=ExtResource("2_hlpec")]
 position = Vector2(704, -96)
 
-[node name="PirannhaPlant4" parent="Enemies" index="9" unique_id=561540357 instance=ExtResource("2_hlpec")]
+[node name="PirannhaPlant4" parent="Enemies" parent_id_path=PackedInt32Array(543247512) index="9" unique_id=561540357 instance=ExtResource("2_hlpec")]
 position = Vector2(832, -32)
 
-[node name="PipeArea" parent="." index="11"]
+[node name="PipeArea" parent="." index="11" unique_id=1989946360]
 target_level = "uid://bq355ycinib3p"
 
 [node name="DiscoLevel" type="Node" parent="." index="16" unique_id=2026681481]

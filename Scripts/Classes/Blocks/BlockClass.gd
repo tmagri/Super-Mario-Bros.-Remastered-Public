@@ -1,8 +1,8 @@
 @icon("res://Assets/Sprites/Editor/Block.svg")
 class_name Block
 extends AnimatableBody2D
-signal player_block_hit(player: Player)
-signal shell_block_hit(shell: Shell)
+signal player_block_hit(player)
+signal shell_block_hit(shell)
 
 @export var visuals: Node = null
 const EMPTY_BLOCK = ("res://Scenes/Prefabs/Blocks/EmptyBlock.tscn")
@@ -74,7 +74,7 @@ func dispense_item() -> void:
 	if item_amount <= 0:
 		spawn_empty_block()
 
-func player_mushroom_check(player: Player = null) -> PackedScene:
+func player_mushroom_check(player = null) -> PackedScene:
 	if player.power_state.hitbox_size == "Small" and mushroom_if_small:
 		return load(SUPER_MUSHROOM)
 	return item

@@ -29,7 +29,7 @@ _bundled = {
 [node name="QuestionBlock" unique_id=888995013 instance=ExtResource("1_ub15u")]
 item = SubResource("PackedScene_dklm2")
 
-[node name="Sprite2D" parent="ItemPreview" index="0"]
+[node name="Sprite2D" parent="ItemPreview" parent_id_path=PackedInt32Array(2045234591) index="0" unique_id=1077862977]
 region_rect = Rect2(16, 0, 16, 16)
 
 [editable path="BlockAnimations"]

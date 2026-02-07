@@ -12,7 +12,7 @@ var lakitu_point := Vector2.ZERO
 
 const BLOCK_DISTANCE := 64
 
-var player: Player = null
+var player = null
 
 var retreat := false
 

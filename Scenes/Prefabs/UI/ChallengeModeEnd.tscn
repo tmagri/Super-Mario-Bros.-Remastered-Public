@@ -94,10 +94,10 @@ metadata/_custom_type_script = "uid://co6tjg3w6qpd8"
 layout_mode = 1
 disabled_containers = [NodePath("PanelContainer/MarginContainer/VBoxContainer/Difficulty")]
 
-[node name="Label" parent="SettingsMenu/PanelContainer/MarginContainer/VBoxContainer/ResourcePacks" index="0"]
+[node name="Label" parent="SettingsMenu/PanelContainer/MarginContainer/VBoxContainer/ResourcePacks" parent_id_path=PackedInt32Array(1125535999, 1135074719) index="0" unique_id=1915923440]
 visible = true
 
-[node name="LabelFontChanger" parent="SettingsMenu" index="1" node_paths=PackedStringArray("labels")]
+[node name="LabelFontChanger" parent="SettingsMenu" index="1" unique_id=170114839 node_paths=PackedStringArray("labels")]
 labels = [NodePath("../PanelContainer/MarginContainer/VBoxContainer/Title"), NodePath("../PanelContainer/MarginContainer/VBoxContainer/CategorySelect/HBoxContainer/Category"), null, null, null, null, null, null, null, NodePath("../PanelContainer/MarginContainer/VBoxContainer/Audio/SelectableOptionNode/Value"), null, NodePath("../PanelContainer/MarginContainer/VBoxContainer/Audio/SelectableOptionNode2/Value"), null, NodePath("../PanelContainer/MarginContainer/VBoxContainer/Audio/SelectableOptionNode3/Value"), NodePath("../PanelContainer/MarginContainer/VBoxContainer/Difficulty/Description/AutoScrollContainer/MarginContainer/Desc")]
 
 [editable path="SettingsMenu"]

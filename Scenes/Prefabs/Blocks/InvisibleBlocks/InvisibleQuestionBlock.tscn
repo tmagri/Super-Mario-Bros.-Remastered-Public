@@ -19,10 +19,10 @@ collision_layer = 1
 script = ExtResource("2_u3lik")
 combo_meter_amount = 10
 
-[node name="Sprite" parent="." index="0"]
+[node name="Sprite" parent="." index="0" unique_id=1665470143]
 visible = false
 
-[node name="Collision" parent="." index="1"]
+[node name="Collision" parent="." index="1" unique_id=1896247994]
 visible = true
 rotation = 3.14159
 disabled = true

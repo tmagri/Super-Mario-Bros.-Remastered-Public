@@ -5,7 +5,7 @@
 
 [node name="LargeCastleDeco" unique_id=12259921 instance=ExtResource("1_wnk7n")]
 
-[node name="SmallCastleVisual" parent="." index="0"]
+[node name="SmallCastleVisual" parent="." index="0" unique_id=2015083474]
 visible = false
 
 [node name="SmallCastleVisual2" parent="." index="1" unique_id=1568345903 instance=ExtResource("2_12kkg")]

@@ -16,8 +16,8 @@ metadata/_custom_type_script = "uid://cmvlgsjmsk0v5"
 [node name="SuperTrampoline" unique_id=938709401 instance=ExtResource("1_6t2fx")]
 bounce_height = -1200
 
-[node name="Sprite" parent="." index="0"]
+[node name="Sprite" parent="." index="0" unique_id=1706970684]
 texture = SubResource("AtlasTexture_p1ygu")
 
-[node name="ResourceSetter" parent="Sprite" index="1"]
+[node name="ResourceSetter" parent="Sprite" index="1" unique_id=168262208]
 themed_resource = SubResource("Resource_dij8c")

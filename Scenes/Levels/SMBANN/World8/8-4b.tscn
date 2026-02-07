@@ -7,13 +7,13 @@
 [node name="8-4b" unique_id=1218919498 instance=ExtResource("1_equhn")]
 campaign = "SMBANN"
 
-[node name="RedPirannhaPlant" parent="." index="2"]
+[node name="RedPirannhaPlant" parent="." index="2" unique_id=414262784]
 position = Vector2(-208, 160)
 
-[node name="RedPirannhaPlant2" parent="." index="3"]
+[node name="RedPirannhaPlant2" parent="." index="3" unique_id=2082635795]
 position = Vector2(-96, 160)
 
-[node name="PipeArea2" parent="." index="5"]
+[node name="PipeArea2" parent="." index="5" unique_id=2067125847]
 target_level = "uid://ctyblojrhejbx"
 
 [node name="DiscoLevel" type="Node" parent="." index="11" unique_id=1776803355]

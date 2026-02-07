@@ -11,13 +11,13 @@ size = Vector2(32, 8)
 
 [node name="CloudPlatform" unique_id=68875525 instance=ExtResource("1_dv323")]
 
-[node name="Sprite" parent="." index="0"]
+[node name="Sprite" parent="." index="0" unique_id=493532537]
 offset_left = -16.0
 offset_right = 16.0
 texture = ExtResource("2_c263f")
 
-[node name="Collision" parent="." index="1"]
+[node name="Collision" parent="." index="1" unique_id=310803267]
 shape = SubResource("RectangleShape2D_kdp6m")
 
-[node name="CollisionShape2D" parent="PlayerDetection" index="0"]
+[node name="CollisionShape2D" parent="PlayerDetection" parent_id_path=PackedInt32Array(1951209479) index="0" unique_id=1367380318]
 shape = SubResource("RectangleShape2D_ch841")

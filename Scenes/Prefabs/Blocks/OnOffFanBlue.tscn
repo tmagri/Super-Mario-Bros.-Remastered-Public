@@ -55,10 +55,10 @@ animations = [{
 [node name="OnOffFanBlue" unique_id=1387588477 instance=ExtResource("1_d1mvb")]
 active = true
 
-[node name="Sprite" parent="." index="1"]
+[node name="Sprite" parent="." index="1" unique_id=846540123]
 sprite_frames = SubResource("SpriteFrames_riapl")
 animation = &"On"
 frame_progress = 0.6434357
 
-[node name="ResourceSetterNew" parent="Sprite" index="0"]
+[node name="ResourceSetterNew" parent="Sprite" index="0" unique_id=1011926638]
 resource_json = ExtResource("3_doyjh")

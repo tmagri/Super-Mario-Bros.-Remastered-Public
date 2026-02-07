@@ -68,6 +68,10 @@ func on_player_hit(hit_player: Player) -> void:
 		
 func award_score(award_level: int) -> void:
 	if award_level >= 10:
+		if Global.current_game_mode == Global.GameMode.MARIO_35:
+			AudioManager.play_global_sfx("1_up")
+			queue_free() # Destroy shell to prevent infinite farming
+			return
 		if [Global.GameMode.CHALLENGE, Global.GameMode.BOO_RACE].has(Global.current_game_mode) or Settings.file.difficulty.inf_lives:
 			$ScoreNoteSpawner.spawn_note(10000)
 		else:
@@ -75,6 +79,9 @@ func award_score(award_level: int) -> void:
 			Global.lives += 1
 			$ScoreNoteSpawner.spawn_one_up_note()
 	else:
+		if Global.current_game_mode == Global.GameMode.MARIO_35:
+			# In BR, add coins for combo steps?
+			pass
 		$ScoreNoteSpawner.spawn_note(COMBO_VALS[award_level])
 		
 func get_kick_award(hit_player: Player) -> int:

@@ -8,13 +8,13 @@
 
 [node name="OnOffSidewaysPlatform" unique_id=1807062739 instance=ExtResource("1_nwvxx")]
 
-[node name="Sprite" parent="AnimatableBody2D" index="0"]
+[node name="Sprite" parent="AnimatableBody2D" parent_id_path=PackedInt32Array(2141167026) index="0" unique_id=2051384286]
 offset_left = -20.0
 offset_right = 20.0
 texture = ExtResource("2_iy32g")
 region_rect = Rect2(0, 0, 24, 8)
 
-[node name="ResourceSetter" parent="AnimatableBody2D/Sprite" index="0"]
+[node name="ResourceSetter" parent="AnimatableBody2D/Sprite" index="0" unique_id=1902144700]
 resource_json = ExtResource("3_50hv7")
 
 [node name="Sprite2D" type="Sprite2D" parent="AnimatableBody2D/Sprite" index="1" unique_id=68553563]
@@ -26,9 +26,6 @@ region_enabled = true
 region_rect = Rect2(24, 0, 16, 8)
 script = ExtResource("4_0jnxm")
 metadata/_custom_type_script = "uid://364rywt44hy6"
-
-[node name="AnimationPlayer" parent="." index="1"]
-autoplay = &"Move"
 
 [node name="AnimationPauser" type="Node" parent="." index="4" unique_id=1680318619 node_paths=PackedStringArray("animation_player") groups=["BooBlocks"]]
 script = ExtResource("3_iy32g")

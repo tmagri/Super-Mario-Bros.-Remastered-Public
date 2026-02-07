@@ -7,10 +7,10 @@
 [node name="SpinningCoin" unique_id=639923487 instance=ExtResource("1_8si4e")]
 particle = ExtResource("2_vxiva")
 
-[node name="Sprite" parent="." index="0"]
+[node name="Sprite" parent="." index="0" unique_id=1124841772]
 animation = &"Spin"
 autoplay = "Spin"
 frame_progress = 0.0
 
-[node name="ResourceSetterNew" parent="Sprite" index="0"]
+[node name="ResourceSetterNew" parent="Sprite" index="0" unique_id=784996704]
 resource_json = ExtResource("2_da77p")

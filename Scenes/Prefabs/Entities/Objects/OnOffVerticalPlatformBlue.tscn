@@ -4,7 +4,7 @@
 
 [node name="OnOffSidewaysPlatform" unique_id=1598004522 instance=ExtResource("1_pd2fy")]
 
-[node name="Sprite" parent="AnimatableBody2D" index="0"]
+[node name="Sprite" parent="AnimatableBody2D" parent_id_path=PackedInt32Array(2141167026) index="0" unique_id=2051384286]
 region_rect = Rect2(0, 8, 24, 8)
 
 [node name="Sprite2D" parent="AnimatableBody2D/Sprite" index="1" unique_id=68553563]

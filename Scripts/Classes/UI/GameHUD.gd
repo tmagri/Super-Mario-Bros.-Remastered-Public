@@ -11,6 +11,14 @@ var delta_time := 0.0
 
 func _ready() -> void:
 	Global.level_theme_changed.connect(update_character_info)
+	
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.time_changed.connect(update_br_timer)
+		Mario35Handler.target_changed.connect(update_br_target)
+		Mario35Handler.target_changed.connect(update_br_target)
+		Mario35Handler.incoming_enemy.connect(add_incoming_enemy_icon)
+		Mario35Handler.incoming_item_roulette.connect(show_item_roulette)
+		update_br_target(Mario35Handler.current_target_mode)
 
 func _process(delta: float) -> void:
 	if not get_tree().paused and $Timer.paused:
@@ -22,6 +30,19 @@ func _process(delta: float) -> void:
 	handle_pausing()
 
 func handle_main_hud() -> void:
+	# Hide HUD completely in Battle Royale mode
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		$Main.visible = false
+		$ModernHUD.visible = false
+		%BattleRoyaleHUD.visible = self.visible # Only show if GameHUD itself is visible
+		handle_br_input()
+		
+		# Watch out warning
+		%WarningLabel.visible = Mario35Handler.enemy_queue.size() >= 3
+		
+		return
+	%BattleRoyaleHUD.visible = false
+	
 	$Main.visible = not Settings.file.visuals.modern_hud
 	$ModernHUD.visible = Settings.file.visuals.modern_hud
 	$Main/RedCoins.hide()
@@ -229,3 +250,74 @@ func on_timeout() -> void:
 		Global.time -= 1
 		if Global.time == 100:
 			AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.TIME_WARNING, 5, true)
+
+func update_br_timer(time: int) -> void:
+	%BRTimer.text = str(time)
+	if time <= 10:
+		%BRTimer.modulate = Color.RED
+	else:
+		%BRTimer.modulate = Color.YELLOW
+
+func update_br_target(mode: int) -> void:
+	var text = "RANDOM"
+	match mode:
+		Mario35Handler.TargetMode.RANDOM: text = "RANDOM"
+		Mario35Handler.TargetMode.LOWEST_TIME: text = "LOWEST_TIME"
+		Mario35Handler.TargetMode.ATTACKERS: text = "ATTACKERS"
+		Mario35Handler.TargetMode.MOST_COINS: text = "MOST_COINS"
+	%TargetLabel.text = text
+
+func handle_br_input():
+	if Input.is_action_just_pressed("ui_right"):
+		Mario35Handler.cycle_target_mode(1)
+	elif Input.is_action_just_pressed("ui_left"):
+		Mario35Handler.cycle_target_mode(-1)
+	elif Input.is_action_just_pressed("ui_focus_next"): # Tab key for Item use
+		Mario35Handler.try_use_item()
+
+func add_incoming_enemy_icon(type: String) -> void:
+	# Create a visual representation
+	var icon = TextureRect.new()
+	# Try to load texture from scene (simplified for now, ideally use a lookup)
+	# For now, just use a generic warning icon or Goomba
+	# We can use the generic goomba sprite from assets if available
+	# Or just a colored rect
+	var texture = preload("res://Assets/Sprites/Enemies/Goomba.png") # Fallback
+	if "Goomba" in type:
+		texture = preload("res://Assets/Sprites/Enemies/Goomba.png")
+	elif "Koopa" in type:
+		texture = preload("res://Assets/Sprites/Enemies/KoopaTroopa.png")
+		
+	# Check if we can load the scene and extract sprite
+	# var scn = load(type)
+	# if scn:
+	# 	var inst = scn.instantiate()
+	# 	if inst.has_node("Sprite"):
+	# 		# Logic to get texture from AnimatedSprite is harder
+	# 		pass
+	# 	inst.queue_free()
+	
+	icon.texture = texture # Assign texture
+	icon.expand_mode = TextureRect.EXPAND_KEEP_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.custom_minimum_size = Vector2(16, 16)
+	%IncomingBar.add_child(icon)
+	
+	# Remove after a delay (simulating spawn or processing)
+	await get_tree().create_timer(3.0).timeout
+	if is_instance_valid(icon):
+		icon.queue_free()
+
+func show_item_roulette() -> void:
+	# Show visual roulette (placeholder)
+	var label = Label.new()
+	label.text = "ITEM ROULETTE..."
+	label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	label.position = Vector2(128, 32) # Center-ish
+	%BattleRoyaleHUD.add_child(label)
+	
+	# Simulate spin visuals
+	await get_tree().create_timer(3.0).timeout
+	label.text = "ITEM USED!"
+	await get_tree().create_timer(1.0).timeout
+	label.queue_free()

@@ -60,12 +60,12 @@ animations = [{
 [node name="OnOffSwitch" unique_id=1023081824 instance=ExtResource("1_bblk7")]
 destructable = false
 
-[node name="Sprite" parent="." index="0"]
+[node name="Sprite" parent="." index="0" unique_id=569196383]
 sprite_frames = SubResource("SpriteFrames_d785i")
 animation = &"Off"
 autoplay = "Off"
 
-[node name="ResourceSetter" parent="Sprite" index="0"]
+[node name="ResourceSetter" parent="Sprite" index="0" unique_id=423967091]
 resource_json = ExtResource("3_xglou")
 
 [connection signal="shell_block_hit" from="." to="." method="on_block_hit" unbinds=1]

@@ -33,10 +33,10 @@ animations = [{
 
 [node name="OnOffBlock" unique_id=503119425 instance=ExtResource("1_x3cu1")]
 
-[node name="Sprite" parent="." index="0"]
+[node name="Sprite" parent="." index="0" unique_id=1589557580]
 sprite_frames = SubResource("SpriteFrames_boqyf")
 animation = &"Off"
 autoplay = ""
 
-[node name="ResourceSetter" parent="Sprite" index="0"]
+[node name="ResourceSetter" parent="Sprite" index="0" unique_id=1616432816]
 resource_json = ExtResource("3_m1hcn")

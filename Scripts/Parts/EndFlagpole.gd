@@ -38,8 +38,11 @@ func player_touch(player: Player) -> void:
 		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.LEVEL_COMPLETE, 99, false)
 	Global.level_complete_begin.emit()
 	await get_tree().create_timer(1, false).timeout
-	if [Global.GameMode.BOO_RACE].has(Global.current_game_mode) == false:
+	if [Global.GameMode.BOO_RACE, Global.GameMode.MARIO_35].has(Global.current_game_mode) == false:
 		Global.tally_time()
+	elif Global.current_game_mode == Global.GameMode.MARIO_35:
+		# Directly transition after delay
+		Global.current_level.transition_to_next_level()
 
 func give_points(player: Player) -> void:
 	var value = clamp(int(lerp(0, 4, (player.global_position.y / -144))), 0, 4)

@@ -8,13 +8,13 @@
 theme_time = "Night"
 campaign = "SMBANN"
 
-[node name="PipeArea2" parent="." index="8"]
+[node name="PipeArea2" parent="." index="8" unique_id=2038754983]
 target_level = "uid://ck5d1abcduiku"
 
-[node name="RedPirannhaPlant" parent="." index="9"]
+[node name="RedPirannhaPlant" parent="." index="9" unique_id=1971625749]
 position = Vector2(-216, 288)
 
-[node name="LevelBG" parent="." index="14"]
+[node name="LevelBG" parent="." index="14" unique_id=639307342]
 time_of_day = 1
 
 [node name="DiscoLevel" type="Node" parent="." index="16" unique_id=675881223]

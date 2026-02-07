@@ -4,7 +4,7 @@
 
 [node name="CastlePeach" unique_id=102509681 instance=ExtResource("1_v6xdq")]
 
-[node name="ThankYou" parent="StandardMSG" index="0"]
+[node name="ThankYou" parent="StandardMSG" parent_id_path=PackedInt32Array(1991921705) index="0" unique_id=1386068379]
 text = "CUTSCENE_SP_PEACH_1"
 
 [node name="AnotherCastle4" parent="EndingSpeech" parent_id_path=PackedInt32Array(749026136) index="0" unique_id=1052910977]

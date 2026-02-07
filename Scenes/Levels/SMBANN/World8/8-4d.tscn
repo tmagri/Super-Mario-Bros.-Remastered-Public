@@ -7,32 +7,32 @@
 [node name="8-4d" unique_id=1614916350 instance=ExtResource("1_kj182")]
 campaign = "SMBANN"
 
-[node name="Player" parent="." index="0"]
+[node name="Player" parent="." index="0" unique_id=1515617647]
 position = Vector2(-224, 0)
 
-[node name="RedPirannhaPlant" parent="Enemies" index="0"]
+[node name="RedPirannhaPlant" parent="Enemies" parent_id_path=PackedInt32Array(534810018) index="0" unique_id=1417544117]
 position = Vector2(-208, 296)
 
-[node name="RedPirannhaPlant2" parent="Enemies" index="1"]
+[node name="RedPirannhaPlant2" parent="Enemies" parent_id_path=PackedInt32Array(534810018) index="1" unique_id=2062976837]
 position = Vector2(-32, 328)
 
-[node name="RedPirannhaPlant3" parent="Enemies" index="2"]
+[node name="RedPirannhaPlant3" parent="Enemies" parent_id_path=PackedInt32Array(534810018) index="2" unique_id=1131158643]
 position = Vector2(432, 280)
 
-[node name="PirannhaPlant" parent="Enemies" index="4" unique_id=455050465 instance=ExtResource("2_txs8t")]
+[node name="PirannhaPlant" parent="Enemies" parent_id_path=PackedInt32Array(534810018) index="4" unique_id=455050465 instance=ExtResource("2_txs8t")]
 position = Vector2(-192, -32)
 
-[node name="PirannhaPlant2" parent="Enemies" index="5" unique_id=1260841227 instance=ExtResource("2_txs8t")]
+[node name="PirannhaPlant2" parent="Enemies" parent_id_path=PackedInt32Array(534810018) index="5" unique_id=1260841227 instance=ExtResource("2_txs8t")]
 position = Vector2(-16, 0)
 
-[node name="PirannhaPlant3" parent="Enemies" index="6" unique_id=1840746819 instance=ExtResource("2_txs8t")]
+[node name="PirannhaPlant3" parent="Enemies" parent_id_path=PackedInt32Array(534810018) index="6" unique_id=1840746819 instance=ExtResource("2_txs8t")]
 position = Vector2(448, -48)
 rotation = 3.1415927
 
-[node name="PipeArea2" parent="." index="4"]
+[node name="PipeArea2" parent="." index="4" unique_id=31343389]
 target_level = "uid://bij088rfbprdk"
 
-[node name="LostLevelsEndingDoor" parent="." index="8"]
+[node name="LostLevelsEndingDoor" parent="." index="8" unique_id=1127807677]
 scene = "uid://b712pxr3iuo7x"
 
 [node name="DiscoLevel" type="Node" parent="." index="14" unique_id=743913119]
@@ -47,10 +47,10 @@ metadata/_custom_type_script = "uid://bjs5mlc3xrxud"
 [connection signal="player_block_hit" from="Tiles/InvisibleQuestionBlock" to="Tiles/InvisibleQuestionBlock/BlockAnimations" method="bounce_block" unbinds=1]
 [connection signal="shell_block_hit" from="Tiles/InvisibleQuestionBlock" to="Tiles/InvisibleQuestionBlock" method="dispense_item" unbinds=1]
 [connection signal="shell_block_hit" from="Tiles/InvisibleQuestionBlock" to="Tiles/InvisibleQuestionBlock/BlockAnimations" method="bounce_block" unbinds=1]
-[connection signal="block_destroyed" from="Tiles/@AnimatableBody2D@112273" to="Tiles/@AnimatableBody2D@112273/LevelPersistance" method="set_as_active_2"]
-[connection signal="block_emptied" from="Tiles/@AnimatableBody2D@112273" to="Tiles/@AnimatableBody2D@112273/LevelPersistance" method="set_as_active"]
-[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@112273" to="Tiles/@AnimatableBody2D@112273" method="player_mushroom_check"]
-[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@112273" to="Tiles/@AnimatableBody2D@112273" method="dispense_item" unbinds=1]
-[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@112273" to="Tiles/@AnimatableBody2D@112273/BlockAnimations" method="bounce_block" unbinds=1]
-[connection signal="shell_block_hit" from="Tiles/@AnimatableBody2D@112273" to="Tiles/@AnimatableBody2D@112273" method="dispense_item" unbinds=1]
-[connection signal="shell_block_hit" from="Tiles/@AnimatableBody2D@112273" to="Tiles/@AnimatableBody2D@112273/BlockAnimations" method="bounce_block" unbinds=1]
+[connection signal="block_destroyed" from="Tiles/@AnimatableBody2D@49542" to="Tiles/@AnimatableBody2D@49542/LevelPersistance" method="set_as_active_2"]
+[connection signal="block_emptied" from="Tiles/@AnimatableBody2D@49542" to="Tiles/@AnimatableBody2D@49542/LevelPersistance" method="set_as_active"]
+[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@49542" to="Tiles/@AnimatableBody2D@49542" method="player_mushroom_check"]
+[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@49542" to="Tiles/@AnimatableBody2D@49542" method="dispense_item" unbinds=1]
+[connection signal="player_block_hit" from="Tiles/@AnimatableBody2D@49542" to="Tiles/@AnimatableBody2D@49542/BlockAnimations" method="bounce_block" unbinds=1]
+[connection signal="shell_block_hit" from="Tiles/@AnimatableBody2D@49542" to="Tiles/@AnimatableBody2D@49542" method="dispense_item" unbinds=1]
+[connection signal="shell_block_hit" from="Tiles/@AnimatableBody2D@49542" to="Tiles/@AnimatableBody2D@49542/BlockAnimations" method="bounce_block" unbinds=1]

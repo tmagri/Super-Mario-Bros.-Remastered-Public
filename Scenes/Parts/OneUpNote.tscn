@@ -19,10 +19,10 @@ metadata/_custom_type_script = "uid://cmvlgsjmsk0v5"
 [node name="ScoreNote" unique_id=433518879 instance=ExtResource("1_t77qk")]
 visibility_layer = 2
 
-[node name="Label" parent="Container" index="0"]
+[node name="Label" parent="Container" parent_id_path=PackedInt32Array(1705015318) index="0" unique_id=1495274821]
 visible = false
 
-[node name="TextureRect" type="TextureRect" parent="Container" index="1" unique_id=1625310665]
+[node name="TextureRect" type="TextureRect" parent="Container" parent_id_path=PackedInt32Array(1705015318) index="1" unique_id=1625310665]
 layout_mode = 2
 texture = ExtResource("2_btd7m")
 
@@ -50,8 +50,5 @@ property_name = "texture"
 themed_resource = SubResource("Resource_q33f0")
 metadata/_custom_type_script = "uid://cq6f682453q6o"
 
-[node name="Animation" parent="." index="1"]
-autoplay = &"Rise"
-
-[node name="TextShadowColourChanger" parent="." index="2" node_paths=PackedStringArray("shadow_node")]
+[node name="TextShadowColourChanger" parent="." index="2" unique_id=2040625455 node_paths=PackedStringArray("shadow_node")]
 shadow_node = NodePath("../Container/TextureRect/TextureRect2")

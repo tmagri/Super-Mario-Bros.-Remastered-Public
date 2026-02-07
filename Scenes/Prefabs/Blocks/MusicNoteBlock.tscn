@@ -25,10 +25,10 @@ note = 3
 octave = 2
 play_sfx = false
 
-[node name="ResourceSetterNew" parent="Sprite" index="0"]
+[node name="ResourceSetterNew" parent="Sprite" parent_id_path=PackedInt32Array(703600601) index="0" unique_id=773662938]
 resource_json = ExtResource("3_d6amy")
 
-[node name="EditorPropertyExposer" parent="." index="3"]
+[node name="EditorPropertyExposer" parent="." index="3" unique_id=1916406125]
 properties = Array[String](["instrument", "note", "octave", "play_on_load"])
 
 [node name="Instrument" type="AudioStreamPlayer2D" parent="." index="4" unique_id=1721553475]

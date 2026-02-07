@@ -13,15 +13,15 @@ metadata/_custom_type_script = "uid://cmvlgsjmsk0v5"
 reset_level = true
 has_menu = false
 
-[node name="Music" parent="." index="0"]
+[node name="Music" parent="." index="0" unique_id=51222479]
 stream = ExtResource("2_gyxu7")
 
-[node name="ResourceSetter" parent="Music" index="0"]
+[node name="ResourceSetter" parent="Music" index="0" unique_id=1528644321]
 themed_resource = SubResource("Resource_ud4io")
 
-[node name="Label" parent="CanvasLayer" index="1"]
+[node name="Label" parent="CanvasLayer" parent_id_path=PackedInt32Array(2144720721) index="1" unique_id=497824721]
 text = "CHALLENGE_MISS"
 
-[node name="VBoxContainer" parent="CanvasLayer" index="2"]
+[node name="VBoxContainer" parent="CanvasLayer" parent_id_path=PackedInt32Array(2144720721) index="2" unique_id=550283935]
 offset_top = -34.0
 offset_bottom = 34.0

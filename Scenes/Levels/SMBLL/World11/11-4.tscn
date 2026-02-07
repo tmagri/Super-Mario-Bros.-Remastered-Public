@@ -85,11 +85,8 @@ position = Vector2(3336, -40)
 [node name="Bowser" parent="." unique_id=1483590297 instance=ExtResource("11_vly3g")]
 position = Vector2(3472, -48)
 
-[node name="ResourceSetterNew" parent="Bowser/SpriteScaleJoint/DeathSprite" index="0"]
+[node name="ResourceSetterNew" parent="Bowser/SpriteScaleJoint/DeathSprite" parent_id_path=PackedInt32Array(1483590297, 405721964) index="0" unique_id=1126679210]
 resource_json = ExtResource("11_vd3y8")
-
-[node name="MoveAnimation" parent="Bowser" index="2"]
-autoplay = &"Move"
 
 [node name="DropShadow" parent="." unique_id=1794891856 instance=ExtResource("14_2ydu0")]
 

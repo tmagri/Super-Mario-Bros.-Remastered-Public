@@ -9,6 +9,10 @@ signal killed(direction: int)
 
 var direction := -1
 
+func _check_br_kill() -> void:
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.on_enemy_killed(self)
+
 func damage_player(player: Player) -> void:
 	player.damage()
 
@@ -17,6 +21,7 @@ func apply_enemy_gravity(delta: float) -> void:
 	velocity.y = clamp(velocity.y, -INF, Global.entity_max_fall_speed)
 
 func die() -> void:
+	_check_br_kill()
 	killed.emit([-1, 1].pick_random())
 	DiscoLevel.combo_amount += 1
 	DiscoLevel.combo_meter = 100
@@ -26,6 +31,7 @@ func die_from_object(obj: Node2D) -> void:
 	var dir = sign(global_position.x - obj.global_position.x)
 	if dir == 0:
 		dir = [-1, 1].pick_random()
+	_check_br_kill()
 	DiscoLevel.combo_amount += 1
 	killed.emit(dir)
 	queue_free()
@@ -33,6 +39,7 @@ func die_from_object(obj: Node2D) -> void:
 func flag_die() -> void:
 	if on_screen_enabler != null:
 		if on_screen_enabler.is_on_screen():
+			_check_br_kill()
 			queue_free()
 			if score_note_adder != null:
 				if score_note_adder.add_score == false:
@@ -43,6 +50,7 @@ func die_from_hammer(obj: Node2D) -> void:
 	var dir = sign(global_position.x - obj.global_position.x)
 	if dir == 0:
 		dir = [-1, 1].pick_random()
+	_check_br_kill()
 	DiscoLevel.combo_amount += 1
 	AudioManager.play_sfx("hammer_hit", global_position)
 	killed.emit(dir)

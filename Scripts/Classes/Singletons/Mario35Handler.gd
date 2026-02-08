@@ -180,14 +180,23 @@ var last_match_ranks := {} # peer_id -> rank
 func _check_win_condition() -> void:
 	if not game_active: return
 	
-	if alive_count <= 1:
-		var winner_id = 0
+	# Check if all players are eliminated OR if there's a last survivor (non-debug only)
+	var should_end = false
+	var winner_id = 0
+	
+	if alive_count == 0:
+		# All players eliminated - end match
+		should_end = true
+	elif alive_count == 1 and not Global.debug_mode:
+		# Last survivor in non-debug mode - end match
+		should_end = true
 		for id in player_statuses:
 			if player_statuses[id].alive:
 				winner_id = id
 				player_statuses[id].rank = 1
 				break
-		
+	
+	if should_end:
 		# Cache ranks before ending game
 		last_match_ranks = {}
 		for id in player_statuses:
@@ -215,6 +224,11 @@ func add_time_with_combo(combo_level: int) -> void:
 
 func on_enemy_killed(enemy: Node, time_reward: int = 2) -> void:
 	if not game_active:
+		return
+	
+	# Eliminated players cannot send enemies
+	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
+	if my_id in player_statuses and not player_statuses[my_id].alive:
 		return
 		
 	# Special case: don't double add if Player.gd already added via combo?
@@ -328,6 +342,11 @@ func get_attackers_count() -> int:
 
 
 func try_use_item() -> void:
+	# Eliminated players cannot use items
+	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
+	if my_id in player_statuses and not player_statuses[my_id].alive:
+		return
+	
 	if coin_roulette_active:
 		stop_roulette()
 	else:

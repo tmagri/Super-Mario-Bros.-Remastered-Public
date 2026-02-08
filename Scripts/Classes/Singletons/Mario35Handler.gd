@@ -46,6 +46,7 @@ var current_roulette_item := ""
 var is_timer_paused := false
 var enemy_queue: Array[String] = []
 var spawn_timer := 0.0
+var levels_played := 0 # Counter for randomization weighting
 const SPAWN_INTERVAL = 1.0 # Seconds between spawns (Faster for more pressure)
 
 # Player status tracking
@@ -61,6 +62,15 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if not game_active or is_timer_paused:
+		return
+		
+	# Personal timer only ticks if alive
+	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
+	var is_alive = true
+	if my_id in player_statuses:
+		is_alive = player_statuses[my_id].alive
+	
+	if not is_alive:
 		return
 		
 	# Decrease timer
@@ -110,6 +120,7 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	max_time = max_time_setting
 	current_time = float(start_time)
 	game_active = true
+	levels_played = 0
 	coins = 0
 	Global.lives = 1 # Start with 1 life in BR
 	
@@ -205,8 +216,13 @@ func _check_win_condition() -> void:
 		game_active = false
 		game_over.emit(winner_id)
 		
-		# Delayed return to lobby
-		await get_tree().create_timer(5.0).timeout
+		# Delayed return to lobby (unless in debug mode)
+		if Global.debug_mode:
+			get_tree().paused = false
+			Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")
+			return
+			
+		await get_tree().create_timer(5.0, false).timeout
 		get_tree().paused = false
 		Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")
 
@@ -508,6 +524,10 @@ func apply_settings(settings: Dictionary) -> void:
 	if "game_seed" in settings: game_seed = settings.game_seed
 	if "game_version" in settings: game_version = settings.game_version
 
+func randomize_seed() -> void:
+	game_seed = randi()
+	print("[M35] New game seed generated: ", game_seed)
+
 func get_next_level_path() -> String:
 	# Determine game version prefix
 	var version_enum = game_version
@@ -529,11 +549,34 @@ func get_next_level_path() -> String:
 		GameVersion.SMBS:
 			prefix = "SMBS"
 	
-	var w = rng.randi_range(w_range[0], w_range[1])
-	var l = rng.randi_range(l_range[0], l_range[1])
 	
-	# Special case for SMBLL folder naming if World > 8
+	var w = rng.randi_range(w_range[0], w_range[1])
+	
+	# Weighted level selection (priority for X-1 stages)
+	var l = 1
+	var l_weights = [0.25, 0.25, 0.25, 0.25] # Default uniform
+	
+	if levels_played == 0:
+		l_weights = [0.8, 0.067, 0.067, 0.066] # 80% chance for X-1 in first round
+	else:
+		l_weights = [0.4, 0.2, 0.2, 0.2] # 40% chance for X-1 thereafter
+	
+	var roll = rng.randf()
+	var weight_sum = 0.0
+	for i in range(l_weights.size()):
+		weight_sum += l_weights[i]
+		if roll <= weight_sum:
+			l = i + 1
+			break
+	
+	levels_played += 1
 	var world_str = str(w)
 	var level_str = "%d-%d" % [w, l]
 	
-	return "res://Scenes/Levels/%s/World%s/%s.tscn" % [prefix, world_str, level_str]
+	# Sync Global variables for HUD and transitions
+	Global.world_num = w
+	Global.level_num = l
+	
+	var level_path = "res://Scenes/Levels/%s/World%s/%s.tscn" % [prefix, world_str, level_str]
+	print("[M35] Randomized next level (Round %d): %s" % [levels_played, level_path])
+	return level_path

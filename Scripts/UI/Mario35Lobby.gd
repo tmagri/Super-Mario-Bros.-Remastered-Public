@@ -494,6 +494,7 @@ func _on_server_disconnected():
 	player_list.clear()
 
 func _on_start_pressed():
+	Mario35Handler.randomize_seed()
 	_update_settings()
 	var settings = Mario35Handler.get_settings_dictionary()
 	Mario35Network.start_game.rpc(settings)

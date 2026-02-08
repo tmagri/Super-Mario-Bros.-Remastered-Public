@@ -818,7 +818,8 @@ func die(pit := false) -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
 		Mario35Handler.on_local_player_death()
-	get_tree().paused = true
+	else:
+		get_tree().paused = true
 	Level.can_set_time = true
 	Level.first_load = true
 	if Global.current_game_mode != Global.GameMode.BOO_RACE:
@@ -837,6 +838,10 @@ func death_load() -> void:
 	if Global.death_load:
 		return
 	Global.death_load = true
+	
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		# Eliminated players can keep playing the level (Ghost mode)
+		pass
 
 	# Handle lives decrement for CAMPAIGN and MARATHON
 	if [Global.GameMode.CAMPAIGN, Global.GameMode.MARATHON].has(Global.current_game_mode):

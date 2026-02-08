@@ -14,14 +14,28 @@ var is_sent_enemy := false:
 		if is_node_ready():
 			_update_sent_visuals()
 
+var _sent_tween: Tween
+
+func _enter_tree() -> void:
+	if is_sent_enemy:
+		_update_sent_visuals()
+
 func _ready() -> void:
 	_update_sent_visuals()
 
 func _update_sent_visuals() -> void:
 	if is_sent_enemy:
-		# Use a more distinct "ghostly" pale bluish-white
-		modulate = Color(0.8, 0.8, 1.2, 0.6)
-		# Optional: Add shader or other visual effects here
+		if _sent_tween: _sent_tween.kill()
+		_sent_tween = create_tween().set_loops()
+		# Fast blink effect
+		_sent_tween.tween_property(self, "modulate:a", 0.2, 0.15)
+		_sent_tween.tween_property(self, "modulate:a", 0.8, 0.15)
+		# Ghostly bluish-white tint
+		modulate = Color(0.7, 0.7, 1.5, 0.8)
+	else:
+		if _sent_tween: _sent_tween.kill()
+		_sent_tween = null
+		modulate = Color.WHITE
 
 func _check_br_kill(time_reward: int = 2) -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:

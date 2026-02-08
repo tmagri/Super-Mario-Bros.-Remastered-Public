@@ -103,6 +103,21 @@ func write_save(campaign: String = Global.current_campaign, force := false) -> v
 		Global.GameMode.MARATHON:
 			save_json["BestAnyTime"] = SpeedrunHandler.marathon_best_any_time
 			save_json["BestWarplessTime"] = SpeedrunHandler.marathon_best_warpless_time
+		Global.GameMode.NONE:
+			# Save campaign data even when on title screen (for campaign switching)
+			if Global.high_score < Global.score:
+				Global.high_score = Global.score
+			save_json["World"] = Global.world_num
+			save_json["Level"] = Global.level_num
+			save_json["Lives"] = Global.lives
+			save_json["Coins"] = Global.coins
+			save_json["Score"] = Global.score
+			save_json["GameWin"] = Global.game_beaten
+			save_json["PowerStates"] = Global.player_power_states
+			save_json["LevelsVisited"] = visited_levels
+			save_json["HighScore"] = Global.high_score
+			save_json["ExtraWorldWin"] = Global.extra_worlds_win
+			save_json["SecondQuest"] = Global.second_quest
 		_:
 			pass
 	if campaign == "SMBANN":

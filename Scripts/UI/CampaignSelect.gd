@@ -86,7 +86,7 @@ func select() -> void:
 		return
 	active = false
 	Settings.file.game.campaign = Global.current_campaign
-	SaveManager.apply_save(SaveManager.load_save(campaign[selected_index]))
+	# SaveManager.apply_save(SaveManager.load_save(campaign[selected_index]))
 	if Global.current_campaign != "SMBANN":
 		SpeedrunHandler.load_best_times()
 	Settings.save_settings()

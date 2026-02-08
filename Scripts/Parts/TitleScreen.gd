@@ -84,6 +84,9 @@ func _process(_delta: float) -> void:
 func campaign_selected() -> void:
 	$CanvasLayer/Options1.close()
 	if last_campaign != Global.current_campaign:
+		# Save current campaign's score before switching
+		if last_campaign != "":
+			SaveManager.write_save(last_campaign)
 		last_campaign = Global.current_campaign
 		should_load_save = true  # Load save when campaign changes
 		update_title()

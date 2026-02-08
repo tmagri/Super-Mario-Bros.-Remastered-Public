@@ -19,6 +19,7 @@ config/name="SMB1R"
 run/main_scene="uid://bn66tnn8nlpi7"
 config/use_custom_user_dir=true
 config/features=PackedStringArray("4.6", "Forward Plus")
+run/single_instance=true
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/show_image=false
 boot_splash/stretch_mode=0

@@ -29,6 +29,7 @@ var can_update := true
 var can_air_kick := false
 
 var times_kicked := 0
+var one_up_count := 0
 
 func _ready() -> void:
 	$Sprite.flip_v = flipped
@@ -70,8 +71,13 @@ func award_score(award_level: int) -> void:
 	if award_level >= 10:
 		if Global.current_game_mode == Global.GameMode.MARIO_35:
 			AudioManager.play_global_sfx("1_up")
-			queue_free() # Destroy shell to prevent infinite farming
-			return
+			# 1-Up prevention: Destroy shell after first 1-up
+			if one_up_count > 0:
+				queue_free()
+				return
+			
+			Mario35Handler.add_time(20) # Award 1-Up time equivalent
+			one_up_count += 1
 		if [Global.GameMode.CHALLENGE, Global.GameMode.BOO_RACE].has(Global.current_game_mode) or Settings.file.difficulty.inf_lives:
 			$ScoreNoteSpawner.spawn_note(10000)
 		else:

@@ -33,7 +33,10 @@ func on_area_entered(area: Area2D) -> void:
 func give_life(_player: Player) -> void:
 	DiscoLevel.combo_amount += 1
 	AudioManager.play_sfx("1_up", global_position)
-	if [Global.GameMode.CHALLENGE, Global.GameMode.BOO_RACE].has(Global.current_game_mode) or Settings.file.difficulty.inf_lives:
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.add_time(20) # Award 1-Up time equivalent (e.g. 20s)
+		$ScoreNoteSpawner.spawn_one_up_note()
+	elif [Global.GameMode.CHALLENGE, Global.GameMode.BOO_RACE].has(Global.current_game_mode) or Settings.file.difficulty.inf_lives:
 		Global.score += 2000
 		$ScoreNoteSpawner.spawn_note(2000)
 	else:

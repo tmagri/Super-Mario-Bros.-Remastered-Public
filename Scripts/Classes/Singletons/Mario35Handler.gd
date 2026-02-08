@@ -5,7 +5,9 @@ signal game_started
 signal game_over(winner_id)
 signal incoming_enemy(enemy_type)
 signal incoming_item_roulette
+signal enemy_spawned(enemy_type) # New signal for HUD sync
 signal target_changed(new_target_type) # 0: Random, 1: Lowest Time, 2: Attackers, 3: Most Coins
+signal player_status_changed
 
 const MIN_TIME = 0
 const DEFAULT_START_TIME = 35
@@ -17,7 +19,10 @@ var current_time := 0.0
 var max_time := DEFAULT_MAX_TIME
 var start_time := DEFAULT_START_TIME
 
-var coins := 0
+var coins := 0:
+	set(value):
+		coins = value
+		# Emit signal if needed for HUD update
 
 # Settings
 enum GameVersion { SMB1, SMBLL, SMBANN, SMBS, RANDOM }
@@ -39,8 +44,11 @@ var spawn_timer := 0.0
 const SPAWN_INTERVAL = 3.0 # Seconds between spawns
 
 # Player status tracking
+# Player status tracking
 var player_statuses := {} # peer_id -> { "name": String, "alive": bool, "rank": int }
 var alive_count := 0
+var last_known_stats := {} # peer_id -> { "time": int, "coins": int, "target": int }
+var stat_broadcast_timer := 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -54,10 +62,20 @@ func _process(delta: float) -> void:
 	var old_int_time = int(current_time)
 	current_time -= delta
 	
+	if Global.debug_mode and current_time < 1.0:
+		if int(current_time) == 0:  # Only print once when it clamps
+			print("[M35] DEBUG MODE: Clamping time at 1.0")
+		current_time = 1.0
+	
 	# Constantly override Global.time to ensure personal timer is source of truth
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
 		Global.time = int(current_time)
 		Global.can_time_tick = false
+	
+	if int(current_time) != old_int_time:
+		time_changed.emit(int(current_time))
+		# Force update Global.time for UI
+		Global.time = int(current_time)
 	
 	if int(current_time) != old_int_time:
 		time_changed.emit(int(current_time))
@@ -72,15 +90,30 @@ func _process(delta: float) -> void:
 			spawn_from_queue()
 			spawn_timer = SPAWN_INTERVAL
 		
-	# Speed up music if low time (logic to be added via AudioManager interaction)
+		
+	# Periodic stat broadcast (1Hz)
+	stat_broadcast_timer -= delta
+	if stat_broadcast_timer <= 0:
+		stat_broadcast_timer = 1.0
+		Mario35Network.broadcast_stats(int(current_time), coins, current_target_id)
+		# Also re-evaluate target if auto-targeting logic requires it
+		if current_target_mode != TargetMode.RANDOM:
+			update_target()
 
 func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = DEFAULT_MAX_TIME) -> void:
+	print("[M35] start_game called, debug_self_attack = ", Global.debug_mode)
 	start_time = time_setting
 	max_time = max_time_setting
 	current_time = float(start_time)
 	game_active = true
 	coins = 0
-	Global.can_pause = false # Disable pausing in Battle Royale
+	Global.lives = 1 # Start with 1 life in BR
+	
+	# Disable pausing in Battle Royale (unless debug mode)
+	if Global.debug_mode:
+		Global.can_pause = true
+	else:
+		Global.can_pause = false
 	
 	if game_seed == 0:
 		game_seed = randi()
@@ -97,12 +130,17 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	alive_count = player_statuses.size()
 	
 	game_started.emit()
+	time_changed.emit(int(current_time))
+	print("[M35] game started, debug_self_attack = ", Global.debug_mode)
 
 func add_time(amount: int) -> void:
 	current_time += amount
 	if current_time > max_time:
 		current_time = float(max_time)
 	time_changed.emit(int(current_time))
+
+func add_item_time_bonus() -> void:
+	add_time(15) # Fixed bonus for duplicate powerup
 
 func _on_timeout() -> void:
 	if not game_active: return
@@ -122,6 +160,7 @@ func on_local_player_death() -> void:
 		
 		# Sync death to others
 		Mario35Network.notify_death(my_id, rank)
+		player_status_changed.emit()
 		_check_win_condition()
 
 func sync_death(id: int, rank: int) -> void:
@@ -129,6 +168,7 @@ func sync_death(id: int, rank: int) -> void:
 		player_statuses[id].alive = false
 		player_statuses[id].rank = rank
 		alive_count -= 1
+		player_status_changed.emit()
 		_check_win_condition()
 
 func _check_win_condition() -> void:
@@ -144,8 +184,17 @@ func _check_win_condition() -> void:
 		
 		game_active = false
 		game_over.emit(winner_id)
+		
+		# Delayed return to lobby
+		await get_tree().create_timer(5.0).timeout
+		get_tree().paused = false
+		Global.transition_to_scene("res://Scenes/Levels/TitleScreen.tscn")
 
 func _on_player_disconnected(id: int) -> void:
+	if id in player_statuses and player_statuses[id].alive:
+		# Treat disconnect as death for ranking
+		sync_death(id, alive_count)
+	
 	if id == current_target_id:
 		update_target()
 
@@ -167,7 +216,11 @@ func on_enemy_killed(enemy: Node, time_reward: int = 2) -> void:
 	incoming_enemy.emit(type) # Update HUD (local visual feedback of what you sent?)
 	
 	# Send to target
-	if current_target_id != 0:
+	if Global.debug_mode:
+		# Self-attack at reduced rate (50%)
+		if randf() < 0.5:
+			receive_enemy(type)
+	elif current_target_id != 0:
 		Mario35Network.send_enemy.rpc_id(current_target_id, type)
 	else:
 		# If no target (e.g. initial random), pick one?
@@ -193,31 +246,45 @@ func spawn_from_queue() -> void:
 	if scn:
 		var enemy = scn.instantiate()
 		enemy.global_position = player.global_position + Vector2(randf_range(-64, 64), -180) # Spawn above
-		enemy.modulate = Color(1, 1, 1, 0.6) # Ghost effect
+		if enemy is Enemy:
+			enemy.is_sent_enemy = true
 		Global.current_level.add_child(enemy)
+		enemy_spawned.emit(type)
+
+func get_attackers_count() -> int:
+	var count = 0
+	var my_id = multiplayer.get_unique_id()
+	for id in last_known_stats:
+		if last_known_stats[id].get("target", 0) == my_id:
+			count += 1
+	return count
 
 
 func try_use_item() -> void:
-	if coin_roulette_active or Global.coins < 20:
-		return
+	spin_roulette()
 	
-	Global.coins -= 20
+func spend_coins(amount: int) -> bool:
+	if coins >= amount:
+		coins -= amount
+		return true
+	return false
+
+func spin_roulette() -> void:
+	if coin_roulette_active: return
+	if not spend_coins(20): return
+	
 	coin_roulette_active = true
-	incoming_item_roulette.emit() # For HUD visuals
+	incoming_item_roulette.emit()
 	
-	# Roulette logic
 	var items = ["Mushroom", "Flower", "Star"]
 	match item_pool_mode:
-		0: # STANDARD
-			items.append("Lucky Star")
-		1: # CLASSIC
-			pass # Just Mushroom, Flower, Star
-		2: # REMASTERED
-			items.append_array(["Lucky Star", "Wing", "Hammer", "P-Switch"])
-	
+		0: items.append("Lucky Star")
+		2: items.append_array(["Lucky Star", "Wing", "Hammer", "P-Switch"])
+		
 	var picked = items.pick_random()
 	
-	await get_tree().create_timer(3.0).timeout # Roulette spin time
+	# Wait for animation (handled by HUD mostly, but logic waits here)
+	await get_tree().create_timer(3.0).timeout
 	
 	apply_item(picked)
 	coin_roulette_active = false
@@ -256,10 +323,58 @@ func cycle_target_mode(direction: int) -> void:
 	update_target()
 
 func update_target() -> void:
-	# Placeholder for actual targeting logic based on mode
-	# Needs access to other players' states (time, coins, etc)
-	# For now, just pick random if not self
-	pass
+	var potential_targets = []
+	for id in player_statuses:
+		if id != multiplayer.get_unique_id() and player_statuses[id].alive:
+			potential_targets.append(id)
+			
+	if potential_targets.is_empty():
+		current_target_id = 0
+		return
+		
+	match current_target_mode:
+		TargetMode.RANDOM:
+			# If current target is invalid or dead, pick new
+			if not current_target_id in potential_targets:
+				current_target_id = potential_targets.pick_random()
+				
+		TargetMode.LOWEST_TIME:
+			var lowest_id = potential_targets[0]
+			var lowest_val = 9999
+			for id in potential_targets:
+				var time = last_known_stats.get(id, {}).get("time", 999)
+				if time < lowest_val:
+					lowest_val = time
+					lowest_id = id
+			current_target_id = lowest_id
+			
+		TargetMode.MOST_COINS:
+			var highest_id = potential_targets[0]
+			var highest_val = -1
+			for id in potential_targets:
+				var c = last_known_stats.get(id, {}).get("coins", 0)
+				if c > highest_val:
+					highest_val = c
+					highest_id = id
+			current_target_id = highest_id
+			
+		TargetMode.ATTACKERS:
+			# Find who represents YOU as target
+			var attackers = []
+			var my_id = multiplayer.get_unique_id()
+			for id in potential_targets:
+				if last_known_stats.get(id, {}).get("target", 0) == my_id:
+					attackers.append(id)
+			
+			if not attackers.is_empty():
+				current_target_id = attackers.pick_random()
+			else:
+				# Fallback to random if no attackers
+				if not current_target_id in potential_targets:
+					current_target_id = potential_targets.pick_random()
+
+func receive_stats(id: int, time: int, coins: int, target: int) -> void:
+	last_known_stats[id] = {"time": time, "coins": coins, "target": target}
 
 
 # Call this when hosting to distribute settings

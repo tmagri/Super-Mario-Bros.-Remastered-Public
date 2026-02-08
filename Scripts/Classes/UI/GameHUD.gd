@@ -7,10 +7,21 @@ static var character_icons := [preload("res://Assets/Sprites/Players/Mario/LifeI
 
 const RANK_COLOURS := {"F": Color.DIM_GRAY, "D": Color.WEB_MAROON, "C": Color.PALE_GREEN, "B": Color.DODGER_BLUE, "A": Color.RED, "S": Color.GOLD, "P": Color.PURPLE}
 
+const ITEM_SPRITES := {
+	"Mushroom": preload("res://Assets/Sprites/Items/SuperMushroom.png"),
+	"Flower": preload("res://Assets/Sprites/Items/FireFlower.png"),
+	"Star": preload("res://Assets/Sprites/Items/SuperStar.png"),
+	"Lucky Star": preload("res://Assets/Sprites/Items/SuperStar.png"), # Placeholder/Tint
+	"Wing": preload("res://Assets/Sprites/Items/Wings.png"),
+	"Hammer": preload("res://Assets/Sprites/Items/Hammer.png"),
+	"P-Switch": preload("res://Assets/Sprites/Items/PSwitch.png")
+}
+
 var delta_time := 0.0
 
 func _ready() -> void:
 	Global.level_theme_changed.connect(update_character_info)
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
 		Mario35Handler.time_changed.connect(update_br_timer)
@@ -21,6 +32,39 @@ func _ready() -> void:
 		Mario35Handler.game_over.connect(_on_game_over)
 		update_br_target(Mario35Handler.current_target_mode)
 		update_br_leaderboard()
+		
+	# Ensure HUD is set up
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		setup_br_hud()
+
+func setup_br_hud() -> void:
+	if %BattleRoyaleHUD.has_node("ItemBox"): return
+	
+	var box = Panel.new()
+	box.name = "ItemBox"
+	box.size = Vector2(64, 64)
+	box.position = Vector2(192 - 32, 24) # Center top below timer
+	box.modulate = Color(1, 1, 1, 0.8)
+	
+	var coin_label = Label.new()
+	coin_label.name = "CoinLabel"
+	coin_label.text = "20"
+	coin_label.position = Vector2(0, 48)
+	coin_label.size = Vector2(64, 16)
+	coin_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(coin_label)
+	
+	var icon = TextureRect.new()
+	icon.name = "RouletteIcon"
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.size = Vector2(48, 48)
+	icon.position = Vector2(8, 0)
+	icon.texture = preload("res://Assets/Sprites/Items/SuperMushroom.png") # Default
+	icon.modulate = Color(0.5, 0.5, 0.5, 0.5) # Dimmed when inactive
+	box.add_child(icon)
+	
+	%BattleRoyaleHUD.add_child(box)
 
 func _process(delta: float) -> void:
 	if not get_tree().paused and $Timer.paused:
@@ -39,8 +83,18 @@ func handle_main_hud() -> void:
 		%BattleRoyaleHUD.visible = self.visible # Only show if GameHUD itself is visible
 		handle_br_input()
 		
+		# Update ItemBox coin count
+		var item_box = %BattleRoyaleHUD.get_node_or_null("ItemBox")
+		if item_box:
+			var lbl = item_box.get_node("CoinLabel")
+			lbl.text = "%d / 20" % Mario35Handler.coins
+			if Mario35Handler.coins >= 20:
+				lbl.modulate = Color.YELLOW
+			else:
+				lbl.modulate = Color.WHITE
+		
 		# Watch out warning
-		%WarningLabel.visible = Mario35Handler.enemy_queue.size() >= 3
+		%WarningLabel.visible = Mario35Handler.get_attackers_count() > 0
 		
 		# Spectating status
 		var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
@@ -229,6 +283,13 @@ func handle_speedrun_timer() -> void:
 func handle_pausing() -> void:
 	if get_tree().get_first_node_in_group("Players") != null and Global.can_pause and (Global.current_game_mode != Global.GameMode.LEVEL_EDITOR) and (Global.current_game_mode != Global.GameMode.MARIO_35):
 		if get_tree().paused == false and Global.game_paused == false:
+			# Battle Royale Pause Override
+			if Global.current_game_mode == Global.GameMode.MARIO_35:
+				# Pause is remapped to Target Change, so we don't open the menu here
+				# UNLESS we are in debug mode
+				if not Global.debug_mode:
+					return
+			
 			if Input.is_action_just_pressed("pause"):
 				activate_pause_menu()
 
@@ -277,11 +338,18 @@ func update_br_target(mode: int) -> void:
 	%TargetLabel.text = text
 
 func handle_br_input():
-	if Input.is_action_just_pressed("ui_right"):
+	# Targeting: Cycle with 'Pause' (Start) or D-Pad
+	# Only if NOT in debug mode (Pause is Pause in debug)
+	if Input.is_action_just_pressed("pause") and not Global.debug_mode:
 		Mario35Handler.cycle_target_mode(1)
-	elif Input.is_action_just_pressed("ui_left"):
+		
+	if Input.is_action_just_pressed("ui_right") or Input.is_action_just_pressed("move_right_0"):
+		Mario35Handler.cycle_target_mode(1)
+	elif Input.is_action_just_pressed("ui_left") or Input.is_action_just_pressed("move_left_0"):
 		Mario35Handler.cycle_target_mode(-1)
-	elif Input.is_action_just_pressed("ui_focus_next"): # Tab key for Item use
+
+	# Item Use: 'drop_item' (Select) or 'ui_focus_next' (Tab)
+	if Input.is_action_just_pressed("ui_focus_next") or Input.is_action_just_pressed("drop_item"): 
 		Mario35Handler.try_use_item()
 
 func add_incoming_enemy_icon(type: String) -> void:
@@ -312,24 +380,41 @@ func add_incoming_enemy_icon(type: String) -> void:
 	icon.custom_minimum_size = Vector2(16, 16)
 	%IncomingBar.add_child(icon)
 	
-	# Remove after a delay (simulating spawn or processing)
-	await get_tree().create_timer(3.0).timeout
-	if is_instance_valid(icon):
-		icon.queue_free()
+	icon.custom_minimum_size = Vector2(16, 16)
+	%IncomingBar.add_child(icon)
+	
+	# Identify as queue item
+	icon.set_meta("queue_item", true)
+
+func _on_enemy_spawned(_type: String) -> void:
+	if %IncomingBar.get_child_count() > 0:
+		%IncomingBar.get_child(0).queue_free()
 
 func show_item_roulette() -> void:
-	# Show visual roulette (placeholder)
-	var label = Label.new()
-	label.text = "ITEM ROULETTE..."
-	label.add_theme_color_override("font_shadow_color", Color.BLACK)
-	label.position = Vector2(128, 32) # Center-ish
-	%BattleRoyaleHUD.add_child(label)
+	var box = %BattleRoyaleHUD.get_node_or_null("ItemBox")
+	if not box: return
+	var icon = box.get_node("RouletteIcon")
 	
-	# Simulate spin visuals
-	await get_tree().create_timer(3.0).timeout
-	label.text = "ITEM USED!"
-	await get_tree().create_timer(1.0).timeout
-	label.queue_free()
+	icon.modulate = Color.WHITE
+	var keys = ITEM_SPRITES.keys()
+	
+	# Simple spin animation loop
+	for i in range(20): # Spin 20 times (approx 2-3 seconds)
+		var rand_key = keys.pick_random()
+		icon.texture = ITEM_SPRITES[rand_key]
+		await get_tree().create_timer(0.1).timeout
+		if not is_instance_valid(icon): return
+		
+	# Since Mario35Handler determines result asynchronously and applies it,
+	# we don't know the result here easily unless we passed it or listen for it.
+	# But wait, Mario35Handler calls apply_item *after* the timer.
+	# We should sync the visual stop with the actual item.
+	
+	# Actually Mario35Handler.spin_roulette waits 3.0s.
+	# We spun for ~2.0s. We can spin a bit more.
+	
+	# Ideally, specific signal with result would be better, but for now just fade out state.
+	icon.modulate = Color(0.5, 0.5, 0.5, 0.5)
 
 func update_br_leaderboard() -> void:
 	# Clear existing

@@ -638,6 +638,10 @@ func add_stomp_combo(enemy: Node = null, award_score := true) -> void:
 			if [Global.GameMode.CHALLENGE, Global.GameMode.BOO_RACE].has(Global.current_game_mode) or Settings.file.difficulty.inf_lives:
 				Global.score += 10000
 				score_note_spawner.spawn_note(10000)
+			elif Global.current_game_mode == Global.GameMode.MARIO_35:
+				Mario35Handler.add_time(20) # 1-Up equivalent time
+				AudioManager.play_global_sfx("1_up")
+				score_note_spawner.spawn_one_up_note()
 			else:
 				Global.lives += 1
 				AudioManager.play_global_sfx("1_up")
@@ -665,6 +669,11 @@ func kick_anim() -> void:
 	kicking = false
 
 func super_star() -> void:
+	if Global.current_game_mode == Global.GameMode.MARIO_35 and is_invincible:
+		Mario35Handler.add_item_time_bonus()
+		AudioManager.play_sfx("power_up", global_position)
+		return
+		
 	DiscoLevel.combo_meter += 1
 	is_invincible = true
 	$StarTimer.start()
@@ -896,6 +905,22 @@ func set_power_state_frame() -> void:
 func get_power_up(power_name := "", give_points := true) -> void:
 	if is_dead:
 		return
+		
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		var bonus = false
+		if power_name == "Big" and power_state.state_name != "Small":
+			bonus = true
+		elif power_name == "Fire" and power_state.state_name == "Fire":
+			bonus = true
+			
+		if bonus:
+			Mario35Handler.add_item_time_bonus()
+			if give_points:
+				Global.score += 1000
+				score_note_spawner.spawn_note(1000)
+			AudioManager.play_sfx("power_up", global_position)
+			return
+			
 	if give_points:
 		Global.score += 1000
 		DiscoLevel.combo_amount += 1
@@ -1145,11 +1170,21 @@ func on_area_entered(area: Area2D) -> void:
 			AudioManager.play_sfx("bump", global_position)
 
 func hammer_get() -> void:
+	if Global.current_game_mode == Global.GameMode.MARIO_35 and has_hammer:
+		Mario35Handler.add_item_time_bonus()
+		AudioManager.play_sfx("power_up", global_position)
+		return
+		
 	has_hammer = true
 	$HammerTimer.start()
 	AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.HAMMER, 0, false)
 
 func wing_get() -> void:
+	if Global.current_game_mode == Global.GameMode.MARIO_35 and flight_meter >= 10:
+		Mario35Handler.add_item_time_bonus()
+		AudioManager.play_sfx("power_up", global_position)
+		return
+		
 	AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.WING, 0, false, false)
 	flight_meter = 10
 

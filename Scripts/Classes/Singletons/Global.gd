@@ -175,15 +175,26 @@ var p_switch_active := false
 var p_switch_timer := 0.0
 var p_switch_timer_paused := false
 
-var debug_mode := false
+var debug_mode := true
+var instance_lock: TCPServer = null
 
 func _ready() -> void:
+	# Single Instance Enforcement
+	instance_lock = TCPServer.new()
+	var lock_error = instance_lock.listen(59350, "127.0.0.1")
+	if lock_error != OK:
+		printerr("[FATAL] Another instance of SMB1R is already running. Quitting.")
+		get_tree().quit()
+		return
+		
 	if is_snapshot: get_build_time()
-	if OS.is_debug_build(): debug_mode = false
+	#if OS.is_debug_build(): debug_mode = false
+	print("Debug mode: ",debug_mode)
 	current_version = get_version_number()
 	get_server_version()
 	setup_config_dirs()
 	check_for_rom()
+	$Transition.process_mode = Node.PROCESS_MODE_ALWAYS
 
 func setup_config_dirs() -> void:
 	var dirs = [

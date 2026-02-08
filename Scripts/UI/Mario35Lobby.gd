@@ -17,6 +17,7 @@ var is_controller_mode := false
 var is_editing_name := false
 var is_editing_setting := false
 var last_input_was_mouse := false
+var debug_code_counter := 0
 
 func _ready():
 	Global.current_game_mode = Global.GameMode.MARIO_35
@@ -40,6 +41,15 @@ func _ready():
 	$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton.pressed.connect(_on_join_pressed)
 	start_button.pressed.connect(_on_start_pressed)
 	$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton.pressed.connect(_on_back_pressed)
+	
+	# Setup Debug Button if enabled
+	if Global.debug_mode:
+		setup_debug_button()
+		# Auto-host immediately if debug_mode is true
+		if not multiplayer.is_server():
+			Global.debug_mode = true
+			await get_tree().process_frame # Wait for scene to be ready
+			_auto_host_for_debug()
 	
 	# Initial focus for controller
 	await get_tree().process_frame
@@ -110,6 +120,7 @@ func _ready():
 	join_btn.focus_neighbor_bottom = back_btn.get_path()
 	
 	back_btn.focus_neighbor_top = host_btn.get_path()
+	# Removed self-lock, now points to debug button if active
 	
 	%SettingsButton.pressed.connect(func(): 
 		%SettingsPopup.show()
@@ -474,11 +485,15 @@ func refresh_player_list():
 		var suffix = " (YOU)" if id == my_id else ""
 		player_list.add_item(p.name.to_upper() + suffix)
 	
-	# Start Game requirements (2+ players)
+	# Start Game requirements (2+ players, or 1 in debug mode)
 	if multiplayer.is_server():
-		start_button.disabled = (count < 2)
-		if count < 2:
-			status_label.text = "WAITING FOR PLAYERS (%d/2)" % count
+		var min_players = 1 if Global.debug_mode else 2
+		start_button.disabled = (count < min_players)
+		if count < min_players:
+			if Global.debug_mode:
+				status_label.text = "DEBUG MODE - READY"
+			else:
+				status_label.text = "WAITING FOR PLAYERS (%d/2)" % count
 		else:
 			status_label.text = "HOSTING"
 			if not Mario35Network.room_key.is_empty():
@@ -550,3 +565,78 @@ func _set_lobby_interaction_active(active: bool) -> void:
 func _on_spinbox_input(event: InputEvent, sb: SpinBox):
 	# Fallback for mouse/keyboard if needed, but the main logic is in _input for controller
 	pass
+
+var debug_btn: Button
+func setup_debug_button() -> void:
+	debug_btn = Button.new()
+	debug_btn.text = "DEBUG: OFF"
+	if Global.debug_mode:
+		debug_btn.text = "DEBUG: ON"
+	debug_btn.name = "DebugButton"
+	
+	# Try to match theme/font if possible, or just rely on inherited theme
+	# To match "Host/Join" buttons:
+	debug_btn.add_theme_font_size_override("font_size", 8)
+	
+	$BG/Border/Content/ScrollContainer/VBoxContainer.add_child(debug_btn)
+	# Move below Back Button
+	$BG/Border/Content/ScrollContainer/VBoxContainer.move_child(debug_btn, -1)
+	
+	var back_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/BackButton
+	back_btn.focus_neighbor_bottom = debug_btn.get_path()
+	debug_btn.focus_neighbor_top = back_btn.get_path()
+	debug_btn.focus_neighbor_bottom = debug_btn.get_path() # Loop on self at bottom
+	
+	debug_btn.pressed.connect(_on_debug_toggled)
+	debug_btn.focus_entered.connect(_on_focus_entered.bind(debug_btn))
+	debug_btn.focus_exited.connect(_on_focus_exited.bind(debug_btn))
+	
+	# Auto-host if debug is already on
+	if Global.debug_mode:
+		_auto_host_for_debug()
+	
+func _on_debug_toggled() -> void:
+	Global.debug_mode = !Global.debug_mode
+	AudioManager.play_global_sfx("coin" if Global.debug_mode else "bump")
+	debug_btn.text = "DEBUG: ON" if Global.debug_mode else "DEBUG: OFF"
+	
+	if Global.debug_mode:
+		DisplayServer.window_set_title("SMB1R - BR DEBUG MODE")
+		_auto_host_for_debug()
+	else:
+		DisplayServer.window_set_title("SMB1R")
+		# Leave game if we were in debug host
+		if multiplayer.is_server():
+			Mario35Network.leave_game()
+			start_button.visible = false
+			%SettingsButton.visible = false
+			status_label.text = ""
+
+func _auto_host_for_debug() -> void:
+	# Auto-host for debug mode (single player)
+	if name_input.text.strip_edges().is_empty():
+		name_input.text = "DEBUG"
+	
+	Mario35Network.player_info.name = name_input.text.strip_edges().to_upper()
+	var err = Mario35Network.host_game("", false) # No UPNP, no room key
+	if err == OK:
+		status_label.text = "DEBUG MODE - READY"
+		start_button.visible = true
+		%SettingsButton.visible = true
+		
+		# Setup focus neighbors for Start/Settings/Back
+		var host_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton
+		var back_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/BackButton
+		var settings_btn = %SettingsButton
+		
+		host_btn.focus_neighbor_bottom = start_button.get_path()
+		start_button.focus_neighbor_top = host_btn.get_path()
+		start_button.focus_neighbor_bottom = settings_btn.get_path()
+		settings_btn.focus_neighbor_top = start_button.get_path()
+		settings_btn.focus_neighbor_bottom = back_btn.get_path()
+		back_btn.focus_neighbor_top = settings_btn.get_path()
+		
+		# Refresh player list to update button state (enables Start Game in debug mode)
+		refresh_player_list()
+	else:
+		status_label.text = "DEBUG HOST FAILED " + str(err)

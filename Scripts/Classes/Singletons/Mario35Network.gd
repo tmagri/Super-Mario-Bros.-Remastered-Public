@@ -26,7 +26,7 @@ var player_info = {
 }
 
 # --- RPC CONFIGURATION (MANUAL MODE) ---
-# Version: 2026-02-07-v13-DEATH-SYNC
+# Version: 2026-02-08-v15-BR-OVERHAUL
 
 func register_player(data_json):
 	var data = JSON.parse_string(data_json)
@@ -71,6 +71,14 @@ func send_enemy(type):
 func notify_death(id, rank):
 	Mario35Handler.sync_death(int(id), int(rank))
 
+func broadcast_stats(time: int, coins: int, target: int) -> void:
+	receive_stats.rpc(time, coins, target)
+
+@rpc("any_peer", "call_remote", "unreliable") # Unreliable is fine for freq stats
+func receive_stats(time: int, coins: int, target: int) -> void:
+	var sender = multiplayer.get_remote_sender_id()
+	Mario35Handler.receive_stats(sender, time, coins, target)
+
 func _broadcast_list():
 	if multiplayer.is_server():
 		# Use rpc_id(0) to ensure it reaches everyone even in manual mode
@@ -78,7 +86,7 @@ func _broadcast_list():
 # --------------------------------------------------
 
 func _ready():
-	print("[NETWORK] Mario35Network Initialized. Version: 2026-02-07-v13-DEATH-SYNC")
+	print("[NETWORK] Mario35Network Initialized. Version: 2026-02-08-v15-BR-OVERHAUL")
 	
 	# MANUAL RPC CONFIGURATION (Godot 4 fallback)
 	var config_any = {
@@ -100,6 +108,7 @@ func _ready():
 	rpc_config("start_game", config_any) # Should be auth-only, but using any for debug
 	rpc_config("send_enemy", config_any)
 	rpc_config("notify_death", config_any)
+	rpc_config("receive_stats", config_any) # Using reliable config for simplicity even if func unchecked
 	# Dedicated server support
 	if "--server" in OS.get_cmdline_args():
 		print("Starting dedicated server...")

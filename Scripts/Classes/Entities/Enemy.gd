@@ -8,6 +8,12 @@ signal killed(direction: int)
 @export var score_note_adder: ScoreNoteSpawner = null
 
 var direction := -1
+var is_sent_enemy := false
+
+func _ready() -> void:
+	if is_sent_enemy:
+		modulate = Color(1, 1, 1, 0.6)
+		# Optional: Add shader or other visual effects here
 
 func _check_br_kill(time_reward: int = 2) -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:

@@ -61,7 +61,13 @@ func die_from_object(obj: Node2D) -> void:
 		dir = [-1, 1].pick_random()
 	
 	# If killed by a shell or player stomp, time is handled by the attacker to allow combos
-	var reward = 0 if (obj is Shell or obj is Player) else 2
+	# Special case: Star kills don't have combos, so they award time directly in Mario 35
+	var reward = 2
+	if (obj is Shell or obj is Player):
+		reward = 0
+		if obj is Player and obj.is_invincible and Global.current_game_mode == Global.GameMode.MARIO_35:
+			reward = 2
+			
 	_check_br_kill(reward)
 	DiscoLevel.combo_amount += 1
 	killed.emit(dir)

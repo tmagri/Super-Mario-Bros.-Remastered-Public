@@ -14,7 +14,8 @@ const ITEM_JSONS := {
 	"Lucky Star": preload("res://Assets/Sprites/Items/LuckyStar.json"),
 	"Wing": preload("res://Assets/Sprites/Items/Wings.json"),
 	"Hammer": preload("res://Assets/Sprites/Items/HammerItem.json"), # HammerItem.json seems correct for item form
-	"P-Switch": preload("res://Assets/Sprites/Items/PSwitch.json")
+	"P-Switch": preload("res://Assets/Sprites/Items/PSwitch.json"),
+	"QuestionBlock": preload("res://Assets/Sprites/Blocks/QuestionBlock.json")
 }
 
 var delta_time := 0.0
@@ -33,21 +34,21 @@ func _ready() -> void:
 func _on_mario35_game_started() -> void:
 	if not Mario35Handler.time_changed.is_connected(update_br_timer):
 		Mario35Handler.time_changed.connect(update_br_timer)
-	if not Mario35Handler.target_changed.is_connected(update_br_target):
-		Mario35Handler.target_changed.connect(update_br_target)
+	if not Mario35Handler.target_changed.is_connected(update_hud_labels):
+		Mario35Handler.target_changed.connect(update_hud_labels)
 	if not Mario35Handler.incoming_item_roulette.is_connected(show_item_roulette):
 		Mario35Handler.incoming_item_roulette.connect(show_item_roulette)
+	if not Mario35Handler.roulette_stopped.is_connected(_on_roulette_stopped):
+		Mario35Handler.roulette_stopped.connect(_on_roulette_stopped)
 	
-	update_br_target(Mario35Handler.current_target_mode)
+	update_hud_labels(Mario35Handler.current_target_mode)
 	update_br_timer(int(Mario35Handler.current_time))
 	# Hide IncomingBar as per user request
 	%IncomingBar.visible = false
 	
-	# Cleanup previous game over / leaderboard
-	if %BattleRoyaleHUD.has_node("GameOverLabel"):
-		%BattleRoyaleHUD.get_node("GameOverLabel").queue_free()
+	# Robust Cleanup of previous game over / leaderboard
 	for child in %BattleRoyaleHUD.get_children():
-		if child.name.begins_with("LRB_"):
+		if "GameOver" in child.name or child.name.begins_with("LRB_"):
 			child.queue_free()
 			
 	setup_br_hud()
@@ -122,22 +123,43 @@ func handle_main_hud() -> void:
 			for c in $Main.get_children(): c.hide()
 		if $ModernHUD:
 			for c in $ModernHUD.get_children(): c.hide()
+			
+		# Final resort: Hide ALL direct children that aren't the BR HUD or Pause
+		for child in get_children():
+			if child is Control and child.name != "BattleRoyaleHUD" and not "Pause" in child.name and not "Results" in child.name:
+				child.hide()
 		
 		return
 	%BattleRoyaleHUD.visible = false
 	
 	$Main.visible = not Settings.file.visuals.modern_hud
 	$ModernHUD.visible = Settings.file.visuals.modern_hud
+	
+	# Reset visibility of essential children (undoing aggressive hide from BR mode)
+	if $Main.visible:
+		for c in $Main.get_children(): c.show()
+	if $ModernHUD.visible:
+		# For ModernHUD, we can be more aggressive as it's cleaner structured
+		for c in $ModernHUD.get_children(): c.show()
 	$Main/RedCoins.hide()
 	$Main/CoinCount.show()
 	%IGT.hide()
 	%Combo.hide()
 	$Timer.paused = Settings.file.difficulty.time_limit == 2
-	$%Time.show()
+	%Time.show()
 	%Stopwatch.hide()
 	%PB.hide()
 	$Main/CoinCount/KeyCount.visible = KeyItem.total_collected > 0
 	%KeyAmount.text = "*" + str(KeyItem.total_collected).pad_zeros(2)
+	
+	# Explicitly re-show standard labels (counteract BR mode hiding)
+	%Score.show()
+	%LevelNum.show()
+	%Time.show()
+	%CoinLabel.show()
+	
+	# RESTORE: Call update_hud_labels for standard game mode!
+	update_hud_labels(Mario35Handler.current_target_mode)
 
 
 func setup_br_hud() -> void:
@@ -172,7 +194,7 @@ func setup_br_hud() -> void:
 	var sprite = AnimatedSprite2D.new()
 	sprite.name = "Sprite"
 	sprite.scale = Vector2(2, 2) 
-	sprite.modulate = Color(0.5, 0.5, 0.5, 0.5)
+	sprite.modulate = Color.WHITE
 	icon_root.add_child(sprite)
 	
 	# Sprite Frames ResourceSetter
@@ -180,7 +202,7 @@ func setup_br_hud() -> void:
 	rs.name = "ResourceSetterNew"
 	rs.node_to_affect = sprite
 	rs.property_name = "sprite_frames"
-	rs.resource_json = ITEM_JSONS["Mushroom"]
+	rs.resource_json = ITEM_JSONS["QuestionBlock"]
 	sprite.add_child(rs)
 
 	# Coin Cost (Bottom Left)
@@ -191,13 +213,12 @@ func setup_br_hud() -> void:
 	# Let's switch CoinIcon to AnimatedSprite2D to be safe and match "Always use resource load json".
 	var coin_root = Control.new()
 	coin_root.name = "CoinIconRoot"
-	coin_root.position = Vector2(8, 40) # Position for the icon
+	coin_root.position = Vector2(12, 40) # Position icon at X=12
 	box.add_child(coin_root)
 	
 	var coin_sprite = AnimatedSprite2D.new()
 	coin_sprite.name = "CoinSprite"
-	coin_sprite.scale = Vector2(1, 1) # 8x8 is small, maybe scale up or keep 1x? Label is small.
-	# Label font size 8. Icon 8x8 matches.
+	coin_sprite.scale = Vector2(1, 1) 
 	coin_root.add_child(coin_sprite)
 	
 	var coin_rs = ResourceSetterNew.new()
@@ -207,11 +228,12 @@ func setup_br_hud() -> void:
 	coin_rs.resource_json = preload("res://Assets/Sprites/UI/CoinIcon.json")
 	coin_sprite.add_child(coin_rs)
 	coin_sprite.play("default")
+	coin_sprite.centered = true # Ensure it's centered at root pos (12, 40)
 
 	var coin_label = Label.new()
 	coin_label.name = "CoinLabel"
 	coin_label.text = "20"
-	coin_label.position = Vector2(10, 32) # Aligned with icon at y=36 (center 40)
+	coin_label.position = Vector2(20, 32) # Side-by-side with icon. Center 32+8=40.
 	coin_label.size = Vector2(20, 16)
 	coin_label.add_theme_font_size_override("font_size", 8)
 	box.add_child(coin_label)
@@ -239,7 +261,7 @@ func setup_br_hud() -> void:
 	#%TargetLabel.add_theme_constant_override("outline_size", 4)
 	
 
-func update_br_target(mode: int) -> void:
+func update_hud_labels(mode: int) -> void:
 	var text = "RANDOM"
 	match mode:
 		Mario35Handler.TargetMode.RANDOM: text = "RANDOM"
@@ -247,6 +269,7 @@ func update_br_target(mode: int) -> void:
 		Mario35Handler.TargetMode.ATTACKERS: text = "ATTACKERS"
 		Mario35Handler.TargetMode.MOST_COINS: text = "MOST COINS"
 	%TargetLabel.text = text
+	%Score.text = str(Global.score).pad_zeros(6)
 	%CoinLabel.text = "*" + str(Global.coins).pad_zeros(2)
 	if current_chara != Global.player_characters[0]:
 		update_character_info()
@@ -266,7 +289,7 @@ func update_br_target(mode: int) -> void:
 	%Time.text = " " + str(Global.time).pad_zeros(3)
 	if Settings.file.difficulty.time_limit == 0:
 		%Time.text = " ---"
-	%Time.visible = get_tree().get_first_node_in_group("Players") != null
+	%Time.visible = get_tree().get_first_node_in_group("Players") != null or Global.in_title_screen
 	handle_modern_hud()
 	if Global.current_game_mode == Global.GameMode.CHALLENGE:
 		handle_challenge_mode_hud()
@@ -481,24 +504,40 @@ func show_item_roulette() -> void:
 	
 	sprite.modulate = Color.WHITE
 	var keys = ITEM_JSONS.keys()
+	keys.erase("QuestionBlock")
 	
-	# Simple spin animation loop
-	for i in range(20): # Spin 20 times (approx 2-3 seconds)
+	# Spin while logic is active
+	while Mario35Handler.coin_roulette_active:
 		var rand_key = keys.pick_random()
 		rs.resource_json = ITEM_JSONS[rand_key]
-		await get_tree().create_timer(0.1).timeout
+		AudioManager.play_global_sfx("menu_move")
+		await get_tree().create_timer(0.05).timeout
 		if not is_instance_valid(sprite): return
-		
-	# Since Mario35Handler determines result asynchronously and applies it,
-	# we don't know the result here easily unless we passed it or listen for it.
-	# But wait, Mario35Handler calls apply_item *after* the timer.
-	# We should sync the visual stop with the actual item.
+
+func _on_roulette_stopped(item: String) -> void:
+	var box = %BattleRoyaleHUD.get_node_or_null("ItemBox")
+	if not box: return
+	var icon_root = box.get_node("RouletteIcon")
+	var sprite = icon_root.get_node("Sprite")
+	var rs = sprite.get_node("ResourceSetterNew")
 	
-	# Actually Mario35Handler.spin_roulette waits 3.0s.
-	# We spun for ~2.0s. We can spin a bit more.
+	if not ITEM_JSONS.has(item): return
 	
-	# Ideally, specific signal with result would be better, but for now just fade out state.
-	sprite.modulate = Color(0.5, 0.5, 0.5, 0.5)
+	# Set final item
+	rs.resource_json = ITEM_JSONS[item]
+	sprite.modulate = Color.WHITE
+	
+	# Blink effect
+	for i in range(6):
+		sprite.visible = !sprite.visible
+		await get_tree().create_timer(0.05).timeout
+	sprite.visible = true
+	
+	# Reset to Question Block after a moment
+	await get_tree().create_timer(0.5).timeout
+	if is_instance_valid(sprite):
+		rs.resource_json = ITEM_JSONS["QuestionBlock"]
+		sprite.play("default")
 
 func update_br_leaderboard() -> void:
 	# Clear existing

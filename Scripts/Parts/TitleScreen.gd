@@ -16,6 +16,12 @@ var has_achievements_to_unlock := false
 var star_offset_x := 0
 var star_offset_y := 0
 
+# Track whether we should load save data (only on fresh loads or campaign changes)
+static var should_load_save := true
+
+# Track if this is a "New Game" that needs stats cleared
+var is_new_game := false
+
 func _enter_tree() -> void:
 	check_for_unlocked_achievements()
 	Global.debugged_in = false
@@ -34,7 +40,7 @@ func _ready() -> void:
 	AudioManager.stop_all_music()
 	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.NONE, true)
 	Global.reset_values()
-	Global.second_quest = false
+	# Don't reset second_quest here - it needs to persist for save/load
 	SpeedrunHandler.timer = 0
 	SpeedrunHandler.timer_active = false
 	SpeedrunHandler.show_timer = false
@@ -47,7 +53,12 @@ func _ready() -> void:
 	update_title()
 
 func update_title() -> void:
-	SaveManager.apply_save(SaveManager.load_save(Global.current_campaign))
+	# Only load save data when explicitly needed (campaign change, initial load, "Continue")
+	# This prevents overwriting current session score/coins when returning from gameplay
+	if should_load_save:
+		SaveManager.apply_save(SaveManager.load_save(Global.current_campaign))
+		should_load_save = false
+	
 	level_id = Global.level_num - 1
 	world_id = Global.world_num
 	update_theme()
@@ -74,6 +85,7 @@ func campaign_selected() -> void:
 	$CanvasLayer/Options1.close()
 	if last_campaign != Global.current_campaign:
 		last_campaign = Global.current_campaign
+		should_load_save = true  # Load save when campaign changes
 		update_title()
 	if Global.current_campaign == "SMBANN":
 		$CanvasLayer/Options2Stripped.open()
@@ -124,7 +136,9 @@ func get_highscore() -> void:
 		%StoryOptions.selected_index = 1
 
 func clear_stats() -> void:
-	Global.clear_saved_values()
+	# Set flag to clear stats when start_game is called
+	# This allows score/coins to remain visible during menu navigation
+	is_new_game = true
 
 func go_back_to_first_level() -> void:
 	Global.world_num = 1
@@ -132,6 +146,11 @@ func go_back_to_first_level() -> void:
 	LevelTransition.level_to_transition_to = Level.get_scene_string(Global.world_num, Global.level_num)
 
 func start_game() -> void:
+	# Clear stats only for "New Game" flows, after user has selected everything
+	if is_new_game:
+		Global.clear_saved_values()
+		is_new_game = false
+	
 	PipeCutscene.seen_cutscene = false
 	first_load = true
 	Global.reset_values()
@@ -238,6 +257,7 @@ func new_game_selected() -> void:
 		$CanvasLayer/StoryMode/NewUnbeatenGame/NoBeatenCharSelect.open()
 
 func continue_game() -> void:
+	# Explicitly load save when user clicks "Continue"
 	SaveManager.apply_save(SaveManager.load_save(Global.current_campaign))
 	Global.current_game_mode = Global.GameMode.CAMPAIGN
 	if Global.game_beaten or Global.debug_mode:

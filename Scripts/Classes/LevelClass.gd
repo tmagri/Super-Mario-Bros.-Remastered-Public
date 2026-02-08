@@ -152,9 +152,9 @@ static func get_world_count() -> int:
 func transition_to_next_level() -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
 		var next_level_path = Mario35Handler.get_next_level_path()
-		# Global.level_num / world_num updates might be needed for HUD
-		LevelTransition.level_to_transition_to = next_level_path 
-		Global.transition_to_scene("res://Scenes/Levels/LevelTransition.tscn")
+		update_next_level_info() # Ensure world/level ids are ready for HUD
+		Global.reset_level_state()
+		Global.transition_to_scene(next_level_path)
 		return
 	if Global.current_game_mode == Global.GameMode.CHALLENGE:
 		Global.transition_to_scene("res://Scenes/Levels/ChallengeModeResults.tscn")

@@ -384,6 +384,25 @@ func reset_values() -> void:
 	p_switch_active = false
 	p_switch_timer = 0.0
 
+func reset_session() -> void:
+	Global.score = 0
+	Global.coins = 0
+	Global.world_num = 1
+	Global.level_num = 1
+	Global.reset_values()
+
+func reset_level_state() -> void:
+	Level.can_set_time = true
+	ResourceSetterNew.cache.clear()
+	ResourceSetterNew.property_cache.clear()
+	AudioManager.current_level_theme = ""
+	Level.vine_return_level = ""
+	Level.vine_warp_level = ""
+	Level.in_vine_level = false
+	p_switch_active = false
+	Lakitu.present = false
+	p_switch_timer = -1
+
 func clear_saved_values() -> void:
 	coins = 0
 	score = 0

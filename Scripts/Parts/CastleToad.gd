@@ -12,6 +12,9 @@ func _ready() -> void:
 		i.text = tr(i.text).replace("{PLAYER}", tr(Player.CHARACTER_NAMES[int(Global.player_characters[0])]))
 
 func begin() -> void:
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.is_timer_paused = true
+		
 	$StaticBody2D/CollisionShape2D.set_deferred("disabled", false)
 	%PBMessage.modulate.a = int(SpeedrunHandler.timer < SpeedrunHandler.best_time)
 	if play_end_music:
@@ -30,7 +33,12 @@ func begin() -> void:
 		exit_level()
 
 func exit_level() -> void:
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.is_timer_paused = false
+	
 	match Global.current_game_mode:
+		Global.GameMode.MARIO_35:
+			Global.current_level.transition_to_next_level()
 		Global.GameMode.MARATHON_PRACTICE:
 			Global.open_marathon_results()
 		Global.GameMode.CUSTOM_LEVEL:
@@ -70,7 +78,12 @@ func show_message(message_node: Node) -> void:
 		await get_tree().create_timer(1).timeout
 
 func peach_level_exit() -> void:
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.is_timer_paused = false
+		
 	match Global.current_game_mode:
+		Global.GameMode.MARIO_35:
+			Global.current_level.transition_to_next_level()
 		Global.GameMode.MARATHON:
 			Global.open_marathon_results()
 		Global.GameMode.MARATHON_PRACTICE:

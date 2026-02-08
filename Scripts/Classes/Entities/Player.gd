@@ -290,7 +290,7 @@ func _ready() -> void:
 	Global.level_theme_changed.connect(apply_physics_style)
 	Global.level_theme_changed.connect(apply_character_physics)
 	Global.level_theme_changed.connect(set_power_state_frame)
-	if Global.current_level.first_load and Global.current_game_mode == Global.GameMode.MARATHON_PRACTICE:
+	if Level.first_load and Global.current_game_mode == Global.GameMode.MARATHON_PRACTICE:
 		Global.player_power_states[player_id] = "0"
 	power_state = $PowerStates.get_node(POWER_STATES[int(Global.player_power_states[player_id])])
 	if Global.current_game_mode == Global.GameMode.LEVEL_EDITOR:
@@ -860,8 +860,9 @@ func death_load() -> void:
 			Global.reset_values()
 			Global.clear_saved_values()
 			Global.death_load = false
-			Level.start_level_path = Global.current_level.scene_file_path
-			Global.current_level.reload_level(),
+			if is_instance_valid(Global.current_level):
+				Level.start_level_path = Global.current_level.scene_file_path
+				Global.current_level.reload_level(),
 
 		"time_up": func():
 			Global.transition_to_scene("res://Scenes/Levels/TimeUp.tscn"),
@@ -872,7 +873,8 @@ func death_load() -> void:
 
 		"default_reload": func():
 			LevelPersistance.reset_states()
-			Global.current_level.reload_level()
+			if is_instance_valid(Global.current_level):
+				Global.current_level.reload_level()
 	}
 
 	# Determine which action to take
@@ -964,7 +966,6 @@ func power_up_animation(new_power_state := "") -> void:
 				transforming = true
 				sprite.material.set_shader_parameter("enabled", true)
 			await get_tree().create_timer(0.4, true).timeout
-			power_state = get_node("PowerStates/" + new_power_state)
 			sprite.sprite_frames = new_frames
 			handle_invincible_palette()
 			sprite.play("Grow")
@@ -996,6 +997,7 @@ func power_up_animation(new_power_state := "") -> void:
 			transforming = true
 			await get_tree().create_timer(0.6).timeout
 			transforming = false
+	power_state = get_node("PowerStates/" + new_power_state)
 	get_tree().paused = false
 	sprite.process_mode = Node.PROCESS_MODE_INHERIT
 	if Global.player_action_just_pressed("jump", player_id):

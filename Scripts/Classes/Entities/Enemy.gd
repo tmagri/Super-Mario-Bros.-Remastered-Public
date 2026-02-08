@@ -8,11 +8,19 @@ signal killed(direction: int)
 @export var score_note_adder: ScoreNoteSpawner = null
 
 var direction := -1
-var is_sent_enemy := false
+var is_sent_enemy := false:
+	set(v):
+		is_sent_enemy = v
+		if is_node_ready():
+			_update_sent_visuals()
 
 func _ready() -> void:
+	_update_sent_visuals()
+
+func _update_sent_visuals() -> void:
 	if is_sent_enemy:
-		modulate = Color(1, 1, 1, 0.6)
+		# Use a more distinct "ghostly" pale bluish-white
+		modulate = Color(0.8, 0.8, 1.2, 0.6)
 		# Optional: Add shader or other visual effects here
 
 func _check_br_kill(time_reward: int = 2) -> void:

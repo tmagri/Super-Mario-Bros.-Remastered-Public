@@ -20,6 +20,7 @@ var last_input_was_mouse := false
 var debug_code_counter := 0
 
 func _ready():
+	AudioManager.stop_all_music()
 	Global.current_game_mode = Global.GameMode.MARIO_35
 	# Music setup
 	music_player = AudioStreamPlayer.new()
@@ -31,31 +32,8 @@ func _ready():
 	
 	if Global.has_node("GameHUD"):
 		Global.get_node("GameHUD").hide()
-	
-	Mario35Network.player_list_changed.connect(refresh_player_list)
-	Mario35Network.connection_failed.connect(_on_connection_failed)
-	Mario35Network.server_disconnected.connect(_on_server_disconnected)
-	Mario35Network.server_found.connect(_on_server_found)
-	
-	$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton.pressed.connect(_on_host_pressed)
-	$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton.pressed.connect(_on_join_pressed)
-	start_button.pressed.connect(_on_start_pressed)
-	$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton.pressed.connect(_on_back_pressed)
-	
-	# Setup Debug Button if enabled
-	if Global.debug_mode:
-		setup_debug_button()
-		# Auto-host immediately if debug_mode is true
-		if not multiplayer.is_server():
-			Global.debug_mode = true
-			await get_tree().process_frame # Wait for scene to be ready
-			_auto_host_for_debug()
-	
-	# Initial focus for controller
-	await get_tree().process_frame
-	name_input.grab_focus()
-	
-	# Setup focus cursor
+		
+	# Setup focus cursor early
 	focus_cursor = TextureRect.new()
 	focus_cursor.texture_filter = TEXTURE_FILTER_NEAREST
 	focus_cursor.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -67,8 +45,6 @@ func _ready():
 	add_child(focus_cursor)
 	focus_cursor.hide()
 	
-	# Use ResourceSetterNew to load the correct cursor texture from JSON
-	# Ensuring we have a basic theme set so ResourceSetter works
 	if Global.level_theme == "":
 		Global.level_theme = "Overworld"
 		
@@ -79,8 +55,7 @@ func _ready():
 	rs.resource_json = load("res://Assets/Sprites/UI/Cursor.json")
 	add_child(rs)
 	
-	# Setup character indicator (Zelda II Style)
-	# Use RichTextLabel for perfect transparency-based overlay
+	# Setup character indicator early
 	char_indicator = RichTextLabel.new()
 	char_indicator.bbcode_enabled = true
 	char_indicator.texture_filter = TEXTURE_FILTER_NEAREST
@@ -92,35 +67,51 @@ func _ready():
 	add_child(char_indicator)
 	char_indicator.hide()
 	
-	name_input.caret_blink = false # Hide standard caret
-	
-	# Blink animation for indicator
+	name_input.caret_blink = false
 	var b_tween = create_tween().set_loops()
 	b_tween.tween_property(char_indicator, "modulate:a", 0.0, 0.4)
 	b_tween.tween_property(char_indicator, "modulate:a", 1.0, 0.4)
 	
-	# Setup neighbors for clunky navigation
-	var host_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton
-	var join_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton
-	var back_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/BackButton
+	Mario35Network.player_list_changed.connect(refresh_player_list)
+	Mario35Network.connection_failed.connect(_on_connection_failed)
+	Mario35Network.server_disconnected.connect(_on_server_disconnected)
+	Mario35Network.server_found.connect(_on_server_found)
 	
-	name_input.focus_neighbor_bottom = ip_input.get_path()
-	ip_input.focus_neighbor_top = name_input.get_path()
-	ip_input.focus_neighbor_bottom = %RoomKeyInput.get_path()
+	$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton.pressed.connect(_on_host_pressed)
+	$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton.pressed.connect(_on_join_pressed)
+	start_button.pressed.connect(_on_start_pressed)
+	$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton.pressed.connect(_on_back_pressed)
 	
-	%RoomKeyInput.focus_neighbor_top = ip_input.get_path()
-	%RoomKeyInput.focus_neighbor_bottom = host_btn.get_path()
+	# Connect focus signals for everything BEFORE potential grab_focus
+	name_input.focus_entered.connect(_on_focus_entered.bind(name_input))
+	name_input.focus_exited.connect(_on_focus_exited.bind(name_input))
+	ip_input.focus_entered.connect(_on_focus_entered.bind(ip_input))
+	ip_input.focus_exited.connect(_on_focus_exited.bind(ip_input))
+	%RoomKeyInput.focus_entered.connect(_on_focus_entered.bind(%RoomKeyInput))
+	%RoomKeyInput.focus_exited.connect(_on_focus_exited.bind(%RoomKeyInput))
 	
-	host_btn.focus_neighbor_top = %RoomKeyInput.get_path()
-	host_btn.focus_neighbor_right = join_btn.get_path()
-	host_btn.focus_neighbor_bottom = back_btn.get_path()
+	for btn in [$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton, 
+				$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton,
+				start_button, 
+				%SettingsButton,
+				$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton]:
+		btn.focus_entered.connect(_on_focus_entered.bind(btn))
+		btn.focus_exited.connect(_on_focus_exited.bind(btn))
+		btn.mouse_entered.connect(btn.grab_focus)
+		
+	# Setup Debug Button if enabled
+	if Global.debug_mode:
+		setup_debug_button()
+		if not multiplayer.is_server():
+			await get_tree().process_frame
+			_auto_host_for_debug()
 	
-	join_btn.focus_neighbor_top = %RoomKeyInput.get_path()
-	join_btn.focus_neighbor_left = host_btn.get_path()
-	join_btn.focus_neighbor_bottom = back_btn.get_path()
+	# Initial focus for controller
+	await get_tree().process_frame
+	if not start_button.visible:
+		name_input.grab_focus()
 	
-	back_btn.focus_neighbor_top = host_btn.get_path()
-	# Removed self-lock, now points to debug button if active
+	update_focus_neighbors()
 	
 	%SettingsButton.pressed.connect(func(): 
 		%SettingsPopup.show()
@@ -140,23 +131,8 @@ func _ready():
 	if name_input.text.is_empty():
 		name_input.text = "PLAYER"
 	
-	name_input.focus_entered.connect(_on_focus_entered.bind(name_input))
-	name_input.focus_exited.connect(_on_focus_exited.bind(name_input))
-	ip_input.focus_entered.connect(_on_focus_entered.bind(ip_input))
-	ip_input.focus_exited.connect(_on_focus_exited.bind(ip_input))
-	%RoomKeyInput.focus_entered.connect(_on_focus_entered.bind(%RoomKeyInput))
-	%RoomKeyInput.focus_exited.connect(_on_focus_exited.bind(%RoomKeyInput))
 	%RoomKeyInput.text_changed.connect(_on_room_key_changed)
 	
-	for btn in [$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton, 
-				$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton,
-				start_button, 
-				%SettingsButton,
-				$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton]:
-		btn.focus_entered.connect(_on_focus_entered.bind(btn))
-		btn.focus_exited.connect(_on_focus_exited.bind(btn))
-		btn.mouse_entered.connect(btn.grab_focus)
-		
 	# Connect focus signals for all settings
 	var settings_nodes = [
 		%StartTimeInput.get_line_edit(), 
@@ -181,7 +157,6 @@ func _ready():
 	%LevelOption.clear()
 	%LevelOption.add_item("SMB1", Mario35Handler.GameVersion.SMB1)
 	%LevelOption.add_item("SMBLL", Mario35Handler.GameVersion.SMBLL)
-	%LevelOption.add_item("ANN", Mario35Handler.GameVersion.SMBANN)
 	%LevelOption.add_item("SPECIAL", Mario35Handler.GameVersion.SMBS)
 	%LevelOption.add_item("RANDOM", Mario35Handler.GameVersion.RANDOM)
 	%LevelOption.selected = 0
@@ -392,13 +367,25 @@ func _move_cursor(direction: int) -> void:
 
 func _on_name_input_changed(new_text: String) -> void:
 	var caret_pos = name_input.caret_column
-	name_input.text = new_text.to_upper()
-	name_input.caret_column = caret_pos
+	var sanitized = ""
+	for c in new_text.to_upper():
+		if c in CHARACTERS: # Use existing CHARACTERS list (A-Z, 0-9, space)
+			sanitized += c
+	
+	if name_input.text != sanitized:
+		name_input.text = sanitized
+		name_input.caret_column = caret_pos
 
 func _on_room_key_changed(new_text: String) -> void:
 	var caret_pos = %RoomKeyInput.caret_column
-	%RoomKeyInput.text = new_text.to_upper()
-	%RoomKeyInput.caret_column = caret_pos
+	var sanitized = ""
+	for c in new_text.to_upper():
+		if c in CHARACTERS:
+			sanitized += c
+			
+	if %RoomKeyInput.text != sanitized:
+		%RoomKeyInput.text = sanitized
+		%RoomKeyInput.caret_column = caret_pos
 
 func _exit_tree() -> void:
 	if Global.has_node("GameHUD"):
@@ -421,27 +408,7 @@ func _on_host_pressed():
 		start_button.visible = true
 		%SettingsButton.visible = true
 		
-		# DYNAMICALLY RELINK NEIGHBORS
-		# Now that Start and Settings are visible, we must insert them into the focus chain
-		var host_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton
-		var join_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton
-		var back_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/BackButton
-		var settings_btn = %SettingsButton
-		
-		# Host/Join now point down to Start Game
-		host_btn.focus_neighbor_bottom = start_button.get_path()
-		join_btn.focus_neighbor_bottom = start_button.get_path()
-		
-		# Start Game points up to Host and down to Settings
-		start_button.focus_neighbor_top = host_btn.get_path()
-		start_button.focus_neighbor_bottom = settings_btn.get_path()
-		
-		# Settings points up to Start and down to Back
-		settings_btn.focus_neighbor_top = start_button.get_path()
-		settings_btn.focus_neighbor_bottom = back_btn.get_path()
-		
-		# Back counts points up to Settings
-		back_btn.focus_neighbor_top = settings_btn.get_path()
+		update_focus_neighbors()
 		
 		refresh_player_list()
 	else:
@@ -460,14 +427,7 @@ func _on_join_pressed():
 		start_button.visible = false
 		%SettingsButton.visible = false
 		
-		# RESET NEIGHBORS (Bypass Start/Settings)
-		var host_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton
-		var join_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton
-		var back_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/BackButton
-		
-		host_btn.focus_neighbor_bottom = back_btn.get_path()
-		join_btn.focus_neighbor_bottom = back_btn.get_path()
-		back_btn.focus_neighbor_top = host_btn.get_path()
+		update_focus_neighbors()
 		
 		refresh_player_list()
 	else:
@@ -480,10 +440,23 @@ func refresh_player_list():
 	player_list.clear()
 	var count = Mario35Network.players.size()
 	var my_id = multiplayer.get_unique_id()
-	for id in Mario35Network.players:
+	
+	# Sort IDs by rank in the previous match
+	var sorted_ids = Mario35Network.players.keys()
+	sorted_ids.sort_custom(func(a, b):
+		var rank_a = Mario35Handler.last_match_ranks.get(a, 999)
+		var rank_b = Mario35Handler.last_match_ranks.get(b, 999)
+		return rank_a < rank_b
+	)
+	
+	for id in sorted_ids:
 		var p = Mario35Network.players[id]
-		var suffix = " (YOU)" if id == my_id else ""
-		player_list.add_item(p.name.to_upper() + suffix)
+		var suffix = " YOU" if id == my_id else ""
+		var rank = Mario35Handler.last_match_ranks.get(id, 0)
+		var rank_str = ""
+		if rank > 0:
+			rank_str = str(rank) + " "
+		player_list.add_item(rank_str + p.name.to_upper() + suffix)
 	
 	# Start Game requirements (2+ players, or 1 in debug mode)
 	if multiplayer.is_server():
@@ -579,13 +552,9 @@ func setup_debug_button() -> void:
 	debug_btn.add_theme_font_size_override("font_size", 8)
 	
 	$BG/Border/Content/ScrollContainer/VBoxContainer.add_child(debug_btn)
-	# Move below Back Button
 	$BG/Border/Content/ScrollContainer/VBoxContainer.move_child(debug_btn, -1)
 	
-	var back_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/BackButton
-	back_btn.focus_neighbor_bottom = debug_btn.get_path()
-	debug_btn.focus_neighbor_top = back_btn.get_path()
-	debug_btn.focus_neighbor_bottom = debug_btn.get_path() # Loop on self at bottom
+	update_focus_neighbors()
 	
 	debug_btn.pressed.connect(_on_debug_toggled)
 	debug_btn.focus_entered.connect(_on_focus_entered.bind(debug_btn))
@@ -611,6 +580,7 @@ func _on_debug_toggled() -> void:
 			start_button.visible = false
 			%SettingsButton.visible = false
 			status_label.text = ""
+			update_focus_neighbors()
 
 func _auto_host_for_debug() -> void:
 	# Auto-host for debug mode (single player)
@@ -624,19 +594,48 @@ func _auto_host_for_debug() -> void:
 		start_button.visible = true
 		%SettingsButton.visible = true
 		
-		# Setup focus neighbors for Start/Settings/Back
-		var host_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton
-		var back_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/BackButton
-		var settings_btn = %SettingsButton
+		update_focus_neighbors()
 		
+		# Refresh player list to update button state (enables Start Game in debug mode)
+		refresh_player_list()
+		start_button.grab_focus()
+	else:
+		status_label.text = "DEBUG HOST FAILED " + str(err)
+
+func update_focus_neighbors():
+	var host_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton
+	var join_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton
+	var back_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/BackButton
+	var settings_btn = %SettingsButton
+	
+	name_input.focus_neighbor_bottom = ip_input.get_path()
+	ip_input.focus_neighbor_top = name_input.get_path()
+	ip_input.focus_neighbor_bottom = %RoomKeyInput.get_path()
+	
+	%RoomKeyInput.focus_neighbor_top = ip_input.get_path()
+	%RoomKeyInput.focus_neighbor_bottom = host_btn.get_path()
+	
+	host_btn.focus_neighbor_top = %RoomKeyInput.get_path()
+	host_btn.focus_neighbor_right = join_btn.get_path()
+	
+	join_btn.focus_neighbor_top = %RoomKeyInput.get_path()
+	join_btn.focus_neighbor_left = host_btn.get_path()
+	
+	if start_button.visible:
 		host_btn.focus_neighbor_bottom = start_button.get_path()
+		join_btn.focus_neighbor_bottom = start_button.get_path()
 		start_button.focus_neighbor_top = host_btn.get_path()
 		start_button.focus_neighbor_bottom = settings_btn.get_path()
 		settings_btn.focus_neighbor_top = start_button.get_path()
 		settings_btn.focus_neighbor_bottom = back_btn.get_path()
 		back_btn.focus_neighbor_top = settings_btn.get_path()
-		
-		# Refresh player list to update button state (enables Start Game in debug mode)
-		refresh_player_list()
 	else:
-		status_label.text = "DEBUG HOST FAILED " + str(err)
+		host_btn.focus_neighbor_bottom = back_btn.get_path()
+		join_btn.focus_neighbor_bottom = back_btn.get_path()
+		back_btn.focus_neighbor_top = host_btn.get_path()
+		
+	# Handle debug button if it exists
+	if is_instance_valid(debug_btn):
+		back_btn.focus_neighbor_bottom = debug_btn.get_path()
+		debug_btn.focus_neighbor_top = back_btn.get_path()
+		debug_btn.focus_neighbor_bottom = debug_btn.get_path() # Loop on self

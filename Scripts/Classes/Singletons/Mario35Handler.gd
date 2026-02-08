@@ -5,6 +5,7 @@ signal game_started
 signal game_over(winner_id)
 signal incoming_enemy(enemy_type)
 signal incoming_item_roulette
+signal roulette_stopped(item: String)
 signal enemy_spawned(enemy_type) # New signal for HUD sync
 signal target_changed(new_target_type) # 0: Random, 1: Lowest Time, 2: Attackers, 3: Most Coins
 signal player_status_changed
@@ -41,9 +42,11 @@ var current_target_mode := TargetMode.RANDOM
 var current_target_id := 0
 
 var coin_roulette_active := false
+var current_roulette_item := ""
+var is_timer_paused := false
 var enemy_queue: Array[String] = []
 var spawn_timer := 0.0
-const SPAWN_INTERVAL = 3.0 # Seconds between spawns
+const SPAWN_INTERVAL = 1.0 # Seconds between spawns (Faster for more pressure)
 
 # Player status tracking
 # Player status tracking
@@ -57,7 +60,7 @@ func _ready() -> void:
 	Mario35Network.player_disconnected.connect(_on_player_disconnected)
 
 func _process(delta: float) -> void:
-	if not game_active:
+	if not game_active or is_timer_paused:
 		return
 		
 	# Decrease timer
@@ -172,6 +175,8 @@ func sync_death(id: int, rank: int) -> void:
 		player_status_changed.emit()
 		_check_win_condition()
 
+var last_match_ranks := {} # peer_id -> rank
+
 func _check_win_condition() -> void:
 	if not game_active: return
 	
@@ -183,13 +188,18 @@ func _check_win_condition() -> void:
 				player_statuses[id].rank = 1
 				break
 		
+		# Cache ranks before ending game
+		last_match_ranks = {}
+		for id in player_statuses:
+			last_match_ranks[id] = player_statuses[id].rank
+		
 		game_active = false
 		game_over.emit(winner_id)
 		
 		# Delayed return to lobby
 		await get_tree().create_timer(5.0).timeout
 		get_tree().paused = false
-		Global.transition_to_scene("res://Scenes/Levels/TitleScreen.tscn")
+		Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")
 
 func _on_player_disconnected(id: int) -> void:
 	if id in player_statuses and player_statuses[id].alive:
@@ -260,27 +270,51 @@ func spawn_from_queue() -> void:
 		var enemy = scn.instantiate()
 		
 		# Spawn Position Logic
-		var spawn_offset = Vector2(320, -128) # Default: Ahead and mid-air
+		# Ensure its spawned off right of view (e.g. 480px)
+		# Set Y to 0 (ground level relative to player) for standard enemies
+		var spawn_offset = Vector2(480, 0) 
 		
 		if "Lakitu" in type:
 			# Lakitu needs to be high up to stay in the sky
-			spawn_offset = Vector2(320, -220) 
+			spawn_offset = Vector2(480, -220) 
 		elif "Bowser" in type:
-			# Bowser should be closer to the ground so he doesn't fall too far / get stuck
-			spawn_offset = Vector2(320, -48)
+			# Bowser should be slightly above ground to fall safely
+			spawn_offset = Vector2(480, -32)
 		elif "CheepCheep" in type or "Blooper" in type:
-			# If water level, random height? 
-			# For now, default is okay, gravity/swim logic handles them.
-			spawn_offset = Vector2(320, randf_range(-180, -32))
+			# Aquatic enemies at random heights
+			spawn_offset = Vector2(480, randf_range(-180, -32))
+		elif "HammerBro" in type or "BulletBill" in type:
+			# Hammer Bros and Bills usually have some air height
+			spawn_offset = Vector2(480, -64)
 			
-		enemy.global_position = player.global_position + spawn_offset
 		
-		# Raycast to find ground? Or just let them fall from a safe height ahead.
-		# Ideally we want them to "appear from the right". 
-		# If we spawn them high up ahead, they will fall into view as the player approaches.
+		# Collision Check: Ensure not spawning in wall
+		# We'll use a raycast or point check to ensure the spawn position is clear.
+		# If it's blocked, we nudge it up until it's not.
+		var space_state = player.get_world_2d().direct_space_state
+		var target_pos = player.global_position + spawn_offset
 		
-		if enemy is Enemy:
+		# Simple upward search if blocked
+		for i in range(10): # Try up to 10 increments
+			var params = PhysicsPointQueryParameters2D.new()
+			params.position = target_pos
+			params.collision_mask = 1 # Terrain layer
+			var result = space_state.intersect_point(params)
+			if result.is_empty():
+				break
+			target_pos.y -= 16 # Adjust up by one tile height
+			
+		enemy.global_position = target_pos
+		
+		# If we want them precisely on the ground, we can attempt a raycast here,
+		# but 0 offset (player's Y) is usually the ground in most SMB levels.
+		# If the player is mid-air, they will fall from player's height.
+		# Since they are spawned 480px ahead, they have time to land before coming into view.
+		
+		# Visual feedback for sent enemies
+		if enemy is Enemy or enemy.has_method("set_is_sent_enemy") or "is_sent_enemy" in enemy:
 			enemy.is_sent_enemy = true
+			
 		Global.current_level.add_child(enemy)
 		enemy_spawned.emit(type)
 
@@ -294,8 +328,11 @@ func get_attackers_count() -> int:
 
 
 func try_use_item() -> void:
-	spin_roulette()
-	
+	if coin_roulette_active:
+		stop_roulette()
+	else:
+		spin_roulette()
+
 func spend_coins(amount: int) -> bool:
 	if coins >= amount:
 		coins -= amount
@@ -307,20 +344,37 @@ func spin_roulette() -> void:
 	if not spend_coins(20): return
 	
 	coin_roulette_active = true
-	incoming_item_roulette.emit()
+	AudioManager.play_global_sfx("coin")
 	
 	var items = ["Mushroom", "Flower", "Star"]
 	match item_pool_mode:
 		0: items.append("Lucky Star")
 		2: items.append_array(["Lucky Star", "Wing", "Hammer", "P-Switch"])
 		
-	var picked = items.pick_random()
+	current_roulette_item = items.pick_random()
+	incoming_item_roulette.emit()
 	
-	# Wait for animation (handled by HUD mostly, but logic waits here)
-	await get_tree().create_timer(3.0).timeout
-	
-	apply_item(picked)
+	# Auto-stop after 1.5 seconds if user doesn't stop it manually
+	await get_tree().create_timer(1.5).timeout
+	if coin_roulette_active:
+		confirm_item()
+
+func stop_roulette() -> void:
+	if not coin_roulette_active: return
+	confirm_item()
+
+func confirm_item() -> void:
+	if not coin_roulette_active: return
 	coin_roulette_active = false
+	
+	roulette_stopped.emit(current_roulette_item)
+	AudioManager.play_global_sfx("correct")
+	
+	# Short delay for HUD blinking effect before applying
+	await get_tree().create_timer(0.5).timeout 
+	
+	apply_item(current_roulette_item)
+	current_roulette_item = ""
 
 func apply_item(item: String) -> void:
 	var player = get_tree().get_first_node_in_group("Players")
@@ -337,10 +391,11 @@ func apply_item(item: String) -> void:
 			player.power_up_animation("Fire")
 		"Star":
 			player.super_star()
+			AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.STAR, 1, false)
 		"Lucky Star":
 			# Standard SMB35 POW effect: Kills all enemies on screen
 			get_tree().call_group("Enemies", "die_from_object", player)
-			AudioManager.play_sfx("stomp")
+			AudioManager.play_global_sfx("lucky_star")
 		"Wing":
 			player.wing_get()
 		"Hammer":
@@ -438,7 +493,7 @@ func get_next_level_path() -> String:
 	# Determine game version prefix
 	var version_enum = game_version
 	if version_enum == GameVersion.RANDOM:
-		version_enum = rng.randi_range(0, 3) # Pick one of the four versions
+		version_enum = [GameVersion.SMB1, GameVersion.SMBLL, GameVersion.SMBS].pick_random()
 	
 	var prefix = "SMB1"
 	var w_range = [1, 8]

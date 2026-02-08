@@ -25,9 +25,6 @@ var player_info = {
 	"skin_id": "0" # Default skin
 }
 
-# --- RPC CONFIGURATION (MANUAL MODE) ---
-# Version: 2026-02-08-v15-BR-OVERHAUL
-
 func register_player(data_json):
 	var data = JSON.parse_string(data_json)
 	if not data: return

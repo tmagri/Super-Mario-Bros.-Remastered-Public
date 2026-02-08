@@ -1,91 +1,10 @@
-[gd_scene format=3 uid="uid://dwdwqpx62nqrg"]
+[gd_scene format=4 uid="uid://dwdwqpx62nqrg"]
 
-[ext_resource type="PackedScene" uid="uid://bksxgpygrdjl7" path="res://Scenes/Prefabs/LevelBG.tscn" id="1_mlgp2"]
-[ext_resource type="Texture2D" uid="uid://cbha2l6hg1kfo" path="res://Assets/Sprites/UI/EditorGrid.png" id="2_fu4yp"]
-[ext_resource type="Texture2D" uid="uid://bxciugu0dg7e8" path="res://Assets/Sprites/Editor/ChunkDisplay.png" id="3_4xsxf"]
-[ext_resource type="PackedScene" uid="uid://ct5rrpa7uehkk" path="res://Scenes/Parts/Tiles.tscn" id="4_jkf56"]
-[ext_resource type="PackedScene" uid="uid://cuh62hlq8errh" path="res://Scenes/Prefabs/Entities/Player.tscn" id="5_2e3ju"]
-[ext_resource type="PackedScene" uid="uid://cinr6kcbmo6gr" path="res://Scenes/Parts/DropShadowRenderer.tscn" id="6_o4mtd"]
+[ext_resource type="PackedScene" uid="uid://d3lsxfuwgmtdt" path="res://Scenes/Levels/SMB1/World1/1-1a.tscn" id="1_uekrc"]
 
-[node name="Level" type="Node" unique_id=661344927]
-metadata/_custom_type_script = "uid://bcqr1v25ygedb"
+[node name="5-1A" unique_id=1818254022 instance=ExtResource("1_uekrc")]
+world_id = 5
+level_id = 1
 
-[node name="LevelBG" parent="." unique_id=834928665 instance=ExtResource("1_mlgp2")]
-
-[node name="Camera" type="Camera2D" parent="." unique_id=2007449657]
-unique_name_in_owner = true
-position = Vector2(-232, 0)
-process_callback = 0
-limit_enabled = false
-limit_bottom = 32
-
-[node name="Grid" type="Parallax2D" parent="." unique_id=2011849910]
-unique_name_in_owner = true
-visibility_layer = 2
-z_index = -10
-z_as_relative = false
-repeat_size = Vector2(512, 512)
-repeat_times = 8
-
-[node name="TextureRect" type="TextureRect" parent="Grid" unique_id=705169204]
-modulate = Color(0.356863, 0.356863, 0.356863, 0.407843)
-offset_right = 512.0
-offset_bottom = 512.0
-texture = ExtResource("2_fu4yp")
-stretch_mode = 1
-
-[node name="ChunkGrid" type="Parallax2D" parent="Grid" unique_id=1356909696]
-unique_name_in_owner = true
-visibility_layer = 2
-z_index = -10
-z_as_relative = false
-scroll_offset = Vector2(0, 32)
-repeat_size = Vector2(512, 512)
-repeat_times = 8
-
-[node name="TextureRect" type="TextureRect" parent="Grid/ChunkGrid" unique_id=863077583]
-offset_right = 512.0
-offset_bottom = 512.0
-texture = ExtResource("3_4xsxf")
-
-[node name="TileLayer5" parent="." unique_id=773168684 instance=ExtResource("4_jkf56")]
-unique_name_in_owner = true
-
-[node name="TileLayer4" parent="." unique_id=1845056440 instance=ExtResource("4_jkf56")]
-unique_name_in_owner = true
-
-[node name="TileLayer3" parent="." unique_id=1529578456 instance=ExtResource("4_jkf56")]
-unique_name_in_owner = true
-
-[node name="TileLayer2" parent="." unique_id=1167162166 instance=ExtResource("4_jkf56")]
-unique_name_in_owner = true
-
-[node name="TileLayer1" parent="." unique_id=56019934 instance=ExtResource("4_jkf56")]
-unique_name_in_owner = true
-
-[node name="EntityLayer5" type="Node2D" parent="." unique_id=734461684]
-unique_name_in_owner = true
-process_mode = 4
-
-[node name="EntityLayer4" type="Node2D" parent="." unique_id=1788866053]
-unique_name_in_owner = true
-process_mode = 4
-
-[node name="EntityLayer3" type="Node2D" parent="." unique_id=88773069]
-unique_name_in_owner = true
-process_mode = 4
-
-[node name="EntityLayer2" type="Node2D" parent="." unique_id=1379810868]
-unique_name_in_owner = true
-process_mode = 4
-
-[node name="EntityLayer1" type="Node2D" parent="." unique_id=192361610]
-unique_name_in_owner = true
-process_mode = 4
-
-[node name="Player" parent="EntityLayer1" unique_id=123353674 instance=ExtResource("5_2e3ju")]
-position = Vector2(-232, 0)
-metadata/tile_position = Vector2i(-15, -1)
-metadata/no_save = false
-
-[node name="DropShadow" parent="." unique_id=774555365 instance=ExtResource("6_o4mtd")]
+[node name="PipeArea" parent="." index="4" unique_id=2129952031]
+target_level = "uid://c4pw4rm4fbtbo"

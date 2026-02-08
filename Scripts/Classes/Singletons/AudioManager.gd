@@ -116,6 +116,9 @@ func play_sfx(stream_name = "", position := Vector2.ZERO, pitch := 1.0) -> void:
 	var stream = stream_name
 	var is_custom = false
 	if stream_name is String:
+		if sfx_library.has(stream_name) == false:
+			printerr("AudioManager: SFX not found: " + str(stream_name))
+			return
 		is_custom = sfx_library[stream_name].contains(Global.config_path.path_join("custom_characters"))
 		stream = import_stream(sfx_library[stream_name])
 	if is_custom == false:

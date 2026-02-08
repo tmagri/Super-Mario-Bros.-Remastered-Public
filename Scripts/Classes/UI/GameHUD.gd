@@ -7,14 +7,14 @@ static var character_icons := [preload("res://Assets/Sprites/Players/Mario/LifeI
 
 const RANK_COLOURS := {"F": Color.DIM_GRAY, "D": Color.WEB_MAROON, "C": Color.PALE_GREEN, "B": Color.DODGER_BLUE, "A": Color.RED, "S": Color.GOLD, "P": Color.PURPLE}
 
-const ITEM_SPRITES := {
-	"Mushroom": preload("res://Assets/Sprites/Items/SuperMushroom.png"),
-	"Flower": preload("res://Assets/Sprites/Items/FireFlower.png"),
-	"Star": preload("res://Assets/Sprites/Items/SuperStar.png"),
-	"Lucky Star": preload("res://Assets/Sprites/Items/SuperStar.png"), # Placeholder/Tint
-	"Wing": preload("res://Assets/Sprites/Items/Wings.png"),
-	"Hammer": preload("res://Assets/Sprites/Items/Hammer.png"),
-	"P-Switch": preload("res://Assets/Sprites/Items/PSwitch.png")
+const ITEM_JSONS := {
+	"Mushroom": preload("res://Assets/Sprites/Items/SuperMushroom.json"),
+	"Flower": preload("res://Assets/Sprites/Items/FireFlower.json"),
+	"Star": preload("res://Assets/Sprites/Items/StarMan.json"), # StarMan.json? Checked list: StarMan.json exists. SuperStar.png exists.
+	"Lucky Star": preload("res://Assets/Sprites/Items/LuckyStar.json"),
+	"Wing": preload("res://Assets/Sprites/Items/Wings.json"),
+	"Hammer": preload("res://Assets/Sprites/Items/HammerItem.json"), # HammerItem.json seems correct for item form
+	"P-Switch": preload("res://Assets/Sprites/Items/PSwitch.json")
 }
 
 var delta_time := 0.0
@@ -23,48 +23,38 @@ func _ready() -> void:
 	Global.level_theme_changed.connect(update_character_info)
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	
+	# Always connect these, so we catch the signal even if GameHUD loads before the mode is set
+	Mario35Handler.game_started.connect(_on_mario35_game_started)
+	Mario35Handler.game_over.connect(_on_game_over)
+	
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
-		Mario35Handler.time_changed.connect(update_br_timer)
-		Mario35Handler.target_changed.connect(update_br_target)
-		Mario35Handler.target_changed.connect(update_br_target)
-		Mario35Handler.incoming_enemy.connect(add_incoming_enemy_icon)
-		Mario35Handler.incoming_item_roulette.connect(show_item_roulette)
-		Mario35Handler.game_over.connect(_on_game_over)
-		update_br_target(Mario35Handler.current_target_mode)
-		update_br_leaderboard()
-		
-	# Ensure HUD is set up
-	if Global.current_game_mode == Global.GameMode.MARIO_35:
-		setup_br_hud()
+		_on_mario35_game_started()
 
-func setup_br_hud() -> void:
-	if %BattleRoyaleHUD.has_node("ItemBox"): return
+func _on_mario35_game_started() -> void:
+	if not Mario35Handler.time_changed.is_connected(update_br_timer):
+		Mario35Handler.time_changed.connect(update_br_timer)
+	if not Mario35Handler.target_changed.is_connected(update_br_target):
+		Mario35Handler.target_changed.connect(update_br_target)
+	if not Mario35Handler.incoming_item_roulette.is_connected(show_item_roulette):
+		Mario35Handler.incoming_item_roulette.connect(show_item_roulette)
 	
-	var box = Panel.new()
-	box.name = "ItemBox"
-	box.size = Vector2(64, 64)
-	box.position = Vector2(192 - 32, 24) # Center top below timer
-	box.modulate = Color(1, 1, 1, 0.8)
+	update_br_target(Mario35Handler.current_target_mode)
+	update_br_timer(int(Mario35Handler.current_time))
+	# Hide IncomingBar as per user request
+	%IncomingBar.visible = false
 	
-	var coin_label = Label.new()
-	coin_label.name = "CoinLabel"
-	coin_label.text = "20"
-	coin_label.position = Vector2(0, 48)
-	coin_label.size = Vector2(64, 16)
-	coin_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(coin_label)
-	
-	var icon = TextureRect.new()
-	icon.name = "RouletteIcon"
-	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.size = Vector2(48, 48)
-	icon.position = Vector2(8, 0)
-	icon.texture = preload("res://Assets/Sprites/Items/SuperMushroom.png") # Default
-	icon.modulate = Color(0.5, 0.5, 0.5, 0.5) # Dimmed when inactive
-	box.add_child(icon)
-	
-	%BattleRoyaleHUD.add_child(box)
+	# Cleanup previous game over / leaderboard
+	if %BattleRoyaleHUD.has_node("GameOverLabel"):
+		%BattleRoyaleHUD.get_node("GameOverLabel").queue_free()
+	for child in %BattleRoyaleHUD.get_children():
+		if child.name.begins_with("LRB_"):
+			child.queue_free()
+			
+	setup_br_hud()
+	%BattleRoyaleHUD.visible = true
+
+
+
 
 func _process(delta: float) -> void:
 	if not get_tree().paused and $Timer.paused:
@@ -87,7 +77,7 @@ func handle_main_hud() -> void:
 		var item_box = %BattleRoyaleHUD.get_node_or_null("ItemBox")
 		if item_box:
 			var lbl = item_box.get_node("CoinLabel")
-			lbl.text = "%d / 20" % Mario35Handler.coins
+			lbl.text = "%d" % Mario35Handler.coins
 			if Mario35Handler.coins >= 20:
 				lbl.modulate = Color.YELLOW
 			else:
@@ -102,6 +92,36 @@ func handle_main_hud() -> void:
 			if not Mario35Handler.player_statuses[my_id].alive:
 				%BRTimer.text = "ELIMINATED"
 				%BRTimer.modulate = Color.GRAY
+		
+		# User requested removal of "random stuff" (P-Switches, Star) which are likely Challenge Mode or Combo elements
+		# Explicitly hide them here to be safe
+		%Combo.hide()
+		%IGT.hide()
+		%Stopwatch.hide()
+		%PB.hide()
+		$Main/RedCoins.hide()
+		$ModernHUD/TopLeft/RedCoins.hide()
+		
+		# Additional potential stragglers
+		%Radar.hide()
+		%ModernRadar.hide()
+		%MedalIcon.hide()
+		%Crown.hide()
+		%CharacterIcon.hide()
+		%ModernLifeCount.hide()
+		
+		# Hide Main HUD elements if they are not children of Main/ModernHUD
+		%Time.hide()
+		%ModernTime.hide()
+		%LevelNum.hide()
+		%Score.hide()
+		%ModernScore.hide()
+		
+		# Aggressive Hide for P-Switches/Stars (likely RedCoins logic or similar)
+		if $Main:
+			for c in $Main.get_children(): c.hide()
+		if $ModernHUD:
+			for c in $ModernHUD.get_children(): c.hide()
 		
 		return
 	%BattleRoyaleHUD.visible = false
@@ -118,9 +138,115 @@ func handle_main_hud() -> void:
 	%PB.hide()
 	$Main/CoinCount/KeyCount.visible = KeyItem.total_collected > 0
 	%KeyAmount.text = "*" + str(KeyItem.total_collected).pad_zeros(2)
-	$Main.set_anchors_preset(Control.PRESET_CENTER_TOP if Settings.file.video.hud_size == 1 else Control.PRESET_TOP_WIDE, true)
-	$ModernHUD.set_anchors_preset(Control.PRESET_CENTER_TOP if Settings.file.video.hud_size == 1 else Control.PRESET_TOP_WIDE, true)
-	%Score.text = str(Global.score).pad_zeros(6)
+
+
+func setup_br_hud() -> void:
+	if %BattleRoyaleHUD.has_node("ItemBox"): return
+	
+	# --- Item Box (Top Left) ---
+	var box = Panel.new()
+	box.name = "ItemBox"
+	box.size = Vector2(56, 48)
+	box.position = Vector2(16, 16) # Top left
+	
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color("6b3f08") # Brown
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = Color.WHITE
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_right = 4
+	style.corner_radius_bottom_left = 4
+	box.add_theme_stylebox_override("panel", style)
+	
+	# Internal layout
+	# Icon (Top)
+	var icon_root = Control.new()
+	icon_root.name = "RouletteIcon"
+	icon_root.position = Vector2(28, 20) # Centered horizontally, top half
+	box.add_child(icon_root)
+	
+	var sprite = AnimatedSprite2D.new()
+	sprite.name = "Sprite"
+	sprite.scale = Vector2(2, 2) 
+	sprite.modulate = Color(0.5, 0.5, 0.5, 0.5)
+	icon_root.add_child(sprite)
+	
+	# Sprite Frames ResourceSetter
+	var rs = ResourceSetterNew.new()
+	rs.name = "ResourceSetterNew"
+	rs.node_to_affect = sprite
+	rs.property_name = "sprite_frames"
+	rs.resource_json = ITEM_JSONS["Mushroom"]
+	sprite.add_child(rs)
+
+	# Coin Cost (Bottom Left)
+	var coin_icon = TextureRect.new()
+	coin_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	coin_icon.size = Vector2(24, 8) 
+
+	# Let's switch CoinIcon to AnimatedSprite2D to be safe and match "Always use resource load json".
+	var coin_root = Control.new()
+	coin_root.name = "CoinIconRoot"
+	coin_root.position = Vector2(8, 40) # Position for the icon
+	box.add_child(coin_root)
+	
+	var coin_sprite = AnimatedSprite2D.new()
+	coin_sprite.name = "CoinSprite"
+	coin_sprite.scale = Vector2(1, 1) # 8x8 is small, maybe scale up or keep 1x? Label is small.
+	# Label font size 8. Icon 8x8 matches.
+	coin_root.add_child(coin_sprite)
+	
+	var coin_rs = ResourceSetterNew.new()
+	coin_rs.name = "ResourceSetterNew"
+	coin_rs.node_to_affect = coin_sprite
+	coin_rs.property_name = "sprite_frames"
+	coin_rs.resource_json = preload("res://Assets/Sprites/UI/CoinIcon.json")
+	coin_sprite.add_child(coin_rs)
+	coin_sprite.play("default")
+
+	var coin_label = Label.new()
+	coin_label.name = "CoinLabel"
+	coin_label.text = "20"
+	coin_label.position = Vector2(10, 32) # Aligned with icon at y=36 (center 40)
+	coin_label.size = Vector2(20, 16)
+	coin_label.add_theme_font_size_override("font_size", 8)
+	box.add_child(coin_label)
+	
+	%BattleRoyaleHUD.add_child(box)
+	
+	# --- Timer (Top Right) ---
+	# Move existing label and style it
+	%BRTimer.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	%BRTimer.position = Vector2(get_viewport().get_visible_rect().size.x / 2 - 40, 16)
+	%BRTimer.size = Vector2(80, 32)
+	%BRTimer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	%BRTimer.add_theme_font_size_override("font_size", 24)
+	%BRTimer.add_theme_color_override("font_outline_color", Color.BLACK)
+	%BRTimer.add_theme_constant_override("outline_size", 8)
+	
+	# --- Target Label (Top Center) ---
+	#%TargetLabel.visible = true
+	#%TargetLabel.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	#%TargetLabel.position = Vector2(get_viewport().get_visible_rect().size.x / 2 - 100, 64) # Below top bar area
+	#%TargetLabel.size = Vector2(200, 32)
+	#%TargetLabel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	#%TargetLabel.add_theme_font_size_override("font_size", 16)
+	#%TargetLabel.add_theme_color_override("font_outline_color", Color.BLACK)
+	#%TargetLabel.add_theme_constant_override("outline_size", 4)
+	
+
+func update_br_target(mode: int) -> void:
+	var text = "RANDOM"
+	match mode:
+		Mario35Handler.TargetMode.RANDOM: text = "RANDOM"
+		Mario35Handler.TargetMode.LOWEST_TIME: text = "LOWEST TIME"
+		Mario35Handler.TargetMode.ATTACKERS: text = "ATTACKERS"
+		Mario35Handler.TargetMode.MOST_COINS: text = "MOST COINS"
+	%TargetLabel.text = text
 	%CoinLabel.text = "*" + str(Global.coins).pad_zeros(2)
 	if current_chara != Global.player_characters[0]:
 		update_character_info()
@@ -328,82 +454,40 @@ func update_br_timer(time: int) -> void:
 	else:
 		%BRTimer.modulate = Color.YELLOW
 
-func update_br_target(mode: int) -> void:
-	var text = "RANDOM"
-	match mode:
-		Mario35Handler.TargetMode.RANDOM: text = "RANDOM"
-		Mario35Handler.TargetMode.LOWEST_TIME: text = "LOWEST_TIME"
-		Mario35Handler.TargetMode.ATTACKERS: text = "ATTACKERS"
-		Mario35Handler.TargetMode.MOST_COINS: text = "MOST_COINS"
-	%TargetLabel.text = text
+
 
 func handle_br_input():
-	# Targeting: Cycle with 'Pause' (Start) or D-Pad
+	# Targeting: Cycle with 'Pause' (Start)
 	# Only if NOT in debug mode (Pause is Pause in debug)
 	if Input.is_action_just_pressed("pause") and not Global.debug_mode:
 		Mario35Handler.cycle_target_mode(1)
-		
-	if Input.is_action_just_pressed("ui_right") or Input.is_action_just_pressed("move_right_0"):
-		Mario35Handler.cycle_target_mode(1)
-	elif Input.is_action_just_pressed("ui_left") or Input.is_action_just_pressed("move_left_0"):
-		Mario35Handler.cycle_target_mode(-1)
 
 	# Item Use: 'drop_item' (Select) or 'ui_focus_next' (Tab)
 	if Input.is_action_just_pressed("ui_focus_next") or Input.is_action_just_pressed("drop_item"): 
 		Mario35Handler.try_use_item()
 
-func add_incoming_enemy_icon(type: String) -> void:
-	# Create a visual representation
-	var icon = TextureRect.new()
-	# Try to load texture from scene (simplified for now, ideally use a lookup)
-	# For now, just use a generic warning icon or Goomba
-	# We can use the generic goomba sprite from assets if available
-	# Or just a colored rect
-	var texture = preload("res://Assets/Sprites/Enemies/Goomba.png") # Fallback
-	if "Goomba" in type:
-		texture = preload("res://Assets/Sprites/Enemies/Goomba.png")
-	elif "Koopa" in type:
-		texture = preload("res://Assets/Sprites/Enemies/KoopaTroopa.png")
-		
-	# Check if we can load the scene and extract sprite
-	# var scn = load(type)
-	# if scn:
-	# 	var inst = scn.instantiate()
-	# 	if inst.has_node("Sprite"):
-	# 		# Logic to get texture from AnimatedSprite is harder
-	# 		pass
-	# 	inst.queue_free()
-	
-	icon.texture = texture # Assign texture
-	icon.expand_mode = TextureRect.EXPAND_KEEP_SIZE
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.custom_minimum_size = Vector2(16, 16)
-	%IncomingBar.add_child(icon)
-	
-	icon.custom_minimum_size = Vector2(16, 16)
-	%IncomingBar.add_child(icon)
-	
-	# Identify as queue item
-	icon.set_meta("queue_item", true)
+func add_incoming_enemy_icon(_type: String) -> void:
+	pass
 
 func _on_enemy_spawned(_type: String) -> void:
-	if %IncomingBar.get_child_count() > 0:
-		%IncomingBar.get_child(0).queue_free()
+	pass
 
 func show_item_roulette() -> void:
 	var box = %BattleRoyaleHUD.get_node_or_null("ItemBox")
 	if not box: return
-	var icon = box.get_node("RouletteIcon")
+	var icon_root = box.get_node("RouletteIcon")
+	var sprite = icon_root.get_node("Sprite")
+	var rs = sprite.get_node("ResourceSetterNew")
 	
-	icon.modulate = Color.WHITE
-	var keys = ITEM_SPRITES.keys()
+	sprite.modulate = Color.WHITE
+	var keys = ITEM_JSONS.keys()
 	
 	# Simple spin animation loop
 	for i in range(20): # Spin 20 times (approx 2-3 seconds)
 		var rand_key = keys.pick_random()
-		icon.texture = ITEM_SPRITES[rand_key]
+		rs.resource_json = ITEM_JSONS[rand_key]
 		await get_tree().create_timer(0.1).timeout
-		if not is_instance_valid(icon): return
+		if not is_instance_valid(sprite): return
 		
 	# Since Mario35Handler determines result asynchronously and applies it,
 	# we don't know the result here easily unless we passed it or listen for it.
@@ -414,7 +498,7 @@ func show_item_roulette() -> void:
 	# We spun for ~2.0s. We can spin a bit more.
 	
 	# Ideally, specific signal with result would be better, but for now just fade out state.
-	icon.modulate = Color(0.5, 0.5, 0.5, 0.5)
+	sprite.modulate = Color(0.5, 0.5, 0.5, 0.5)
 
 func update_br_leaderboard() -> void:
 	# Clear existing
@@ -456,12 +540,13 @@ func _on_game_over(winner_id: int) -> void:
 		message = "WINNER: " + winner_name
 		
 	var label = Label.new()
+	label.name = "GameOverLabel"
 	label.text = message
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", 32)
 	label.add_theme_color_override("font_outline_color", Color.BLACK)
 	label.add_theme_constant_override("outline_size", 8)
-	label.position = Vector2(0, 100)
+	label.position = Vector2(get_viewport().get_visible_rect().size.x / 2 - 200, 140)
 	label.size = Vector2(400, 32)
 	%BattleRoyaleHUD.add_child(label)
 	

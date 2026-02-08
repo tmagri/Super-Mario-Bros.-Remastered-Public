@@ -77,9 +77,14 @@ var score := 0:
 			score = value
 var coins := 0:
 	set(value):
-		coins = value
 		if Global.current_game_mode == Global.GameMode.MARIO_35:
+			if value > coins:
+				var diff = value - coins
+				#if Mario35Handler.game_active:
+				#	Mario35Handler.add_time(diff * 1) # 1 second per coin
+			coins = value
 			return
+		coins = value
 		if coins >= 100:#
 			if Settings.file.difficulty.inf_lives == 0 and (Global.current_game_mode != Global.GameMode.CHALLENGE and Global.current_campaign != "SMBANN"):
 				lives += floor(coins / 100.0)

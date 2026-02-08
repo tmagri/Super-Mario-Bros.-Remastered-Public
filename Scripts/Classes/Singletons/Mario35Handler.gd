@@ -19,9 +19,11 @@ var current_time := 0.0
 var max_time := DEFAULT_MAX_TIME
 var start_time := DEFAULT_START_TIME
 
-var coins := 0:
+var coins: int:
+	get:
+		return Global.coins
 	set(value):
-		coins = value
+		Global.coins = value
 		# Emit signal if needed for HUD update
 
 # Settings
@@ -77,8 +79,7 @@ func _process(delta: float) -> void:
 		# Force update Global.time for UI
 		Global.time = int(current_time)
 	
-	if int(current_time) != old_int_time:
-		time_changed.emit(int(current_time))
+
 	
 	if current_time <= 0:
 		_on_timeout()
@@ -244,8 +245,40 @@ func spawn_from_queue() -> void:
 	
 	var scn = load(type)
 	if scn:
+		# Shell Replacement Logic
+		if "Shell" in type:
+			if "GreenKoopa" in type:
+				scn = load("res://Scenes/Prefabs/Entities/Enemies/GreenKoopaTroopa.tscn")
+				type = scn.resource_path # Update type for signal
+			elif "RedKoopa" in type:
+				scn = load("res://Scenes/Prefabs/Entities/Enemies/RedKoopaTroopa.tscn")
+				type = scn.resource_path
+			elif "Buzzy" in type:
+				scn = load("res://Scenes/Prefabs/Entities/Enemies/BuzzyBeetle.tscn")
+				type = scn.resource_path
+	
 		var enemy = scn.instantiate()
-		enemy.global_position = player.global_position + Vector2(randf_range(-64, 64), -180) # Spawn above
+		
+		# Spawn Position Logic
+		var spawn_offset = Vector2(320, -128) # Default: Ahead and mid-air
+		
+		if "Lakitu" in type:
+			# Lakitu needs to be high up to stay in the sky
+			spawn_offset = Vector2(320, -220) 
+		elif "Bowser" in type:
+			# Bowser should be closer to the ground so he doesn't fall too far / get stuck
+			spawn_offset = Vector2(320, -48)
+		elif "CheepCheep" in type or "Blooper" in type:
+			# If water level, random height? 
+			# For now, default is okay, gravity/swim logic handles them.
+			spawn_offset = Vector2(320, randf_range(-180, -32))
+			
+		enemy.global_position = player.global_position + spawn_offset
+		
+		# Raycast to find ground? Or just let them fall from a safe height ahead.
+		# Ideally we want them to "appear from the right". 
+		# If we spawn them high up ahead, they will fall into view as the player approaches.
+		
 		if enemy is Enemy:
 			enemy.is_sent_enemy = true
 		Global.current_level.add_child(enemy)

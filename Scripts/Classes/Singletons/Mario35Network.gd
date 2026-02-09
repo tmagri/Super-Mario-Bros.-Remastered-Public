@@ -68,13 +68,13 @@ func send_enemy(type):
 func notify_death(id, rank):
 	Mario35Handler.sync_death(int(id), int(rank))
 
-func broadcast_stats(time: int, coins: int, target: int) -> void:
-	receive_stats.rpc(time, coins, target)
+func broadcast_stats(time: int, coins: int, target: int, kills: int) -> void:
+	receive_stats.rpc(time, coins, target, kills)
 
 @rpc("any_peer", "call_remote", "unreliable") # Unreliable is fine for freq stats
-func receive_stats(time: int, coins: int, target: int) -> void:
+func receive_stats(time: int, coins: int, target: int, kills: int) -> void:
 	var sender = multiplayer.get_remote_sender_id()
-	Mario35Handler.receive_stats(sender, time, coins, target)
+	Mario35Handler.receive_stats(sender, time, coins, target, kills)
 
 func _broadcast_list():
 	if multiplayer.is_server():

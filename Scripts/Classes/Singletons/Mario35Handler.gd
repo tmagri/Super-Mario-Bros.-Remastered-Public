@@ -46,6 +46,7 @@ var current_roulette_item := ""
 var is_timer_paused := false
 var enemy_queue: Array[String] = []
 var spawn_timer := 0.0
+var session_points: Dictionary = {} # peer_id -> int (Persists between games)
 var levels_played := 0 # Counter for randomization weighting
 const SPAWN_INTERVAL = 1.0 # Seconds between spawns (Faster for more pressure)
 
@@ -109,7 +110,8 @@ func _process(delta: float) -> void:
 	stat_broadcast_timer -= delta
 	if stat_broadcast_timer <= 0:
 		stat_broadcast_timer = 1.0
-		Mario35Network.broadcast_stats(int(current_time), coins, current_target_id)
+		var my_kills = player_statuses.get(my_id, {}).get("kills", 0)
+		Mario35Network.broadcast_stats(int(current_time), coins, current_target_id, my_kills)
 		# Also re-evaluate target if auto-targeting logic requires it
 		if current_target_mode != TargetMode.RANDOM:
 			update_target()
@@ -140,8 +142,12 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 		player_statuses[id] = {
 			"name": Mario35Network.players[id].get("name", "Player %d" % id),
 			"alive": true,
-			"rank": 0
+			"rank": 0,
+			"kills": 0,
+			"driver_score": 0
 		}
+		if not id in session_points:
+			session_points[id] = 0
 	alive_count = player_statuses.size()
 	
 	game_started.emit()
@@ -208,10 +214,12 @@ func _check_win_condition() -> void:
 				break
 	
 	if should_end:
-		# Cache ranks before ending game
+		# Cache ranks and award points before ending game
 		last_match_ranks = {}
 		for id in player_statuses:
 			last_match_ranks[id] = player_statuses[id].rank
+		
+		_award_placement_points()
 		
 		game_active = false
 		game_over.emit(winner_id)
@@ -225,6 +233,26 @@ func _check_win_condition() -> void:
 		await get_tree().create_timer(5.0, false).timeout
 		get_tree().paused = false
 		Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")
+
+func _award_placement_points() -> void:
+	var pts_table = [15, 12, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+	for id in player_statuses:
+		var r = player_statuses[id].rank
+		if r > 0 and r <= pts_table.size():
+			var earned = pts_table[r - 1]
+			session_points[id] = session_points.get(id, 0) + earned
+			print("[M35] Player %s earned %d placement points (Rank %d)" % [player_statuses[id].name, earned, r])
+
+func get_driver_score(id: int) -> float:
+	if not id in player_statuses: return 0.0
+	var s = player_statuses[id]
+	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
+	var c = coins if id == my_id else last_known_stats.get(id, {}).get("coins", 0)
+	var k = s.kills
+	
+	# Score = (Kills * 10) + (Coins * 1) + (Survival Factor)
+	var alive_factor = current_time * 0.1 if s.alive else 0.0
+	return (k * 10.0) + (c * 1.0) + alive_factor
 
 func _on_player_disconnected(id: int) -> void:
 	if id in player_statuses and player_statuses[id].alive:
@@ -244,8 +272,11 @@ func on_enemy_killed(enemy: Node, time_reward: int = 2) -> void:
 	
 	# Eliminated players cannot send enemies
 	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
-	if my_id in player_statuses and not player_statuses[my_id].alive:
-		return
+	if my_id in player_statuses:
+		if not player_statuses[my_id].alive:
+			return
+		player_statuses[my_id].kills += 1
+		player_status_changed.emit()
 		
 	# Special case: don't double add if Player.gd already added via combo?
 	# Actually, Player.gd adds combo time, and this sends the enemy.
@@ -310,6 +341,10 @@ func spawn_from_queue() -> void:
 		elif "Bowser" in type:
 			# Bowser should be slightly above ground to fall safely
 			spawn_offset = Vector2(480, -32)
+		elif "LeapingCheepCheep" in type:
+			# Leap from below the screen
+			# Range from slightly behind player to well ahead
+			spawn_offset = Vector2(randf_range(-64, 384), 240)
 		elif "CheepCheep" in type or "Blooper" in type:
 			# Aquatic enemies at random heights
 			spawn_offset = Vector2(480, randf_range(-180, -32))
@@ -493,8 +528,11 @@ func update_target() -> void:
 				if not current_target_id in potential_targets:
 					current_target_id = potential_targets.pick_random()
 
-func receive_stats(id: int, time: int, coins: int, target: int) -> void:
-	last_known_stats[id] = {"time": time, "coins": coins, "target": target}
+func receive_stats(id: int, time: int, coins: int, target: int, kills: int) -> void:
+	last_known_stats[id] = {"time": time, "coins": coins, "target": target, "kills": kills}
+	# Also update player_statuses for leaderboard
+	if id in player_statuses:
+		player_statuses[id].kills = kills
 
 
 # Call this when hosting to distribute settings

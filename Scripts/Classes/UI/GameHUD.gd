@@ -15,10 +15,12 @@ const ITEM_JSONS := {
 	"Wing": preload("res://Assets/Sprites/Items/Wings.json"),
 	"Hammer": preload("res://Assets/Sprites/Items/HammerItem.json"), # HammerItem.json seems correct for item form
 	"P-Switch": preload("res://Assets/Sprites/Items/PSwitch.json"),
-	"QuestionBlock": preload("res://Assets/Sprites/Blocks/ClearQuestionBlock.json")
+	"QuestionBlock": preload("res://Assets/Sprites/Blocks/QuestionBlock.json"),
+	"ClearQuestionBlock": preload("res://Assets/Sprites/Blocks/ClearQuestionBlock.json")
 }
 
 var delta_time := 0.0
+var is_item_displaying := false
 
 func _ready() -> void:
 	Global.level_theme_changed.connect(update_character_info)
@@ -82,6 +84,13 @@ func handle_main_hud() -> void:
 				lbl.modulate = Color.YELLOW
 			else:
 				lbl.modulate = Color.WHITE
+				
+		# Visual cue for ItemBox (Swap Clear for Full when >= 20 coins)
+		var box_rs = %BattleRoyaleHUD.get_node_or_null("ItemBox/RouletteIcon/Sprite/BoxRS")
+		if box_rs and not is_item_displaying and not Mario35Handler.coin_roulette_active:
+			var target_json = ITEM_JSONS["QuestionBlock"] if Mario35Handler.coins >= 20 else ITEM_JSONS["ClearQuestionBlock"]
+			if box_rs.resource_json != target_json:
+				box_rs.resource_json = target_json
 		
 		# Watch out warning
 		%WarningLabel.visible = Mario35Handler.get_attackers_count() > 0
@@ -90,7 +99,6 @@ func handle_main_hud() -> void:
 		var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
 		if my_id in Mario35Handler.player_statuses:
 			if not Mario35Handler.player_statuses[my_id].alive:
-				%BRTimer.text = "ELIMINATED"
 				%BRTimer.modulate = Color.GRAY
 		
 		# User requested removal of "random stuff" (P-Switches, Star) which are likely Challenge Mode or Combo elements
@@ -251,10 +259,10 @@ func setup_br_hud() -> void:
 	
 	# Sprite Frames ResourceSetter
 	var rs = ResourceSetterNew.new()
-	rs.name = "ResourceSetterNew"
+	rs.name = "BoxRS"
 	rs.node_to_affect = sprite
 	rs.property_name = "sprite_frames"
-	rs.resource_json = ITEM_JSONS["QuestionBlock"]
+	rs.resource_json = ITEM_JSONS["ClearQuestionBlock"]
 	sprite.add_child(rs)
 
 	%BattleRoyaleHUD.add_child(box)
@@ -545,17 +553,22 @@ func _on_enemy_spawned(_type: String) -> void:
 func show_item_roulette() -> void:
 	var box = %BattleRoyaleHUD.get_node_or_null("ItemBox")
 	if not box: return
-	var icon_root = box.get_node("RouletteIcon")
-	var sprite = icon_root.get_node("Sprite")
-	var rs = sprite.get_node("ResourceSetterNew")
+	var icon_root = box.get_node_or_null("RouletteIcon")
+	if not icon_root: return
+	var sprite = icon_root.get_node_or_null("Sprite")
+	if not sprite: return
+	var rs = sprite.get_node_or_null("BoxRS")
+	if not rs: return
 	
 	sprite.modulate = Color.WHITE
 	var keys = ITEM_JSONS.keys()
 	keys.erase("QuestionBlock")
+	keys.erase("ClearQuestionBlock")
 	
 	# Spin while logic is active
 	while Mario35Handler.coin_roulette_active:
 		var rand_key = keys.pick_random()
+		if not is_instance_valid(rs): return
 		rs.resource_json = ITEM_JSONS[rand_key]
 		AudioManager.play_global_sfx("menu_move")
 		await get_tree().create_timer(0.05).timeout
@@ -564,11 +577,16 @@ func show_item_roulette() -> void:
 func _on_roulette_stopped(item: String) -> void:
 	var box = %BattleRoyaleHUD.get_node_or_null("ItemBox")
 	if not box: return
-	var icon_root = box.get_node("RouletteIcon")
-	var sprite = icon_root.get_node("Sprite")
-	var rs = sprite.get_node("ResourceSetterNew")
+	var icon_root = box.get_node_or_null("RouletteIcon")
+	if not icon_root: return
+	var sprite = icon_root.get_node_or_null("Sprite")
+	if not sprite: return
+	var rs = sprite.get_node_or_null("BoxRS")
+	if not rs: return
 	
 	if not ITEM_JSONS.has(item): return
+	
+	is_item_displaying = true
 	
 	# Set final item
 	rs.resource_json = ITEM_JSONS[item]
@@ -580,11 +598,9 @@ func _on_roulette_stopped(item: String) -> void:
 		await get_tree().create_timer(0.05).timeout
 	sprite.visible = true
 	
-	# Reset to Question Block after a moment
-	await get_tree().create_timer(0.5).timeout
-	if is_instance_valid(sprite):
-		rs.resource_json = ITEM_JSONS["QuestionBlock"]
-		sprite.play("default")
+	# Keep item displayed for a couple of seconds
+	await get_tree().create_timer(2.0, false).timeout
+	is_item_displaying = false
 
 func update_br_leaderboard() -> void:
 	# Clear existing
@@ -598,15 +614,20 @@ func update_br_leaderboard() -> void:
 	sorted_ids.sort_custom(func(a, b):
 		if statuses[a].alive != statuses[b].alive:
 			return statuses[a].alive
-		return statuses[a].rank < statuses[b].rank
+		# Sort by dynamic driver score while alive
+		return Mario35Handler.get_driver_score(a) > Mario35Handler.get_driver_score(b)
 	)
 	
 	var y_offset = 64
 	for id in sorted_ids:
 		var s = statuses[id]
+		var score = Mario35Handler.get_driver_score(id)
+		var pts = Mario35Handler.session_points.get(id, 0)
 		var label = Label.new()
 		label.name = "LRB_" + str(id)
-		label.text = "%s : %s" % [s.name, "ALIVE" if s.alive else "RANK %d" % s.rank]
+		
+		var status_text = "ALIVE" if s.alive else "OUT"
+		label.text = "%s : %s (%d pts)" % [s.name, status_text, pts]
 		label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
 		label.position = Vector2(-200, y_offset) # Centered horizontally
 		label.size = Vector2(400, 12)

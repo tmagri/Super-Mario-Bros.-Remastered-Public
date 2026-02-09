@@ -319,18 +319,15 @@ func spawn_from_queue() -> void:
 			
 		
 		# Collision Check: Ensure not spawning in wall
-		# We'll use a raycast or point check to ensure the spawn position is clear.
+		# We'll use test_move to ensure the spawn position is clear for the enemy's shape.
 		# If it's blocked, we nudge it up until it's not.
-		var space_state = player.get_world_2d().direct_space_state
 		var target_pos = player.global_position + spawn_offset
 		
 		# Simple upward search if blocked
-		for i in range(10): # Try up to 10 increments
-			var params = PhysicsPointQueryParameters2D.new()
-			params.position = target_pos
-			params.collision_mask = 1 # Terrain layer
-			var result = space_state.intersect_point(params)
-			if result.is_empty():
+		# We use test_move on the instantiated enemy which provides accurate shape collision.
+		for i in range(24): # Try up to 24 increments (384px height check)
+			enemy.global_position = target_pos
+			if not enemy.test_move(enemy.global_transform, Vector2.ZERO):
 				break
 			target_pos.y -= 16 # Adjust up by one tile height
 			
@@ -534,32 +531,56 @@ func get_next_level_path() -> String:
 	if version_enum == GameVersion.RANDOM:
 		version_enum = [GameVersion.SMB1, GameVersion.SMBLL, GameVersion.SMBS].pick_random()
 	
+	var max_w = 8
 	var prefix = "SMB1"
-	var w_range = [1, 8]
-	var l_range = [1, 4]
 	
 	match version_enum:
 		GameVersion.SMB1:
 			prefix = "SMB1"
+			max_w = 8
 		GameVersion.SMBLL:
 			prefix = "SMBLL"
-			w_range = [1, 13] # SMBLL has up to World D (13)
+			max_w = 13 # SMBLL has up to World D (13)
 		GameVersion.SMBANN:
 			prefix = "SMBANN"
+			max_w = 8
 		GameVersion.SMBS:
 			prefix = "SMBS"
+			max_w = 4 # Usually 4 worlds for special editions
 	
+	# --- World Selection with Weighting ---
+	var w = 1
+	# Favor earlier worlds in initial rounds
+	if levels_played < 2: # First 2 levels
+		# 80% chance for World 1-2
+		if rng.randf() < 0.8:
+			w = rng.randi_range(1, 2)
+		else:
+			w = rng.randi_range(1, max_w)
+	elif levels_played < 5: # Levels 3-5
+		# 60% chance for World 1-4
+		if rng.randf() < 0.6:
+			w = rng.randi_range(1, 4)
+		else:
+			w = rng.randi_range(1, max_w)
+	else:
+		# Standard randomization
+		w = rng.randi_range(1, max_w)
 	
-	var w = rng.randi_range(w_range[0], w_range[1])
-	
-	# Weighted level selection (priority for X-1 stages)
+	# --- Level Selection with Weighting ---
+	# Priority for X-1 stages, especially in round 1
 	var l = 1
 	var l_weights = [0.25, 0.25, 0.25, 0.25] # Default uniform
 	
 	if levels_played == 0:
-		l_weights = [0.8, 0.067, 0.067, 0.066] # 80% chance for X-1 in first round
+		# First level: zero chance for castle level
+		l_weights = [0.90, 0.07, 0.03, 0.0] 
+	elif levels_played < 10:
+		# Early rounds: strongly favor X-1/X-2
+		l_weights = [0.5, 0.3, 0.15, 0.05]
 	else:
-		l_weights = [0.4, 0.2, 0.2, 0.2] # 40% chance for X-1 thereafter
+		# Later rounds: more balanced
+		l_weights = [0.35, 0.25, 0.20, 0.20]
 	
 	var roll = rng.randf()
 	var weight_sum = 0.0

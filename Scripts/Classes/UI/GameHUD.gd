@@ -15,7 +15,7 @@ const ITEM_JSONS := {
 	"Wing": preload("res://Assets/Sprites/Items/Wings.json"),
 	"Hammer": preload("res://Assets/Sprites/Items/HammerItem.json"), # HammerItem.json seems correct for item form
 	"P-Switch": preload("res://Assets/Sprites/Items/PSwitch.json"),
-	"QuestionBlock": preload("res://Assets/Sprites/Blocks/QuestionBlock.json")
+	"QuestionBlock": preload("res://Assets/Sprites/Blocks/ClearQuestionBlock.json")
 }
 
 var delta_time := 0.0

@@ -87,7 +87,7 @@ func handle_horizontal_scrolling(delta: float) -> void:
 			camera_position.x = global_position.x + offset
 	
 	## LEFT MOVEMENT
-	elif true_vel_dir == -1 and can_scroll_left and is_instance_valid(Global.current_level) and Global.current_level.can_backscroll:
+	elif true_vel_dir == -1 and can_scroll_left and is_instance_valid(Global.current_level) and Global.current_level.can_backscroll and Global.current_game_mode != Global.GameMode.MARIO_35:
 		cam_direction = -1
 		if global_position.x <= camera_position.x:
 			scrolling = true
@@ -163,7 +163,7 @@ func handle_offsets(delta: float) -> void:
 	if owner.velocity.x == 0 or (owner.is_on_wall() and owner.direction == -owner.get_wall_normal().x):
 		true_vel_dir = 0
 		true_velocity.x = 0
-	if is_instance_valid(Global.current_level) and Global.current_level.can_backscroll:
+	if is_instance_valid(Global.current_level) and Global.current_level.can_backscroll and Global.current_game_mode != Global.GameMode.MARIO_35:
 		if true_vel_dir != 0 and abs(true_velocity.x) > 80:
 			if abs(camera_position.x - global_position.x) <= 64:
 				camera_offset.x = move_toward(camera_offset.x, 8 * true_vel_dir, abs(true_velocity.x) / 200)

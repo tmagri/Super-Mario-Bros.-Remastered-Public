@@ -58,6 +58,8 @@ func die() -> void:
 	queue_free()
 
 func die_from_hammer() -> void:
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.on_enemy_killed(self, 2)
 	AudioManager.play_sfx("hammer_hit", global_position)
 	killed.emit()
 	queue_free()

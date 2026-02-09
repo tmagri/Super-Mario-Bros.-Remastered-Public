@@ -75,10 +75,9 @@ func handle_main_hud() -> void:
 		handle_br_input()
 		
 		# Update ItemBox coin count
-		var item_box = %BattleRoyaleHUD.get_node_or_null("ItemBox")
-		if item_box:
-			var lbl = item_box.get_node("CoinLabel")
-			lbl.text = "%d" % Mario35Handler.coins
+		var lbl = %BattleRoyaleHUD.get_node_or_null("CoinContainer/CoinLabel")
+		if lbl:
+			lbl.text = "%02d" % Mario35Handler.coins
 			if Mario35Handler.coins >= 20:
 				lbl.modulate = Color.YELLOW
 			else:
@@ -165,35 +164,88 @@ func handle_main_hud() -> void:
 func setup_br_hud() -> void:
 	if %BattleRoyaleHUD.has_node("ItemBox"): return
 	
-	# --- Item Box (Top Left) ---
+	# Ensure HUD container is full rect for proper anchoring
+	%BattleRoyaleHUD.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	
+	# --- Coins (Top Left, mimics standard HUD row 1/2 stack) ---
+	var coin_container = Control.new()
+	coin_container.name = "CoinContainer"
+	coin_container.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	coin_container.position = Vector2(24, 16) # Shifted right 16 (2 chars)
+	%BattleRoyaleHUD.add_child(coin_container)
+	
+	# MarioLabel (Far left, row 1)
+	var mario_root = Control.new()
+	mario_root.name = "MarioRoot"
+	mario_root.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	mario_root.position = Vector2(24, 16) # Shifted right 16 (2 chars)
+	%BattleRoyaleHUD.add_child(mario_root)
+
+	var mario_lbl = Label.new()
+	mario_lbl.name = "MarioLabel"
+	var my_name = Mario35Handler.player_statuses.get(multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1, {}).get("name", "MARIO")
+	mario_lbl.text = my_name.to_upper()
+	mario_lbl.add_theme_font_size_override("font_size", 8)
+	mario_lbl.add_theme_color_override("font_shadow_color", Color.BLACK)
+	mario_lbl.add_theme_constant_override("shadow_offset_x", 1)
+	mario_lbl.add_theme_constant_override("shadow_offset_y", 1)
+	mario_lbl.position = Vector2(0, 0)
+	mario_root.add_child(mario_lbl)
+	
+	var coin_icon_root = Control.new()
+	coin_icon_root.name = "CoinIconRoot"
+	coin_icon_root.position = Vector2(8, 16) # Row 2 relative to container y=16 -> y=24
+	coin_container.add_child(coin_icon_root)
+	
+	var coin_sprite = AnimatedSprite2D.new()
+	coin_sprite.scale = Vector2(1, 1)
+	coin_icon_root.add_child(coin_sprite)
+	var coin_rs = ResourceSetterNew.new()
+	coin_rs.name = "ResourceSetterNew"
+	coin_rs.node_to_affect = coin_sprite
+	coin_rs.property_name = "sprite_frames"
+	coin_rs.resource_json = preload("res://Assets/Sprites/UI/CoinIcon.json")
+	coin_sprite.add_child(coin_rs)
+	coin_sprite.play("default")
+	
+	var x_lbl = Label.new()
+	x_lbl.text = "*" 
+	x_lbl.add_theme_font_size_override("font_size", 8)
+	x_lbl.add_theme_color_override("font_shadow_color", Color.BLACK)
+	x_lbl.add_theme_constant_override("shadow_offset_x", 1)
+	x_lbl.add_theme_constant_override("shadow_offset_y", 1)
+	x_lbl.position = Vector2(8, 8) # Row 2
+	coin_container.add_child(x_lbl)
+	
+	var coin_val = Label.new()
+	coin_val.name = "CoinLabel"
+	coin_val.text = "00"
+	coin_val.add_theme_font_size_override("font_size", 8)
+	coin_val.add_theme_color_override("font_shadow_color", Color.BLACK)
+	coin_val.add_theme_constant_override("shadow_offset_x", 1)
+	coin_val.add_theme_constant_override("shadow_offset_y", 1)
+	coin_val.position = Vector2(16, 8) # Row 2
+	coin_container.add_child(coin_val)
+
+	# --- Item Box (Top Center) ---
 	var box = Panel.new()
 	box.name = "ItemBox"
-	box.size = Vector2(56, 48)
-	box.position = Vector2(16, 16) # Top left
-	
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color("6b3f08") # Brown
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.border_color = Color.WHITE
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.corner_radius_bottom_right = 4
-	style.corner_radius_bottom_left = 4
+	box.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	box.position = Vector2(-24, 16) # Aligned with Row 1 top
+	box.size = Vector2(48, 48)
+	var style = StyleBoxEmpty.new()
 	box.add_theme_stylebox_override("panel", style)
 	
 	# Internal layout
 	# Icon (Top)
 	var icon_root = Control.new()
 	icon_root.name = "RouletteIcon"
-	icon_root.position = Vector2(28, 20) # Centered horizontally, top half
+	icon_root.position = Vector2(24, 8) # Adjusted for alignment
 	box.add_child(icon_root)
 	
 	var sprite = AnimatedSprite2D.new()
 	sprite.name = "Sprite"
-	sprite.scale = Vector2(2, 2) 
+	sprite.scale = Vector2(1, 1) # Half size as requested
 	sprite.modulate = Color.WHITE
 	icon_root.add_child(sprite)
 	
@@ -205,50 +257,33 @@ func setup_br_hud() -> void:
 	rs.resource_json = ITEM_JSONS["QuestionBlock"]
 	sprite.add_child(rs)
 
-	# Coin Cost (Bottom Left)
-	var coin_icon = TextureRect.new()
-	coin_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	coin_icon.size = Vector2(24, 8) 
-
-	# Let's switch CoinIcon to AnimatedSprite2D to be safe and match "Always use resource load json".
-	var coin_root = Control.new()
-	coin_root.name = "CoinIconRoot"
-	coin_root.position = Vector2(12, 40) # Position icon at X=12
-	box.add_child(coin_root)
-	
-	var coin_sprite = AnimatedSprite2D.new()
-	coin_sprite.name = "CoinSprite"
-	coin_sprite.scale = Vector2(1, 1) 
-	coin_root.add_child(coin_sprite)
-	
-	var coin_rs = ResourceSetterNew.new()
-	coin_rs.name = "ResourceSetterNew"
-	coin_rs.node_to_affect = coin_sprite
-	coin_rs.property_name = "sprite_frames"
-	coin_rs.resource_json = preload("res://Assets/Sprites/UI/CoinIcon.json")
-	coin_sprite.add_child(coin_rs)
-	coin_sprite.play("default")
-	coin_sprite.centered = true # Ensure it's centered at root pos (12, 40)
-
-	var coin_label = Label.new()
-	coin_label.name = "CoinLabel"
-	coin_label.text = "20"
-	coin_label.position = Vector2(20, 32) # Side-by-side with icon. Center 32+8=40.
-	coin_label.size = Vector2(20, 16)
-	coin_label.add_theme_font_size_override("font_size", 8)
-	box.add_child(coin_label)
-	
 	%BattleRoyaleHUD.add_child(box)
 	
-	# --- Timer (Top Right) ---
+	# --- Timer (Top Right, mimics standard HUD) ---
+	var time_container = Control.new()
+	time_container.name = "TimeContainer"
+	time_container.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	time_container.position = Vector2(-56, 16) # Shifted right 16 (2 chars) from -72
+	%BattleRoyaleHUD.add_child(time_container)
+	
+	var time_lbl_label = Label.new()
+	time_lbl_label.text = "TIME"
+	time_lbl_label.add_theme_font_size_override("font_size", 8)
+	time_lbl_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	time_lbl_label.add_theme_constant_override("shadow_offset_x", 1)
+	time_lbl_label.add_theme_constant_override("shadow_offset_y", 1)
+	time_lbl_label.position = Vector2(0, 0)
+	time_container.add_child(time_lbl_label)
+
 	# Move existing label and style it
-	%BRTimer.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	%BRTimer.position = Vector2(get_viewport().get_visible_rect().size.x / 2 - 40, 16)
-	%BRTimer.size = Vector2(80, 32)
-	%BRTimer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	%BRTimer.add_theme_font_size_override("font_size", 24)
-	%BRTimer.add_theme_color_override("font_outline_color", Color.BLACK)
-	%BRTimer.add_theme_constant_override("outline_size", 8)
+	%BRTimer.reparent(time_container)
+	%BRTimer.position = Vector2(8, 8) # Row 2 relative to y=16 -> y=24
+	%BRTimer.size = Vector2(50, 16)
+	%BRTimer.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	%BRTimer.add_theme_font_size_override("font_size", 8) # Standard HUD size
+	%BRTimer.add_theme_color_override("font_shadow_color", Color.BLACK)
+	%BRTimer.add_theme_constant_override("shadow_offset_x", 1)
+	%BRTimer.add_theme_constant_override("shadow_offset_y", 1)
 	
 	# --- Target Label (Top Center) ---
 	#%TargetLabel.visible = true
@@ -271,6 +306,12 @@ func update_hud_labels(mode: int) -> void:
 	%TargetLabel.text = text
 	%Score.text = str(Global.score).pad_zeros(6)
 	%CoinLabel.text = "*" + str(Global.coins).pad_zeros(2)
+	
+	# Handle Battle Royale HUD specific updates
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		var br_coin_lbl = %BattleRoyaleHUD.get_node_or_null("CoinContainer/CoinLabel")
+		if br_coin_lbl:
+			br_coin_lbl.text = "%02d" % Mario35Handler.coins
 	if current_chara != Global.player_characters[0]:
 		update_character_info()
 	%CharacterIcon.get_node("Shadow").texture = %CharacterIcon.texture
@@ -471,7 +512,13 @@ func on_timeout() -> void:
 			AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.TIME_WARNING, 5, true)
 
 func update_br_timer(time: int) -> void:
-	%BRTimer.text = str(time)
+	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
+	if my_id in Mario35Handler.player_statuses and not Mario35Handler.player_statuses[my_id].alive:
+		%BRTimer.text = "ELIMINATED"
+		%BRTimer.modulate = Color.GRAY
+		return
+		
+	%BRTimer.text = str(time).pad_zeros(3)
 	if time <= 10:
 		%BRTimer.modulate = Color.RED
 	else:
@@ -560,12 +607,17 @@ func update_br_leaderboard() -> void:
 		var label = Label.new()
 		label.name = "LRB_" + str(id)
 		label.text = "%s : %s" % [s.name, "ALIVE" if s.alive else "RANK %d" % s.rank]
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+		label.position = Vector2(-200, y_offset) # Centered horizontally
+		label.size = Vector2(400, 12)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.add_theme_font_size_override("font_size", 8)
+		label.add_theme_color_override("font_shadow_color", Color.BLACK)
+		label.add_theme_constant_override("shadow_offset_x", 1)
+		label.add_theme_constant_override("shadow_offset_y", 1)
 		label.add_theme_color_override("font_color", Color.WHITE if s.alive else Color.DARK_GRAY)
-		label.position = Vector2(400 - 80, y_offset) # Position on right side
 		%BattleRoyaleHUD.add_child(label)
-		y_offset += 12
+		y_offset += 14 # Slightly more spacing
 
 func _on_game_over(winner_id: int) -> void:
 	update_br_leaderboard()
@@ -583,14 +635,40 @@ func _on_game_over(winner_id: int) -> void:
 	label.text = message
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", 32)
-	label.add_theme_color_override("font_outline_color", Color.BLACK)
-	label.add_theme_constant_override("outline_size", 8)
-	label.position = Vector2(get_viewport().get_visible_rect().size.x / 2 - 200, 140)
-	label.size = Vector2(400, 32)
+	label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	label.add_theme_constant_override("shadow_offset_x", 2)
+	label.add_theme_constant_override("shadow_offset_y", 2)
+	label.size = Vector2(400, 36)
+	label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	%BattleRoyaleHUD.add_child(label)
+	
+	# Personal Rank Label (Bottom Left)
+	if my_id in Mario35Handler.player_statuses:
+		var status = Mario35Handler.player_statuses[my_id]
+		var rank_lbl = Label.new()
+		rank_lbl.name = "PersonalRankLabel"
+		rank_lbl.text = _get_ordinal_rank(status.rank)
+		rank_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		rank_lbl.add_theme_font_size_override("font_size", 16)
+		rank_lbl.add_theme_color_override("font_shadow_color", Color.BLACK)
+		rank_lbl.add_theme_constant_override("shadow_offset_x", 1)
+		rank_lbl.add_theme_constant_override("shadow_offset_y", 1)
+		rank_lbl.size = Vector2(100, 24)
+		rank_lbl.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+		rank_lbl.position = Vector2(16, -32) # Margin from bottom left
+		%BattleRoyaleHUD.add_child(rank_lbl)
 	
 	# Play victory/loss sfx
 	if winner_id == my_id:
 		AudioManager.play_global_sfx("level_clear")
 	else:
 		AudioManager.play_global_sfx("game_over")
+
+func _get_ordinal_rank(rank: int) -> String:
+	var suffix = "TH"
+	if rank % 100 < 11 or rank % 100 > 13:
+		match rank % 10:
+			1: suffix = "ST"
+			2: suffix = "ND"
+			3: suffix = "RD"
+	return str(rank) + suffix

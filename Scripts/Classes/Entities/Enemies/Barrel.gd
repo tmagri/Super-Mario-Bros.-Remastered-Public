@@ -13,9 +13,11 @@ func die() -> void:
 	destroy()
 
 func die_from_object(_node: Node2D) -> void:
+	_check_br_kill()
 	destroy()
 	
 func die_from_hammer(_node: Node2D) -> void:
+	_check_br_kill()
 	AudioManager.play_sfx("hammer_hit", global_position)
 	destroy()
 

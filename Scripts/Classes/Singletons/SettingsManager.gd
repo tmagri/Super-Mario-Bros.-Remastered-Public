@@ -85,6 +85,14 @@ var file := {
 		"back_scroll": 0,
 		"time_limit": 1,
 		"lakitu_style": 0
+	},
+	"mario_35":
+	{
+		"start_time": 35,
+		"max_time": 400,
+		"item_pool_mode": 0,
+		"physics_mode": 0,
+		"game_version": 0
 	}
 }
 

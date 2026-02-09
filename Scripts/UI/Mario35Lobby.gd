@@ -159,7 +159,16 @@ func _ready():
 	%LevelOption.add_item("SMBLL", Mario35Handler.GameVersion.SMBLL)
 	%LevelOption.add_item("SPECIAL", Mario35Handler.GameVersion.SMBS)
 	%LevelOption.add_item("RANDOM", Mario35Handler.GameVersion.RANDOM)
-	%LevelOption.selected = 0
+	
+	# Load saved settings
+	var m35_settings = Settings.file.mario_35
+	%StartTimeInput.value = m35_settings.start_time
+	%MaxTimeInput.value = m35_settings.max_time
+	%ItemOption.selected = m35_settings.item_pool_mode
+	%PhysicsOption.selected = m35_settings.physics_mode
+	%LevelOption.selected = m35_settings.game_version
+	_update_settings()
+	update_settings_focus_neighbors()
 
 func _process(_delta: float) -> void:
 	if not get_tree().paused:
@@ -505,6 +514,14 @@ func _update_settings():
 	Mario35Handler.item_pool_mode = %ItemOption.selected
 	Mario35Handler.physics_mode = %PhysicsOption.selected
 	Mario35Handler.game_version = %LevelOption.selected
+	
+	# Save to persistent settings
+	Settings.file.mario_35.start_time = Mario35Handler.start_time
+	Settings.file.mario_35.max_time = Mario35Handler.max_time
+	Settings.file.mario_35.item_pool_mode = Mario35Handler.item_pool_mode
+	Settings.file.mario_35.physics_mode = Mario35Handler.physics_mode
+	Settings.file.mario_35.game_version = Mario35Handler.game_version
+	Settings.save_settings()
 
 func _on_back_pressed():
 	Mario35Network.leave_game()
@@ -525,7 +542,8 @@ func _set_lobby_interaction_active(active: bool) -> void:
 		%SettingsButton,
 		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton,
 		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton,
-		$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton
+		$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton,
+		debug_btn
 	]
 	
 	for node in lobby_nodes:
@@ -640,3 +658,29 @@ func update_focus_neighbors():
 		back_btn.focus_neighbor_bottom = debug_btn.get_path()
 		debug_btn.focus_neighbor_top = back_btn.get_path()
 		debug_btn.focus_neighbor_bottom = debug_btn.get_path() # Loop on self
+
+func update_settings_focus_neighbors():
+	var start = %StartTimeInput.get_line_edit()
+	var max_t = %MaxTimeInput.get_line_edit()
+	var item = %ItemOption
+	var level = %LevelOption
+	var physics = %PhysicsOption
+	var close = %CloseSettingsButton
+	
+	start.focus_neighbor_top = close.get_path()
+	start.focus_neighbor_bottom = max_t.get_path()
+	
+	max_t.focus_neighbor_top = start.get_path()
+	max_t.focus_neighbor_bottom = item.get_path()
+	
+	item.focus_neighbor_top = max_t.get_path()
+	item.focus_neighbor_bottom = level.get_path()
+	
+	level.focus_neighbor_top = item.get_path()
+	level.focus_neighbor_bottom = physics.get_path()
+	
+	physics.focus_neighbor_top = level.get_path()
+	physics.focus_neighbor_bottom = close.get_path()
+	
+	close.focus_neighbor_top = physics.get_path()
+	close.focus_neighbor_bottom = start.get_path()

@@ -354,24 +354,30 @@ func spawn_from_queue() -> void:
 			
 		
 		# Collision Check: Ensure not spawning in wall
-		# We'll use test_move to ensure the spawn position is clear for the enemy's shape.
-		# If it's blocked, we nudge it up until it's not.
 		var target_pos = player.global_position + spawn_offset
 		
-		# Simple upward search if blocked
-		# We use test_move on the instantiated enemy which provides accurate shape collision.
-		for i in range(24): # Try up to 24 increments (384px height check)
-			enemy.global_position = target_pos
-			if not enemy.test_move(enemy.global_transform, Vector2.ZERO):
-				break
-			target_pos.y -= 16 # Adjust up by one tile height
-			
-		enemy.global_position = target_pos
+		# Raycast for floor detection
+		var space_state = player.get_world_2d().direct_space_state
+		var ray_params = PhysicsRayQueryParameters2D.create(target_pos, target_pos + Vector2(0, 320), 6) # Check down 20 tiles
+		var result = space_state.intersect_ray(ray_params)
 		
-		# If we want them precisely on the ground, we can attempt a raycast here,
-		# but 0 offset (player's Y) is usually the ground in most SMB levels.
-		# If the player is mid-air, they will fall from player's height.
-		# Since they are spawned 480px ahead, they have time to land before coming into view.
+		if not result.is_empty():
+			# Found ground, spawn there
+			target_pos = result.position
+		
+		# Ensure we aren't spawning inside a block/wall at this position
+		var point_params = PhysicsPointQueryParameters2D.new()
+		point_params.collision_mask = 6 # Terrain/Blocks
+		
+		# If we are inside a wall, move up until we are free
+		for i in range(16): # Check up to 16 tiles up
+			point_params.position = target_pos - Vector2(0, 8) # Check slightly above point
+			var hits = space_state.intersect_point(point_params, 1)
+			if hits.is_empty():
+				break
+			target_pos.y -= 16
+		
+		enemy.global_position = target_pos
 		
 		# Visual feedback for sent enemies
 		if enemy is Enemy or enemy.has_method("set_is_sent_enemy") or "is_sent_enemy" in enemy:

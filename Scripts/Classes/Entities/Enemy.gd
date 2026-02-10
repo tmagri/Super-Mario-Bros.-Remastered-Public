@@ -25,13 +25,22 @@ func _ready() -> void:
 
 func _update_sent_visuals() -> void:
 	if is_sent_enemy:
+		# Only restart the tween if it doesn't exist or isn't running
 		if _sent_tween: _sent_tween.kill()
+		
+		# Reset material to default (in case it was changed previously)
+		self.material = null 
+
+		# R=1.2, G=1.2: Increases base brightness
+		# B=3.0: High blue boost for the tint
+		modulate = Color(1.2, 1.2, 3.0, 1.0)
+
 		_sent_tween = create_tween().set_loops()
-		# Fast blink effect
-		_sent_tween.tween_property(self, "modulate:a", 0.2, 0.15)
-		_sent_tween.tween_property(self, "modulate:a", 0.8, 0.15)
-		# Ghostly bluish-white tint
-		modulate = Color(0.7, 0.7, 1.5, 0.8)
+		
+		# Fast blink effect (flickering transparency)
+		# Note: We keep alpha (a) separate so it doesn't override the RGB boost above
+		_sent_tween.tween_property(self, "modulate:a", 0.4, 0.15)
+		_sent_tween.tween_property(self, "modulate:a", 1.0, 0.15)
 	else:
 		if _sent_tween: _sent_tween.kill()
 		_sent_tween = null
@@ -48,25 +57,25 @@ func apply_enemy_gravity(delta: float) -> void:
 	velocity.y += (Global.entity_gravity / delta) * delta
 	velocity.y = clamp(velocity.y, -INF, Global.entity_max_fall_speed)
 
-func die() -> void:
-	_check_br_kill(2)
+func die(time_reward: int = 2) -> void:
+	_check_br_kill(time_reward)
 	killed.emit([-1, 1].pick_random())
 	DiscoLevel.combo_amount += 1
 	DiscoLevel.combo_meter = 100
 	queue_free()
 
-func die_from_object(obj: Node2D) -> void:
+func die_from_object(obj: Node2D, time_reward: int = 2) -> void:
 	var dir = sign(global_position.x - obj.global_position.x)
 	if dir == 0:
 		dir = [-1, 1].pick_random()
 	
 	# If killed by a shell or player stomp, time is handled by the attacker to allow combos
 	# Special case: Star kills don't have combos, so they award time directly in Mario 35
-	var reward = 2
+	var reward = time_reward
 	if (obj is Shell or obj is Player):
 		reward = 0
 		if obj is Player and obj.is_invincible and Global.current_game_mode == Global.GameMode.MARIO_35:
-			reward = 2
+			reward = time_reward
 			
 	_check_br_kill(reward)
 	DiscoLevel.combo_amount += 1

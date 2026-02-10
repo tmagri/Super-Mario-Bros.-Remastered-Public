@@ -42,6 +42,7 @@ func player_touch(player: Player) -> void:
 		Global.tally_time()
 	elif Global.current_game_mode == Global.GameMode.MARIO_35:
 		# Directly transition after delay
+		Mario35Handler.add_time(20)
 		Global.current_level.transition_to_next_level()
 
 func give_points(player: Player) -> void:

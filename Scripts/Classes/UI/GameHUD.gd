@@ -627,7 +627,7 @@ func update_br_leaderboard() -> void:
 		label.name = "LRB_" + str(id)
 		
 		var status_text = "ALIVE" if s.alive else "OUT"
-		label.text = "%s : %s (%d pts)" % [s.name, status_text, pts]
+		label.text = "%s : %s (%d PTS)" % [s.name, status_text, pts]
 		label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
 		label.position = Vector2(-200, y_offset) # Centered horizontally
 		label.size = Vector2(400, 12)

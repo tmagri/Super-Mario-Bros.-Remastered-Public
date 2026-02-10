@@ -117,6 +117,12 @@ func throw_hammers() -> void:
 	if get_node_or_null("HammerTime") != null:
 		$HammerTime.start()
 
+func die(time_reward: int = 20) -> void:
+	super.die(time_reward)
+
+func die_from_object(obj: Node2D, time_reward: int = 20) -> void:
+	super.die_from_object(obj, time_reward)
+
 func fireball_hit() -> void:
 	health -= 1
 	AudioManager.play_sfx("bump", global_position)

@@ -1,123 +1,137 @@
 {
+	"animations": {
+		"default": {
+			"frames": [
+				[
+					0,
+					0,
+					16,
+					16
+				]
+			],
+			"speed": 1.0,
+			"loop": true
+		}
+	},
 	"variations": {
 		"default": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				0.0,
-				0.0,
-				16.0,
-				16.0
+				0,
+				0,
+				16,
+				16
 			]
 		},
 		"Underground": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				32.0,
-				0.0,
-				16.0,
-				16.0
+				16,
+				0,
+				16,
+				16
 			]
 		},
 		"GhostHouse": {
 			"link": "Underground"
 		},
 		"Castle": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				64.0,
-				0.0,
-				16.0,
-				16.0
+				32,
+				0,
+				16,
+				16
 			]
 		},
 		"Underwater": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				96.0,
-				0.0,
-				16.0,
-				16.0
+				48,
+				0,
+				16,
+				16
 			]
 		},
 		"Desert": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				0.0,
-				16.0,
-				16.0,
-				16.0
+				0,
+				16,
+				16,
+				16
 			]
 		},
 		"Jungle": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				32.0,
-				16.0,
-				16.0,
-				16.0
+				16,
+				16,
+				16,
+				16
 			]
 		},
 		"Snow": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				64.0,
-				16.0,
-				16.0,
-				16.0
+				32,
+				16,
+				16,
+				16
 			]
 		},
 		"Volcano": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				96.0,
-				16.0,
-				16.0,
-				16.0
+				48,
+				16,
+				16,
+				16
 			]
 		},
 		"Autumn": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				0.0,
-				32.0,
-				16.0,
-				16.0
+				0,
+				32,
+				16,
+				16
 			]
 		},
 		"Beach": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				32.0,
-				32.0,
-				16.0,
-				16.0
+				16,
+				32,
+				16,
+				16
 			]
 		},
 		"Mountain": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				64.0,
-				32.0,
-				16.0,
-				16.0
+				32,
+				32,
+				16,
+				16
 			]
 		},
 		"Space": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				96.0,
-				32.0,
-				16.0,
-				16.0
+				48,
+				32,
+				16,
+				16
 			]
 		},
 		"Bonus": {
-			"source": "SPItems.png",
+			"source": "Hammer.png",
 			"rect": [
-				0.0,
-				48.0,
-				16.0,
-				16.0
+				0,
+				48,
+				16,
+				16
 			]
 		}
 	}

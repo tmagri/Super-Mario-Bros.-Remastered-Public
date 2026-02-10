@@ -44,6 +44,8 @@ func destroy_bridge(player: Player) -> void:
 	player.velocity = Vector2.ZERO
 	Global.can_time_tick = false
 	axe_touched.emit()
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.add_time(20)
 	$Axe.queue_free()
 	if bowser_present:
 		for i in get_tree().get_nodes_in_group("Bowser"):

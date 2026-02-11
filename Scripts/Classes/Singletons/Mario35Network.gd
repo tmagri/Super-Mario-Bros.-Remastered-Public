@@ -65,6 +65,7 @@ func start_game(settings = {}):
 func send_enemy(type):
 	Mario35Handler.receive_enemy(type)
 
+@rpc("any_peer", "call_local", "reliable")
 func notify_death(id, rank):
 	Mario35Handler.sync_death(int(id), int(rank))
 

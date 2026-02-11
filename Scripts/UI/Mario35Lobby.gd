@@ -79,6 +79,17 @@ func _ready():
 	
 	$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton.pressed.connect(_on_host_pressed)
 	$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton.pressed.connect(_on_join_pressed)
+	
+	# Setup Practice Button
+	var practice_button = Button.new()
+	practice_button.text = "PRACTICE"
+	practice_button.name = "PracticeButton"
+	$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer.add_child(practice_button)
+	practice_button.pressed.connect(_on_practice_pressed)
+	practice_button.focus_entered.connect(_on_focus_entered.bind(practice_button))
+	practice_button.focus_exited.connect(_on_focus_exited.bind(practice_button))
+	practice_button.mouse_entered.connect(practice_button.grab_focus)
+
 	start_button.pressed.connect(_on_start_pressed)
 	$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton.pressed.connect(_on_back_pressed)
 	
@@ -99,13 +110,6 @@ func _ready():
 		btn.focus_exited.connect(_on_focus_exited.bind(btn))
 		btn.mouse_entered.connect(btn.grab_focus)
 		
-	# Setup Debug Button if enabled
-	if Global.debug_mode:
-		setup_debug_button()
-		if not multiplayer.is_server():
-			await get_tree().process_frame
-			_auto_host_for_debug()
-	
 	# Initial focus for controller
 	await get_tree().process_frame
 	if not start_button.visible:
@@ -409,6 +413,7 @@ func _on_host_pressed():
 	var key = %RoomKeyInput.text.strip_edges().to_upper()
 	var use_upnp = %NetworkOption.selected == 0 # 0: GLOBAL
 	
+	Mario35Handler.is_practice = false
 	var err = Mario35Network.host_game(key, use_upnp)
 	if err == OK:
 		status_label.text = "HOSTING"
@@ -430,6 +435,7 @@ func _on_join_pressed():
 		
 	Mario35Network.player_info.name = name_input.text.strip_edges().to_upper()
 	var key = %RoomKeyInput.text.strip_edges().to_upper()
+	Mario35Handler.is_practice = false
 	var err = Mario35Network.join_game(ip_input.text, key)
 	if err == OK:
 		status_label.text = "JOINING..."
@@ -469,11 +475,11 @@ func refresh_player_list():
 	
 	# Start Game requirements (2+ players, or 1 in debug mode)
 	if multiplayer.is_server():
-		var min_players = 1 if Global.debug_mode else 2
+		var min_players = 1 if Mario35Handler.is_practice else 2
 		start_button.disabled = (count < min_players)
 		if count < min_players:
-			if Global.debug_mode:
-				status_label.text = "DEBUG MODE - READY"
+			if Mario35Handler.is_practice:
+				status_label.text = "PRACTICE MODE - READY"
 			else:
 				status_label.text = "WAITING FOR PLAYERS (%d/2)" % count
 		else:
@@ -542,8 +548,8 @@ func _set_lobby_interaction_active(active: bool) -> void:
 		%SettingsButton,
 		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton,
 		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton,
-		$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton,
-		debug_btn
+		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/PracticeButton,
+		$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton
 	]
 	
 	for node in lobby_nodes:
@@ -558,48 +564,9 @@ func _on_spinbox_input(event: InputEvent, sb: SpinBox):
 	# Fallback for mouse/keyboard if needed, but the main logic is in _input for controller
 	pass
 
-var debug_btn: Button
-func setup_debug_button() -> void:
-	debug_btn = Button.new()
-	debug_btn.text = "DEBUG: OFF"
-	if Global.debug_mode:
-		debug_btn.text = "DEBUG: ON"
-	debug_btn.name = "DebugButton"
-	
-	# Try to match theme/font if possible, or just rely on inherited theme
-	# To match "Host/Join" buttons:
-	debug_btn.add_theme_font_size_override("font_size", 8)
-	
-	$BG/Border/Content/ScrollContainer/VBoxContainer.add_child(debug_btn)
-	$BG/Border/Content/ScrollContainer/VBoxContainer.move_child(debug_btn, -1)
-	
-	update_focus_neighbors()
-	
-	debug_btn.pressed.connect(_on_debug_toggled)
-	debug_btn.focus_entered.connect(_on_focus_entered.bind(debug_btn))
-	debug_btn.focus_exited.connect(_on_focus_exited.bind(debug_btn))
-	
-	# Auto-host if debug is already on
-	if Global.debug_mode:
-		_auto_host_for_debug()
-	
-func _on_debug_toggled() -> void:
-	Global.debug_mode = !Global.debug_mode
-	AudioManager.play_global_sfx("coin" if Global.debug_mode else "bump")
-	debug_btn.text = "DEBUG: ON" if Global.debug_mode else "DEBUG: OFF"
-	
-	if Global.debug_mode:
-		DisplayServer.window_set_title("SMB1R - BR DEBUG MODE")
-		_auto_host_for_debug()
-	else:
-		DisplayServer.window_set_title("SMB1R")
-		# Leave game if we were in debug host
-		if multiplayer.is_server():
-			Mario35Network.leave_game()
-			start_button.visible = false
-			%SettingsButton.visible = false
-			status_label.text = ""
-			update_focus_neighbors()
+func _on_practice_pressed():
+	Mario35Handler.is_practice = true
+	_auto_host_for_debug()
 
 func _auto_host_for_debug() -> void:
 	# Auto-host for debug mode (single player)
@@ -609,7 +576,7 @@ func _auto_host_for_debug() -> void:
 	Mario35Network.player_info.name = name_input.text.strip_edges().to_upper()
 	var err = Mario35Network.host_game("", false) # No UPNP, no room key
 	if err == OK:
-		status_label.text = "DEBUG MODE - READY"
+		status_label.text = "PRACTICE MODE - READY"
 		start_button.visible = true
 		%SettingsButton.visible = true
 		
@@ -619,7 +586,7 @@ func _auto_host_for_debug() -> void:
 		refresh_player_list()
 		start_button.grab_focus()
 	else:
-		status_label.text = "DEBUG HOST FAILED " + str(err)
+		status_label.text = "PRACTICE HOST FAILED " + str(err)
 
 func update_focus_neighbors():
 	var host_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton
@@ -640,9 +607,15 @@ func update_focus_neighbors():
 	join_btn.focus_neighbor_top = %RoomKeyInput.get_path()
 	join_btn.focus_neighbor_left = host_btn.get_path()
 	
+	var practice_button = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/PracticeButton
+	join_btn.focus_neighbor_right = practice_button.get_path()
+	practice_button.focus_neighbor_left = join_btn.get_path()
+	practice_button.focus_neighbor_top = %RoomKeyInput.get_path()
+	
 	if start_button.visible:
 		host_btn.focus_neighbor_bottom = start_button.get_path()
 		join_btn.focus_neighbor_bottom = start_button.get_path()
+		practice_button.focus_neighbor_bottom = start_button.get_path()
 		start_button.focus_neighbor_top = host_btn.get_path()
 		start_button.focus_neighbor_bottom = settings_btn.get_path()
 		settings_btn.focus_neighbor_top = start_button.get_path()
@@ -651,13 +624,10 @@ func update_focus_neighbors():
 	else:
 		host_btn.focus_neighbor_bottom = back_btn.get_path()
 		join_btn.focus_neighbor_bottom = back_btn.get_path()
-		back_btn.focus_neighbor_top = host_btn.get_path()
+		practice_button.focus_neighbor_bottom = back_btn.get_path()
+		back_btn.focus_neighbor_top = join_btn.get_path()
 		
-	# Handle debug button if it exists
-	if is_instance_valid(debug_btn):
-		back_btn.focus_neighbor_bottom = debug_btn.get_path()
-		debug_btn.focus_neighbor_top = back_btn.get_path()
-		debug_btn.focus_neighbor_bottom = debug_btn.get_path() # Loop on self
+	# No debug button
 
 func update_settings_focus_neighbors():
 	var start = %StartTimeInput.get_line_edit()

@@ -73,7 +73,11 @@ func handle_main_hud() -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
 		$Main.visible = false
 		$ModernHUD.visible = false
-		%BattleRoyaleHUD.visible = self.visible # Only show if GameHUD itself is visible
+		
+		# Hide during level transitions to prevent overlap with "World X-X" black screen
+		var in_transition = Global.transitioning_scene or get_tree().current_scene is LevelTransition
+		%BattleRoyaleHUD.visible = self.visible and not in_transition
+		
 		handle_br_input()
 		
 		# Update ItemBox coin count

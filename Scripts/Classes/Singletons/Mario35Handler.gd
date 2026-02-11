@@ -19,6 +19,7 @@ var game_active := false
 var current_time := 0.0
 var max_time := DEFAULT_MAX_TIME
 var start_time := DEFAULT_START_TIME
+var is_practice := false
 
 var coins: int:
 	get:
@@ -78,11 +79,6 @@ func _process(delta: float) -> void:
 	var old_int_time = int(current_time)
 	current_time -= delta
 	
-	if Global.debug_mode and current_time < 1.0:
-		if int(current_time) == 0:  # Only print once when it clamps
-			print("[M35] DEBUG MODE: Clamping time at 1.0")
-		current_time = 1.0
-	
 	# Constantly override Global.time to ensure personal timer is source of truth
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
 		Global.time = int(current_time)
@@ -117,7 +113,7 @@ func _process(delta: float) -> void:
 			update_target()
 
 func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = DEFAULT_MAX_TIME) -> void:
-	print("[M35] start_game called, debug_self_attack = ", Global.debug_mode)
+	print("[M35] start_game called, is_practice = ", is_practice)
 	start_time = time_setting
 	max_time = max_time_setting
 	current_time = float(start_time)
@@ -126,8 +122,8 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	coins = 0
 	Global.lives = 1 # Start with 1 life in BR
 	
-	# Disable pausing in Battle Royale (unless debug mode)
-	if Global.debug_mode:
+	# Disable pausing in Battle Royale (unless practice/debug mode)
+	if is_practice or Global.debug_mode:
 		Global.can_pause = true
 	else:
 		Global.can_pause = false
@@ -138,6 +134,7 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	
 	# Initialize player statuses
 	player_statuses = {}
+	last_known_stats = {} # Clear stale stats from previous match
 	for id in Mario35Network.players:
 		player_statuses[id] = {
 			"name": Mario35Network.players[id].get("name", "Player %d" % id),
@@ -152,7 +149,7 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	
 	game_started.emit()
 	time_changed.emit(int(current_time))
-	print("[M35] game started, debug_self_attack = ", Global.debug_mode)
+	print("[M35] game started, is_practice = ", is_practice)
 
 func add_time(amount: int) -> void:
 	current_time += amount
@@ -180,7 +177,7 @@ func on_local_player_death() -> void:
 		alive_count -= 1
 		
 		# Sync death to others
-		Mario35Network.notify_death(my_id, rank)
+		Mario35Network.notify_death.rpc(my_id, rank)
 		player_status_changed.emit()
 		_check_win_condition()
 
@@ -204,7 +201,7 @@ func _check_win_condition() -> void:
 	if alive_count == 0:
 		# All players eliminated - end match
 		should_end = true
-	elif alive_count == 1 and not Global.debug_mode:
+	elif alive_count == 1 and not is_practice:
 		# Last survivor in non-debug mode - end match
 		should_end = true
 		for id in player_statuses:
@@ -225,7 +222,7 @@ func _check_win_condition() -> void:
 		game_over.emit(winner_id)
 		
 		# Delayed return to lobby (unless in debug mode)
-		if Global.debug_mode:
+		if is_practice:
 			get_tree().paused = false
 			Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")
 			return
@@ -261,6 +258,8 @@ func _on_player_disconnected(id: int) -> void:
 	
 	if id == current_target_id:
 		update_target()
+	
+	last_known_stats.erase(id)
 
 func add_time_with_combo(combo_level: int) -> void:
 	var idx = clampi(combo_level, 0, COMBO_TIME_REWARDS.size() - 1)
@@ -288,7 +287,7 @@ func on_enemy_killed(enemy: Node, time_reward: int = 2) -> void:
 	incoming_enemy.emit(type) # Update HUD (local visual feedback of what you sent?)
 	
 	# Send to target
-	if Global.debug_mode:
+	if is_practice:
 		# Self-attack at reduced rate (50%)
 		if randf() < 0.5:
 			receive_enemy(type)
@@ -388,10 +387,12 @@ func spawn_from_queue() -> void:
 
 func get_attackers_count() -> int:
 	var count = 0
-	var my_id = multiplayer.get_unique_id()
+	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
 	for id in last_known_stats:
-		if last_known_stats[id].get("target", 0) == my_id:
-			count += 1
+		# Only count attackers who are actually in the game and alive
+		if id in player_statuses and player_statuses[id].alive:
+			if last_known_stats[id].get("target", 0) == my_id:
+				count += 1
 	return count
 
 

@@ -12,8 +12,8 @@ const ITEM_JSONS := {
 	"Flower": preload("res://Assets/Sprites/Items/FireFlower.json"),
 	"Star": preload("res://Assets/Sprites/Items/StarMan.json"), # StarMan.json? Checked list: StarMan.json exists. SuperStar.png exists.
 	"Lucky Star": preload("res://Assets/Sprites/Items/LuckyStar.json"),
-	"Wing": preload("res://Assets/Sprites/Items/Wings.json"),
-	"Hammer": preload("res://Assets/Sprites/Items/HammerItem.json"), # HammerItem.json seems correct for item form
+	"Wing": preload("res://Assets/Sprites/Items/WingItem.json"),
+	"Hammer": preload("res://Assets/Sprites/Items/HammerIcon.json"),
 	"P-Switch": preload("res://Assets/Sprites/Items/PSwitch.json"),
 	"QuestionBlock": preload("res://Assets/Sprites/Blocks/QuestionBlock.json"),
 	"ClearQuestionBlock": preload("res://Assets/Sprites/Blocks/ClearQuestionBlock.json")

@@ -119,6 +119,7 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	current_time = float(start_time)
 	game_active = true
 	levels_played = 0
+	Global.score = 0
 	coins = 0
 	Global.lives = 1 # Start with 1 life in BR
 	
@@ -135,6 +136,7 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	# Initialize player statuses
 	player_statuses = {}
 	last_known_stats = {} # Clear stale stats from previous match
+	session_points = {} # Reset session points for a fresh match
 	for id in Mario35Network.players:
 		player_statuses[id] = {
 			"name": Mario35Network.players[id].get("name", "Player %d" % id),
@@ -143,8 +145,7 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 			"kills": 0,
 			"driver_score": 0
 		}
-		if not id in session_points:
-			session_points[id] = 0
+		session_points[id] = 0
 	alive_count = player_statuses.size()
 	
 	game_started.emit()
@@ -335,8 +336,8 @@ func spawn_from_queue() -> void:
 		var spawn_offset = Vector2(480, 0) 
 		
 		if "Lakitu" in type:
-			# Lakitu needs to be high up to stay in the sky
-			spawn_offset = Vector2(480, -220) 
+			# Lakitu needs to be high up to stay in the sky (approx 10 tiles above player)
+			spawn_offset = Vector2(480, -160) 
 		elif "Bowser" in type:
 			# Bowser should be slightly above ground to fall safely
 			spawn_offset = Vector2(480, -32)
@@ -356,25 +357,30 @@ func spawn_from_queue() -> void:
 		var target_pos = player.global_position + spawn_offset
 		
 		# Raycast for floor detection
-		var space_state = player.get_world_2d().direct_space_state
-		var ray_params = PhysicsRayQueryParameters2D.create(target_pos, target_pos + Vector2(0, 320), 6) # Check down 20 tiles
-		var result = space_state.intersect_ray(ray_params)
-		
-		if not result.is_empty():
-			# Found ground, spawn there
-			target_pos = result.position
-		
-		# Ensure we aren't spawning inside a block/wall at this position
-		var point_params = PhysicsPointQueryParameters2D.new()
-		point_params.collision_mask = 6 # Terrain/Blocks
-		
-		# If we are inside a wall, move up until we are free
-		for i in range(16): # Check up to 16 tiles up
-			point_params.position = target_pos - Vector2(0, 8) # Check slightly above point
-			var hits = space_state.intersect_point(point_params, 1)
-			if hits.is_empty():
-				break
-			target_pos.y -= 16
+		var needs_snapping = true
+		if "Lakitu" in type or "BulletBill" in type or "CheepCheep" in type or "Blooper" in type or "LeapingCheepCheep" in type:
+			needs_snapping = false
+			
+		if needs_snapping:
+			var space_state = player.get_world_2d().direct_space_state
+			var ray_params = PhysicsRayQueryParameters2D.create(target_pos, target_pos + Vector2(0, 320), 6) # Check down 20 tiles
+			var result = space_state.intersect_ray(ray_params)
+			
+			if not result.is_empty():
+				# Found ground, spawn there
+				target_pos = result.position
+			
+			# Ensure we aren't spawning inside a block/wall at this position
+			var point_params = PhysicsPointQueryParameters2D.new()
+			point_params.collision_mask = 6 # Terrain/Blocks
+			
+			# If we are inside a wall, move up until we are free
+			for i in range(16): # Check up to 16 tiles up
+				point_params.position = target_pos - Vector2(0, 8) # Check slightly above point
+				var hits = space_state.intersect_point(point_params, 1)
+				if hits.is_empty():
+					break
+				target_pos.y -= 16
 		
 		enemy.global_position = target_pos
 		
@@ -574,6 +580,7 @@ func get_next_level_path() -> String:
 	# Determine game version prefix
 	var version_enum = game_version
 	if version_enum == GameVersion.RANDOM:
+		# Randomize between the core three for "Mixed" feel
 		version_enum = [GameVersion.SMB1, GameVersion.SMBLL, GameVersion.SMBS].pick_random()
 	
 	var max_w = 8

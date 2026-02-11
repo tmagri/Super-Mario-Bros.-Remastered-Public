@@ -161,8 +161,9 @@ func _ready():
 	%LevelOption.clear()
 	%LevelOption.add_item("SMB1", Mario35Handler.GameVersion.SMB1)
 	%LevelOption.add_item("SMBLL", Mario35Handler.GameVersion.SMBLL)
+	%LevelOption.add_item("ALL-NIGHT", Mario35Handler.GameVersion.SMBANN)
 	%LevelOption.add_item("SPECIAL", Mario35Handler.GameVersion.SMBS)
-	%LevelOption.add_item("RANDOM", Mario35Handler.GameVersion.RANDOM)
+	%LevelOption.add_item("MIXED (SMB/LL/S)", Mario35Handler.GameVersion.RANDOM)
 	
 	# Load saved settings
 	var m35_settings = Settings.file.mario_35
@@ -170,7 +171,7 @@ func _ready():
 	%MaxTimeInput.value = m35_settings.max_time
 	%ItemOption.selected = m35_settings.item_pool_mode
 	%PhysicsOption.selected = m35_settings.physics_mode
-	%LevelOption.selected = m35_settings.game_version
+	%LevelOption.select(%LevelOption.get_item_index(m35_settings.game_version))
 	_update_settings()
 	update_settings_focus_neighbors()
 
@@ -519,7 +520,7 @@ func _update_settings():
 	Mario35Handler.max_time = int(%MaxTimeInput.value)
 	Mario35Handler.item_pool_mode = %ItemOption.selected
 	Mario35Handler.physics_mode = %PhysicsOption.selected
-	Mario35Handler.game_version = %LevelOption.selected
+	Mario35Handler.game_version = %LevelOption.get_selected_id()
 	
 	# Save to persistent settings
 	Settings.file.mario_35.start_time = Mario35Handler.start_time

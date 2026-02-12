@@ -154,6 +154,7 @@ func transition_to_next_level() -> void:
 		var next_level_path = Mario35Handler.get_next_level_path()
 		# Global variables are now updated inside get_next_level_path()
 		Global.reset_level_state()
+		LevelPersistance.reset_states() # Reset enemies/blocks so they respawn on revisited levels
 		Global.transition_to_scene(next_level_path)
 		return
 	if Global.current_game_mode == Global.GameMode.CHALLENGE:

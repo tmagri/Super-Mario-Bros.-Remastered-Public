@@ -49,6 +49,7 @@ var enemy_queue: Array[String] = []
 var spawn_timer := 0.0
 var session_points: Dictionary = {} # peer_id -> int (Persists between games)
 var levels_played := 0 # Counter for randomization weighting
+var last_level_path := "" # Prevent back-to-back repeats
 const SPAWN_INTERVAL = 1.0 # Seconds between spawns (Faster for more pressure)
 
 # Player status tracking
@@ -119,6 +120,7 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	current_time = float(start_time)
 	game_active = true
 	levels_played = 0
+	last_level_path = ""
 	Global.score = 0
 	coins = 0
 	Global.lives = 1 # Start with 1 life in BR
@@ -651,5 +653,20 @@ func get_next_level_path() -> String:
 	Global.level_num = l
 	
 	var level_path = "res://Scenes/Levels/%s/World%s/%s.tscn" % [prefix, world_str, level_str]
+	
+	# Prevent back-to-back repeats (retry up to 3 times)
+	if level_path == last_level_path and levels_played > 1:
+		for _retry in range(3):
+			w = rng.randi_range(1, max_w)
+			l = rng.randi_range(1, 4)
+			world_str = str(w)
+			level_str = "%d-%d" % [w, l]
+			level_path = "res://Scenes/Levels/%s/World%s/%s.tscn" % [prefix, world_str, level_str]
+			if level_path != last_level_path:
+				break
+		Global.world_num = w
+		Global.level_num = l
+	
+	last_level_path = level_path
 	print("[M35] Randomized next level (Round %d): %s" % [levels_played, level_path])
 	return level_path

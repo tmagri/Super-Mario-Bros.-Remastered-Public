@@ -101,19 +101,63 @@ func _ready():
 	%RoomKeyInput.focus_entered.connect(_on_focus_entered.bind(%RoomKeyInput))
 	%RoomKeyInput.focus_exited.connect(_on_focus_exited.bind(%RoomKeyInput))
 	
+	var font_size = name_input.get_theme_font_size("font_size")
+	var compact_style = StyleBoxFlat.new()
+	compact_style.bg_color = Color.BLACK
+	compact_style.set_border_width_all(1)
+	compact_style.border_color = Color.WHITE
+	compact_style.content_margin_top = 0
+	compact_style.content_margin_bottom = 0
+	compact_style.content_margin_left = 4
+	compact_style.content_margin_right = 4
+	
+	var nodes_to_shrink = [
+		name_input, ip_input, %RoomKeyInput, start_button, %SettingsButton,
+		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton,
+		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton,
+		$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton,
+		practice_button
+	]
+	
+	for node in nodes_to_shrink:
+		node.custom_minimum_size.y = font_size + 2
+		if node is Button:
+			node.add_theme_stylebox_override("normal", compact_style)
+			node.add_theme_stylebox_override("hover", compact_style)
+			node.add_theme_stylebox_override("pressed", compact_style)
+			node.add_theme_stylebox_override("focus", compact_style)
+		elif node is LineEdit:
+			node.add_theme_stylebox_override("normal", compact_style)
+			node.add_theme_stylebox_override("focus", compact_style)
+			node.add_theme_stylebox_override("read_only", compact_style)
+
 	for btn in [$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton, 
 				$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton,
 				start_button, 
 				%SettingsButton,
-				$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton]:
+				$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton,
+				practice_button]:
 		btn.focus_entered.connect(_on_focus_entered.bind(btn))
 		btn.focus_exited.connect(_on_focus_exited.bind(btn))
 		btn.mouse_entered.connect(btn.grab_focus)
 		
-	# Initial focus for controller
+	# Reduce spacing to save vertical space
+	var container = $BG/Border/Content/ScrollContainer/VBoxContainer
+	container.add_theme_constant_override("separation", 1)
+	container.alignment = BoxContainer.ALIGNMENT_BEGIN # Remove top centering space
+	$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer.add_theme_constant_override("separation", 2)
+	
+	$BG/Border/Content.offset_top = 6 # Shift down to avoid border overlap
+	
+	player_list.add_theme_constant_override("v_separation", 0)
+	player_list.fixed_column_width = 0
+	player_list.custom_minimum_size.y = 64 # Fixed height for scrollable list
+	player_list.auto_height = false
+	
+	# Initial status with 0 players
+	status_label.text = "CONNECTED (0)"
 	await get_tree().process_frame
-	if not start_button.visible:
-		name_input.grab_focus()
+	name_input.grab_focus()
 	
 	update_focus_neighbors()
 	
@@ -480,18 +524,18 @@ func refresh_player_list():
 		start_button.disabled = (count < min_players)
 		if count < min_players:
 			if Mario35Handler.is_practice:
-				status_label.text = "PRACTICE MODE - READY"
+				status_label.text = "PRACTICE MODE (%d)" % count
 			else:
-				status_label.text = "WAITING FOR PLAYERS (%d/2)" % count
+				status_label.text = "WAITING (%d/2)" % count
 		else:
-			status_label.text = "HOSTING"
+			status_label.text = "HOSTING (%d)" % count
 			if not Mario35Network.room_key.is_empty():
-				status_label.text += " (KEY: %s)" % Mario35Network.room_key
+				status_label.text += " [%s]" % Mario35Network.room_key # Compact room key
 	elif not multiplayer.is_server():
 		start_button.visible = false
 		%SettingsButton.visible = false
 		if count > 0:
-			status_label.text = "CONNECTED"
+			status_label.text = "CONNECTED (%d)" % count
 
 func _on_server_found(ip: String, info: Dictionary):
 	if ip_input.text.is_empty() or ip_input.text == Mario35Network.DEFAULT_SERVER_IP:

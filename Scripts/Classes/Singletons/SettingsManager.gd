@@ -92,7 +92,8 @@ var file := {
 		"max_time": 400,
 		"item_pool_mode": 0,
 		"physics_mode": 0,
-		"game_version": 0
+		"game_version": 0,
+		"difficulty_mode": 0
 	}
 }
 

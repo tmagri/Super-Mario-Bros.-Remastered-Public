@@ -163,6 +163,7 @@ grow_vertical = 2
 
 [node name="VBox" type="VBoxContainer" parent="SettingsPopup" unique_id=2012578718]
 layout_mode = 2
+theme_override_constants/separation = 1
 
 [node name="Title" type="Label" parent="SettingsPopup/VBox" unique_id=97681201]
 layout_mode = 2
@@ -174,6 +175,7 @@ layout_mode = 2
 
 [node name="Grid" type="GridContainer" parent="SettingsPopup/VBox" unique_id=2083791130]
 layout_mode = 2
+theme_override_constants/v_separation = 1
 columns = 2
 
 [node name="LabelTime" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=1882600765]
@@ -259,6 +261,20 @@ item_count = 2
 popup/item_0/text = "REMASTERED"
 popup/item_0/id = 0
 popup/item_1/text = "CLASSIC"
+popup/item_1/id = 1
+
+[node name="LabelDifficulty" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=335577889]
+layout_mode = 2
+text = "DIFFICULTY"
+
+[node name="DifficultyOption" type="OptionButton" parent="SettingsPopup/VBox/Grid" unique_id=335577890]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "FIRST QUEST"
+popup/item_0/id = 0
+popup/item_1/text = "SECOND QUEST"
 popup/item_1/id = 1
 
 [node name="HSeparator2" type="HSeparator" parent="SettingsPopup/VBox" unique_id=191166437]

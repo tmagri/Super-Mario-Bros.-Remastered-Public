@@ -189,6 +189,7 @@ func _ready():
 		%LevelOption, 
 		%NetworkOption,
 		%PhysicsOption,
+		%DifficultyOption,
 		%CloseSettingsButton
 	]
 	
@@ -216,6 +217,7 @@ func _ready():
 	%ItemOption.selected = m35_settings.item_pool_mode
 	%PhysicsOption.selected = m35_settings.physics_mode
 	%LevelOption.select(%LevelOption.get_item_index(m35_settings.game_version))
+	%DifficultyOption.selected = m35_settings.get("difficulty_mode", 0)
 	_update_settings()
 	update_settings_focus_neighbors()
 
@@ -565,6 +567,7 @@ func _update_settings():
 	Mario35Handler.item_pool_mode = %ItemOption.selected
 	Mario35Handler.physics_mode = %PhysicsOption.selected
 	Mario35Handler.game_version = %LevelOption.get_selected_id()
+	Mario35Handler.difficulty_mode = %DifficultyOption.selected
 	
 	# Save to persistent settings
 	Settings.file.mario_35.start_time = Mario35Handler.start_time
@@ -572,6 +575,7 @@ func _update_settings():
 	Settings.file.mario_35.item_pool_mode = Mario35Handler.item_pool_mode
 	Settings.file.mario_35.physics_mode = Mario35Handler.physics_mode
 	Settings.file.mario_35.game_version = Mario35Handler.game_version
+	Settings.file.mario_35.difficulty_mode = Mario35Handler.difficulty_mode
 	Settings.save_settings()
 
 func _on_back_pressed():
@@ -680,6 +684,7 @@ func update_settings_focus_neighbors():
 	var item = %ItemOption
 	var level = %LevelOption
 	var physics = %PhysicsOption
+	var diff = %DifficultyOption
 	var close = %CloseSettingsButton
 	
 	start.focus_neighbor_top = close.get_path()
@@ -695,7 +700,10 @@ func update_settings_focus_neighbors():
 	level.focus_neighbor_bottom = physics.get_path()
 	
 	physics.focus_neighbor_top = level.get_path()
-	physics.focus_neighbor_bottom = close.get_path()
+	physics.focus_neighbor_bottom = diff.get_path()
 	
-	close.focus_neighbor_top = physics.get_path()
+	diff.focus_neighbor_top = physics.get_path()
+	diff.focus_neighbor_bottom = close.get_path()
+	
+	close.focus_neighbor_top = diff.get_path()
 	close.focus_neighbor_bottom = start.get_path()

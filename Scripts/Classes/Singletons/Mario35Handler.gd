@@ -34,6 +34,7 @@ var game_version := GameVersion.SMB1
 var allow_all_levels := true
 var item_pool_mode := 0 # 0: STANDARD, 1: CLASSIC, 2: REMASTERED
 var physics_mode := 0 # 0: REMASTERED, 1: CLASSIC
+var difficulty_mode := 0 # 0: FIRST QUEST, 1: SECOND QUEST
 var game_seed := 0
 var rng = RandomNumberGenerator.new()
 
@@ -119,6 +120,7 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	max_time = max_time_setting
 	current_time = float(start_time)
 	game_active = true
+	Global.second_quest = (difficulty_mode == 1)
 	levels_played = 0
 	last_level_path = ""
 	Global.score = 0
@@ -562,7 +564,8 @@ func get_settings_dictionary() -> Dictionary:
 		"item_pool_mode": item_pool_mode,
 		"physics_mode": physics_mode,
 		"game_seed": game_seed,
-		"game_version": game_version
+		"game_version": game_version,
+		"difficulty_mode": difficulty_mode
 	}
 
 func apply_settings(settings: Dictionary) -> void:
@@ -573,6 +576,7 @@ func apply_settings(settings: Dictionary) -> void:
 	if "physics_mode" in settings: physics_mode = settings.physics_mode
 	if "game_seed" in settings: game_seed = settings.game_seed
 	if "game_version" in settings: game_version = settings.game_version
+	if "difficulty_mode" in settings: difficulty_mode = settings.difficulty_mode
 
 func randomize_seed() -> void:
 	game_seed = randi()

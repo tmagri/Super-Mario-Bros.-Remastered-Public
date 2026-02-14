@@ -2,6 +2,12 @@ extends Enemy
 
 const MOVE_SPEED := 30
 const BARREL_DESTRUCTION_PARTICLE = preload("res://Scenes/Prefabs/Particles/BarrelDestructionParticle.tscn")
+
+func _ready() -> void:
+	super()
+	collision_layer = 16
+	collision_mask = 50
+
 func _physics_process(delta: float) -> void:
 	handle_movement(delta)
 

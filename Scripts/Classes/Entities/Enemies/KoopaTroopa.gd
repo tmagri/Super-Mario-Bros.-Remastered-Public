@@ -40,7 +40,7 @@ func handle_fly_movement(delta: float) -> void:
 func stomped_on(player: Player) -> void:
 	if dead:
 		return
-	player.enemy_bounce_off(self)
+	player.enemy_bounce_off(self, true, true, false)
 	AudioManager.play_sfx("enemy_stomp", global_position)
 	if winged:
 		DiscoLevel.combo_meter = 100

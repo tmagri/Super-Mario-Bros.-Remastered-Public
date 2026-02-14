@@ -51,7 +51,7 @@ func on_player_stomped_on(stomped_player: Player) -> void:
 		DiscoLevel.combo_meter += 10
 		moving = false
 		AudioManager.play_sfx("enemy_stomp", global_position)
-		stomped_player.enemy_bounce_off(self, true, moving_time > 0.1)
+		stomped_player.enemy_bounce_off(self, true, moving_time > 0.1, false)
 
 func block_bounced(_block: Block) -> void:
 	velocity.y = -200
@@ -85,9 +85,7 @@ func award_score(award_level: int) -> void:
 			Global.lives += 1
 			$ScoreNoteSpawner.spawn_one_up_note()
 	else:
-		if Global.current_game_mode == Global.GameMode.MARIO_35:
-			var reward = Mario35Handler.COMBO_TIME_REWARDS[clampi(award_level, 0, Mario35Handler.COMBO_TIME_REWARDS.size() - 1)]
-			Mario35Handler.add_time(reward)
+		# Mario 35: No time reward for shell kicks/stops (unless actual kill happens separate)
 		$ScoreNoteSpawner.spawn_note(COMBO_VALS[award_level])
 		
 func get_kick_award(hit_player: Player) -> int:
@@ -218,6 +216,9 @@ func handle_block_collision() -> void:
 			i.shell_block_hit.emit(self)
 
 func add_combo() -> void:
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		var reward = Mario35Handler.COMBO_TIME_REWARDS[clampi(combo + 3, 0, Mario35Handler.COMBO_TIME_REWARDS.size() - 1)]
+		Mario35Handler.add_time(reward)
 	award_score(combo + 3)
 	if combo < 7:
 		combo += 1

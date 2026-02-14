@@ -89,6 +89,20 @@ func _ready():
 	practice_button.focus_entered.connect(_on_focus_entered.bind(practice_button))
 	practice_button.focus_exited.connect(_on_focus_exited.bind(practice_button))
 	practice_button.mouse_entered.connect(practice_button.grab_focus)
+	
+	# Setup Assist Button
+	var assist_button = %AssistButton
+	assist_button.text = "ASSIST MODE: ON" if Global.assist_mode else "ASSIST MODE: OFF"
+	assist_button.pressed.connect(func():
+		Global.assist_mode = not Global.assist_mode
+		assist_button.text = "ASSIST MODE: ON" if Global.assist_mode else "ASSIST MODE: OFF"
+		AudioManager.play_sfx("coin")
+	)
+	assist_button.focus_entered.connect(_on_focus_entered.bind(assist_button))
+	assist_button.focus_exited.connect(_on_focus_exited.bind(assist_button))
+	assist_button.mouse_entered.connect(assist_button.grab_focus)
+
+
 
 	start_button.pressed.connect(_on_start_pressed)
 	$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton.pressed.connect(_on_back_pressed)
@@ -116,7 +130,8 @@ func _ready():
 		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton,
 		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton,
 		$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton,
-		practice_button
+		practice_button,
+		%AssistButton
 	]
 	
 	for node in nodes_to_shrink:
@@ -175,8 +190,13 @@ func _ready():
 	
 	# Convert input to uppercase as user types
 	name_input.text_changed.connect(_on_name_input_changed)
+	name_input.text_changed.connect(func(_t): if name_input.has_focus(): _update_cursor_pos(name_input))
 	
-	if name_input.text.is_empty():
+	# Load saved player name from settings
+	var saved_name = Settings.file.mario_35.get("player_name", "PLAYER")
+	if saved_name and not saved_name.is_empty():
+		name_input.text = saved_name
+	else:
 		name_input.text = "PLAYER"
 	
 	%RoomKeyInput.text_changed.connect(_on_room_key_changed)
@@ -250,7 +270,20 @@ func _update_cursor_pos(node: Control) -> void:
 	
 	# Refine centering and offset to prevent hiding at the top/sides
 	var center_y = node.size.y / 2
-	var offset_x = -16 # Slightly closer to the button
+	var offset_x = -16 # Default offset for non-text inputs
+	
+	# For LineEdit nodes (text inputs), calculate position based on caret position
+	if node is LineEdit:
+		var line_edit = node as LineEdit
+		var font = line_edit.get_theme_font("font")
+		var font_size = line_edit.get_theme_font_size("font_size")
+		
+		# Calculate width of text before caret
+		var text_before_caret = line_edit.text.substr(0, line_edit.caret_column)
+		var text_width = font.get_string_size(text_before_caret, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+		
+		# Position cursor at the caret position with a small offset
+		offset_x = text_width - 8
 	
 	var cursor_pos = node.global_position + Vector2(offset_x, center_y - 8)
 	
@@ -289,7 +322,7 @@ func _update_char_indicator() -> void:
 		HORIZONTAL_ALIGNMENT_CENTER: align_tag = "center"
 		HORIZONTAL_ALIGNMENT_RIGHT: align_tag = "right"
 	
-	# Zelda II Style: Blinking character via BBCode transparency
+	# Zelda II Style: Blinking character with proper monospace alignment
 	var full_text = name_input.text
 	if full_text.length() <= controller_cursor_index:
 		full_text = full_text.rpad(controller_cursor_index + 1, " ")
@@ -298,10 +331,20 @@ func _update_char_indicator() -> void:
 	var target = full_text[controller_cursor_index]
 	var suffix = full_text.substr(controller_cursor_index + 1)
 	
-	# We use [color=#00000000] to make non-selected chars invisible
-	# This ensures the yellow character is EXACTLY where the LineEdit draws it
-	var blink_color = "yellow" if (Time.get_ticks_msec() / 250) % 2 == 0 else "#00000000"
-	char_indicator.text = "[%s][color=#00000000]%s[/color][color=%s]%s[/color][color=#00000000]%s[/color][/%s]" % [align_tag, prefix, blink_color, target, suffix, align_tag]
+	# Use proper monospace positioning: we render the whole text but only color the selected character
+	# This ensures each character takes up exactly the same space
+	var blink_color = "yellow" if (Time.get_ticks_msec() / 250) % 2 == 0 else "white"
+	
+	# Build the text with individual character coloring for monospace alignment
+	var output = "[%s]" % align_tag
+	for i in range(full_text.length()):
+		if i == controller_cursor_index:
+			output += "[color=%s]%s[/color]" % [blink_color, full_text[i]]
+		else:
+			output += "[color=#00000000]%s[/color]" % full_text[i]
+	output += "[/%s]" % align_tag
+	
+	char_indicator.text = output
 	
 	# Vertical centering: RichTextLabel doesn't handle this well, so we offset the whole node
 	char_indicator.global_position.y = name_input.global_position.y + (name_input.size.y / 2 - font_size / 2)
@@ -435,6 +478,10 @@ func _on_name_input_changed(new_text: String) -> void:
 	if name_input.text != sanitized:
 		name_input.text = sanitized
 		name_input.caret_column = caret_pos
+	
+	# Save player name to settings
+	Settings.file.mario_35.player_name = name_input.text.strip_edges().to_upper()
+	Settings.save_settings()
 
 func _on_room_key_changed(new_text: String) -> void:
 	var caret_pos = %RoomKeyInput.caret_column

@@ -8,7 +8,22 @@ func _enter_tree() -> void:
 	if not is_sent_enemy:
 		$Animation.play("Hide")
 	else:
-		$Animation.play("Rise")
+		$Animation.stop()
+		$Sprite.visible = true
+		$Sprite.position.y = -12
+		$Sprite/Hitbox.monitoring = true
+		
+		# Sent Piranha Plants need physics to stand on ground
+		z_index = 0
+		collision_layer = 16
+		collision_mask = 50
+		
+		var shape = CollisionShape2D.new()
+		var rect = RectangleShape2D.new()
+		rect.size = Vector2(12, 15)
+		shape.shape = rect
+		shape.position.y = -7.5
+		add_child(shape)
 
 func _ready() -> void:
 	if is_equal_approx(abs(global_rotation_degrees), 180) == false:

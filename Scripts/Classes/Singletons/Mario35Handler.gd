@@ -139,6 +139,9 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	
 	# Initialize player statuses
 	player_statuses = {}
+	# Reset local player power state for a fresh start
+	Global.player_power_states = "0000"
+	
 	last_known_stats = {} # Clear stale stats from previous match
 	session_points = {} # Reset session points for a fresh match
 	for id in Mario35Network.players:
@@ -469,10 +472,12 @@ func apply_item(item: String) -> void:
 		"Mushroom":
 			if player.power_state.state_name == "Small":
 				player.power_up_animation("Big")
+				update_player_state(player.player_id, "1")
 			else:
 				add_time(10)
 		"Flower":
 			player.power_up_animation("Fire")
+			update_player_state(player.player_id, "2")
 		"Star":
 			player.super_star()
 			AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.STAR, 1, false)
@@ -577,6 +582,12 @@ func apply_settings(settings: Dictionary) -> void:
 	if "game_seed" in settings: game_seed = settings.game_seed
 	if "game_version" in settings: game_version = settings.game_version
 	if "difficulty_mode" in settings: difficulty_mode = settings.difficulty_mode
+
+func update_player_state(player_id: int, state_idx: String) -> void:
+	var s = Global.player_power_states
+	if player_id >= 0 and player_id < s.length():
+		Global.player_power_states = s.substr(0, player_id) + state_idx + s.substr(player_id + 1)
+
 
 func randomize_seed() -> void:
 	game_seed = randi()

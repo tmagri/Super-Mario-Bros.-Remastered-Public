@@ -92,6 +92,7 @@ var coins := 0:
 			coins = coins % 100
 var time := 300
 var lives := 3
+var assist_mode := false
 var world_num := 1
 
 var level_num := 1

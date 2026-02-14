@@ -93,7 +93,7 @@ position = Vector2(168, -88)
 position = Vector2(168, -88)
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74450" to="Tiles/@Node2D@74450/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74451" to="Tiles/@Node2D@74451/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74452" to="Tiles/@Node2D@74452/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74453" to="Tiles/@Node2D@74453/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@75395" to="Tiles/@Node2D@75395/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@75396" to="Tiles/@Node2D@75396/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@75397" to="Tiles/@Node2D@75397/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@75398" to="Tiles/@Node2D@75398/LevelPersistance" method="set_as_active"]

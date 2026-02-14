@@ -603,9 +603,9 @@ func is_actually_on_ceiling() -> bool:
 				return true
 	return false
 
-func enemy_bounce_off(enemy: Node = null, add_combo := true, award_score := true) -> void:
+func enemy_bounce_off(enemy: Node = null, add_combo := true, award_score := true, award_m35_time := true) -> void:
 	if add_combo:
-		add_stomp_combo(enemy, award_score)
+		add_stomp_combo(enemy, award_score, award_m35_time)
 	if classic_physics and not classic_plus_enabled:
 		# Classic physics uses a single initial bounce velocity.
 		velocity.y = sign(gravity_vector.y) * -BOUNCE_HEIGHT
@@ -624,9 +624,9 @@ func enemy_bounce_off(enemy: Node = null, add_combo := true, award_score := true
 			gravity = FALL_GRAVITY
 
 
-func add_stomp_combo(enemy: Node = null, award_score := true) -> void:
+func add_stomp_combo(enemy: Node = null, award_score := true, award_m35_time := true) -> void:
 	# Award time in Mario 35 mode
-	if Global.current_game_mode == Global.GameMode.MARIO_35:
+	if Global.current_game_mode == Global.GameMode.MARIO_35 and award_m35_time:
 		var reward = Mario35Handler.COMBO_TIME_REWARDS[clampi(stomp_combo, 0, Mario35Handler.COMBO_TIME_REWARDS.size() - 1)]
 		if enemy:
 			Mario35Handler.on_enemy_killed(enemy, reward)
@@ -757,6 +757,27 @@ func handle_wing_flight(delta: float) -> void:
 func damage() -> void:
 	if can_hurt == false or is_invincible:
 		return
+		
+	# Assist Mode: Special handling
+	if Global.assist_mode:
+		# Fire Mario loses power-up to Super Mario
+		if power_state.state_name == "Fire":
+			var super_state = get_node("PowerStates/Big")
+			if super_state:
+				AudioManager.play_sfx("damage", global_position)
+				await power_up_animation(super_state.state_name)
+				power_state = super_state
+				Global.player_power_states[player_id] = str(power_state.get_index())
+				do_i_frames()
+				return
+		
+		# Super or Small Mario: just flinch
+		AudioManager.play_sfx("damage", global_position)
+		if velocity.y > -200: velocity.y = -120
+		velocity.x = -direction * 60
+		do_i_frames()
+		return
+		
 	times_hit += 1
 	var damage_state = power_state.damage_state
 	if damage_state != null:
@@ -943,7 +964,9 @@ func get_power_up(power_name := "", give_points := true) -> void:
 	else:
 		return
 	power_state = new_power_state
-	Global.player_power_states[player_id] = str(power_state.get_index())
+	# Concatenate string to update specific index
+	var s = Global.player_power_states
+	Global.player_power_states = s.substr(0, player_id) + str(power_state.get_index()) + s.substr(player_id + 1)
 	handle_power_up_states(0)
 	can_hurt = true
 	refresh_hitbox()

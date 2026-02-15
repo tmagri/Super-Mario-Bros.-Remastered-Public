@@ -15,7 +15,7 @@ func handle_movement(delta: float) -> void:
 	if is_on_wall() and is_on_floor() and get_wall_normal().x == -direction:
 		die()
 
-func die() -> void:
+func die(style: int = 0) -> void:
 	destroy()
 
 func die_from_object(_node: Node2D) -> void:

@@ -84,7 +84,18 @@ static func is_coin_collected(coin_id: CoinValues = CoinValues.R_COIN_1, num := 
 	return num & (1 << coin_id) != 0
 
 static func is_coin_permanently_collected(coin_id: CoinValues = CoinValues.R_COIN_1) -> bool:
-	var permanently_collected = int(red_coins_collected[Global.world_num - 1][Global.level_num - 1])
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		return false
+		
+	var w_idx = Global.world_num - 1
+	var l_idx = Global.level_num - 1
+	
+	if w_idx < 0 or w_idx >= red_coins_collected.size():
+		return false
+	if l_idx < 0 or l_idx >= red_coins_collected[w_idx].size():
+		return false
+		
+	var permanently_collected = int(red_coins_collected[w_idx][l_idx])
 	return permanently_collected & (1 << coin_id) != 0
 
 func check_for_achievement() -> void:

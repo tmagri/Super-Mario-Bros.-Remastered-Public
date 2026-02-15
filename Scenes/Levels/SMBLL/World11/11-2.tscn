@@ -140,10 +140,6 @@ y_pos = 0
 entity_scene = ExtResource("17_eod1w")
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@63842" to="Tiles/@Node2D@63842/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@63843" to="Tiles/@Node2D@63843/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@63844" to="Tiles/@Node2D@63844/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@63845" to="Tiles/@Node2D@63845/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@63846" to="Tiles/@Node2D@63846/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@63847" to="Tiles/@Node2D@63847/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@63848" to="Tiles/@Node2D@63848/LevelPersistance" method="set_as_active"]
@@ -200,3 +196,7 @@ entity_scene = ExtResource("17_eod1w")
 [connection signal="collected" from="Tiles/@Node2D@63899" to="Tiles/@Node2D@63899/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@63900" to="Tiles/@Node2D@63900/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@63901" to="Tiles/@Node2D@63901/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@63902" to="Tiles/@Node2D@63902/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@63903" to="Tiles/@Node2D@63903/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@63904" to="Tiles/@Node2D@63904/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@63905" to="Tiles/@Node2D@63905/LevelPersistance" method="set_as_active"]

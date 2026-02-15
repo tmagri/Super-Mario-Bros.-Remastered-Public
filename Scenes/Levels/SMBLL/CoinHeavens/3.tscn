@@ -1050,10 +1050,6 @@ script = ExtResource("28_hfoh6")
 destination_scene = "res://Scenes/Levels/SMBLL/World9/9-3.tscn"
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51286" to="Tiles/@Node2D@51286/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51287" to="Tiles/@Node2D@51287/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51288" to="Tiles/@Node2D@51288/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51289" to="Tiles/@Node2D@51289/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51290" to="Tiles/@Node2D@51290/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51291" to="Tiles/@Node2D@51291/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51292" to="Tiles/@Node2D@51292/LevelPersistance" method="set_as_active"]
@@ -1065,3 +1061,7 @@ destination_scene = "res://Scenes/Levels/SMBLL/World9/9-3.tscn"
 [connection signal="collected" from="Tiles/@Node2D@51298" to="Tiles/@Node2D@51298/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51299" to="Tiles/@Node2D@51299/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51300" to="Tiles/@Node2D@51300/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51301" to="Tiles/@Node2D@51301/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51302" to="Tiles/@Node2D@51302/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51303" to="Tiles/@Node2D@51303/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51304" to="Tiles/@Node2D@51304/LevelPersistance" method="set_as_active"]

@@ -1034,10 +1034,6 @@ combo_meter_rate = 0.0
 metadata/_custom_type_script = "uid://bjs5mlc3xrxud"
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@38726" to="Tiles/@Node2D@38726/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@38727" to="Tiles/@Node2D@38727/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@38728" to="Tiles/@Node2D@38728/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@38729" to="Tiles/@Node2D@38729/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@38730" to="Tiles/@Node2D@38730/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@38731" to="Tiles/@Node2D@38731/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@38732" to="Tiles/@Node2D@38732/LevelPersistance" method="set_as_active"]
@@ -1085,3 +1081,7 @@ metadata/_custom_type_script = "uid://bjs5mlc3xrxud"
 [connection signal="collected" from="Tiles/@Node2D@38774" to="Tiles/@Node2D@38774/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@38775" to="Tiles/@Node2D@38775/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@38776" to="Tiles/@Node2D@38776/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@38777" to="Tiles/@Node2D@38777/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@38778" to="Tiles/@Node2D@38778/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@38779" to="Tiles/@Node2D@38779/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@38780" to="Tiles/@Node2D@38780/LevelPersistance" method="set_as_active"]

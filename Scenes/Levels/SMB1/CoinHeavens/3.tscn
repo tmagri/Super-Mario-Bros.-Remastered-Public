@@ -9,10 +9,6 @@ theme_time = "Night"
 time_of_day = 1
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21637" to="Tiles/@Node2D@21637/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21638" to="Tiles/@Node2D@21638/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21639" to="Tiles/@Node2D@21639/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21640" to="Tiles/@Node2D@21640/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21641" to="Tiles/@Node2D@21641/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21642" to="Tiles/@Node2D@21642/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21643" to="Tiles/@Node2D@21643/LevelPersistance" method="set_as_active"]
@@ -49,3 +45,7 @@ time_of_day = 1
 [connection signal="collected" from="Tiles/@Node2D@21674" to="Tiles/@Node2D@21674/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21675" to="Tiles/@Node2D@21675/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21676" to="Tiles/@Node2D@21676/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21677" to="Tiles/@Node2D@21677/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21678" to="Tiles/@Node2D@21678/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21679" to="Tiles/@Node2D@21679/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21680" to="Tiles/@Node2D@21680/LevelPersistance" method="set_as_active"]

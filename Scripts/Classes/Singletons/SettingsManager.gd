@@ -10,6 +10,7 @@ var file := {
 		"visuals": 0,
 		"hud_size": 0, 
 		"frame_limit" : 0,
+		"internal_res": 0,
 		"window_size": [256, 240]
 	},
 	"audio": {

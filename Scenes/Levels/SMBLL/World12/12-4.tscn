@@ -23,10 +23,6 @@ can_fire = true
 resource_json = ExtResource("2_yq5dk")
 
 [connection signal="area_entered" from="Tiles/DeathPit" to="Tiles/DeathPit" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@64999" to="Tiles/@Area2D@64999" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@65000" to="Tiles/@Area2D@65000" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@65001" to="Tiles/@Area2D@65001" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@65002" to="Tiles/@Area2D@65002" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@65003" to="Tiles/@Area2D@65003" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@65004" to="Tiles/@Area2D@65004" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@65005" to="Tiles/@Area2D@65005" method="area_entered"]
@@ -101,6 +97,10 @@ resource_json = ExtResource("2_yq5dk")
 [connection signal="area_entered" from="Tiles/@Area2D@65074" to="Tiles/@Area2D@65074" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@65075" to="Tiles/@Area2D@65075" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@65076" to="Tiles/@Area2D@65076" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@65077" to="Tiles/@Area2D@65077" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@65078" to="Tiles/@Area2D@65078" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@65079" to="Tiles/@Area2D@65079" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@65080" to="Tiles/@Area2D@65080" method="area_entered"]
 
 [editable path="CastleBridge"]
 [editable path="Bowser"]

@@ -1024,10 +1024,6 @@ tile_map_data = PackedByteArray("AADw/wAAAAAEAAEAAADx/wAAAAAEAAEAAADy/wAAAAAEAAE
 tile_set = SubResource("TileSet_po3om")
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51198" to="Tiles/@Node2D@51198/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51199" to="Tiles/@Node2D@51199/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51200" to="Tiles/@Node2D@51200/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51201" to="Tiles/@Node2D@51201/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51202" to="Tiles/@Node2D@51202/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51203" to="Tiles/@Node2D@51203/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51204" to="Tiles/@Node2D@51204/LevelPersistance" method="set_as_active"]
@@ -1100,3 +1096,7 @@ tile_set = SubResource("TileSet_po3om")
 [connection signal="collected" from="Tiles/@Node2D@51271" to="Tiles/@Node2D@51271/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51272" to="Tiles/@Node2D@51272/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51273" to="Tiles/@Node2D@51273/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51274" to="Tiles/@Node2D@51274/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51275" to="Tiles/@Node2D@51275/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51276" to="Tiles/@Node2D@51276/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51277" to="Tiles/@Node2D@51277/LevelPersistance" method="set_as_active"]

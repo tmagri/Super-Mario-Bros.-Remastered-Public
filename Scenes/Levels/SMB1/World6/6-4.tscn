@@ -38,10 +38,6 @@ resource_json = ExtResource("2_1tffw")
 enabled = true
 
 [connection signal="area_entered" from="Tiles/DeathPit" to="Tiles/DeathPit" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@33019" to="Tiles/@Area2D@33019" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@33020" to="Tiles/@Area2D@33020" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@33021" to="Tiles/@Area2D@33021" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@33022" to="Tiles/@Area2D@33022" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@33023" to="Tiles/@Area2D@33023" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@33024" to="Tiles/@Area2D@33024" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@33025" to="Tiles/@Area2D@33025" method="area_entered"]
@@ -58,5 +54,9 @@ enabled = true
 [connection signal="area_entered" from="Tiles/@Area2D@33036" to="Tiles/@Area2D@33036" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@33037" to="Tiles/@Area2D@33037" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@33038" to="Tiles/@Area2D@33038" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@33039" to="Tiles/@Area2D@33039" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@33040" to="Tiles/@Area2D@33040" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@33041" to="Tiles/@Area2D@33041" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@33042" to="Tiles/@Area2D@33042" method="area_entered"]
 
 [editable path="Bowser"]

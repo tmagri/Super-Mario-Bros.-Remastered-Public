@@ -1029,10 +1029,6 @@ time_of_day = 1
 particles = 3
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51379" to="Tiles/@Node2D@51379/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51380" to="Tiles/@Node2D@51380/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51381" to="Tiles/@Node2D@51381/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@51382" to="Tiles/@Node2D@51382/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51383" to="Tiles/@Node2D@51383/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51384" to="Tiles/@Node2D@51384/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51385" to="Tiles/@Node2D@51385/LevelPersistance" method="set_as_active"]
@@ -1083,3 +1079,7 @@ particles = 3
 [connection signal="collected" from="Tiles/@Node2D@51430" to="Tiles/@Node2D@51430/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51431" to="Tiles/@Node2D@51431/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@51432" to="Tiles/@Node2D@51432/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51433" to="Tiles/@Node2D@51433/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51434" to="Tiles/@Node2D@51434/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51435" to="Tiles/@Node2D@51435/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@51436" to="Tiles/@Node2D@51436/LevelPersistance" method="set_as_active"]

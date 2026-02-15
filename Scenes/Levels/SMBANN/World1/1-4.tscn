@@ -13,10 +13,6 @@ max_combo = 1
 metadata/_custom_type_script = "uid://bjs5mlc3xrxud"
 
 [connection signal="area_entered" from="Tiles/DeathPit" to="Tiles/DeathPit" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@41084" to="Tiles/@Area2D@41084" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@41085" to="Tiles/@Area2D@41085" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@41086" to="Tiles/@Area2D@41086" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@41087" to="Tiles/@Area2D@41087" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@41088" to="Tiles/@Area2D@41088" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@41089" to="Tiles/@Area2D@41089" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@41090" to="Tiles/@Area2D@41090" method="area_entered"]
@@ -33,3 +29,7 @@ metadata/_custom_type_script = "uid://bjs5mlc3xrxud"
 [connection signal="area_entered" from="Tiles/@Area2D@41101" to="Tiles/@Area2D@41101" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@41102" to="Tiles/@Area2D@41102" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@41103" to="Tiles/@Area2D@41103" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@41104" to="Tiles/@Area2D@41104" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@41105" to="Tiles/@Area2D@41105" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@41106" to="Tiles/@Area2D@41106" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@41107" to="Tiles/@Area2D@41107" method="area_entered"]

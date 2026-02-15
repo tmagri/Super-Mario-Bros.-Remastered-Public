@@ -27,13 +27,13 @@ position = Vector2(-80, -32)
 scale = Vector2(900, 900)
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74399" to="Tiles/@Node2D@74399/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74400" to="Tiles/@Node2D@74400/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74401" to="Tiles/@Node2D@74401/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74402" to="Tiles/@Node2D@74402/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@74403" to="Tiles/@Node2D@74403/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@74404" to="Tiles/@Node2D@74404/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@74405" to="Tiles/@Node2D@74405/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@74406" to="Tiles/@Node2D@74406/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@74407" to="Tiles/@Node2D@74407/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@74408" to="Tiles/@Node2D@74408/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@74409" to="Tiles/@Node2D@74409/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@74410" to="Tiles/@Node2D@74410/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@74411" to="Tiles/@Node2D@74411/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@74412" to="Tiles/@Node2D@74412/LevelPersistance" method="set_as_active"]

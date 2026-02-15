@@ -141,10 +141,6 @@ position = Vector2(776, -72)
 item = ExtResource("24_utmff")
 
 [connection signal="area_entered" from="Tiles/DeathPit" to="Tiles/DeathPit" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@60460" to="Tiles/@Area2D@60460" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@60461" to="Tiles/@Area2D@60461" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@60462" to="Tiles/@Area2D@60462" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@60463" to="Tiles/@Area2D@60463" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@60464" to="Tiles/@Area2D@60464" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@60465" to="Tiles/@Area2D@60465" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@60466" to="Tiles/@Area2D@60466" method="area_entered"]
@@ -223,3 +219,7 @@ item = ExtResource("24_utmff")
 [connection signal="area_entered" from="Tiles/@Area2D@60539" to="Tiles/@Area2D@60539" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@60540" to="Tiles/@Area2D@60540" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@60541" to="Tiles/@Area2D@60541" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@60542" to="Tiles/@Area2D@60542" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@60543" to="Tiles/@Area2D@60543" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@60544" to="Tiles/@Area2D@60544" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@60545" to="Tiles/@Area2D@60545" method="area_entered"]

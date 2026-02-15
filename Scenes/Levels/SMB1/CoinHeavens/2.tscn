@@ -1027,10 +1027,6 @@ tile_set = SubResource("TileSet_0rggs")
 position = Vector2(1248, -8)
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21574" to="Tiles/@Node2D@21574/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21575" to="Tiles/@Node2D@21575/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21576" to="Tiles/@Node2D@21576/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21577" to="Tiles/@Node2D@21577/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21578" to="Tiles/@Node2D@21578/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21579" to="Tiles/@Node2D@21579/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21580" to="Tiles/@Node2D@21580/LevelPersistance" method="set_as_active"]
@@ -1078,3 +1074,7 @@ position = Vector2(1248, -8)
 [connection signal="collected" from="Tiles/@Node2D@21622" to="Tiles/@Node2D@21622/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21623" to="Tiles/@Node2D@21623/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21624" to="Tiles/@Node2D@21624/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21625" to="Tiles/@Node2D@21625/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21626" to="Tiles/@Node2D@21626/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21627" to="Tiles/@Node2D@21627/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21628" to="Tiles/@Node2D@21628/LevelPersistance" method="set_as_active"]

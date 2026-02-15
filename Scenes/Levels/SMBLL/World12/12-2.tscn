@@ -101,10 +101,6 @@ tilemap = NodePath("../Tiles")
 metadata/_custom_type_script = "uid://cybpwmw4ywoow"
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@64539" to="Tiles/@Node2D@64539/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@64540" to="Tiles/@Node2D@64540/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@64541" to="Tiles/@Node2D@64541/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@64542" to="Tiles/@Node2D@64542/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@64543" to="Tiles/@Node2D@64543/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@64544" to="Tiles/@Node2D@64544/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@64545" to="Tiles/@Node2D@64545/LevelPersistance" method="set_as_active"]
@@ -129,6 +125,10 @@ metadata/_custom_type_script = "uid://cybpwmw4ywoow"
 [connection signal="collected" from="Tiles/@Node2D@64564" to="Tiles/@Node2D@64564/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@64565" to="Tiles/@Node2D@64565/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@64566" to="Tiles/@Node2D@64566/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@64567" to="Tiles/@Node2D@64567/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@64568" to="Tiles/@Node2D@64568/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@64569" to="Tiles/@Node2D@64569/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@64570" to="Tiles/@Node2D@64570/LevelPersistance" method="set_as_active"]
 [connection signal="block_destroyed" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock/LevelPersistance" method="set_as_active_2"]
 [connection signal="block_emptied" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock/LevelPersistance" method="set_as_active"]
 [connection signal="player_block_hit" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock" method="player_mushroom_check"]

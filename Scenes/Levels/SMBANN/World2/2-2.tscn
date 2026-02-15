@@ -23,10 +23,6 @@ max_combo = 1.0
 metadata/_custom_type_script = "uid://bjs5mlc3xrxud"
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@41938" to="Tiles/@Node2D@41938/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@41939" to="Tiles/@Node2D@41939/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@41940" to="Tiles/@Node2D@41940/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@41941" to="Tiles/@Node2D@41941/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@41942" to="Tiles/@Node2D@41942/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@41943" to="Tiles/@Node2D@41943/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@41944" to="Tiles/@Node2D@41944/LevelPersistance" method="set_as_active"]
@@ -50,6 +46,10 @@ metadata/_custom_type_script = "uid://bjs5mlc3xrxud"
 [connection signal="collected" from="Tiles/@Node2D@41962" to="Tiles/@Node2D@41962/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@41963" to="Tiles/@Node2D@41963/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@41964" to="Tiles/@Node2D@41964/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@41965" to="Tiles/@Node2D@41965/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@41966" to="Tiles/@Node2D@41966/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@41967" to="Tiles/@Node2D@41967/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@41968" to="Tiles/@Node2D@41968/LevelPersistance" method="set_as_active"]
 [connection signal="block_destroyed" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock/LevelPersistance" method="set_as_active_2"]
 [connection signal="block_emptied" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock/LevelPersistance" method="set_as_active"]
 [connection signal="player_block_hit" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock" method="player_mushroom_check"]

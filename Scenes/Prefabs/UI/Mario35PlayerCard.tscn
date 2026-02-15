@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://bcwlng0ec7r1x"]
+
+[ext_resource type="Script" uid="uid://6boalhkbg2fj" path="res://Scripts/UI/Mario35PlayerCard.gd" id="1_m35pc"]
+
+[node name="Mario35PlayerCard" type="Panel" unique_id=1992716486]
+clip_contents = true
+script = ExtResource("1_m35pc")
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1940404303]
+texture_filter = 2
+theme_override_constants/separation = 0
+
+[node name="NameLabel" type="Label" parent="VBox" unique_id=181540204]
+unique_name_in_owner = true
+texture_filter = 2
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 24
+text = "PLAYER"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="StatusLabel" type="Label" parent="VBox" unique_id=46803410]
+unique_name_in_owner = true
+texture_filter = 2
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3

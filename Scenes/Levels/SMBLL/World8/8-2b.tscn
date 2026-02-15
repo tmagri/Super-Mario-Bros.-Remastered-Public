@@ -71,10 +71,6 @@ position = Vector2(-184, 8)
 shape = SubResource("RectangleShape2D_4fl3v")
 
 [connection signal="area_entered" from="Tiles/DeathPit" to="Tiles/DeathPit" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@61613" to="Tiles/@Area2D@61613" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@61614" to="Tiles/@Area2D@61614" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@61615" to="Tiles/@Area2D@61615" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@61616" to="Tiles/@Area2D@61616" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@61617" to="Tiles/@Area2D@61617" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@61618" to="Tiles/@Area2D@61618" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@61619" to="Tiles/@Area2D@61619" method="area_entered"]
@@ -101,3 +97,7 @@ shape = SubResource("RectangleShape2D_4fl3v")
 [connection signal="area_entered" from="Tiles/@Area2D@61640" to="Tiles/@Area2D@61640" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@61641" to="Tiles/@Area2D@61641" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@61642" to="Tiles/@Area2D@61642" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@61643" to="Tiles/@Area2D@61643" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@61644" to="Tiles/@Area2D@61644" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@61645" to="Tiles/@Area2D@61645" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@61646" to="Tiles/@Area2D@61646" method="area_entered"]

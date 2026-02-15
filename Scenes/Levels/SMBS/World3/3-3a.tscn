@@ -71,10 +71,6 @@ target_level = "uid://bsmbofnhpobtv"
 position = Vector2(1056, -176)
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@72483" to="Tiles/@Node2D@72483/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@72484" to="Tiles/@Node2D@72484/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@72485" to="Tiles/@Node2D@72485/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@72486" to="Tiles/@Node2D@72486/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@72487" to="Tiles/@Node2D@72487/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@72488" to="Tiles/@Node2D@72488/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@72489" to="Tiles/@Node2D@72489/LevelPersistance" method="set_as_active"]
@@ -127,6 +123,10 @@ position = Vector2(1056, -176)
 [connection signal="collected" from="Tiles/@Node2D@72536" to="Tiles/@Node2D@72536/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@72537" to="Tiles/@Node2D@72537/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@72538" to="Tiles/@Node2D@72538/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@72539" to="Tiles/@Node2D@72539/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@72540" to="Tiles/@Node2D@72540/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@72541" to="Tiles/@Node2D@72541/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@72542" to="Tiles/@Node2D@72542/LevelPersistance" method="set_as_active"]
 [connection signal="block_destroyed" from="Tiles/BrickBlock" to="Tiles/BrickBlock/LevelPersistance" method="set_as_active_2"]
 [connection signal="block_emptied" from="Tiles/BrickBlock" to="Tiles/BrickBlock/LevelPersistance" method="set_as_active"]
 [connection signal="item_changed" from="Tiles/BrickBlock" to="Tiles/BrickBlock" method="check_brick_empty"]

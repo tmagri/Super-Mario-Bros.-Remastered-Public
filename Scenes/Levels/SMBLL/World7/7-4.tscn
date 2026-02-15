@@ -233,10 +233,6 @@ id = 4
 position = Vector2(3712, 0)
 
 [connection signal="area_entered" from="Tiles/DeathPit" to="Tiles/DeathPit" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@61027" to="Tiles/@Area2D@61027" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@61028" to="Tiles/@Area2D@61028" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@61029" to="Tiles/@Area2D@61029" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@61030" to="Tiles/@Area2D@61030" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@61031" to="Tiles/@Area2D@61031" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@61032" to="Tiles/@Area2D@61032" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@61033" to="Tiles/@Area2D@61033" method="area_entered"]
@@ -311,6 +307,10 @@ position = Vector2(3712, 0)
 [connection signal="area_entered" from="Tiles/@Area2D@61102" to="Tiles/@Area2D@61102" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@61103" to="Tiles/@Area2D@61103" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@61104" to="Tiles/@Area2D@61104" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@61105" to="Tiles/@Area2D@61105" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@61106" to="Tiles/@Area2D@61106" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@61107" to="Tiles/@Area2D@61107" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@61108" to="Tiles/@Area2D@61108" method="area_entered"]
 [connection signal="axe_touched" from="CastleBridge" to="Bowser" method="bridge_fall"]
 [connection signal="victory_begin" from="CastleBridge" to="CastleToad" method="begin"]
 [connection signal="victory_begin" from="CastleBridge" to="ChallengeNodes/CastleChallengeEnd" method="begin"]

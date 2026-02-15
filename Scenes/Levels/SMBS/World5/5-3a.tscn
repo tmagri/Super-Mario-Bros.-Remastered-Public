@@ -78,10 +78,6 @@ pipe_id = 1
 target_level = "uid://det5ot7oc4jj0"
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@73939" to="Tiles/@Node2D@73939/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@73940" to="Tiles/@Node2D@73940/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@73941" to="Tiles/@Node2D@73941/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@73942" to="Tiles/@Node2D@73942/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@73943" to="Tiles/@Node2D@73943/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@73944" to="Tiles/@Node2D@73944/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@73945" to="Tiles/@Node2D@73945/LevelPersistance" method="set_as_active"]
@@ -106,3 +102,7 @@ target_level = "uid://det5ot7oc4jj0"
 [connection signal="collected" from="Tiles/@Node2D@73964" to="Tiles/@Node2D@73964/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@73965" to="Tiles/@Node2D@73965/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@73966" to="Tiles/@Node2D@73966/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@73967" to="Tiles/@Node2D@73967/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@73968" to="Tiles/@Node2D@73968/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@73969" to="Tiles/@Node2D@73969/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@73970" to="Tiles/@Node2D@73970/LevelPersistance" method="set_as_active"]

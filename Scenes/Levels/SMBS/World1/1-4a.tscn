@@ -53,10 +53,6 @@ position = Vector2(544, -104)
 [node name="DropShadow" parent="." unique_id=645449696 instance=ExtResource("13_45d7w")]
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@71269" to="Tiles/@Node2D@71269/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@71270" to="Tiles/@Node2D@71270/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@71271" to="Tiles/@Node2D@71271/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@71272" to="Tiles/@Node2D@71272/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@71273" to="Tiles/@Node2D@71273/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@71274" to="Tiles/@Node2D@71274/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@71275" to="Tiles/@Node2D@71275/LevelPersistance" method="set_as_active"]
@@ -84,3 +80,7 @@ position = Vector2(544, -104)
 [connection signal="collected" from="Tiles/@Node2D@71297" to="Tiles/@Node2D@71297/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@71298" to="Tiles/@Node2D@71298/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@71299" to="Tiles/@Node2D@71299/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@71300" to="Tiles/@Node2D@71300/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@71301" to="Tiles/@Node2D@71301/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@71302" to="Tiles/@Node2D@71302/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@71303" to="Tiles/@Node2D@71303/LevelPersistance" method="set_as_active"]

@@ -132,6 +132,7 @@ SETTING_MUFFLED,,Muffled,,,,,,,,,,,,
 VIDEO_MODE,"windowed, fullscreen, etc",Mode,Mode,Tryb,peжиm,Modo,Modalità video,ＭＯＤＥ,Mode,Fenstermodus,Pencere Modu,Mode,Modo,ウィンドウモード
 VIDEO_SIZE,"aspect ratio (4:3, widescreen)",Size,Taille,Wielkość,paзmep,Tamaño,Formato schermo,ＳＩＺＥ,Sukat ng Screen,Seitenverhältnis,En Boy Oranı,Ukuran,Proporção,かいぞうど
 VIDEO_RENDER,,Rendering,Rendu,Renderowanie,pehдepиhг,Renderizardo,Rendering,ＲＥＮＤＥＲＩＮＧ,,,Görselleştİrme,Rendering,Renderização,レンダリング
+VIDEO_INTERNAL_RES,,Internal Resolution,Résolution Interne,Wewnętrzna Rozdzielczość,bhУtpehhий pehдepиhг,Resolución Interna,,ＢＥＴＷＥＥＮ 1 ＡＮＤ 4,,,İç Çözünürlük,Internal Resolution,Resolução Interna,ないぶかいぞうど
 VIDEO_SCALING,,Scaling,Mise à l'échelle,Powiększanie,Фильtpaция,Escalado,Ridimensionamento,ＳＣＡＬＩＮＧ,Pagka-render,Skalierung,Ölçeklendİrme,Scaling,Dimensionamento,スケーリング
 VIDEO_VSYNC,,VSync,VSync,V-Sync,bept. cиhxpohизaция,VSync,VSync,ＶＳＹＮＣ,VSync,VSync,VSync,VSync,VSync,VSYNC
 VIDEO_SHADOWS,,Drop Shadows,Ombres portées,Cienie,Пaдaющиe tehи,Sombras ,Ombre,ＤＲＯＰ ＳＨＡＤＯＷＳ,Drop Shadows,Schatten,Gölgeler,Bayangan,Sombras,ドロップシャドウ

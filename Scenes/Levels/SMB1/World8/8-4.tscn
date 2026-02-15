@@ -88,10 +88,6 @@ id = 1
 particles = 3
 
 [connection signal="area_entered" from="Tiles/DeathPit" to="Tiles/DeathPit" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@34256" to="Tiles/@Area2D@34256" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@34257" to="Tiles/@Area2D@34257" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@34258" to="Tiles/@Area2D@34258" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@34259" to="Tiles/@Area2D@34259" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@34260" to="Tiles/@Area2D@34260" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@34261" to="Tiles/@Area2D@34261" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@34262" to="Tiles/@Area2D@34262" method="area_entered"]
@@ -101,3 +97,7 @@ particles = 3
 [connection signal="area_entered" from="Tiles/@Area2D@34266" to="Tiles/@Area2D@34266" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@34267" to="Tiles/@Area2D@34267" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@34268" to="Tiles/@Area2D@34268" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@34269" to="Tiles/@Area2D@34269" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@34270" to="Tiles/@Area2D@34270" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@34271" to="Tiles/@Area2D@34271" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@34272" to="Tiles/@Area2D@34272" method="area_entered"]

@@ -58,16 +58,21 @@ func handle_camera(delta: float) -> void:
 			handle_offsets(delta)
 		else:
 			handle_sp_scrolling()
-	
+		
 	do_limits()
 	camera.global_position = camera_position + camera_offset
+	# Standard update barriers
 	update_camera_barriers()
 
 func update_camera_barriers() -> void:
 	if get_viewport() != null:
 		camera_center_joint.global_position = get_viewport().get_camera_2d().get_screen_center_position()
-		camera_center_joint.get_node("LeftWall").position.x = -(get_viewport_rect().size.x / 2)
-		camera_center_joint.get_node("RightWall").position.x = (get_viewport_rect().size.x / 2)
+		# M35: Walls at ±128 (4:3 game area). Standard: Walls at ±VP_half.
+		var half_w = get_viewport_rect().size.x / 2.0
+		if Global.current_game_mode == Global.GameMode.MARIO_35:
+			half_w = 128.0
+		camera_center_joint.get_node("LeftWall").position.x = -half_w
+		camera_center_joint.get_node("RightWall").position.x = half_w
 
 func handle_horizontal_scrolling(delta: float) -> void:
 	scrolling = false
@@ -171,8 +176,18 @@ func handle_offsets(delta: float) -> void:
 		camera_offset.x = 8
 
 func do_limits() -> void:
-	camera_right_limit = clamp(Player.camera_right_limit, -256 + (get_viewport().get_visible_rect().size.x), INF)
-	camera_position.x = clamp(camera_position.x, point_to_camera_limit(-256 - camera_offset.x, -1), point_to_camera_limit(camera_right_limit - camera_offset.x, 1))
+	# M35: Use 256px (4:3) for camera calculations. Standard: Use actual viewport width.
+	var effective_width = get_viewport().get_visible_rect().size.x
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		effective_width = 256.0
+	
+	camera_right_limit = clamp(Player.camera_right_limit, -256 + effective_width, INF)
+	
+	var half_w = effective_width / 2.0
+	var min_x = -256 - camera_offset.x + half_w
+	var max_x = camera_right_limit - camera_offset.x - half_w
+	if min_x > max_x: max_x = min_x
+	camera_position.x = clamp(camera_position.x, min_x, max_x)
 	var v_height := -208.0
 	if is_instance_valid(Global.current_level):
 		v_height = Global.current_level.vertical_height

@@ -1027,10 +1027,6 @@ tile_set = SubResource("TileSet_w8w3k")
 time_of_day = 1
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21689" to="Tiles/@Node2D@21689/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21690" to="Tiles/@Node2D@21690/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21691" to="Tiles/@Node2D@21691/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@21692" to="Tiles/@Node2D@21692/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21693" to="Tiles/@Node2D@21693/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21694" to="Tiles/@Node2D@21694/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21695" to="Tiles/@Node2D@21695/LevelPersistance" method="set_as_active"]
@@ -1078,3 +1074,7 @@ time_of_day = 1
 [connection signal="collected" from="Tiles/@Node2D@21737" to="Tiles/@Node2D@21737/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21738" to="Tiles/@Node2D@21738/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@21739" to="Tiles/@Node2D@21739/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21740" to="Tiles/@Node2D@21740/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21741" to="Tiles/@Node2D@21741/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21742" to="Tiles/@Node2D@21742/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@21743" to="Tiles/@Node2D@21743/LevelPersistance" method="set_as_active"]

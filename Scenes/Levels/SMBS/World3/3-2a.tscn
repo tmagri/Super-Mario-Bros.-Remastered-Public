@@ -141,13 +141,9 @@ position = Vector2(360, -72)
 item = ExtResource("14_kjbin")
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@72252" to="Tiles/@Node2D@72252/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@72253" to="Tiles/@Node2D@72253/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@72256" to="Tiles/@Node2D@72256/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@72257" to="Tiles/@Node2D@72257/LevelPersistance" method="set_as_active"]
 [connection signal="area_entered" from="Tiles/DeathPit" to="Tiles/DeathPit" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@72254" to="Tiles/@Area2D@72254" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@72255" to="Tiles/@Area2D@72255" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@72256" to="Tiles/@Area2D@72256" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@72257" to="Tiles/@Area2D@72257" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@72258" to="Tiles/@Area2D@72258" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@72259" to="Tiles/@Area2D@72259" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@72260" to="Tiles/@Area2D@72260" method="area_entered"]
@@ -197,3 +193,7 @@ item = ExtResource("14_kjbin")
 [connection signal="area_entered" from="Tiles/@Area2D@72304" to="Tiles/@Area2D@72304" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@72305" to="Tiles/@Area2D@72305" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@72306" to="Tiles/@Area2D@72306" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@72307" to="Tiles/@Area2D@72307" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@72308" to="Tiles/@Area2D@72308" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@72309" to="Tiles/@Area2D@72309" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@72310" to="Tiles/@Area2D@72310" method="area_entered"]

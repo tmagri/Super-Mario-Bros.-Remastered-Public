@@ -42,6 +42,8 @@ func _on_mario35_game_started() -> void:
 		Mario35Handler.incoming_item_roulette.connect(show_item_roulette)
 	if not Mario35Handler.roulette_stopped.is_connected(_on_roulette_stopped):
 		Mario35Handler.roulette_stopped.connect(_on_roulette_stopped)
+	if not Mario35Handler.player_status_changed.is_connected(update_m35_rank):
+		Mario35Handler.player_status_changed.connect(update_m35_rank)
 	
 	update_hud_labels(Mario35Handler.current_target_mode)
 	update_br_timer(int(Mario35Handler.current_time))
@@ -50,8 +52,13 @@ func _on_mario35_game_started() -> void:
 	
 	# Robust Cleanup of previous game over / leaderboard
 	for child in %BattleRoyaleHUD.get_children():
-		if "GameOver" in child.name or child.name.begins_with("LRB_"):
-			child.queue_free()
+		if "GameOver" in child.name or child.name.begins_with("LRB_") or "RankLabel" in child.name:
+			# BUT: DO NOT clear the live "RankLabel" if it was created in setup_br_hud
+			# Wait, setup_br_hud names it "RankLabel". 
+			# In _on_game_over we name it "PersonalRankLabel".
+			# So we should specifically target "PersonalRankLabel".
+			if child.name == "PersonalRankLabel" or "GameOver" in child.name or child.name.begins_with("LRB_"):
+				child.queue_free()
 			
 	setup_br_hud()
 	%BattleRoyaleHUD.visible = true
@@ -59,7 +66,64 @@ func _on_mario35_game_started() -> void:
 
 
 
+func update_m35_hud_positioning() -> void:
+	if not %BattleRoyaleHUD.visible: return
+	
+	var vp_size = get_viewport().get_visible_rect().size
+	var center_x = vp_size.x / 2.0
+	var game_half_width = 128.0
+	var game_left = center_x - game_half_width
+	var game_right = center_x + game_half_width
+	
+	var mario_root = %BattleRoyaleHUD.get_node_or_null("MarioRoot")
+	var coin_container = %BattleRoyaleHUD.get_node_or_null("CoinContainer")
+	var time_container = %BattleRoyaleHUD.get_node_or_null("TimeContainer")
+	var rank_lbl = %BattleRoyaleHUD.get_node_or_null("RankLabel")
+	
+	# Top Left: Mario Name & Coins
+	if mario_root:
+		mario_root.position.x = game_left + 16
+		mario_root.position.y = 16
+	if coin_container:
+		coin_container.position.x = game_left + 16
+		coin_container.position.y = 16
+		
+	# Top Right: Time
+	if time_container:
+		if time_container.get_anchor(SIDE_LEFT) != 0:
+			time_container.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		time_container.position.y = 16
+		# Width of "TIME 123" ~ 64px.
+		time_container.position.x = game_right - 64 - 8
+		
+	# Bottom Left: Rank (e.g. "1ST")
+	if rank_lbl:
+		if rank_lbl.get_anchor(SIDE_LEFT) != 0 or rank_lbl.get_anchor(SIDE_TOP) != 0:
+			rank_lbl.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		rank_lbl.size = Vector2(64, 16)
+		rank_lbl.position.x = game_left + 8
+		rank_lbl.position.y = vp_size.y - 24
+	
+	var over_rank = %BattleRoyaleHUD.get_node_or_null("PersonalRankLabel")
+	if over_rank:
+		if over_rank.get_anchor(SIDE_LEFT) != 0 or over_rank.get_anchor(SIDE_TOP) != 0:
+			over_rank.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		over_rank.size = Vector2(100, 24)
+		over_rank.position.x = game_left + 8
+		over_rank.position.y = vp_size.y - 24
+		
+	# Bottom Right: Target (reposition the TargetSelector container)
+	var target_sel = %BattleRoyaleHUD.get_node_or_null("TargetSelector")
+	if target_sel:
+		if target_sel.get_anchor(SIDE_LEFT) != 0 or target_sel.get_anchor(SIDE_TOP) != 0:
+			target_sel.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		target_sel.size = Vector2(100, 32)
+		target_sel.position.x = game_right - 100 - 8
+		target_sel.position.y = vp_size.y - 32
+
 func _process(delta: float) -> void:
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		update_m35_hud_positioning()
 	if not get_tree().paused and $Timer.paused:
 		delta_time += delta
 	if delta_time >= 1:
@@ -76,7 +140,8 @@ func handle_main_hud() -> void:
 		
 		# Hide during level transitions to prevent overlap with "World X-X" black screen
 		var in_transition = Global.transitioning_scene or get_tree().current_scene is LevelTransition
-		%BattleRoyaleHUD.visible = self.visible and not in_transition
+		# User requested it to persist:
+		%BattleRoyaleHUD.visible = self.visible #and not in_transition
 		
 		handle_br_input()
 		
@@ -178,6 +243,12 @@ func setup_br_hud() -> void:
 	
 	# Ensure HUD container is full rect for proper anchoring
 	%BattleRoyaleHUD.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	
+	# --- Widescreen HUD ---
+	if not %BattleRoyaleHUD.has_node("Mario35WidescreenHUD"):
+		var ws_hud = preload("res://Scenes/Prefabs/UI/Mario35WidescreenHUD.tscn").instantiate()
+		%BattleRoyaleHUD.add_child(ws_hud)
+		%BattleRoyaleHUD.move_child(ws_hud, 0) # Draw behind HUD overlay
 	
 	# --- Coins (Top Left, mimics standard HUD row 1/2 stack) ---
 	var coin_container = Control.new()
@@ -297,6 +368,19 @@ func setup_br_hud() -> void:
 	%BRTimer.add_theme_constant_override("shadow_offset_x", 1)
 	%BRTimer.add_theme_constant_override("shadow_offset_y", 1)
 	
+	# --- Rank Label (Bottom Left) ---
+	var rank_lbl = Label.new()
+	rank_lbl.name = "RankLabel"
+	rank_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	rank_lbl.add_theme_font_size_override("font_size", 16)
+	rank_lbl.add_theme_color_override("font_shadow_color", Color.BLACK)
+	rank_lbl.add_theme_constant_override("shadow_offset_x", 1)
+	rank_lbl.add_theme_constant_override("shadow_offset_y", 1)
+	rank_lbl.size = Vector2(64, 16)
+	rank_lbl.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	%BattleRoyaleHUD.add_child(rank_lbl)
+	update_m35_rank()
+	
 	# --- Target Label (Top Center) ---
 	#%TargetLabel.visible = true
 	#%TargetLabel.set_anchors_preset(Control.PRESET_CENTER_TOP)
@@ -305,9 +389,6 @@ func setup_br_hud() -> void:
 	#%TargetLabel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	#%TargetLabel.add_theme_font_size_override("font_size", 16)
 	#%TargetLabel.add_theme_color_override("font_outline_color", Color.BLACK)
-	#%TargetLabel.add_theme_constant_override("outline_size", 4)
-	
-
 func update_hud_labels(mode: int) -> void:
 	var text = "RANDOM"
 	match mode:
@@ -536,7 +617,21 @@ func update_br_timer(time: int) -> void:
 	else:
 		%BRTimer.modulate = Color.YELLOW
 
-
+func update_m35_rank(_dummy = null) -> void:
+	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
+	var rank_lbl = %BattleRoyaleHUD.get_node_or_null("RankLabel")
+	if not rank_lbl: return
+	
+	if my_id in Mario35Handler.player_statuses:
+		var status = Mario35Handler.player_statuses[my_id]
+		if status.rank > 0:
+			rank_lbl.text = _get_ordinal_rank(status.rank)
+		else:
+			rank_lbl.text = "---"
+		rank_lbl.visible = status.alive
+	else:
+		rank_lbl.text = "---"
+		rank_lbl.visible = true
 
 func handle_br_input():
 	# Targeting: Cycle with 'Pause' (Start)
@@ -679,8 +774,10 @@ func _on_game_over(winner_id: int) -> void:
 		rank_lbl.add_theme_constant_override("shadow_offset_x", 1)
 		rank_lbl.add_theme_constant_override("shadow_offset_y", 1)
 		rank_lbl.size = Vector2(100, 24)
-		rank_lbl.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
-		rank_lbl.position = Vector2(16, -32) # Margin from bottom left
+		rank_lbl.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		var vp_sz = get_viewport().get_visible_rect().size
+		var gl = vp_sz.x / 2.0 - 128.0
+		rank_lbl.position = Vector2(gl + 8, vp_sz.y - 24)
 		%BattleRoyaleHUD.add_child(rank_lbl)
 	
 	# Play victory/loss sfx
@@ -690,6 +787,7 @@ func _on_game_over(winner_id: int) -> void:
 		AudioManager.play_global_sfx("game_over")
 
 func _get_ordinal_rank(rank: int) -> String:
+	if rank <= 0: return ""
 	var suffix = "TH"
 	if rank % 100 < 11 or rank % 100 > 13:
 		match rank % 10:

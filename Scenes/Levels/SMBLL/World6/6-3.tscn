@@ -165,10 +165,6 @@ item = ExtResource("22_cstyg")
 position = Vector2(360, -120)
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@59244" to="Tiles/@Node2D@59244/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@59245" to="Tiles/@Node2D@59245/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@59246" to="Tiles/@Node2D@59246/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@59247" to="Tiles/@Node2D@59247/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@59248" to="Tiles/@Node2D@59248/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@59249" to="Tiles/@Node2D@59249/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@59250" to="Tiles/@Node2D@59250/LevelPersistance" method="set_as_active"]
@@ -182,6 +178,10 @@ position = Vector2(360, -120)
 [connection signal="collected" from="Tiles/@Node2D@59258" to="Tiles/@Node2D@59258/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@59259" to="Tiles/@Node2D@59259/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@59260" to="Tiles/@Node2D@59260/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@59261" to="Tiles/@Node2D@59261/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@59262" to="Tiles/@Node2D@59262/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@59263" to="Tiles/@Node2D@59263/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@59264" to="Tiles/@Node2D@59264/LevelPersistance" method="set_as_active"]
 [connection signal="block_destroyed" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock/LevelPersistance" method="set_as_active_2"]
 [connection signal="block_emptied" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock/LevelPersistance" method="set_as_active"]
 [connection signal="player_block_hit" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock" method="player_mushroom_check"]

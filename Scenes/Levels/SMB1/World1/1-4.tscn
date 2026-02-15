@@ -161,10 +161,6 @@ position = Vector2(344, -104)
 position = Vector2(1224, -168)
 
 [connection signal="area_entered" from="Tiles/DeathPit" to="Tiles/DeathPit" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@24003" to="Tiles/@Area2D@24003" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@24004" to="Tiles/@Area2D@24004" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@24005" to="Tiles/@Area2D@24005" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@24006" to="Tiles/@Area2D@24006" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@24007" to="Tiles/@Area2D@24007" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@24008" to="Tiles/@Area2D@24008" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@24009" to="Tiles/@Area2D@24009" method="area_entered"]
@@ -181,6 +177,10 @@ position = Vector2(1224, -168)
 [connection signal="area_entered" from="Tiles/@Area2D@24020" to="Tiles/@Area2D@24020" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@24021" to="Tiles/@Area2D@24021" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@24022" to="Tiles/@Area2D@24022" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@24023" to="Tiles/@Area2D@24023" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@24024" to="Tiles/@Area2D@24024" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@24025" to="Tiles/@Area2D@24025" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@24026" to="Tiles/@Area2D@24026" method="area_entered"]
 [connection signal="axe_touched" from="CastleBridge" to="Bowser" method="bridge_fall"]
 [connection signal="victory_begin" from="CastleBridge" to="ChallengeNodes/CastleChallengeEnd" method="begin"]
 [connection signal="victory_begin" from="CastleBridge" to="CastleToad" method="begin"]

@@ -142,6 +142,9 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	# Reset local player power state for a fresh start
 	Global.player_power_states = "0000"
 	
+	# Force Widescreen (Expand Mode) to allow HUD on sides
+	get_tree().root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
+	
 	last_known_stats = {} # Clear stale stats from previous match
 	session_points = {} # Reset session points for a fresh match
 	for id in Mario35Network.players:
@@ -232,11 +235,15 @@ func _check_win_condition() -> void:
 		# Delayed return to lobby (unless in debug mode)
 		if is_practice:
 			get_tree().paused = false
+			var aspect = Window.CONTENT_SCALE_ASPECT_EXPAND if Settings.file.video.size == 1 else Window.CONTENT_SCALE_ASPECT_KEEP
+			get_tree().root.content_scale_aspect = aspect
 			Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")
 			return
 			
 		await get_tree().create_timer(5.0, false).timeout
 		get_tree().paused = false
+		var aspect = Window.CONTENT_SCALE_ASPECT_EXPAND if Settings.file.video.size == 1 else Window.CONTENT_SCALE_ASPECT_KEEP
+		get_tree().root.content_scale_aspect = aspect
 		Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")
 
 func _award_placement_points() -> void:

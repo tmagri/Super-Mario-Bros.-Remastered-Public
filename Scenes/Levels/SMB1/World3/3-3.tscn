@@ -171,10 +171,6 @@ script = ExtResource("24_0kg6f")
 extra_track = ExtResource("25_0kg6f")
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@26460" to="Tiles/@Node2D@26460/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@26461" to="Tiles/@Node2D@26461/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@26462" to="Tiles/@Node2D@26462/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@26463" to="Tiles/@Node2D@26463/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@26464" to="Tiles/@Node2D@26464/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@26465" to="Tiles/@Node2D@26465/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@26466" to="Tiles/@Node2D@26466/LevelPersistance" method="set_as_active"]
@@ -191,3 +187,7 @@ extra_track = ExtResource("25_0kg6f")
 [connection signal="collected" from="Tiles/@Node2D@26477" to="Tiles/@Node2D@26477/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@26478" to="Tiles/@Node2D@26478/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@26479" to="Tiles/@Node2D@26479/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@26480" to="Tiles/@Node2D@26480/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@26481" to="Tiles/@Node2D@26481/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@26482" to="Tiles/@Node2D@26482/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@26483" to="Tiles/@Node2D@26483/LevelPersistance" method="set_as_active"]

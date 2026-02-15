@@ -17,7 +17,10 @@ func null_function(_fuck_you := 0) -> void:
 	pass
 
 func window_size_changed(new_value := 0) -> void:
-	get_tree().root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND if new_value == 1 else Window.CONTENT_SCALE_ASPECT_KEEP
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		get_tree().root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
+	else:
+		get_tree().root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND if new_value == 1 else Window.CONTENT_SCALE_ASPECT_KEEP
 	Settings.file.video.size = new_value
 
 func vsync_changed(new_value := 0) -> void:
@@ -59,6 +62,24 @@ func frame_limit_changed(new_value := 0) -> void:
 	Engine.set_max_fps(new_framerate)
 	Settings.file.video.frame_limit = new_value
 
+func internal_res_changed(new_value := 0) -> void:
+	# Revert logical scaling to fix the zoom/size issue
+	get_tree().root.content_scale_factor = 1.0
+	
+	# Density Fix: Use CANVAS_ITEMS mode for x2-x4 to allow high-res drawing commands
+	# to exceed the viewport buffer and use the full window resolution (Increased PPI).
+	if new_value > 0:
+		get_tree().root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+		# Disable snapping to allow transformed sprites to benefit from the higher physical resolution
+		RenderingServer.viewport_set_snap_2d_transforms_to_pixel(get_tree().root.get_viewport_rid(), false)
+	else:
+		# Restore based on visuals setting if Internal Res is x1
+		var is_pixel_mode = Settings.file.video.visuals == 0
+		get_tree().root.content_scale_mode = Window.CONTENT_SCALE_MODE_VIEWPORT if is_pixel_mode else Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+		RenderingServer.viewport_set_snap_2d_transforms_to_pixel(get_tree().root.get_viewport_rid(), is_pixel_mode)
+		
+	Settings.file.video.internal_res = new_value
+
 func set_window_size(value := []) -> void:
 	pass
 	# nabbup: Recenter resized window on launch
@@ -78,5 +99,6 @@ func set_value(value_name := "", value = null) -> void:
 		"hud_size": hud_style_changed,
 		"hud_style": hud_style_changed,
 		"frame_limit": frame_limit_changed,
+		"internal_res": internal_res_changed,
 		"window_size": set_window_size
 	}[value_name].call(value)

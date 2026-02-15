@@ -37,10 +37,6 @@ max_combo = 0
 metadata/_custom_type_script = "uid://bjs5mlc3xrxud"
 
 [connection signal="area_entered" from="Tiles/DeathPit" to="Tiles/DeathPit" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@50182" to="Tiles/@Area2D@50182" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@50183" to="Tiles/@Area2D@50183" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@50184" to="Tiles/@Area2D@50184" method="area_entered"]
-[connection signal="area_entered" from="Tiles/@Area2D@50185" to="Tiles/@Area2D@50185" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@50186" to="Tiles/@Area2D@50186" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@50187" to="Tiles/@Area2D@50187" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@50188" to="Tiles/@Area2D@50188" method="area_entered"]
@@ -66,6 +62,10 @@ metadata/_custom_type_script = "uid://bjs5mlc3xrxud"
 [connection signal="area_entered" from="Tiles/@Area2D@50208" to="Tiles/@Area2D@50208" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@50209" to="Tiles/@Area2D@50209" method="area_entered"]
 [connection signal="area_entered" from="Tiles/@Area2D@50210" to="Tiles/@Area2D@50210" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@50211" to="Tiles/@Area2D@50211" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@50212" to="Tiles/@Area2D@50212" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@50213" to="Tiles/@Area2D@50213" method="area_entered"]
+[connection signal="area_entered" from="Tiles/@Area2D@50214" to="Tiles/@Area2D@50214" method="area_entered"]
 [connection signal="block_destroyed" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock/LevelPersistance" method="set_as_active_2"]
 [connection signal="block_emptied" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock/LevelPersistance" method="set_as_active"]
 [connection signal="player_block_hit" from="Tiles/QuestionBlock" to="Tiles/QuestionBlock" method="player_mushroom_check"]

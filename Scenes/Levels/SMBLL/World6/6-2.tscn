@@ -205,10 +205,6 @@ position = Vector2(1720, -104)
 item = ExtResource("22_kwbbf")
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@59198" to="Tiles/@Node2D@59198/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@59199" to="Tiles/@Node2D@59199/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@59200" to="Tiles/@Node2D@59200/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@59201" to="Tiles/@Node2D@59201/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@59202" to="Tiles/@Node2D@59202/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@59203" to="Tiles/@Node2D@59203/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@59204" to="Tiles/@Node2D@59204/LevelPersistance" method="set_as_active"]
@@ -238,3 +234,7 @@ item = ExtResource("22_kwbbf")
 [connection signal="collected" from="Tiles/@Node2D@59228" to="Tiles/@Node2D@59228/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@59229" to="Tiles/@Node2D@59229/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@59230" to="Tiles/@Node2D@59230/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@59231" to="Tiles/@Node2D@59231/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@59232" to="Tiles/@Node2D@59232/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@59233" to="Tiles/@Node2D@59233/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@59234" to="Tiles/@Node2D@59234/LevelPersistance" method="set_as_active"]

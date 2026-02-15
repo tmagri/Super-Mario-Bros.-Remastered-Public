@@ -59,12 +59,12 @@ extra_track = ExtResource("13_dp837")
 metadata/_custom_type_script = "uid://cusgxgerctsft"
 
 [connection signal="collected" from="Tiles/Coin" to="Tiles/Coin/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74378" to="Tiles/@Node2D@74378/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74379" to="Tiles/@Node2D@74379/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74380" to="Tiles/@Node2D@74380/LevelPersistance" method="set_as_active"]
-[connection signal="collected" from="Tiles/@Node2D@74381" to="Tiles/@Node2D@74381/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@74382" to="Tiles/@Node2D@74382/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@74383" to="Tiles/@Node2D@74383/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@74384" to="Tiles/@Node2D@74384/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@74385" to="Tiles/@Node2D@74385/LevelPersistance" method="set_as_active"]
 [connection signal="collected" from="Tiles/@Node2D@74386" to="Tiles/@Node2D@74386/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@74387" to="Tiles/@Node2D@74387/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@74388" to="Tiles/@Node2D@74388/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@74389" to="Tiles/@Node2D@74389/LevelPersistance" method="set_as_active"]
+[connection signal="collected" from="Tiles/@Node2D@74390" to="Tiles/@Node2D@74390/LevelPersistance" method="set_as_active"]

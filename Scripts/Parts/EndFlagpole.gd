@@ -18,12 +18,12 @@ func player_touch(player: Player) -> void:
 		SpeedrunHandler.is_warp_run = false
 		SpeedrunHandler.run_finished()
 	Global.can_pause = false
+	Global.can_time_tick = false
 	if get_node_or_null("Top") != null:
 		$Top.queue_free()
 	$Hitbox.queue_free()
 	get_tree().call_group("Enemies", "flag_die")
 	give_points(player)
-	Global.can_time_tick = false
 	if player.can_pose == false:
 		player.z_index = -2
 	player.global_position.x = $Flag.global_position.x + 3

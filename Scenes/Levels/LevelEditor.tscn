@@ -253,7 +253,7 @@
 [ext_resource type="JSON" path="res://Assets/Sprites/Items/LuckyStar.json" id="224_vjdbd"]
 [ext_resource type="JSON" path="res://Assets/Sprites/Items/Key.json" id="229_u1728"]
 [ext_resource type="PackedScene" uid="uid://ny5glffi0suh" path="res://Scenes/Prefabs/Entities/Items/KeyItem.tscn" id="230_gk37f"]
-[ext_resource type="Script" uid="uid://codql1f5eca56" path="res://Scripts/Classes/Editor/OptionButtonThatIsntFuckingBlurry.gd" id="241_8au2b"]
+[ext_resource type="Script" uid="uid://codql1f5eca56" path="res://Scripts/Classes/Editor/OptionButtonThatIsntISSUEingBlurry.gd" id="241_8au2b"]
 [ext_resource type="Script" uid="uid://dt2p68xl462v2" path="res://Scripts/Parts/TextShadowColourChanger.gd" id="249_mdu03"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5mw2n"]

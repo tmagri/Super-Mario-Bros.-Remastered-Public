@@ -10,6 +10,6 @@ func _ready() -> void:
 		hitbox.area_entered.connect(area_entered)
 
 func area_entered(area: Area2D) -> void:
-	if area.owner is FireBall:
+	if area.owner is FireBall or area.owner is SuperballProjectile:
 		fireball_hit.emit(area.owner)
 		area.owner.hit(play_sfx_on_hit)

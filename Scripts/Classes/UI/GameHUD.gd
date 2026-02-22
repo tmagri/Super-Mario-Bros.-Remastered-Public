@@ -16,7 +16,8 @@ const ITEM_JSONS := {
 	"Hammer": preload("res://Assets/Sprites/Items/HammerIcon.json"),
 	"P-Switch": preload("res://Assets/Sprites/Items/PSwitch.json"),
 	"QuestionBlock": preload("res://Assets/Sprites/Blocks/QuestionBlock.json"),
-	"ClearQuestionBlock": preload("res://Assets/Sprites/Blocks/ClearQuestionBlock.json")
+	"ClearQuestionBlock": preload("res://Assets/Sprites/Blocks/ClearQuestionBlock.json"),
+	"Superball": preload("res://Assets/Sprites/Items/SuperballFlower.json"),
 }
 
 var delta_time := 0.0

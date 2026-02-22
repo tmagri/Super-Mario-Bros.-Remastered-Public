@@ -62,7 +62,7 @@ func dispense_item() -> void:
 			parent = get_parent().get_parent().get_parent()
 		parent.add_child(node)
 		parent.move_child(node, get_index() - 1)
-		print("FUCK: " + str(item.resource_path))
+		print("ISSUE: " + str(item.resource_path))
 		if NO_SFX_ITEMS.has(item.resource_path) == false:
 			AudioManager.play_sfx("item_appear", global_position)
 			node.set("velocity", Vector2(0, node.get_meta("block_launch_velocity", -150)))

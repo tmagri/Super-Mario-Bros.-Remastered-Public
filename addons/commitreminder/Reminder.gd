@@ -41,4 +41,4 @@ func start_timer() -> void:
 
 
 func on_pressed() -> void:
-	print("FUCK")
+	print("ISSUE")

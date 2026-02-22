@@ -13,7 +13,7 @@ func window_mode_changed(new_value := 0) -> void:
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	Settings.file.video.mode = new_value
 
-func null_function(_fuck_you := 0) -> void:
+func null_function(_discard := 0) -> void:
 	pass
 
 func window_size_changed(new_value := 0) -> void:

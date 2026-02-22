@@ -139,7 +139,7 @@ var is_posing := false
 
 const COMBO_VALS := [100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000, null]
 
-@export_enum("Small", "Big", "Fire") var starting_power_state := 0
+@export_enum("Small", "Big", "Fire", "Superball") var starting_power_state := 0
 @onready var state_machine: StateMachine = $States
 @onready var normal_state: Node = $States/Normal
 @export var auto_death_pit := true
@@ -167,7 +167,7 @@ var can_uncrouch := false
 var can_air_turn := false
 
 static var CHARACTERS := ["Mario", "Luigi", "Toad", "Toadette"]
-const POWER_STATES := ["Small", "Big", "Fire"]
+const POWER_STATES := ["Small", "Big", "Fire", "Superball"]
 
 signal moved
 signal dead
@@ -230,7 +230,8 @@ const ANIMATION_FALLBACKS := {
 	"RunJumpFall": "JumpFall",
 	"RunJumpBump": "JumpBump",
 	"StarJump": "Jump",
-	"StarFall": "JumpFall"
+	"StarFall": "JumpFall",
+	"SuperballShrink": "SuperballGrow"
 }
 
 var palette_transform := true
@@ -762,8 +763,8 @@ func damage() -> void:
 		
 	# Assist Mode: Special handling
 	if Global.assist_mode:
-		# Fire Mario loses power-up to Super Mario
-		if power_state.state_name == "Fire":
+		# Fire/Superball Mario loses power-up to Super Mario
+		if power_state.state_name == "Fire" or power_state.state_name == "Superball":
 			var super_state = get_node("PowerStates/Big")
 			if super_state:
 				AudioManager.play_sfx("damage", global_position)
@@ -941,6 +942,8 @@ func get_power_up(power_name := "", give_points := true) -> void:
 		if power_name == "Big" and power_state.state_name != "Small":
 			bonus = true
 		elif power_name == "Fire" and power_state.state_name == "Fire":
+			bonus = true
+		elif power_name == "Superball" and power_state.state_name == "Superball":
 			bonus = true
 			
 		if bonus:

@@ -71,11 +71,6 @@ func award_score(award_level: int) -> void:
 	if award_level >= 10:
 		if Global.current_game_mode == Global.GameMode.MARIO_35:
 			AudioManager.play_global_sfx("1_up")
-			# 1-Up prevention: Destroy shell after first 1-up
-			if one_up_count > 0:
-				queue_free()
-				return
-			
 			Mario35Handler.add_time(20) # Award 1-Up time equivalent
 			one_up_count += 1
 		if [Global.GameMode.CHALLENGE, Global.GameMode.BOO_RACE].has(Global.current_game_mode) or Settings.file.difficulty.inf_lives:
@@ -177,7 +172,7 @@ func kick(hit_player: Player, is_stomp: bool = false) -> void:
 	AudioManager.play_sfx("kick", global_position)
 	
 	# Limit the number of times you can kick the same shell.
-	if Global.current_game_mode == Global.GameMode.CHALLENGE:
+	if Global.current_game_mode == Global.GameMode.CHALLENGE or Global.current_game_mode == Global.GameMode.MARIO_35:
 		times_kicked += 1
 		if times_kicked >= 7:
 			die_from_object(hit_player)

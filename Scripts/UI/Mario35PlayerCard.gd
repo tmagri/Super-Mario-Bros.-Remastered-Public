@@ -37,8 +37,7 @@ func _process(_delta: float) -> void:
 	else:
 		target_font = int(ss_width / 8.0)
 	
-	target_font = clamp(target_font, 8, 256)
-	
+	target_font = clamp(target_font, 8, 512)
 	if name_label:
 		name_label.add_theme_font_size_override("font_size", target_font)
 	if status_label:

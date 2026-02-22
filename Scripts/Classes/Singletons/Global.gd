@@ -49,7 +49,7 @@ const LEVEL_THEMES := {
 }
 
 const SMB1_LEVEL_THEMES := ["Overworld", "Desert", "Snow", "Jungle", "Desert", "Snow", "Jungle", "Overworld", "Space", "Autumn", "Pipeland", "Skyland", "Volcano"]
-const SMBS_LEVEL_THEMES := ["Overworld", "Garden", "Beach", "Mountain", "Garden", "Beach", "Mountain", "Overworld", "Autumn", "Pipeland", "Skyland", "Volcano", "Fuck"]
+const SMBS_LEVEL_THEMES := ["Overworld", "Garden", "Beach", "Mountain", "Garden", "Beach", "Mountain", "Overworld", "Autumn", "Pipeland", "Skyland", "Volcano", "ISSUE"]
 
 const FORCE_NIGHT_THEMES := ["Space"]
 const FORCE_DAY_THEMES := []

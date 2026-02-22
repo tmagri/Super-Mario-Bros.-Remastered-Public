@@ -14,6 +14,7 @@ const DEFAULT_SFX_LIBRARY := {
 	"enemy_stomp": ("res://Assets/Audio/SFX/Stomp.wav"),
 	"kick": ("res://Assets/Audio/SFX/Kick.wav"),
 	"fireball": ("res://Assets/Audio/SFX/Fireball.wav"),
+	"superball": ("res://Assets/Audio/SFX/Superball.wav"),
 	"1_up": ("res://Assets/Audio/SFX/1up.wav"),
 	"cannon": ("res://Assets/Audio/SFX/Cannon.wav"),
 	"checkpoint": ("res://Assets/Audio/SFX/Checkpoint.wav"),

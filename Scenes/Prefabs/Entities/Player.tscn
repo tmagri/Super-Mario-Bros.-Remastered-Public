@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://c8xvkkv34fjr4" path="res://Scripts/Classes/PowerStates/PowerUpState.gd" id="5_rs3l8"]
 [ext_resource type="Script" uid="uid://caq1qiwmy0mox" path="res://Scripts/Parts/BetterAnimatedSprite.gd" id="5_x2idl"]
 [ext_resource type="Script" uid="uid://d0hnf0d6tudgj" path="res://Scripts/Classes/PowerStates/Fire.gd" id="6_7nbqp"]
+[ext_resource type="Script" path="res://Scripts/Classes/PowerStates/Superball.gd" id="superball_script"]
 [ext_resource type="Script" uid="uid://cnjpqn05bfm57" path="res://Scripts/Classes/States/Player/PlayerState.gd" id="6_8f1du"]
 [ext_resource type="JSON" path="res://Assets/Sprites/Items/HammerItem.json" id="7_2mfvl"]
 [ext_resource type="Script" uid="uid://ri1g4nllpkfj" path="res://Scripts/Classes/States/Player/FlagPole.gd" id="7_8f1du"]
@@ -650,6 +651,14 @@ script = ExtResource("6_7nbqp")
 state_name = "Fire"
 power_tier = 2
 hitbox_size = "Big"
+damage_state = NodePath("../Big")
+metadata/_custom_type_script = "uid://c8xvkkv34fjr4"
+
+[node name="Superball" type="Node" parent="PowerStates" node_paths=PackedStringArray("damage_state")]
+script = ExtResource("superball_script")
+state_name = "Superball"
+power_tier = 2
+hitbox_size = "Superball"
 damage_state = NodePath("../Big")
 metadata/_custom_type_script = "uid://c8xvkkv34fjr4"
 

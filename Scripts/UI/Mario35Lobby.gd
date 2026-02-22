@@ -642,6 +642,7 @@ func _set_lobby_interaction_active(active: bool) -> void:
 		player_list, 
 		start_button, 
 		%SettingsButton,
+		%AssistButton,
 		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton,
 		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton,
 		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/PracticeButton,
@@ -689,6 +690,7 @@ func update_focus_neighbors():
 	var join_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton
 	var back_btn = $BG/Border/Content/ScrollContainer/VBoxContainer/BackButton
 	var settings_btn = %SettingsButton
+	var assist_btn = %AssistButton
 	
 	name_input.focus_neighbor_bottom = ip_input.get_path()
 	ip_input.focus_neighbor_top = name_input.get_path()
@@ -708,22 +710,22 @@ func update_focus_neighbors():
 	practice_button.focus_neighbor_left = join_btn.get_path()
 	practice_button.focus_neighbor_top = %RoomKeyInput.get_path()
 	
+	# Assist button sits below Host/Join/Practice row
+	host_btn.focus_neighbor_bottom = assist_btn.get_path()
+	join_btn.focus_neighbor_bottom = assist_btn.get_path()
+	practice_button.focus_neighbor_bottom = assist_btn.get_path()
+	assist_btn.focus_neighbor_top = host_btn.get_path()
+	
 	if start_button.visible:
-		host_btn.focus_neighbor_bottom = start_button.get_path()
-		join_btn.focus_neighbor_bottom = start_button.get_path()
-		practice_button.focus_neighbor_bottom = start_button.get_path()
-		start_button.focus_neighbor_top = host_btn.get_path()
+		assist_btn.focus_neighbor_bottom = start_button.get_path()
+		start_button.focus_neighbor_top = assist_btn.get_path()
 		start_button.focus_neighbor_bottom = settings_btn.get_path()
 		settings_btn.focus_neighbor_top = start_button.get_path()
 		settings_btn.focus_neighbor_bottom = back_btn.get_path()
 		back_btn.focus_neighbor_top = settings_btn.get_path()
 	else:
-		host_btn.focus_neighbor_bottom = back_btn.get_path()
-		join_btn.focus_neighbor_bottom = back_btn.get_path()
-		practice_button.focus_neighbor_bottom = back_btn.get_path()
-		back_btn.focus_neighbor_top = join_btn.get_path()
-		
-	# No debug button
+		assist_btn.focus_neighbor_bottom = back_btn.get_path()
+		back_btn.focus_neighbor_top = assist_btn.get_path()
 
 func update_settings_focus_neighbors():
 	var start = %StartTimeInput.get_line_edit()

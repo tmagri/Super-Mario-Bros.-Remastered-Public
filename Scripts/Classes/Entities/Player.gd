@@ -672,6 +672,8 @@ func super_star() -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35 and is_invincible:
 		Mario35Handler.add_item_time_bonus()
 		AudioManager.play_sfx("power_up", global_position)
+		# Reset star timer so the new star gets its full duration
+		$StarTimer.start()
 		return
 		
 	DiscoLevel.combo_meter += 1

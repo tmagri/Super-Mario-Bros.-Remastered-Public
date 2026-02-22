@@ -277,6 +277,7 @@ func _ready() -> void:
 			classic_plus_enabled = false # Usually MARIO 35 is strictly Classic or Remastered
 			apply_physics_style(physics_style)
 			apply_character_physics(false) # Force default physics for stability/fairness
+			Mario35Handler.is_timer_paused = false
 		else:
 			physics_style = 0  #Force Remastered
 			classic_physics = false
@@ -703,7 +704,7 @@ func handle_block_collision_detection() -> void:
 			var points: Array = $SmallCollision.polygon
 			points.sort_custom(func(a, b): return a.y < b.y)
 			$BlockCollision.position.y = points.front().y * $SmallCollision.scale.y
-		"Big":
+		"Big", "Superball":
 			var points: Array = $BigCollision.polygon
 			points.sort_custom(func(a, b): return a.y < b.y)
 			$BlockCollision.position.y = points.front().y * $BigCollision.scale.y
@@ -745,7 +746,7 @@ func handle_wing_flight(delta: float) -> void:
 	%Wings.visible = flight_meter >= 0
 	if flight_meter < 0:
 		return
-	%BigWing.visible = power_state.hitbox_size == "Big"
+	%BigWing.visible = power_state.hitbox_size != "Small"
 	%SmallWing.visible = power_state.hitbox_size == "Small"
 	for i in [%SmallWing, %BigWing]:
 		if velocity.y < 0:

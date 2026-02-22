@@ -7,6 +7,10 @@ var can_land := true
 func enter(_msg := {}) -> void:
 	player.direction = 1
 	player.stop_all_timers()
+	# Pause Mario 35 timer immediately on flagpole touch & award level completion bonus
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.is_timer_paused = true
+		Mario35Handler.add_time(20)
 	await Global.level_complete_begin
 	state_machine.transition_to("LevelExit")
 

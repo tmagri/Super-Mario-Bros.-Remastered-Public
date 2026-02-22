@@ -8,12 +8,12 @@ func _enter_tree() -> void:
 	if not is_sent_enemy:
 		$Animation.play("Hide")
 	else:
+		# Sent Piranha Plants: visible, stationary, no animation, gravity + collision like Goomba
 		$Animation.stop()
 		$Sprite.visible = true
 		$Sprite.position.y = -12
 		$Sprite/Hitbox.monitoring = true
 		
-		# Sent Piranha Plants need physics to stand on ground
 		z_index = 0
 		collision_layer = 16
 		collision_mask = 50
@@ -35,7 +35,9 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_sent_enemy:
+		# Gravity + collision like Goomba, but no horizontal movement
 		apply_enemy_gravity(delta)
+		velocity.x = 0
 		move_and_slide()
 
 func on_timeout() -> void:
@@ -47,4 +49,4 @@ func on_timeout() -> void:
 		if abs(player.global_position.x - global_position.x) >= player_range:
 			$Animation.play("Rise")
 	elif (abs(player.global_position.y - global_position.y) >= player_range and abs(player.global_position.x - global_position.x) >= player_range * 2):
-			$Animation.play("Rise")
+		$Animation.play("Rise")

@@ -365,7 +365,9 @@ func spawn_from_queue() -> void:
 		elif "HammerBro" in type or "BulletBill" in type:
 			# Hammer Bros and Bills usually have some air height
 			spawn_offset = Vector2(480, -64)
-			
+		elif "PiranhaPlant" in type:
+			# Piranha Plants spawn well above ground to stand on surface
+			spawn_offset = Vector2(480, -160)
 		
 		# Collision Check: Ensure not spawning in wall
 		var target_pos = player.global_position + spawn_offset
@@ -490,6 +492,14 @@ func apply_item(item: String) -> void:
 			AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.STAR, 1, false)
 		"Lucky Star":
 			# Standard SMB35 POW effect: Kills all enemies on screen
+			var enemies = get_tree().get_nodes_in_group("Enemies")
+			var kill_count := 0
+			for enemy in enemies:
+				if is_instance_valid(enemy):
+					kill_count += 1
+			# Award 2 seconds per enemy killed
+			if kill_count > 0:
+				add_time(kill_count * 2)
 			get_tree().call_group("Enemies", "die_from_object", player)
 			AudioManager.play_global_sfx("lucky_star")
 		"Wing":

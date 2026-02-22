@@ -34,6 +34,10 @@ func run_player_check(player: Player) -> void:
 		Global.reset_values()
 		Level.first_load = true
 		has_warped = true
+		# Pause Mario 35 timer & award level completion bonus for warp pipes
+		if Global.current_game_mode == Global.GameMode.MARIO_35:
+			Mario35Handler.is_timer_paused = true
+			Mario35Handler.add_time(20)
 		player.enter_pipe(self, Global.current_game_mode != Global.GameMode.MARATHON_PRACTICE and Global.current_campaign != "SMBANN")
 		if Global.current_game_mode == Global.GameMode.MARATHON_PRACTICE:
 			SpeedrunHandler.run_finished()

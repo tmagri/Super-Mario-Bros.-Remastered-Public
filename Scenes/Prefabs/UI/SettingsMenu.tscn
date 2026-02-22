@@ -370,7 +370,7 @@ values = ["Unlimited", "60fps", "120fps", "144fps", "240fps"]
 layout_mode = 2
 option_key = "internal_res"
 title = "VIDEO_INTERNAL_RES"
-values = ["x1", "x2", "x3", "x4"]
+values = ["Auto", "x1", "x2", "x3", "x4"]
 
 [node name="WindowChanger" type="Node" parent="PanelContainer/MarginContainer/VBoxContainer/Video" unique_id=1685811151]
 script = ExtResource("5_hnwhb")

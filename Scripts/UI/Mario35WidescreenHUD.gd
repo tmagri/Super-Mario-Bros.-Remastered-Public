@@ -22,7 +22,8 @@ func _process(delta: float) -> void:
 	var h_sep = 2.0 # matches GridContainer h_separation
 	var v_sep = 2.0 # matches GridContainer v_separation
 	var card_w = max((side_width - h_sep * 2.0) / 3.0, 8.0)
-	var card_h = max((vp_size.y - v_sep * 5.0) / 6.0, 8.0)
+	# 6 rows of players + 2 rows of height for the Stat Headers = 8 total rows
+	var card_h = max((vp_size.y - v_sep * 7.0) / 8.0, 8.0)
 	current_card_size = Vector2(card_w, card_h)
 	
 	if %LeftPanel:
@@ -109,8 +110,26 @@ func sync_players() -> void:
 		if not stat_cards.has(stat_name):
 			var card = player_card_scene.instantiate()
 			stat_cards[stat_name] = card
-			# Initial add to left_grid, will be reparented if needed
-			left_grid.add_child(card)
+			
+	# Initial add to correct VBox parents directly, skipping grids entirely
+	var left_vbox = %LeftPanel.get_node_or_null("VBox")
+	var right_vbox = %RightPanel.get_node_or_null("VBox")
+	
+	if left_vbox:
+		var level_stat = stat_cards["LevelStat"]
+		if not level_stat.get_parent():
+			left_vbox.add_child(level_stat)
+		elif level_stat.get_parent() != left_vbox:
+			level_stat.reparent(left_vbox)
+		left_vbox.move_child(level_stat, 0) # Top of sidebar
+		
+	if right_vbox:
+		var alive_stat = stat_cards["AliveStat"]
+		if not alive_stat.get_parent():
+			right_vbox.add_child(alive_stat)
+		elif alive_stat.get_parent() != right_vbox:
+			alive_stat.reparent(right_vbox)
+		right_vbox.move_child(alive_stat, 0) # Top of sidebar
 	
 	# Update Stats
 	var level_name = "X-X"
@@ -126,15 +145,17 @@ func sync_players() -> void:
 	stat_cards["AliveStat"].setup_as_stat("", "%d/%d" % [alive_count, total_count])
 
 	# Placement Logic
-	for i in range(18): # Left Grid
+	# Explicit height/size updates for top-level Stat cards
+	stat_cards["LevelStat"].custom_minimum_size = Vector2(current_card_size.x * 3, current_card_size.y * 2)
+	stat_cards["LevelStat"].size = stat_cards["LevelStat"].custom_minimum_size
+	stat_cards["AliveStat"].custom_minimum_size = Vector2(current_card_size.x * 3, current_card_size.y * 2)
+	stat_cards["AliveStat"].size = stat_cards["AliveStat"].custom_minimum_size
+	
+	for i in range(17): # Left Grid (LevelStat removed, capacity is just players)
 		var target_node = null
-		if i == 2:
-			target_node = stat_cards["LevelStat"]
-		else:
-			var p_idx = i if i < 2 else i - 1
-			if p_idx < display_ids.size():
-				var pid = display_ids[p_idx]
-				target_node = _get_or_create_player_card(pid)
+		if i < display_ids.size():
+			var pid = display_ids[i]
+			target_node = _get_or_create_player_card(pid)
 		
 		if target_node:
 			if target_node.get_parent() != left_grid:
@@ -143,15 +164,12 @@ func sync_players() -> void:
 			target_node.custom_minimum_size = current_card_size
 			_update_card_data(target_node, target_node.get_meta("player_id", 0) if target_node.has_meta("player_id") else 0)
 
-	for i in range(18): # Right Grid
+	for i in range(17): # Right Grid (AliveStat removed, capacity is just players)
 		var target_node = null
-		if i == 0:
-			target_node = stat_cards["AliveStat"]
-		else:
-			var p_idx = 17 + (i - 1)
-			if p_idx < display_ids.size():
-				var pid = display_ids[p_idx]
-				target_node = _get_or_create_player_card(pid)
+		var p_idx = 17 + i
+		if p_idx < display_ids.size():
+			var pid = display_ids[p_idx]
+			target_node = _get_or_create_player_card(pid)
 		
 		if target_node:
 			if target_node.get_parent() != right_grid:

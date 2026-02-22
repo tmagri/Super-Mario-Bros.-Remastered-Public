@@ -9,35 +9,39 @@ const SUPERSAMPLE = 4.0
 var is_stat := false
 
 func _process(_delta: float) -> void:
+	# Snapshot injected sizes from WidescreenHUD before mathematical alterations
+	if custom_minimum_size.x > size.x:
+		size = custom_minimum_size
+	
 	if not vbox or size.x <= 0 or size.y <= 0:
 		return
 	
 	# Render VBox at SUPERSAMPLE resolution, scale down for smooth text
-	var ss_mult = float(Settings.file.video.internal_res + 1)
+	var ss_mult = float(Settings.file.video.internal_res)
+	if ss_mult == 0.0:
+		var monitor_id = DisplayServer.window_get_current_screen()
+		var monitor_y = DisplayServer.screen_get_size(monitor_id).y
+		ss_mult = max(1.0, floor(monitor_y / 240.0))
+		
 	var ss_width = size.x * ss_mult
 	var ss_height = size.y * ss_mult
 	
-	# Clamp max VBox dimensions to avoid rendering issues
-	ss_width = min(ss_width, 512.0)
-	ss_height = min(ss_height, 512.0)
-	
-	var scale_x = ss_width / max(size.x, 1.0)
-	var inv_scale = 1.0 / max(scale_x, 0.01)
+	var inv_scale = 1.0 / ss_mult
 	
 	vbox.size = Vector2(ss_width, ss_height)
 	vbox.scale = Vector2(inv_scale, inv_scale)
 	vbox.position = Vector2.ZERO
 	
-	# Scale font to fit across the supersampled width
-	# For stats, we want to fill the available height (~48% of card height per label)
-	# For players, we follow the width divisor (~8 chars)
 	var target_font: int
 	if is_stat:
-		target_font = int(ss_height * 0.48)
+		# Explicitly render exactly 24 integer pixels high, stretched by current monitor DPI.
+		# This leverages the `3x by 2x` massive column allocation given by WidescreenHUD.
+		target_font = int(24.0 * ss_mult)
 	else:
+		# Player names remain at proportional responsive box logic
 		target_font = int(ss_width / 8.0)
 	
-	target_font = clamp(target_font, 8, 512)
+	target_font = clamp(target_font, 8, 4096)
 	if name_label:
 		name_label.add_theme_font_size_override("font_size", target_font)
 	if status_label:
@@ -53,10 +57,14 @@ func setup_as_stat(title: String, value: String) -> void:
 	if name_label:
 		name_label.text = title
 		name_label.visible = title != ""
+		name_label.clip_text = false
+		name_label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
 	if status_label:
 		status_label.text = value
 		status_label.modulate = Color.YELLOW
 		status_label.visible = value != ""
+		status_label.clip_text = false
+		status_label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
 	modulate = Color.WHITE
 
 func update_state(is_alive: bool, coins: int, is_targeting_me: bool) -> void:

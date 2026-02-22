@@ -66,9 +66,16 @@ func internal_res_changed(new_value := 0) -> void:
 	# Revert logical scaling to fix the zoom/size issue
 	get_tree().root.content_scale_factor = 1.0
 	
+	var effective_res = new_value
+	if new_value == 0:
+		var monitor_id = DisplayServer.window_get_current_screen()
+		var monitor_y = DisplayServer.screen_get_size(monitor_id).y
+		# Calculate how many 240p integer scales fit into monitor max height (minimum 1)
+		effective_res = max(1, floor(monitor_y / 240.0))
+	
 	# Density Fix: Use CANVAS_ITEMS mode for x2-x4 to allow high-res drawing commands
 	# to exceed the viewport buffer and use the full window resolution (Increased PPI).
-	if new_value > 0:
+	if effective_res > 1:
 		get_tree().root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
 		# Disable snapping to allow transformed sprites to benefit from the higher physical resolution
 		RenderingServer.viewport_set_snap_2d_transforms_to_pixel(get_tree().root.get_viewport_rid(), false)

@@ -35,6 +35,9 @@ func physics_style_changed(new_value := 0) -> void:
 	for player in get_tree().get_nodes_in_group("Players"):
 		player.apply_physics_style()
 
+func assist_mode_changed(new_value := 0) -> void:
+	Global.assist_mode = new_value as Global.AssistMode
+
 func set_value(value_name := "", value := 0) -> void:
 	{
 		"damage_style": damage_style_changed,
@@ -46,7 +49,8 @@ func set_value(value_name := "", value := 0) -> void:
 		"level_design": level_design_changed,
 		"extra_checkpoints": extra_checkpoints_changed,
 		"back_scroll": backscroll_changed,
-		"physics_style": physics_style_changed
+		"physics_style": physics_style_changed,
+		"assist_mode": assist_mode_changed
 	}[value_name].call(value)
 
 

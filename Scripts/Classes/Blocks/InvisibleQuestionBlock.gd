@@ -4,7 +4,7 @@ var _assist_tween: Tween
 
 func _ready() -> void:
 	# Assist Mode: show hidden blocks with blinking indicator
-	if Global.assist_mode:
+	if Global.assist_mode == Global.AssistMode.FULL:
 		_start_assist_blink()
 
 func _start_assist_blink() -> void:

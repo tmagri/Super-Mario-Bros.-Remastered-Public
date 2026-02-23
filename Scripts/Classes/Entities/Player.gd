@@ -1206,7 +1206,7 @@ func damage(type: String = "") -> void:
 		return
 		
 	# Assist Mode: Special handling
-	if Global.assist_mode:
+	if Global.assist_mode == Global.AssistMode.NORMAL or Global.assist_mode == Global.AssistMode.FULL:
 		# Fire/Superball Mario loses power-up to Super Mario
 		if power_state.state_name == "Fire" or power_state.state_name == "Superball":
 			var super_state = get_node("PowerStates/Big")

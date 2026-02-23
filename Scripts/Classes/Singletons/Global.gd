@@ -92,12 +92,21 @@ var coins := 0:
 			coins = coins % 100
 var time := 300
 var lives := 3
-var assist_mode := false
+signal assist_mode_changed(new_mode: AssistMode)
+
+var assist_mode: AssistMode:
+	get:
+		return Settings.file.difficulty.assist_mode as AssistMode
+	set(value):
+		Settings.file.difficulty.assist_mode = value
+		Settings.save_settings()
+		assist_mode_changed.emit(value)
 var world_num := 1
 
 var level_num := 1
 var disco_mode := false
 
+enum AssistMode{OFF, NORMAL, FULL}
 enum Room{MAIN_ROOM, BONUS_ROOM, COIN_HEAVEN, PIPE_CUTSCENE, TITLE_SCREEN}
 
 const room_strings := ["MainRoom", "BonusRoom", "CoinHeaven", "PipeCutscene", "TitleScreen"]

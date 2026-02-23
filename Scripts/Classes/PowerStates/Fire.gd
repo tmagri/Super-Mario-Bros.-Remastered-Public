@@ -16,7 +16,7 @@ func update(delta: float) -> void:
 		throw_fireball()
 		
 	# Assist Mode Auto Fire (with cooldown)
-	elif Global.assist_mode and fireball_amount < 2 and player.state_machine.state.name == "Normal" and auto_fire_cooldown <= 0:
+	elif Global.assist_mode == Global.AssistMode.FULL and fireball_amount < 2 and player.state_machine.state.name == "Normal" and auto_fire_cooldown <= 0:
 		check_auto_fire()
 
 func check_auto_fire() -> void:

@@ -91,16 +91,16 @@ func _ready():
 	practice_button.mouse_entered.connect(practice_button.grab_focus)
 	
 	# Setup Assist Button
-	var assist_button = %AssistButton
-	assist_button.text = "ASSIST MODE: ON" if Global.assist_mode else "ASSIST MODE: OFF"
-	assist_button.pressed.connect(func():
-		Global.assist_mode = not Global.assist_mode
-		assist_button.text = "ASSIST MODE: ON" if Global.assist_mode else "ASSIST MODE: OFF"
+	_on_assist_mode_changed(Global.assist_mode)
+	Global.assist_mode_changed.connect(_on_assist_mode_changed)
+	
+	%AssistButton.pressed.connect(func():
+		Global.assist_mode = (int(Global.assist_mode) + 1) % 3 as Global.AssistMode
 		AudioManager.play_sfx("coin")
 	)
-	assist_button.focus_entered.connect(_on_focus_entered.bind(assist_button))
-	assist_button.focus_exited.connect(_on_focus_exited.bind(assist_button))
-	assist_button.mouse_entered.connect(assist_button.grab_focus)
+	%AssistButton.focus_entered.connect(_on_focus_entered.bind(%AssistButton))
+	%AssistButton.focus_exited.connect(_on_focus_exited.bind(%AssistButton))
+	%AssistButton.mouse_entered.connect(%AssistButton.grab_focus)
 
 
 
@@ -504,6 +504,8 @@ func _on_room_key_changed(new_text: String) -> void:
 func _exit_tree() -> void:
 	if Global.has_node("GameHUD"):
 		Global.get_node("GameHUD").show()
+	if Global.assist_mode_changed.is_connected(_on_assist_mode_changed):
+		Global.assist_mode_changed.disconnect(_on_assist_mode_changed)
 
 func _on_host_pressed():
 	if name_input.text.strip_edges().is_empty():
@@ -615,6 +617,20 @@ func _on_start_pressed():
 	var settings = Mario35Handler.get_settings_dictionary()
 	Mario35Network.start_game.rpc(settings)
 
+func _on_assist_mode_changed(new_mode: Global.AssistMode):
+	var assist_button = get_node_or_null("%AssistButton")
+	if is_instance_valid(assist_button):
+		var mode_name = "OFF"
+		match new_mode:
+			Global.AssistMode.NORMAL: mode_name = "NORMAL"
+			Global.AssistMode.FULL: mode_name = "FULL"
+		assist_button.text = "ASSIST MODE: " + mode_name
+	
+	var assist_option = get_node_or_null("%AssistOption")
+	if is_instance_valid(assist_option):
+		assist_option.selected = int(new_mode)
+
+
 func _update_settings():
 	Mario35Handler.start_time = int(%StartTimeInput.value)
 	Mario35Handler.max_time = int(%MaxTimeInput.value)
@@ -622,6 +638,7 @@ func _update_settings():
 	Mario35Handler.physics_mode = %PhysicsOption.selected
 	Mario35Handler.game_version = %LevelOption.get_selected_id()
 	Mario35Handler.difficulty_mode = %DifficultyOption.selected
+	# Global.assist_mode is already updated via the popup or button, no need to set it here from stale UI
 	
 	# Save to persistent settings
 	Settings.file.mario_35.start_time = Mario35Handler.start_time

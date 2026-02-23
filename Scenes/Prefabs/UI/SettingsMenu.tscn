@@ -603,7 +603,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = -4
 script = ExtResource("4_avtty")
 category_name = "SETTINGS_DIFFICULTY"
-options = [NodePath("DamageStyle"), NodePath("Checkpoints"), NodePath("ExtraCheckpoints"), NodePath("Lives"), NodePath("FlagpoleLives"), NodePath("GameOverStyle"), NodePath("LevelDesign"), NodePath("BackScroll"), NodePath("TimeLimit"), NodePath("LakituStyle"), NodePath("PhysicsStyle")]
+options = [NodePath("DamageStyle"), NodePath("Checkpoints"), NodePath("ExtraCheckpoints"), NodePath("Lives"), NodePath("FlagpoleLives"), NodePath("GameOverStyle"), NodePath("LevelDesign"), NodePath("BackScroll"), NodePath("TimeLimit"), NodePath("LakituStyle"), NodePath("PhysicsStyle"), NodePath("AssistMode")]
 description_node = NodePath("Description/AutoScrollContainer/MarginContainer/Desc")
 
 [node name="Control" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/Difficulty" unique_id=1644264128]
@@ -696,6 +696,14 @@ option_key = "physics_style"
 title = "DIFFI_PHYSICS"
 value_descs = Array[String](["DESC_PHYSICS_0", "DESC_PHYSICS_1", "DESC_PHYSICS_2"])
 values = ["DIFFI_PHYSICS_0", "DIFFI_PHYSICS_1", "DIFFI_PHYSICS_2"]
+settings_category = "difficulty"
+
+[node name="AssistMode" parent="PanelContainer/MarginContainer/VBoxContainer/Difficulty" unique_id=23153576 groups=["Options"] instance=ExtResource("3_dl6kk")]
+layout_mode = 2
+option_key = "assist_mode"
+title = "DIFFI_ASSIST"
+value_descs = Array[String](["DESC_ASSIST_0", "DESC_ASSIST_1", "DESC_ASSIST_2"])
+values = ["DIFFI_ASSIST_0", "DIFFI_ASSIST_1", "DIFFI_ASSIST_2"]
 settings_category = "difficulty"
 
 [node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/Difficulty" unique_id=1015383680]
@@ -1078,6 +1086,7 @@ script = ExtResource("19_k6yev")
 [connection signal="value_changed" from="PanelContainer/MarginContainer/VBoxContainer/Difficulty/LakituStyle" to="PanelContainer/MarginContainer/VBoxContainer/Difficulty/DifficultySetter" method="lakitu_style_changed"]
 [connection signal="value_changed" from="PanelContainer/MarginContainer/VBoxContainer/Difficulty/PhysicsStyle" to="PanelContainer/MarginContainer/VBoxContainer/Difficulty/DifficultySetter" method="on_value_changed"]
 [connection signal="value_changed" from="PanelContainer/MarginContainer/VBoxContainer/Difficulty/PhysicsStyle" to="PanelContainer/MarginContainer/VBoxContainer/Difficulty/DifficultySetter" method="physics_style_changed"]
+[connection signal="value_changed" from="PanelContainer/MarginContainer/VBoxContainer/Difficulty/AssistMode" to="PanelContainer/MarginContainer/VBoxContainer/Difficulty/DifficultySetter" method="assist_mode_changed"]
 [connection signal="deleted" from="PanelContainer/MarginContainer/VBoxContainer/Data/CampaignData" to="PanelContainer/MarginContainer/VBoxContainer/Data/DataDeletion" method="delete_story"]
 [connection signal="deleted" from="PanelContainer/MarginContainer/VBoxContainer/Data/ChallengeModeData" to="PanelContainer/MarginContainer/VBoxContainer/Data/DataDeletion" method="delete_challenge"]
 [connection signal="deleted" from="PanelContainer/MarginContainer/VBoxContainer/Data/BooRaceData" to="PanelContainer/MarginContainer/VBoxContainer/Data/DataDeletion" method="delete_boo"]

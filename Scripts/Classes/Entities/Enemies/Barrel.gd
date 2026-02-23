@@ -18,7 +18,7 @@ func handle_movement(delta: float) -> void:
 func die(style: int = 0) -> void:
 	destroy()
 
-func die_from_object(_node: Node2D) -> void:
+func die_from_object(_node: Node2D, _time_reward: int = 2) -> void:
 	_check_br_kill()
 	destroy()
 	

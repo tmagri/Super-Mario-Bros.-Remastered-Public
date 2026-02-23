@@ -1476,6 +1476,8 @@ func power_up_animation(new_power_state := "") -> void:
 				await get_tree().create_timer(0.05).timeout
 				sprite.sprite_frames = old_frames
 				await get_tree().create_timer(0.05).timeout
+			power_state = new_state
+			sprite.sprite_frames = new_frames
 		else:
 			var rainbow = physics_params("RAINBOW_POWERUP_FX", COSMETIC_PARAMETERS, new_power_state) or physics_params("RAINBOW_POWERUP_FX", COSMETIC_PARAMETERS, old_state.state_name)
 			if rainbow:
@@ -1483,6 +1485,10 @@ func power_up_animation(new_power_state := "") -> void:
 				sprite.material.set_shader_parameter("enabled", true)
 			handle_invincible_palette()
 			sprite.stop()
+			
+			power_state = new_state
+			sprite.sprite_frames = new_frames
+			
 			await get_tree().create_timer(0.6).timeout
 			transforming = false
 			if rainbow:

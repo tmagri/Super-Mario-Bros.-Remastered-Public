@@ -158,9 +158,15 @@ func sync_players() -> void:
 			target_node = _get_or_create_player_card(pid)
 		
 		if target_node:
-			if target_node.get_parent() != left_grid:
+			var parent = target_node.get_parent()
+			if not parent:
+				left_grid.add_child(target_node)
+			elif parent != left_grid:
 				target_node.reparent(left_grid)
-			left_grid.move_child(target_node, i)
+			
+			if target_node.get_parent() == left_grid:
+				left_grid.move_child(target_node, i)
+			
 			target_node.custom_minimum_size = current_card_size
 			_update_card_data(target_node, target_node.get_meta("player_id", 0) if target_node.has_meta("player_id") else 0)
 
@@ -172,9 +178,15 @@ func sync_players() -> void:
 			target_node = _get_or_create_player_card(pid)
 		
 		if target_node:
-			if target_node.get_parent() != right_grid:
+			var parent = target_node.get_parent()
+			if not parent:
+				right_grid.add_child(target_node)
+			elif parent != right_grid:
 				target_node.reparent(right_grid)
-			right_grid.move_child(target_node, i)
+				
+			if target_node.get_parent() == right_grid:
+				right_grid.move_child(target_node, i)
+				
 			target_node.custom_minimum_size = current_card_size
 			_update_card_data(target_node, target_node.get_meta("player_id", 0) if target_node.has_meta("player_id") else 0)
 

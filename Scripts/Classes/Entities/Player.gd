@@ -113,7 +113,7 @@ extends CharacterBody2D
 		"CAN_AIR_TURN": false,             # Determines if the player can turn in mid-air.
 		"CAN_BREAK_BRICKS": true,          # Determines if the player can break bricks in their current form.
 		"CAN_BE_WALL_EJECTED": true,       # Determines if the player gets pushed out of blocks if inside of them.
-		"ROUNDED_FLOOR_COLLISION": true,
+		"ROUNDED_FLOOR_COLLISION": false,
 		"JUMP_WALK_THRESHOLD": 60.0,       # The minimum velocity the player must move at to perform a walking jump.
 		"JUMP_RUN_THRESHOLD": 93.75,       # The minimum velocity the player must move at to perform a running jump.
 		"JUMP_BUFFER": 2,

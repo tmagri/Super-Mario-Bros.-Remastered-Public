@@ -172,7 +172,7 @@ func _ready():
 	# Initial status with 0 players
 	status_label.text = "CONNECTED (0)"
 	await get_tree().process_frame
-	name_input.grab_focus()
+	$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton.grab_focus()
 	
 	update_focus_neighbors()
 	
@@ -730,9 +730,13 @@ func update_focus_neighbors():
 		settings_btn.focus_neighbor_top = start_button.get_path()
 		settings_btn.focus_neighbor_bottom = back_btn.get_path()
 		back_btn.focus_neighbor_top = settings_btn.get_path()
+		back_btn.focus_neighbor_bottom = name_input.get_path() # Wrap to Name
+		name_input.focus_neighbor_top = back_btn.get_path() # Wrap to Back
 	else:
 		assist_btn.focus_neighbor_bottom = back_btn.get_path()
 		back_btn.focus_neighbor_top = assist_btn.get_path()
+		back_btn.focus_neighbor_bottom = name_input.get_path() # Wrap to Name
+		name_input.focus_neighbor_top = back_btn.get_path() # Wrap to Back
 
 func update_settings_focus_neighbors():
 	var start = %StartTimeInput.get_line_edit()

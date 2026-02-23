@@ -39,7 +39,7 @@ script/source = "extends Node
 
 var input_nodes := []
 
-var actions := [\"jump\", \"run\", \"action\", \"move_left\", \"move_right\", \"move_up\", \"move_down\", \"ui_accept\", \"ui_back\", \"pause\"]
+var actions := [\"jump\", \"run\", \"action\", \"move_left\", \"move_right\", \"move_up\", \"move_down\", \"ui_accept\", \"ui_back\", \"pause\", \"drop_item\", \"m35_target\"]
 
 @export_enum(\"Keyboard\", \"Controller\") var type := 0
 
@@ -107,7 +107,7 @@ func save_inputs() -> void:
 	for i in actions:
 		var event = null
 		var events := []
-		if i.contains(\"ui\") or i == \"pause\":
+		if i.contains(\"ui\") or i in [\"pause\", \"drop_item\", \"m35_target\"]:
 			event = InputMap.action_get_events(i)
 		else:
 			event = InputMap.action_get_events(i + \"_0\")
@@ -741,7 +741,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = -4
 script = ExtResource("4_avtty")
 category_name = "SETTINGS_KEYBOARD"
-options = [NodePath("Jump"), NodePath("Run"), NodePath("Action"), NodePath("Left"), NodePath("Right"), NodePath("Up"), NodePath("Down"), NodePath("Accept"), NodePath("Back"), NodePath("Pause")]
+options = [NodePath("Jump"), NodePath("Run"), NodePath("Action"), NodePath("Left"), NodePath("Right"), NodePath("Up"), NodePath("Down"), NodePath("Accept"), NodePath("Back"), NodePath("Pause"), NodePath("DropItem"), NodePath("M35Target")]
 
 [node name="Control" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/KeyboardControls" unique_id=54314590]
 custom_minimum_size = Vector2(0, 4)
@@ -797,6 +797,16 @@ layout_mode = 2
 action_names = ["pause"]
 title = "PAUSE"
 
+[node name="DropItem" parent="PanelContainer/MarginContainer/VBoxContainer/KeyboardControls" unique_id=1907651047 groups=["Options"] instance=ExtResource("9_ksnto")]
+layout_mode = 2
+action_names = ["drop_item"]
+title = "ITEM ROULETTE"
+
+[node name="M35Target" parent="PanelContainer/MarginContainer/VBoxContainer/KeyboardControls" unique_id=1907651048 groups=["Options"] instance=ExtResource("9_ksnto")]
+layout_mode = 2
+action_names = ["m35_target"]
+title = "TARGET MODE"
+
 [node name="InputMapSaving" type="Node" parent="PanelContainer/MarginContainer/VBoxContainer/KeyboardControls" unique_id=1758293049 groups=["Options"]]
 process_mode = 3
 script = SubResource("GDScript_ksnto")
@@ -814,7 +824,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = -4
 script = ExtResource("4_avtty")
 category_name = "SETTINGS_CONTROLLER"
-options = [NodePath("Jump"), NodePath("Run"), NodePath("Action"), NodePath("Left"), NodePath("Right"), NodePath("Up"), NodePath("Down"), NodePath("Accept"), NodePath("Back"), NodePath("Pause")]
+options = [NodePath("Jump"), NodePath("Run"), NodePath("Action"), NodePath("Left"), NodePath("Right"), NodePath("Up"), NodePath("Down"), NodePath("Accept"), NodePath("Back"), NodePath("Pause"), NodePath("DropItem"), NodePath("M35Target")]
 
 [node name="Control" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/Controller" unique_id=1908594773]
 custom_minimum_size = Vector2(0, 4)
@@ -888,6 +898,20 @@ layout_mode = 2
 settings_category = "controller"
 action_names = ["pause"]
 title = "PAUSE"
+type = 1
+
+[node name="DropItem" parent="PanelContainer/MarginContainer/VBoxContainer/Controller" unique_id=2010460355 groups=["Options"] instance=ExtResource("9_ksnto")]
+layout_mode = 2
+settings_category = "controller"
+action_names = ["drop_item"]
+title = "ITEM ROULETTE"
+type = 1
+
+[node name="M35Target" parent="PanelContainer/MarginContainer/VBoxContainer/Controller" unique_id=2010460356 groups=["Options"] instance=ExtResource("9_ksnto")]
+layout_mode = 2
+settings_category = "controller"
+action_names = ["m35_target"]
+title = "TARGET MODE"
 type = 1
 
 [node name="InputMapSaving" type="Node" parent="PanelContainer/MarginContainer/VBoxContainer/Controller" unique_id=1884890595 groups=["Options"]]

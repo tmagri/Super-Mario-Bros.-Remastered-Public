@@ -47,6 +47,17 @@ const button_id_translation := [
 
 func _ready() -> void:
 	update_value()
+	mouse_entered.connect(_on_mouse_entered)
+
+func _on_mouse_entered() -> void:
+	if not can_remap or not get_parent().has_method("auto_get_options"): return
+	var parent = get_parent()
+	if parent.active and parent.can_input:
+		var idx = parent.options.find(self)
+		if idx != -1 and parent.selected_index != idx:
+			parent.selected_index = idx
+			if Settings.file.audio.extra_sfx == 1:
+				AudioManager.play_global_sfx("menu_move")
 
 func _process(_delta: float) -> void:
 	if selected:
@@ -106,7 +117,7 @@ func _input(event: InputEvent) -> void:
 func map_event_to_action(event, idx := 0) -> void:
 	for action_name in action_names:
 		var action = action_name
-		if action.contains("ui_") == false and action != "pause":
+		if action.contains("ui_") == false and action not in ["pause", "drop_item", "m35_target"]:
 			action = action_name + "_" + str(player_idx)
 		var replace_event = null
 		var events = InputMap.action_get_events(action).duplicate()

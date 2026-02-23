@@ -635,9 +635,8 @@ func update_m35_rank(_dummy = null) -> void:
 		rank_lbl.visible = true
 
 func handle_br_input():
-	# Targeting: Cycle with 'Pause' (Start)
-	# Only if NOT in debug mode (Pause is Pause in debug)
-	if Input.is_action_just_pressed("pause") and not Global.debug_mode:
+	# Targeting: Cycle with 'm35_target' (dedicated action, defaults to Start)
+	if Input.is_action_just_pressed("m35_target") and not Global.debug_mode:
 		Mario35Handler.cycle_target_mode(1)
 
 	# Item Use: 'drop_item' (Select) or 'ui_focus_next' (Tab)

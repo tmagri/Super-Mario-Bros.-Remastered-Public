@@ -16,6 +16,17 @@ var selected_index := 0:
 func _ready() -> void:
 	await get_tree().process_frame
 	update_starting_values()
+	mouse_entered.connect(_on_mouse_entered)
+
+func _on_mouse_entered() -> void:
+	if not get_parent().has_method("auto_get_options"): return
+	var parent = get_parent()
+	if parent.active and parent.can_input:
+		var idx = parent.options.find(self)
+		if idx != -1 and parent.selected_index != idx:
+			parent.selected_index = idx
+			if Settings.file.audio.extra_sfx == 1:
+				AudioManager.play_global_sfx("menu_move")
 
 func update_starting_values() -> void:
 	if Settings.file.has(settings_category):

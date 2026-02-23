@@ -316,10 +316,10 @@ resource_local_to_scene = true
 size = Vector2(10, 30.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t1xso"]
-size = Vector2(9999999, 8)
+size = Vector2(8, 9999999)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jl70t"]
-size = Vector2(9999999, 8)
+size = Vector2(8, 9999999)
 
 [sub_resource type="Animation" id="Animation_057py"]
 length = 0.001
@@ -733,7 +733,7 @@ script = ExtResource("21_jl70t")
 offset = Vector2(0, -14)
 
 [node name="CameraCenterJoint" type="Node2D" parent="." unique_id=1436879219]
-physics_interpolation_mode = 2
+physics_interpolation_mode = 0
 top_level = true
 
 [node name="LeftWall" type="StaticBody2D" parent="CameraCenterJoint" unique_id=455096569]
@@ -742,9 +742,7 @@ collision_layer = 0
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CameraCenterJoint/LeftWall" unique_id=1185119116]
-rotation = 1.5707964
 shape = SubResource("RectangleShape2D_t1xso")
-one_way_collision = true
 
 [node name="RightWall" type="StaticBody2D" parent="CameraCenterJoint" unique_id=1273904064]
 position = Vector2(-128, 0)
@@ -752,9 +750,7 @@ collision_layer = 0
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CameraCenterJoint/RightWall" unique_id=36577519]
-rotation = -1.5707964
 shape = SubResource("RectangleShape2D_jl70t")
-one_way_collision = true
 
 [node name="Sprite2D" type="Sprite2D" parent="CameraCenterJoint" unique_id=1434752138]
 visible = false

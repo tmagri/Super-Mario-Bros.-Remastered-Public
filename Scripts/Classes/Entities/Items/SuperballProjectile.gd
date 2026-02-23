@@ -3,9 +3,11 @@ extends CharacterBody2D
 
 const CHARACTERS := ["Mario", "Luigi", "Toad", "Toadette"]
 
+var is_friendly := true
+
 var character := "Mario"
 var direction := 1
-var lifetime := 10.0
+var LIFETIME := 10.0
 
 @export var COLLECT_COINS := false
 @export var MOVE_SPEED := 150
@@ -14,8 +16,8 @@ const SMOKE_PARTICLE = preload("res://Scenes/Prefabs/Particles/SmokeParticle.tsc
 
 func _ready() -> void:
 	# Start lifetime timer
-	if lifetime > 0:
-		await get_tree().create_timer(lifetime).timeout
+	if LIFETIME > 0:
+		await get_tree().create_timer(LIFETIME).timeout
 		if is_instance_valid(self):
 			hit(false)
 

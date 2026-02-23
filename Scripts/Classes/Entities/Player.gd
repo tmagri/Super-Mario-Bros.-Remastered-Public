@@ -1,83 +1,352 @@
 class_name Player
 extends CharacterBody2D
 
-#region Physics properies, these can be changed within a custom character's CharacterInfo.json
-# --- Jump Gravity variables (Revised for classic physics interpolation) ---
-var MIN_JUMP_GRAVITY_CLASSIC := 11.5 # Base gravity, corresponds to slowest speeds in smb.asm
-var MAX_JUMP_GRAVITY_CLASSIC := 14.1 # Max gravity, corresponds to high speeds in smb.asm ($90/$70 * base)
-const MIN_GRAVITY_SPEED_THRESHOLD := 64.0 # Speed at which gravity starts increasing (scaled $10)
-const MAX_GRAVITY_SPEED_THRESHOLD := 100.0 # Speed at which gravity reaches maximum (scaled $19)
-# --- Original physics properties ---
-var JUMP_GRAVITY := 11.0               # The player's gravity while jumping (Used by Remastered, Base for Classic MIN)
-var JUMP_HEIGHT := 300.0               # The strength of the player's jump, measured in px/sec
-var JUMP_INCR := 8.0                   # How much the player's X velocity affects their jump speed
-var JUMP_CANCEL_DIVIDE := 1.5          # When the player cancels their jump, their Y velocity gets divided by this value
-var JUMP_HOLD_SPEED_THRESHOLD := 0.0   # When the player's Y velocity goes past this value while jumping, their gravity switches to FALL_GRAVITY
+#region Intended modifiable properties, can be changed in a character's CharacterInfo.json
+# SkyanUltra: Moved physics/death parameters into their own nested dictionaries.
+# This makes it possible to modify character physics to a much greater extent,
+# allowing for power-state specific parameters while still limiting the player's
+# modifications to a specific degree to prevent cheating.
+## Determines various important values of the player character.
+@export_group("Player Parameters")
+## Determines the physics properties of the player character, such as general movement values, hitboxes, and other typical behavior.
+@export var PHYSICS_PARAMETERS: Dictionary = {
+	"Default": { # Fallback parameters. Additional entries can be added through CharacterInfo.json.
+		"COLLISION_SIZE": [8, 28],
+		"CROUCH_COLLISION_SIZE": [8, 14],            # The player's hitbox scale when crouched.
+		"CAN_AIR_TURN": false,             # Determines if the player can turn in mid-air.
+		"CAN_BREAK_BRICKS": true,          # Determines if the player can break bricks in their current form.
+		"CAN_BE_WALL_EJECTED": true,       # Determines if the player gets pushed out of blocks if inside of them.
+		"ROUNDED_FLOOR_COLLISION": false,
+		"JUMP_WALK_THRESHOLD": 60.0,       # The minimum velocity the player must move at to perform a walking jump.
+		"JUMP_RUN_THRESHOLD": 135.0,       # The minimum velocity the player must move at to perform a running jump.
+		
+		"JUMP_GRAVITY_IDLE": 11.0,         # The player's gravity while jumping from an idle state, measured in px/frame.
+		"JUMP_GRAVITY_WALK": 11.0,         # The player's gravity while jumping from a walking state, measured in px/frame.
+		"JUMP_GRAVITY_RUN": 11.0,          # The player's gravity while jumping from a running state, measured in px/frame.
+		"JUMP_SPEED_IDLE": 300.0,          # The strength of the player's idle jump, measured in px/sec.
+		"JUMP_SPEED_WALK": 300.0,          # The strength of the player's walking jump, measured in px/sec.
+		"JUMP_SPEED_RUN": 300.0,           # The strength of the player's running jump, measured in px/sec.
+		"JUMP_INCR": 8.0,                  # How much the player's X velocity affects their jump speed.
+		"JUMP_CANCEL_DIVIDE": 1.5,         # When the player cancels their jump, their Y velocity gets divided by this value.
+		"JUMP_HOLD_SPEED_THRESHOLD": 0.0,  # When the player's Y velocity goes past this value while jumping, their gravity switches to FALL_GRAVITY.
+		"JUMP_BUFFER": 10,
+		"CLASSIC_BOUNCE_BEHAVIOR": false,  # Determines if the player can only get extra height from a bounce with upward velocity, as opposed to holding jump.
+		"BOUNCE_SPEED": 200.0,             # The strength at which the player bounces off enemies without any extra input, measured in px/sec.
+		"BOUNCE_JUMP_SPEED": 300.0,        # The strength at which the player bounces off enemies while holding jump, measured in px/sec.
+		
+		"FALL_GRAVITY_PREDETERMINED": false,         # Determines if the player's gravity is determined by their last X velocity from leaving the ground rather than their current X velocity.
+		"FALL_GRAVITY_IDLE": 25.0,         # The player's gravity while falling from an idle state, measured in px/frame.
+		"FALL_GRAVITY_WALK": 25.0,         # The player's gravity while falling from a walking state, measured in px/frame.
+		"FALL_GRAVITY_RUN": 25.0,          # The player's gravity while falling from a running state, measured in px/frame.
+		"MAX_FALL_SPEED": 280.0,           # The player's maximum fall speed, measured in px/sec.
+		"CEILING_BUMP_SPEED": 45.0,        # The speed at which the player falls after hitting a ceiling, measured in px/sec.
+		
+		"CLAMP_GROUND_SPEED": false,       # Determines if the player's speed will get clamped while moving on the ground, emulating snappier movement.
+		"MINIMUM_SPEED": 0.0,              # The player's minimum speed while actively moving.
+		
+		"WALK_SPEED": 96.0,                # The player's speed while walking, measured in px/sec.
+		"GROUND_WALK_ACCEL": 4.0,          # The player's acceleration while walking, measured in px/frame.
+		"WALK_SKID": 8.0,                  # The player's turning deceleration while running, measured in px/frame.
+		"CAN_RUN_ACCEL_EARLY": false,      # Determines if the player can hold run before reaching walk speed to begin running.
+		"RUN_STOP_BUFFER": 0.0,            # Determines the amount of time in seconds before running will stop once its initiated.
+		"RUN_SPEED": 160.0,                # The player's speed while running, measured in px/sec.
+		"GROUND_RUN_ACCEL": 1.25,          # The player's acceleration while running, measured in px/frame.
+		"RUN_SKID": 8.0,     
+		"ICE_ACCEL_MOD": 0.25,
+		"ICE_DECEL_MOD": 0.25,
+		"ICE_SKID_MOD": 0.25,              # The player's turning deceleration while running, measured in px/frame.
+		
+		"CLASSIC_SKID_CONDITIONS": false,  # Determines if the player's speed must be over SKID_THRESHOLD to begin skidding.
+		"CAN_INSTANT_STOP_SKID": false,    # Determines if the player will instantly stop upon reaching the skid threshold.
+		"SKID_THRESHOLD": 100.0,           # The horizontal speed required, to be able to start skidding.
+		"SKID_STOP_THRESHOLD": 10.0,       # The maximum velocity required before the player will stop skidding.
+		
+		"GROUND_WALK_DECEL": 3.0,          # The player's grounded deceleration while no buttons are pressed, measured in px/frame.
+		"GROUND_RUN_DECEL": 3.0,           # The player's grounded deceleration while no buttons are pressed from running speed, measured in px/frame.
+		"DECEL_THRESHOLD": 0,
+		"AIR_DECEL": 0.0,                  # The player's airborne deceleration while no buttons are pressed, measured in px/frame.
+		
+		"AIR_WALK_ACCEL": 3.0,             # The player's usual acceleration while in midair, measured in px/frame.
+		"AIR_WALK_SKID_ACCEL": 4.5,        # The player's usual skid acceleration while in midair, measured in px/frame.
+		"AIR_RUN_ACCEL": 3.0,              # The player's running acceleration while in midair, measured in px/frame.
+		"AIR_RUN_SKID_ACCEL": 4.5,         # The player's running skid acceleration while in midair, measured in px/frame.
+		"AIR_BACKWARDS_ACCEL": 3.0,        # The player's backwards acceleration while in midair, measured in px/frame.
+		"AIR_BACKWARDS_SKID_ACCEL": 4.5,   # The player's backwards skid acceleration while in midair, measured in px/frame.
+		"AIR_SKID_JUMP_SPEED_MINIMUM": 0.0,          # The minimum jump speed required to use 'skid' params instead of 'accel' params for air control.
 
-var BOUNCE_HEIGHT := 200.0             # The strength at which the player bounces off enemies, measured in px/sec
-var BOUNCE_JUMP_HEIGHT := 300.0        # The strength at which the player bounces off enemies while holding jump, measured in px/sec
+		"LOCK_AIR_SPEED": false,           # Determines if the player can surpass their walk speed while in the air, aside from on trampolines.
+		"USE_BACKWARDS_ACCEL": false,      # Determines if the player will use backwards acceleration while travelling backwards.
+		"CAN_AIR_RUN_WITHOUT_RUN_BUTTON": false,     # Determines if the player must be holding the run button to allow for running speed in the air.
+		"CAN_AIR_SKID_ALWAYS": true,       # Determines if the player uses 'skid' params instead of 'accel' params if jump started below a certain speed.
+		"CAN_AIR_RUN_EARLY": false,        # Determines a multiplier to the player's acceleration when moving backwards in the air.
+		
+		"CLIMB_OFFSET": 5.0,               # The X position offset applied to the player when climbing.
+		"CLIMB_UP_SPEED": 50.0,            # The player's speed while climbing upwards, measured in px/sec.
+		"CLIMB_DOWN_SPEED": 120.0,         # The player's speed while climbing downwards, measured in px/sec.
 
-var FALL_GRAVITY := 25.0               # The player's gravity while falling, measured in px/frame
-var MAX_FALL_SPEED := 280.0            # The player's maximum fall speed, measured in px/sec
-var CEILING_BUMP_SPEED := 45.0         # The speed at which the player falls after hitting a ceiling, measured in px/sec
-
-var WALK_SPEED := 96.0                 # The player's speed while walking, measured in px/sec
-var GROUND_WALK_ACCEL := 4.0           # The player's acceleration while walking, measured in px/frame
-var WALK_SKID := 8.0                   # The player's turning deceleration while running, measured in px/frame
-
-var RUN_SPEED := 160.0                 # The player's speed while running, measured in px/sec
-var GROUND_RUN_ACCEL := 1.25           # The player's acceleration while running, measured in px/frame
-var RUN_SKID := 8.0                    # The player's turning deceleration while running, measured in px/frame
-
-var SKID_THRESHOLD := 100.0            # The horizontal speed required, to be able to start skidding.
-
-var DECEL := 3.0                       # The player's deceleration while no buttons are pressed, measured in px/frame
-var AIR_ACCEL := 3.0                   # The player's acceleration while in midair, measured in px/frame
-var AIR_SKID := 1.5                    # The player's turning deceleration while in midair, measured in px/frame
-
-var SWIM_SPEED := 95.0                 # The player's horizontal speed while swimming, measured in px/sec
-var SWIM_GROUND_SPEED := 45.0          # The player's horizontal speed while grounded underwater, measured in px/sec
-var SWIM_HEIGHT := 100.0               # The strength of the player's swim, measured in px/sec
-var SWIM_GRAVITY := 2.5                # The player's gravity while swimming, measured in px/frame
-var MAX_SWIM_FALL_SPEED := 200.0       # The player's maximum fall speed while swimming, measured in px/sec
-
-var DEATH_JUMP_HEIGHT := 300.0         # The strength of the player's "jump" during the death animation, measured in px/sec
-
-var SPRING_GRAVITY := 11.0             # The player's gravity while spring bouncing, measured in px/frame
-
-var FAST_REVERSE_ACCEL := 0.0          # Additional deceleration when reversing direction, measured in px/frame
-
-const DEFAULT_CLASSIC_PHYSICS := {
-	"JUMP_GRAVITY": 11,
-	"JUMP_HEIGHT": 320.0,
-	"JUMP_INCR": 4.0,
-	"JUMP_CANCEL_DIVIDE": 1.8,
-	"JUMP_HOLD_SPEED_THRESHOLD": 0.0,
-	"BOUNCE_HEIGHT": 200.0,
-	"BOUNCE_JUMP_HEIGHT": 300.0,
-	"FALL_GRAVITY": 20.0,
-	"MAX_FALL_SPEED": 288.0,
-	"CEILING_BUMP_SPEED": 45.0,
-	"WALK_SPEED": 96.0,
-	"GROUND_WALK_ACCEL": 2.3,
-	"WALK_SKID": 6.1,
-	"RUN_SPEED": 160.0,
-	"GROUND_RUN_ACCEL": 2.8,
-	"RUN_SKID": 9.1,
-	"SKID_THRESHOLD": 104.0,
-	"DECEL": 3.05,
-	"AIR_ACCEL": 3.0,
-	"AIR_SKID": 14.0,
-	"SWIM_SPEED": 95.0,
-	"SWIM_GROUND_SPEED": 45.0,
-	"SWIM_HEIGHT": 100.0,
-	"SWIM_GRAVITY": 2.5,
-	"MAX_SWIM_FALL_SPEED": 200.0,
-	"DEATH_JUMP_HEIGHT": 300.0,
-	"FAST_REVERSE_ACCEL": 12.0,
-	"can_air_turn": false
+		"TRAMPOLINE_SPEED": 500.0,         # The strength of a jump on a trampoline, measured in px/sec.
+		"SUPER_TRAMPOLINE_SPEED": 1200.0,  # The strength of a jump on a super trampoline, measured in px/sec.
+		
+		"SWIM_SPEED": 95.0,                # The player's horizontal speed while swimming, measured in px/sec.
+		"SWIM_GROUND_SPEED": 45.0,         # The player's horizontal speed while grounded underwater, measured in px/sec.
+		"SWIM_DECEL": 3.0,                 # The player's deceleration in water while no buttons are pressed, measured in px/frame.
+		"SWIM_HEIGHT": 100.0,              # The strength of the player's swim, measured in px/sec.
+		"SWIM_EXIT_SPEED": 250.0,          # The strength of the player's jump out of water, measured in px/sec.
+		"SWIM_GRAVITY": 2.5,               # The player's gravity while swimming, measured in px/frame.
+		"MAX_SWIM_FALL_SPEED": 200.0,      # The player's maximum fall speed while swimming, measured in px/sec.
+	},
+	"Small": {
+		"COLLISION_SIZE": [8, 14],
+		"CROUCH_COLLISION_SIZE": [8, 12],
+		"CAN_BREAK_BRICKS": false,
+		"CAN_BE_WALL_EJECTED": false,
+	},
+	"Big": {},
+	"Fire": {},
+	"Superball": {}
 }
+## Determines the physics properties of the character while "Classic Physics" are enabled.
+@export var CLASSIC_PARAMETERS: Dictionary = {
+	"Default": { # This uses the same parameters as PHYSICS_PARAMETERS and should be updated whenever new parameters are added.
+		"COLLISION_SIZE": [8, 28],        # The player's hitbox scale.
+		"CROUCH_COLLISION_SIZE": [8, 14],             # The player's hitbox scale when crouched.
+		"CAN_AIR_TURN": false,             # Determines if the player can turn in mid-air.
+		"CAN_BREAK_BRICKS": true,          # Determines if the player can break bricks in their current form.
+		"CAN_BE_WALL_EJECTED": true,       # Determines if the player gets pushed out of blocks if inside of them.
+		"ROUNDED_FLOOR_COLLISION": true,
+		"JUMP_WALK_THRESHOLD": 60.0,       # The minimum velocity the player must move at to perform a walking jump.
+		"JUMP_RUN_THRESHOLD": 93.75,       # The minimum velocity the player must move at to perform a running jump.
+		"JUMP_BUFFER": 2,
+		"JUMP_GRAVITY_IDLE": 7.5,          # The player's gravity while jumping from an idle state, measured in px/frame.
+		"JUMP_GRAVITY_WALK": 7.03,         # The player's gravity while jumping from a walking state, measured in px/frame.
+		"JUMP_GRAVITY_RUN": 9.375,         # The player's gravity while jumping from a running state, measured in px/frame.
+		"JUMP_SPEED_IDLE": 248.0,          # The strength of the player's idle jump, measured in px/sec.
+		"JUMP_SPEED_WALK": 248.0,          # The strength of the player's walking jump, measured in px/sec.
+		"JUMP_SPEED_RUN": 310.0,           # The strength of the player's running jump, measured in px/sec.
+		"JUMP_INCR": 0.0,                  # How much the player's X velocity affects their jump speed.
+		"JUMP_CANCEL_DIVIDE": 1.0,         # When the player cancels their jump, their Y velocity gets divided by this value.
+		"JUMP_HOLD_SPEED_THRESHOLD": 0.0,  # When the player's Y velocity goes past this value while jumping, their gravity switches to FALL_GRAVITY.
+		
+		"CLASSIC_BOUNCE_BEHAVIOR": true,   # Determines if the player can only get extra height from a bounce with upward velocity, as opposed to holding jump.
+		
+		"BOUNCE_SPEED": {
+			"SMB1": {"value": 248.0},
+			"SMBLL": {"value": 370.0}
+		},
+		"BOUNCE_JUMP_SPEED": {
+			"SMB1": {"value": 310.0},
+			"SMBLL": {"value": 370.0}
+		},                                 # The strength at which the player bounces off enemies without any extra input, measured in px/sec.   # The strength at which the player bounces off enemies while holding jump, measured in px/sec.
+		
+		"FALL_GRAVITY_PREDETERMINED": true,          # Determines if the player's gravity is determined by their last X velocity from leaving the ground rather than their current X velocity.
+		"FALL_GRAVITY_IDLE": 26.25,        # The player's gravity while falling from an idle state, measured in px/frame.
+		"FALL_GRAVITY_WALK": 22.5,         # The player's gravity while falling from a walking state, measured in px/frame.
+		"FALL_GRAVITY_RUN": 33.75,         # The player's gravity while falling from a running state, measured in px/frame.
+		"MAX_FALL_SPEED": 255.0,           # The player's maximum fall speed, measured in px/sec.
+		"CEILING_BUMP_SPEED": 45.0,        # The speed at which the player falls after hitting a ceiling, measured in px/sec.
+		
+		"CLAMP_GROUND_SPEED": true,        # Determines if the player's speed will get clamped while moving on the ground, emulating snappier movement.
+		"MINIMUM_SPEED": 4.46,             # The player's minimum speed while actively moving.
+		
+		"WALK_SPEED": 90.0,                # The player's speed while walking, measured in px/sec.
+		"GROUND_WALK_ACCEL": 2.23,         # The player's acceleration while walking, measured in px/frame.
+		"WALK_SKID": 6.1,                  # The player's turning deceleration while running, measured in px/frame.
+		
+		"CAN_RUN_ACCEL_EARLY": true,       # Determines if the player can hold run before reaching walk speed to begin running.
+		"RUN_STOP_BUFFER": 0.167,          # Determines the amount of time in seconds before running will stop once its initiated.
+		"RUN_SPEED": 150.0,                # The player's speed while running, measured in px/sec.
+		"GROUND_RUN_ACCEL": 3.34,          # The player's acceleration while running, measured in px/frame.
+		"RUN_SKID": 6.1,                   # The player's turning deceleration while running, measured in px/frame.
+		
+		"CLASSIC_SKID_CONDITIONS": true,   # Determines if the player's speed must be over SKID_THRESHOLD to begin skidding.
+		"CAN_INSTANT_STOP_SKID": true,     # Determines if the player will instantly stop upon reaching the skid threshold.
+		"SKID_THRESHOLD": 100.0,           # The horizontal speed required, to be able to start skidding.
+		"SKID_STOP_THRESHOLD": 33.75,      # The maximum velocity required before the player will stop skidding.
+		
+		"GROUND_WALK_DECEL": 3.05,   
+		"GROUND_RUN_DECEL": 3.05,
+		"DECEL_THRESHOLD": 33.75,           # The player's grounded deceleration while no buttons are pressed, measured in px/frame.
+		
+		"AIR_DECEL": 0.0,                  # The player's airborne deceleration while no buttons are pressed, measured in px/frame.
+		"AIR_WALK_ACCEL": 2.23,            # The player's usual acceleration while in midair, measured in px/frame.
+		"AIR_WALK_SKID_ACCEL": 3.04,       # The player's usual skid acceleration while in midair, measured in px/frame.
+		"AIR_RUN_ACCEL": 3.34,             # The player's running acceleration while in midair, measured in px/frame.
+		"AIR_RUN_SKID_ACCEL": 3.34,        # The player's running skid acceleration while in midair, measured in px/frame.
+		"AIR_BACKWARDS_ACCEL": 4.46,       # The player's backwards acceleration while in midair, measured in px/frame.
+		"AIR_BACKWARDS_SKID_ACCEL": 4.46,  # The player's backwards skid acceleration while in midair, measured in px/frame.
+		"AIR_SKID_JUMP_SPEED_MINIMUM": 105.0,        # The minimum jump speed required to use 'skid' params instead of 'accel' params for air control.
+
+		"LOCK_AIR_SPEED": true,            # Determines if the player can surpass their walk speed while in the air, aside from on trampolines.
+		"USE_BACKWARDS_ACCEL": true,       # Determines if the player will use backwards acceleration while travelling backwards.
+		"CAN_AIR_RUN_WITHOUT_RUN_BUTTON": true,      # Determines if the player must be holding the run button to allow for running speed in the air.
+		"CAN_AIR_SKID_ALWAYS": false,      # Determines if the player uses 'skid' params instead of 'accel' params if jump started below a certain speed.
+		"CAN_AIR_RUN_EARLY": false,        # Determines a multiplier to the player's acceleration when moving backwards in the air.
+		
+		"CLIMB_OFFSET": 5.0,               # The X position offset applied to the player when climbing.
+		"CLIMB_UP_SPEED": 50.0,            # The player's speed while climbing upwards, measured in px/sec.
+		"CLIMB_DOWN_SPEED": 120.0,         # The player's speed while climbing downwards, measured in px/sec.
+
+		"TRAMPOLINE_SPEED": 500.0,         # The strength of a jump on a trampoline, measured in px/sec.
+		"SUPER_TRAMPOLINE_SPEED": 1200.0,  # The strength of a jump on a super trampoline, measured in px/sec.
+		
+		"SWIM_SPEED": 95.0,                # The player's horizontal speed while swimming, measured in px/sec.
+		"SWIM_GROUND_SPEED": 45.0,         # The player's horizontal speed while grounded underwater, measured in px/sec.
+		"SWIM_DECEL": 0.0,                 # The player's deceleration in water while no buttons are pressed, measured in px/frame.
+		"SWIM_HEIGHT": 100.0,              # The strength of the player's swim, measured in px/sec.
+		"SWIM_EXIT_SPEED": 250.0,          # The strength of the player's jump out of water, measured in px/sec.
+		"SWIM_GRAVITY": 2.5,               # The player's gravity while swimming, measured in px/frame.
+		"MAX_SWIM_FALL_SPEED": 200.0,      # The player's maximum fall speed while swimming, measured in px/sec.
+	},
+	"Small": {
+		"COLLISION_SIZE": [8, 14],        # The player's hitbox scale.
+		"CROUCH_COLLISION_SIZE": [8, 12],  
+		"CROUCH_SCALE": 1.0,
+		"CAN_BREAK_BRICKS": false,
+		"CAN_BE_WALL_EJECTED": false,
+	},
+	"Big": {},
+	"Fire": {},
+	"Superball": {}
+}
+## Determines parameters typically involved with power-up behavior, mainly projectiles fired by the player.
+@export var POWER_PARAMETERS: Dictionary = {
+	"Default": {
+		"STARTING_POWER_STATE": "Small",   # Determines the default starting power state.
+		"STAR_TIME": 12.0,                 # Determines how long a Star will last for.
+		"WING_TIME": 10.0,                 # Determines how long Wings will last for.
+		"HAMMER_TIME": 10.0,               # Determines how long a Hammer will last for.
+		
+		"PROJ_TYPE": "",                   # Determines what projectile scene is used. Leaving this blank disables firing projectiles entirely.
+		
+		"PROJ_PARTICLE": "",               # Determines what particle scene is used. Leaving this blank disables particles from spawning.
+		"PROJ_PARTICLE_OFFSET": [0, 0],    # Determines the spawn location of the projectile's particle.
+		"PROJ_PARTICLE_ON_CONTACT": false, # Defines if the particle will play when making contact without being destroyed.
+		
+		"PROJ_EXTRA_PROJ": "",             # Determines if an extra projectile will be spawned. Leaving this blank will prevent any additional projectiles.
+		"PROJ_EXTRA_PROJ_OFFSET": [0, 0],  # Determines the spawn location of the extra projectile spawned when destroyed.
+		"PROJ_EXTRA_PROJ_ON_CONTACT": false,    # Defines if the extra projectile will spawn when the original makes contact without being destroyed.
+		
+		"PROJ_SFX_THROW": "fireball",      # Defines the sound effect that plays when this projectile is fired.
+		"PROJ_SFX_COLLIDE": "bump",        # Defines the sound effect that plays when this projectile collides.
+		"PROJ_SFX_HIT": "fireball_hit",    # Defines the sound effect that plays when this projectile hits an enemy.
+		"PROJ_COLLECT_COINS": false,
+		"MAX_PROJ_COUNT": 2,               # How many projectiles can be fired at once. -1 and below count as infinite.
+		"PROJ_COLLISION": true,            # Determines if the projectile can interact with collidable surfaces.
+		"PROJ_PIERCE_COUNT": 0,            # Determines how many additional enemies this projectile can hit before being destroyed. -1 and below count as infinite.
+		"PROJ_PIERCE_HITRATE": -1,         # Determines how much time must pass in seconds before this projectile can hit the same enemy it is on top of currently. -1 and below count as infinite. 
+		"PROJ_BOUNCE_COUNT": -1,           # Determines how many additional enemies this projectile can hit before being destroyed. -1 and below count as infinite.
+		"PROJ_GROUND_BOUNCE": true,        # Determines if the projectile can bounce off the ground.
+		"PROJ_WALL_BOUNCE": false,         # Determines if the projectile can bounce off of wals.
+		"PROJ_CEIL_BOUNCE": false,         # Determines if the projectile can bounce off of ceilings.
+		
+		"PROJ_LIFETIME": -1,               # Determines how long the projectile will last for. -1 and below count as infinite.
+		"PROJ_OFFSET": [-4.0, 16.0],       # Determines the offset for where the projectile will spawn.
+		"PROJ_ANGLE" : null,               # Determines the exact angle the projectile is sent at in degrees. Leaving this blank disables angled behavior entirely.
+		"PROJ_SPEED": [220.0, -100.0],     # Determines the initial velocity of the projectile.
+		"PROJ_SPEED_CAP": [-220.0, 220.0], # Determines the minimum and maximum X velocity of the projectile.
+		"PROJ_SPEED_SCALING": false,       # Determines if the projectile will have its initial speed scale with the player's movement.
+		
+		"PROJ_GROUND_DECEL": 0.0,          # The projectile's deceleration on the ground, measured in px/frame
+		"PROJ_AIR_DECEL": 0.0,             # The projectile's deceleration in the air, measured in px/frame
+		"PROJ_GRAVITY": 15.0,              # The projectile's gravity, measured in px/frame
+		"PROJ_BOUNCE_HEIGHT": 125.0,       # The projectile's bounce velocity upon landing on the ground.
+		"PROJ_MAX_FALL_SPEED": 150.0,      # The projectile's maximum fall speed, measured in px/sec
+	},
+	"Small": {
+		"PROJ_OFFSET": [-4.0, 8.0],
+	},
+	"Big": {},
+	"Fire": {
+		"PROJ_TYPE": "res://Scenes/Prefabs/Entities/Items/Fireball",
+		"PROJ_PARTICLE": "res://Scenes/Prefabs/Particles/FireballExplosion",
+	},
+	"Superball": {
+		"PROJ_TYPE": "res://Scenes/Prefabs/Entities/Items/SuperballProjectile",
+		"PROJ_PARTICLE": "res://Scenes/Prefabs/Particles/SmokeParticle",
+		"PROJ_SFX_THROW": "superball",
+		"PROJ_SFX_HIT": "superball_hit",
+		"PROJ_GRAVITY": 0.0, 
+		"PROJ_LIFETIME": 10.0,
+		"PROJ_WALL_BOUNCE": true,
+		"PROJ_CEIL_BOUNCE": true,
+		"PROJ_FLOOR_BOUNCE": true,
+		"PROJ_COLLECT_COINS": true,
+		"PROJ_SPEED": [150.0, -150.0],
+	}
+}
+## Determines values involving various ending sequences, such as grabbing the flagpole and walking to an NPC at the end of a level.
+@export var ENDING_PARAMETERS: Dictionary = {
+	"Default": {
+		"FLAG_SKIP_GRAB": false,           # Determines if the player skips grabbing the flag entirely.
+		"FLAG_HANG_TIMER": 1.5,            # How long the player will stick on the flagpole.
+		"FLAG_SLIDE_SPEED": 125.0,         # How fast the player slides down the flagpole.
+		
+		"FLAG_INITIAL_X_VELOCITY": 0.0,    # Determines the player's initial X velocity after letting go of the flagpole.
+		"FLAG_JUMP_SPEED": 0.0,            # How high the player will initially jump after letting go of the flagpole.
+		"FLAG_JUMP_INCR": 8.0,             # How much the player's X velocity will influence the player's jump height.
+		
+		"FLAG_SPEED_MULT": 1.0,            # The multiplier applied onto the player's max speed when walking to the flag.
+		"FLAG_ACCEL_MULT": 1.0,            # The multiplier applied onto the player's max acceleration when walking to the flag.
+		"TOAD_SPEED_MULT": 1.0,            # The multiplier applied onto the player's max speed when walking to a Toad.
+		"TOAD_ACCEL_MULT": 1.0,            # The multiplier applied onto the player's max acceleration when walking to a Toad.
+		"PEACH_SPEED_MULT": 1.0,           # The multiplier applied onto the player's max speed when walking to Peach.
+		"PEACH_ACCEL_MULT": 1.0,           # The multiplier applied onto the player's max acceleration when walking to Peach.
+		
+		"DOOR_POSE_OFFSET": 0.0,           # The offset of where the player performs their PoseDoor animation, if applicable.
+		"TOAD_POSE_OFFSET": -12.0,         # The offset of where the player performs their PoseToad animation, if applicable.
+		"PEACH_POSE_OFFSET": -12.0,        # The offset of where the player performs their PosePeach animation, if applicable.
+	}
+}
+## Determines values involving death, unique separated by damage types rather than power states.
+@export var DEATH_PARAMETERS: Dictionary = {
+	"Default": {
+		"DEATH_COLLISION": false,          # Determines whether the player will still collide with the level.
+		"DEATH_HANG_TIMER": 0.5,           # The amount of time the player will freeze in the air for during the death animation in seconds
+		"DEATH_X_VELOCITY": 0,             # The horizontal velocity the player gets sent at when dying, measured in px/sec
+		"DEATH_DECEL": 3.0,                # The player's deceleration during death, measured in px/frame
+		"DEATH_JUMP_SPEED": 300.0,         # The strength of the player's "jump" during the death animation, measured in px/sec
+		"DEATH_FALL_GRAVITY": 11.0,        # The player's gravity while falling during death, measured in px/frame
+		"DEATH_MAX_FALL_SPEED": 280.0,     # The player's maximum fall speed during death, measured in px/sec
+	}
+}
+## Determines values involving purely cosmetic changes, including offsets for the wing and hammer sprites and configuration for various visual and audio effects.
+@export var COSMETIC_PARAMETERS: Dictionary = {
+	"Default": { # Fallback parameters. Additional entries can be added through CharacterInfo.json.
+		"WING_OFFSET": [0.0, 0.0],         # The visual offset of the wings which appear with the Wing power-up.
+		"HAMMER_OFFSET": [0.0, -8.0],      # The visual offset of the hammer which appears with the Hammer power-up.
+		
+		"MOVE_ANIM_SPEED_DIV": 32,         # Determines the value used for division in the animation speed formula for walk/run animations. Lower is faster.
+		"CHECKPOINT_ICON_HEIGHT": -40,
+		"RAINBOW_STAR_FX_SPEED": 15.0,     # Determines the speed of the rainbow effect under the effects of a star, measured in cycles/sec
+		"RAINBOW_STAR_SLOW_FX_SPEED": 7.5, # Determines the speed of the rainbow effect nearing the end of a star's duration, measured in cycles/sec
+		"RAINBOW_POWERUP_FX": true,        # Determines whether or not the player will play the rainbow effect when powering up.
+		"RAINBOW_FX_SPEED": 15.0,          # Determines the speed of the rainbow effect in other scenarios, measured in cycles/sec
+		"ICE_SPEED_MOD": 1.5,
+		"WALK_SFX": "walk",                # Determines which sound effect to play when walking.
+		"RUN_SFX": "run",                  # Determines which sound effect to play when running.
+		"SKID_SFX": "skid",            # Determines which sound effect to play when skidding.
+		"JUMP_SFX": "big_jump",            # Determines which sound effect to play when jumping.
+		"TRAMPOLINE_SFX": "big_trampoline",          # Determines which sound effect to play when bouncing on a trampoline.
+		"TRAMPOLINE_USED_SFX": "big_used_trampoline", # Determines which sound effect to play when actively using a trampoline.
+		"GROUNDED_WALK_SFX": true,         # Forces walk sounds to only play when on the ground.
+		"GROUNDED_RUN_SFX": true,          # Forces run sounds to only play when on the ground.
+	},
+	"Small": {
+		"WING_OFFSET": [0.0, 10.0],
+		"RAINBOW_POWERUP_FX": false,
+		"JUMP_SFX": "small_jump",
+		"TRAMPOLINE_SFX": "small_trampoline",
+		"TRAMPOLINE_USED_SFX": "small_used_trampoline",
+		"CHECKPOINT_ICON_HEIGHT": -24,
+	},
+	"Big": {
+		"RAINBOW_POWERUP_FX": false,
+	}
+} 
 #endregion
+@export_group("")
+
+@export var physics_dict = PHYSICS_PARAMETERS
 
 @onready var camera_center_joint: Node2D = $CameraCenterJoint
 
@@ -85,20 +354,21 @@ const DEFAULT_CLASSIC_PHYSICS := {
 @onready var camera: Camera2D = $Camera
 @onready var score_note_spawner: ScoreNoteSpawner = $ScoreNoteSpawner
 
-# Used for handling different jump arcs in classic physics.
-enum JumpType { STANDARD, TRAMPOLINE, CLASSIC, CLASSIC_WALK, CLASSIC_RUN }
-var jump_type := JumpType.STANDARD
-var jump_fall_gravity := FALL_GRAVITY
-
 var has_jumped := false
+var has_spring_jumped := false
 
 var direction := 1
 var input_direction := 0
 
+var star_meter := 0.0
 var flight_meter := 0.0
+var hammer_meter := 0.0
+var powerup_timers := ["star_meter", "flight_meter", "hammer_meter"]
 
 var velocity_direction := 1
-var velocity_x_jump_stored := 0.0 # Changed to float to store precise speed
+var velocity_x_jump_stored := 0
+var speed_mult := 1.0
+var accel_mult := 1.0
 
 var total_keys := 0
 
@@ -112,30 +382,48 @@ var crouching := false:
 	get(): # You can't crouch if the animation somehow doesn't exist.
 		if not sprite.sprite_frames.has_animation("Crouch"): return false
 		return crouching
+	set(value):
+		if not crouching and value:
+			crouch_started.emit()
+		crouching = value
+var looking_up := false:
+	get(): # Same deal, can't look up if the animation doesn't exist.
+		if not sprite.sprite_frames.has_animation("LookUp"): return false
+		return looking_up
 var skidding := false
 
 var bumping := false
 var can_bump_sfx := true
-var can_bump_jump = false
-var can_bump_crouch = false
-var can_bump_swim = false
-var can_bump_fly = false
+var just_landed := false
+var can_land_sfx := false
 
 var kicking = false
-var can_kick_anim = false
 
 @export var player_id := 0
 const ONE_UP_NOTE = preload("uid://dopxwjj37gu0l")
-var gravity := FALL_GRAVITY # Current gravity applied
+@onready var gravity: float = calculate_speed_param("FALL_GRAVITY", velocity_x_jump_stored)
 
 var attacking := false
-var pipe_enter_direction := Vector2.ZERO#
+var pipe_enter_direction := Vector2.ZERO
 var pipe_move_direction := 1
 var stomp_combo := 0
 
 var is_invincible := false
-var can_pose := false
+var in_cutscene := false
+
+var can_pose_anim := false
+var can_pose_castle_anim := false
 var is_posing := false
+
+var can_big_grow_anim = false
+var can_bump_jump_anim = false
+var can_bump_crouch_anim = false
+var can_bump_swim_anim = false
+var can_bump_fly_anim = false
+var can_kick_anim = false
+var can_push_anim = false
+var can_spring_land_anim = false
+var can_spring_fall_anim = false
 
 const COMBO_VALS := [100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000, null]
 
@@ -144,10 +432,14 @@ const COMBO_VALS := [100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000, null
 @onready var normal_state: Node = $States/Normal
 @export var auto_death_pit := true
 
-var can_hurt := true
+var can_hurt := true:
+	set(value):
+		can_hurt = value
 
 var in_water := false
 
+var has_star := false
+var has_wings := false
 var has_hammer := false
 
 var spring_bouncing := false
@@ -166,13 +458,22 @@ var can_uncrouch := false
 
 var can_air_turn := false
 
+static var classic_physics := false
+static var classic_plus_enabled := false
+
 static var CHARACTERS := ["Mario", "Luigi", "Toad", "Toadette"]
 const POWER_STATES := ["Small", "Big", "Fire", "Superball"]
 
 signal moved
 signal dead
+signal jumped
+signal crouch_started
+signal damaged
+signal attacked
+signal powered_up
 
 var is_dead := false
+var last_damage_source := ""
 
 static var CHARACTER_NAMES := ["CHAR_MARIO", "CHAR_LUIGI", "CHAR_TOAD", "CHAR_TOADETTE"]
 
@@ -189,50 +490,129 @@ static var CHARACTER_PALETTES := [
 	preload("res://Assets/Sprites/Players/Toadette/ColourPalette.json")
 ]
 
+#region Animation Fallbacks, these determine what animations will use as a back-up if they aren't present.
 const ANIMATION_FALLBACKS := {
-	"JumpFall": "Jump",
-	"JumpBump": "Bump",
-	"Fall": "Move",
-	"Pipe": "Idle",
-	"Walk": "Move",
-	"Run": "Move",
-	"PipeWalk": "Walk",
+	# --- Idle States ---
 	"LookUp": "Idle",
 	"WaterLookUp": "LookUp",
 	"WingLookUp": "WaterLookUp",
 	"Crouch": "Idle",
 	"WaterCrouch": "Crouch",
 	"WingCrouch": "WaterCrouch",
+	"StarCrouch": "Crouch",
+	"StarLookUp": "LookUp",
+	"Stunned": "Idle",
+	"StarIdle": "Idle",
+	
+	# --- Cutscene States ---
+	"PosePeach": "PoseToad",
+
+	# --- Jump & Fall States ---
+	"Fall": "Move",
+	"JumpFall": "Jump",
+	"JumpBump": "Bump",
 	"CrouchFall": "Crouch",
 	"CrouchJump": "Crouch",
 	"CrouchBump": "Bump",
+	"JogJump": "Jump",
+	"JogJumpFall": "JumpFall",
+	"JogJumpBump": "JumpBump",
+	"RunJump": "Jump",
+	"RunJumpFall": "JumpFall",
+	"RunJumpBump": "JumpBump",
+	"SpringJump": "Jump",
+	"SpringJumpBump": "JumpBump",
+	
+	# --- Star Jump & Fall States ---
+	"StarJump": "Jump",
+	"StarFall": "JumpFall",
+	"StarJumpFall": "StarFall", # SkyanUltra: Legacy fallback for >1.0.2.
+	"StarJumpBump": "JumpBump",
+	
+	"StarRunJump": "StarJump",
+	"StarRunJumpFall": "StarJumpFall",
+	"StarRunJumpBump": "StarJumpBump",
+	
+	"StarSpringJump": "StarJump",
+	"StarSpringFall": "StarJumpFall",
+	"StarSpringBump": "StarJumpBump",
+
+	# --- Movement/Interaction States ---
+	"Walk": "Move",
+	"Jog": "Walk",
+	"Run": "Move",
+	"StarWalk": "Walk",
+	"StarJog": "Jog",
+	"StarRun": "Run",
+	"StarSkid": "Skid",
+	"StarPush": "Push",
+	"StarKick": "Kick",
 	"CrouchMove": "Crouch",
-	"WaterCrouchMove": "CrouchMove",
-	"WingCrouchMove": "WaterCrouchMove",
+	"StarCrouchMove": "CrouchMove",
+	"Pipe": "Idle",
+	"PipeWalk": "Walk",
+	"FlagSlide": "Climb",
+
+	# --- Size Transformations ---
+	"Shrink": "Grow",
+	# SkyanUltra: Future power-ups will need to be added here.
+	"SmallShrink": "SmallGrow",
+	"NormalShrink": "NormalGrow",
+	"FireShrink": "FireGrow",
+	"SuperballShrink": "SuperballGrow",
+
+	# --- Attack States ---
 	"IdleAttack": "MoveAttack",
 	"CrouchAttack": "IdleAttack",
 	"MoveAttack": "Attack",
 	"WalkAttack": "MoveAttack",
 	"RunAttack": "MoveAttack",
 	"SkidAttack": "MoveAttack",
+	"StarIdleAttack": "IdleAttack",
+	"StarWalkAttack": "WalkAttack",
+	"StarRunAttack": "RunAttack",
+	"StarCrouchAttack": "CrouchAttack",
+
+	# --- Water & Flying States ---
+	"WaterIdle": "Idle",
+	"WaterMove": "Move",
+	"WaterWalk": "WaterMove",
+	"WaterJog": "WaterMove",
+	"WaterRun": "WaterMove",
+	"WaterCrouchMove": "CrouchMove",
+	"WaterCrouchFall": "CrouchFall",
+	"WaterIdleAttack": "IdleAttack",
+	"WaterWalkAttack": "WalkAttack",
+	"WaterRunAttack": "RunAttack",
+	"SwimBump": "Bump",
 	"WingIdle": "WaterIdle",
-	"FlyUp": "SwimUp",
 	"WingMove": "WaterMove",
+	"WingWalk": "WaterWalk",
+	"WingJog": "WaterJog",
+	"WingRun": "WaterRun",
+	"WingCrouchMove": "WaterCrouchMove",
+	"WingCrouchFall": "WaterCrouchFall",
+	"WingIdleAttack": "WaterIdleAttack",
+	"WingWalkAttack": "WaterWalkAttack",
+	"WingRunAttack": "WaterRunAttack",
+	"FlyIdle": "SwimIdle",
+	"FlyUp": "SwimUp",
 	"FlyAttack": "SwimAttack",
 	"FlyBump": "SwimBump",
-	"FlagSlide": "Climb",
-	"WaterMove": "Move",
-	"WaterIdle": "Idle",
-	"FlyIdle": "SwimIdle",
-	"SwimBump": "Bump",
-	"DieFreeze": "Die",
-	"RunJump": "Jump",
-	"RunJumpFall": "JumpFall",
-	"RunJumpBump": "JumpBump",
-	"StarJump": "Jump",
-	"StarFall": "JumpFall",
-	"SuperballShrink": "SuperballGrow"
+
+	# --- Death States ---
+	"DieFreeze": "DieFall",
+	"DieIdle": "DieFall",
+	"DieMove": "DieIdle",
+	"DieRise": "DieFall",
+	"DieFall": "Die", # SkyanUltra: Legacy fallback for death animations in 1.0.2.
+	"FireDieFreeze": "DieFreeze",
+	"FireDieIdle": "DieIdle",
+	"FireDieMove": "DieMove",
+	"FireDieRise": "DieRise",
+	"FireDieFall": "DieFall",
 }
+#endregion
 
 var palette_transform := true
 var transforming := false
@@ -241,17 +621,16 @@ static var camera_right_limit := 999999
 
 static var times_hit := 0
 
+
 var can_run := true
 
 var air_frames := 0
 
-static var classic_physics := false
-static var classic_plus_enabled := false
-
-
 var swim_stroke := false
 
 var skid_frames := 0
+
+var on_ice := false
 
 var simulated_velocity := Vector2.ZERO
 
@@ -261,40 +640,36 @@ func _ready() -> void:
 	$Checkpoint/Label.text = str(player_id + 1)
 	$Checkpoint/Label.modulate = [Color("5050FF"), Color("F73910"), Color("1A912E"), Color("FFB762")][player_id]
 	$Checkpoint/Label.visible = Global.connected_players > 1
-	Global.can_pause = true
 	character = CHARACTERS[int(Global.player_characters[player_id])]
-	Global.can_time_tick = true
-	var physics_style = Settings.file.difficulty.get("physics_style", 2);
+	
+	var physics_style = Settings.file.difficulty.get("physics_style", 2)
 	if [Global.GameMode.BOO_RACE, Global.GameMode.MARATHON, Global.GameMode.MARATHON_PRACTICE, Global.GameMode.CUSTOM_LEVEL, Global.GameMode.MARIO_35].has(Global.current_game_mode) == false:
-		classic_physics = physics_style == 1 or physics_style == 2; #Is Classic Engine
-		classic_plus_enabled = physics_style == 2; #Is Classic Plus
-		apply_physics_style(physics_style)
-		apply_character_physics(true)
+		classic_physics = physics_style == 1 or physics_style == 2 #Is Classic Engine
+		classic_plus_enabled = physics_style == 2 #Is Classic Plus
 	else:
 		if Global.current_game_mode == Global.GameMode.MARIO_35:
 			physics_style = Mario35Handler.physics_mode
 			classic_physics = physics_style == 1
 			classic_plus_enabled = false # Usually MARIO 35 is strictly Classic or Remastered
-			apply_physics_style(physics_style)
-			apply_character_physics(false) # Force default physics for stability/fairness
 			Mario35Handler.is_timer_paused = false
 		else:
 			physics_style = 0  #Force Remastered
 			classic_physics = false
 			classic_plus_enabled = false
-			apply_physics_style(physics_style)
-			if Global.current_game_mode == Global.GameMode.CUSTOM_LEVEL:
-				apply_character_physics(true)
-			else:
-				apply_character_physics(false)
+	physics_dict = CLASSIC_PARAMETERS if classic_physics else PHYSICS_PARAMETERS
+	
+	apply_character_physics()
 	apply_character_sfx_map()
-	Global.level_theme_changed.connect(apply_character_sfx_map)
-	Global.level_theme_changed.connect(apply_physics_style)
+	Global.can_pause = true
+	Global.can_time_tick = true
 	Global.level_theme_changed.connect(apply_character_physics)
+	Global.level_theme_changed.connect(apply_character_sfx_map)
 	Global.level_theme_changed.connect(set_power_state_frame)
-	if Level.first_load and Global.current_game_mode == Global.GameMode.MARATHON_PRACTICE:
+	if Global.current_level.first_load and Global.current_game_mode == Global.GameMode.MARATHON_PRACTICE:
 		Global.player_power_states[player_id] = "0"
-	power_state = $PowerStates.get_node(POWER_STATES[int(Global.player_power_states[player_id])])
+	var cur_power_state = int(Global.player_power_states[player_id])
+	power_state = get_node("PowerStates/" + physics_params("STARTING_POWER_STATE", POWER_PARAMETERS))
+	power_state = $PowerStates.get_node(POWER_STATES[cur_power_state])
 	if Global.current_game_mode == Global.GameMode.LEVEL_EDITOR:
 		camera.enabled = false
 	handle_power_up_states(0)
@@ -303,98 +678,92 @@ func _ready() -> void:
 	if Global.level_editor == null:
 		recenter_camera()
 
-# Applies a physics style from a JSON file.
-# Defaults to Remastered (0) if no type is specified.
-func apply_physics_style(physics_type: int = 0) -> void:
-	var json_path: String = "res://Resources/RemasteredPhysics.json"
-	if physics_type == 1 or physics_type == 2: # Classic or Classic Plus
-		json_path = "res://Resources/ClassicPhysics.json"
-	if not FileAccess.file_exists(json_path):
-		printerr("Physics file not found at path: ", json_path)
-		return # Exit the function to prevent a crash.
-	var file = FileAccess.open(json_path, FileAccess.READ)
-	var content = file.get_as_text()
-	var json_data = JSON.parse_string(content)
-	if json_data == null:
-		printerr("Failed to parse JSON from file: ", json_path)
-		return # Exit if the JSON is invalid.
-	for key in json_data:
-		set(key, json_data[key])
+# SkyanUltra: Helper function for getting physics params.
+func physics_params(type: String, params_dict: Dictionary = {}, key: String = "") -> Variant:
+	var mult_applied = 1.0
+	var is_movement = false
+	# SkyanUltra: This is a stupid workaround for a stupid issue with this stupid
+	# engine. I can't just set params_dict to physics_dict... So I have to do this
+	# work around. I hate it. If anyone can fix it, then please. Do it.
+	if params_dict == {}: params_dict = physics_dict
+	for tag in ["WALK", "RUN", "AIR", "SWIM"]:
+		if tag in type:
+			is_movement = true
+			break
+	if "MULT" not in type and is_movement:
+		if "ACCEL" in type or "SKID" in type:
+			mult_applied = accel_mult
+		elif "SPEED" in type:
+			mult_applied = speed_mult
+	if power_state != null:
+		if key == "": key = power_state.state_name
+		if key in params_dict:
+			var state_dict = params_dict[key]
+			if type in state_dict:
+				var value = state_dict[type]
+				if (value is int or value is float) and not (value is bool):
+					return value * mult_applied
+				return value
+	if "Default" in params_dict:
+		var default_dict = params_dict["Default"]
+		if type in default_dict:
+			var value = default_dict[type]
+			if value is Dictionary:
+				value = $ResourceSetterNew.get_variation_json(value).value
+			if (value is int or value is float) and not (value is bool):
+				return value * mult_applied
+			return value
+	print("NULL PARAMETER! Looking up: type='%s', key='%s'\nparams_dict='%s'" % [type, key, params_dict["Default"]])
+	return null
 
-	# Set classic gravity values based on the loaded base JUMP_GRAVITY
-	if classic_physics:
-		# Increase the minimum gravity slightly for stationary jumps
-		MIN_JUMP_GRAVITY_CLASSIC = JUMP_GRAVITY + 0.5 # Adjust "+ 0.5" for tuning
-		# Set MAX slightly lower than MIN to make high speed jumps slightly weaker (floatier)
-		MAX_JUMP_GRAVITY_CLASSIC = MIN_JUMP_GRAVITY_CLASSIC - 0.5 # Adjust "- 0.5" for tuning
-
-	print("Successfully applied physics style from: ", json_path)
-
-
-func apply_character_physics(apply: bool = true) -> void:
-	# Load the JSON file
+func apply_character_physics() -> void:
+	var apply_gameplay_changes = true
 	var path = "res://Assets/Sprites/Players/" + character + "/CharacterInfo.json"
 	if int(Global.player_characters[player_id]) > 3:
 		path = path.replace("res://Assets/Sprites/Players", Global.config_path.path_join("custom_characters/"))
 	path = ResourceSetter.get_pure_resource_path(path)
+	var json = JSON.parse_string(FileAccess.open(path, FileAccess.READ).get_as_text())
 	
-	var file = FileAccess.open(path, FileAccess.READ)
-	if not file:
-		printerr("Failed to open character info: ", path)
-		return
-		
-	var json = JSON.parse_string(file.get_as_text())
-
-	# Determine which physics set to use
-	var physics_set_name = "classic" if classic_physics else "remastered"
-	var physics_values = null
-
-	# Find the correct physics set from the array
-	if json.physics is Array:
-		for physics_set in json.physics:
-			if physics_set is Dictionary and physics_set.get("name") == physics_set_name:
-				physics_values = physics_set.get("values")
-				break
-	
-	# Fallback if the expected set isn't found or structure is different
-	if physics_values == null:
-		printerr("Could not find physics set '", physics_set_name, "' in ", path, ". Checking for fallbacks.")
-		# Try to find "remastered" as a default if the target was missing
-		if json.physics is Array:
-			for physics_set in json.physics:
-				if physics_set is Dictionary and physics_set.get("name") == "remastered":
-					physics_values = physics_set.get("values")
-					printerr("Using 'remastered' set as a fallback.")
-					break
-		# Fallback for the old single-object format
-		elif json.physics is Dictionary:
-			printerr("Physics is old format.")
-			if classic_physics:
-				printerr("Using default classic physics for legacy file.")
-				physics_values = DEFAULT_CLASSIC_PHYSICS
-			else:
-				printerr("Using legacy values as remastered physics.")
-				physics_values = json.physics
-		
-	# If we still have nothing, we can't proceed
-	if physics_values == null:
-		printerr("Failed to parse any physics from ", path)
-		return
-
-	# Apply the selected physics values
-	if apply:
-		for i in physics_values:
-			set(i, physics_values[i])
+	# SkyanUltra: This section controls all CHARACTER PHYSICS values. This should be
+	# preventing physics changes to stop potential cheating in modes like You VS. Boo
+	# and Marathon mode.
+	if apply_gameplay_changes:
+		physics_dict = CLASSIC_PARAMETERS if classic_physics else PHYSICS_PARAMETERS
+	# Backwards compatibility check: Is this using the new 1.1 PHYSICS_PARAMETERS structure?
+	var uses_new_physics = false
+	for key in json.physics:
+		if key in ["PHYSICS_PARAMETERS", "CLASSIC_PARAMETERS", "POWER_PARAMETERS", "ENDING_PARAMETERS"]:
+			uses_new_physics = true
+			break
 			
-	# Update hitboxes (this logic is unchanged as scales are top-level)
-	for i in get_tree().get_nodes_in_group("SmallCollisions"):
-		var hitbox_scale = json.get("small_hitbox_scale", [1, 1]) if apply else [1, 1]
-		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("small_crouch_scale", 0.75) if apply else 0.75)
-		i._physics_process(0)
-	for i in get_tree().get_nodes_in_group("BigCollisions"):
-		var hitbox_scale = json.get("big_hitbox_scale", [1, 1]) if apply else [1, 1]
-		i.hitbox = Vector3(hitbox_scale[0], hitbox_scale[1] if i.get_meta("scalable", true) else 1, json.get("big_crouch_scale", 0.5) if apply else 0.5)
-		i._physics_process(0)
+	if uses_new_physics:
+		for key in json.physics:
+			if key in ["PHYSICS_PARAMETERS", "CLASSIC_PARAMETERS", "POWER_PARAMETERS", "ENDING_PARAMETERS"]:
+				if apply_gameplay_changes:
+					if get(key) is Dictionary and json.physics[key] is Dictionary:
+						Global.merge_dict(get(key), json.physics[key])
+					else:
+						set(key, json.physics[key])
+			else:
+				if get(key) is Dictionary and json.physics[key] is Dictionary:
+					Global.merge_dict(get(key), json.physics[key])
+				else:
+					set(key, json.physics[key])
+	else:
+		# Legacy Character format found! Treat its flat logic as Remastered variables.
+		# If user is playing in Classic mode, we completely ignore them and stick to default classic tuning.
+		if not classic_physics:
+			for key in json.physics:
+				if PHYSICS_PARAMETERS["Default"].has(key):
+					PHYSICS_PARAMETERS["Default"][key] = json.physics[key]
+				else:
+					# Certain legacy keys like `can_air_turn` exist at the top level of Player.gd
+					set(key, json.physics[key])
+
+func apply_classic_physics() -> void:
+	var json = JSON.parse_string(FileAccess.open("res://Resources/ClassicPhysics.json", FileAccess.READ).get_as_text())
+	for i in json:
+		set(i, json[i])
 
 func recenter_camera() -> void:
 	%CameraHandler.recenter_camera()
@@ -403,14 +772,20 @@ func recenter_camera() -> void:
 func reparent_camera() -> void:
 	return
 
-func editor_level_start() -> void:
+func actual_velocity_y():
+	if gravity_vector.y >= 0:
+		return velocity.y
+	else:
+		return -velocity.y
+
+func power_load(starting_power_state) -> void:
 	if PipeArea.exiting_pipe_id == -1:
 		power_state = get_node("PowerStates").get_child(starting_power_state)
-	handle_power_up_states(0)
-	set_power_state_frame()
-	camera_make_current()
-	recenter_camera()
-	state_machine.transition_to("Normal")
+		handle_power_up_states(0)
+		set_power_state_frame()
+		camera_make_current()
+		recenter_camera()
+		state_machine.transition_to("Normal")
 	if camera_right_limit <= global_position.x:
 		camera_right_limit = 99999999
 	await get_tree().create_timer(0.1, false).timeout
@@ -432,31 +807,29 @@ func _physics_process(delta: float) -> void:
 			Global.log_comment("NOCLIP Enabled")
 
 	up_direction = -gravity_vector
+	handle_collision_shapes()
+	handle_step_collision()
 	handle_directions()
+	handle_projectile_firing(delta)
 	handle_block_collision_detection()
+	handle_star(delta)
+	handle_hammer(delta)
 	handle_wing_flight(delta)
+	if has_node("%IceCheck"):
+		on_ice = %IceCheck.is_colliding() and is_on_floor()
+	else:
+		on_ice = false
 	air_frames = (air_frames + 1 if is_on_floor() == false else 0)
-	for i in get_tree().get_nodes_in_group("StepCollision"):
-		var on_wall := false
-		for x in [$StepWallChecks/LWall, $StepWallChecks/RWall]:
-			if x.is_colliding():
-				on_wall = true
-		var step_enabled = (not on_wall and air_frames < 4 and velocity.y >= 0)
-		i.set_deferred("disabled", not step_enabled)
 	if is_actually_on_ceiling() and can_bump_sfx:
 		bump_ceiling()
 	elif is_actually_on_floor() and not is_invincible:
+		land_on_ground()
 		stomp_combo = 0
-	elif velocity.y > 15:
+	elif actual_velocity_y() > 15:
 		can_bump_sfx = true
+	if not is_actually_on_floor() and not just_landed:
+		can_land_sfx = true
 	handle_water_detection()
-	%SkidParticles.visible = Settings.file.visuals.extra_particles == 1
-	%SkidParticles.emitting = ((skidding and skid_frames > 2) or crouching) and is_on_floor() and abs(velocity.x) > 25 and Settings.file.visuals.extra_particles == 1
-	if $SkidSFX.playing:
-		if (is_actually_on_floor() and skidding) == false:
-			$SkidSFX.stop()
-	elif is_actually_on_floor() and skidding and Settings.file.audio.skid_sfx == 1:
-		$SkidSFX.play()
 
 const BUBBLE_PARTICLE = preload("uid://bwjae1h1airtr")
 
@@ -466,6 +839,8 @@ func handle_water_detection() -> void:
 		in_water = $Hitbox.get_overlapping_areas().any(func(area: Area2D): return area is WaterArea) or $WaterDetect.get_overlapping_bodies().is_empty() == false
 	if old_water != in_water and in_water == false and flight_meter <= 0:
 		water_exited()
+	if in_water and old_water == false and flight_meter <= 0:
+		water_entered()
 
 func summon_bubble() -> void:
 	var bubble = BUBBLE_PARTICLE.instantiate()
@@ -477,66 +852,32 @@ func _process(delta: float) -> void:
 	handle_invincible_palette()
 	if is_invincible:
 		DiscoLevel.combo_meter = 100
-	%Hammer.visible = has_hammer
-	%HammerHitbox.collision_layer = has_hammer
-
-
 
 func apply_gravity(delta: float) -> void:
-
-
-	var current_gravity := FALL_GRAVITY # Default to fall gravity
-
 	if in_water or flight_meter > 0:
-		current_gravity = SWIM_GRAVITY
-	elif spring_bouncing:
-		current_gravity = SPRING_GRAVITY
+		gravity = physics_params("SWIM_GRAVITY")
 	else:
-		if sign(gravity_vector.y) * velocity.y + JUMP_HOLD_SPEED_THRESHOLD > 0.0:
-			if jump_type >= JumpType.CLASSIC:
-				current_gravity = jump_fall_gravity
-			else:
-				current_gravity = FALL_GRAVITY
-			
-		# Remastered physics fallback if needed or just use current_gravity
-		# Reference code sets "gravity" member.
-		# My code uses "current_gravity" local then applies.
-		# I must ensure gravity stays same if jumping (not falling).
-		
-		# If jumping (else block of falling check):
-		if not (sign(gravity_vector.y) * velocity.y + JUMP_HOLD_SPEED_THRESHOLD > 0.0):
-			if classic_physics:
-				# Do nothing? Reference sets gravity inside jump().
-				# But here apply_gravity uses 'gravity' member in calculation.
-				# My code calculates 'current_gravity'.
-				# I should assign current_gravity = gravity (member) if jumping.
-				current_gravity = gravity
-			else:
-				if not jump_cancelled:
-					current_gravity = JUMP_GRAVITY
-				# else current_gravity remains FALL_GRAVITY
-
-	# Apply the determined gravity
-	velocity += (gravity_vector * ((current_gravity / (1.5 if low_gravity else 1.0)) / delta)) * delta
-
-	# Clamp fall speed
-	var target_fall: float = MAX_FALL_SPEED
+		if sign(gravity_vector.y) * velocity.y + physics_params("JUMP_HOLD_SPEED_THRESHOLD") > 0.0:
+			gravity = calculate_speed_param("FALL_GRAVITY", velocity_x_jump_stored)
+	velocity += (gravity_vector * ((gravity / (1.5 if low_gravity else 1.0)) / delta)) * delta
+	var target_fall: float = physics_params("MAX_FALL_SPEED")
 	if in_water:
-		target_fall = MAX_SWIM_FALL_SPEED
-	if gravity_vector.y > 0:
+		target_fall = physics_params("MAX_SWIM_FALL_SPEED")
+	if gravity_vector.y >= 0:
 		velocity.y = clamp(velocity.y, -INF, (target_fall / (1.2 if low_gravity else 1.0)))
 	else:
 		velocity.y = clamp(velocity.y, -(target_fall / (1.2 if low_gravity else 1.0)), INF)
-
 
 func camera_make_current() -> void:
 	camera.enabled = true
 	camera.make_current()
 
-func play_animation(animation_name := "") -> void:
+func play_animation(animation_name := "", force := false) -> void:
 	if sprite.sprite_frames == null: return
 	animation_name = get_fallback_animation(animation_name)
-	if sprite.animation != animation_name:
+	if sprite.scale.x == -1 and sprite.sprite_frames.has_animation("Left" + animation_name):
+		animation_name = "Left" + animation_name
+	if sprite.animation != animation_name or force:
 		sprite.play(animation_name)
 
 func get_fallback_animation(animation_name := "") -> String:
@@ -552,8 +893,11 @@ func apply_character_sfx_map() -> void:
 		custom_character = true
 		path = path.replace("res://Assets/Sprites/Players", Global.config_path.path_join("custom_characters/"))
 	path = ResourceSetter.get_pure_resource_path(path)
+	if FileAccess.file_exists(path) == false:
+		AudioManager.load_sfx_map({})
+		return
 	var json = JSON.parse_string(FileAccess.open(path, FileAccess.READ).get_as_text())
-
+	
 	for i in json:
 		var res_path = "res://Assets/Audio/SFX/" + json[i]
 		res_path = ResourceSetter.get_pure_resource_path(res_path)
@@ -568,15 +912,12 @@ func apply_character_sfx_map() -> void:
 				json[i] = res_path
 		else:
 			json[i] = res_path
-
+	
 	AudioManager.load_sfx_map(json)
 
 func refresh_hitbox() -> void:
-	$Hitbox.set_deferred("monitoring", false)
-	$Hitbox.set_deferred("monitorable", false)
-	await get_tree().physics_frame
-	$Hitbox.set_deferred("monitoring", true)
-	$Hitbox.set_deferred("monitorable", true)
+	for i in $Hitbox.get_overlapping_areas():
+		i.area_entered.emit($Hitbox)
 
 func is_actually_on_floor() -> bool:
 	if is_on_floor():
@@ -609,25 +950,24 @@ func enemy_bounce_off(enemy: Node = null, add_combo := true, award_score := true
 	if add_combo:
 		add_stomp_combo(enemy, award_score, award_m35_time)
 	if classic_physics and not classic_plus_enabled:
-		# Classic physics uses a single initial bounce velocity.
-		velocity.y = sign(gravity_vector.y) * -BOUNCE_HEIGHT
+		jump_cancelled = sign(velocity.y * gravity_vector.y) >= 0.0 if physics_params("CLASSIC_BOUNCE_BEHAVIOR") else not Global.player_action_pressed("jump", player_id)
 	else:
-		# This block handles Remastered and Classic Plus physics
 		jump_cancelled = not Global.player_action_pressed("jump", player_id)
-		await get_tree().physics_frame
-		if Global.player_action_pressed("jump", player_id):
-			velocity.y = sign(gravity_vector.y) * -BOUNCE_JUMP_HEIGHT
-			# Determine correct gravity based on initial jump speed for Classic+
-			gravity = JUMP_GRAVITY
-			has_jumped = true
+	await get_tree().physics_frame
+	if Global.player_action_pressed("jump", player_id):
+		velocity.y = sign(gravity_vector.y) * -physics_params("BOUNCE_JUMP_SPEED")
+		if physics_params("CLASSIC_BOUNCE_BEHAVIOR") and classic_physics and not classic_plus_enabled:
+			if jump_cancelled:
+				gravity = calculate_speed_param("FALL_GRAVITY", velocity_x_jump_stored)
 		else:
-			velocity.y = sign(gravity_vector.y) * -BOUNCE_HEIGHT
-			# Gravity becomes FALL_GRAVITY immediately after bounce if jump not held
-			gravity = FALL_GRAVITY
-
+			gravity = calculate_speed_param("JUMP_GRAVITY")
+		has_jumped = true
+	else:
+		velocity.y = sign(gravity_vector.y) * -physics_params("BOUNCE_SPEED")
+		if not classic_physics or classic_plus_enabled:
+			gravity = calculate_speed_param("FALL_GRAVITY", velocity_x_jump_stored)
 
 func add_stomp_combo(enemy: Node = null, award_score := true, award_m35_time := true) -> void:
-	# Award time in Mario 35 mode
 	if Global.current_game_mode == Global.GameMode.MARIO_35 and award_m35_time:
 		var reward = Mario35Handler.COMBO_TIME_REWARDS[clampi(stomp_combo, 0, Mario35Handler.COMBO_TIME_REWARDS.size() - 1)]
 		if enemy:
@@ -641,12 +981,12 @@ func add_stomp_combo(enemy: Node = null, award_score := true, award_m35_time := 
 				Global.score += 10000
 				score_note_spawner.spawn_note(10000)
 			elif Global.current_game_mode == Global.GameMode.MARIO_35:
-				Mario35Handler.add_time(20) # 1-Up equivalent time
+				Mario35Handler.add_time(20)
 				AudioManager.play_global_sfx("1_up")
 				score_note_spawner.spawn_one_up_note()
 			else:
-				Global.lives += 1
 				AudioManager.play_global_sfx("1_up")
+				Global.lives += 1
 				score_note_spawner.spawn_one_up_note()
 	else:
 		if award_score:
@@ -654,14 +994,21 @@ func add_stomp_combo(enemy: Node = null, award_score := true, award_m35_time := 
 			score_note_spawner.spawn_note(COMBO_VALS[stomp_combo])
 		stomp_combo += 1
 
+func land_on_ground() -> void:
+	if can_land_sfx:
+		AudioManager.play_sfx("land", global_position)
+		just_landed = true
+		can_land_sfx = false
+		await get_tree().create_timer(0.1).timeout
+		just_landed = false
+
 func bump_ceiling() -> void:
 	AudioManager.play_sfx("bump", global_position)
-	velocity.y = CEILING_BUMP_SPEED
+	velocity.y = sign(gravity_vector.y) * physics_params("CEILING_BUMP_SPEED")
 	can_bump_sfx = false
 	bumping = true
 	await get_tree().create_timer(0.1).timeout
-	AudioManager.kill_sfx("small_jump")
-	AudioManager.kill_sfx("big_jump")
+	AudioManager.kill_sfx(physics_params("JUMP_SFX", COSMETIC_PARAMETERS))
 	await get_tree().create_timer(0.1).timeout
 	bumping = false
 
@@ -670,49 +1017,28 @@ func kick_anim() -> void:
 	await get_tree().create_timer(0.2).timeout
 	kicking = false
 
-func super_star() -> void:
-	if Global.current_game_mode == Global.GameMode.MARIO_35 and is_invincible:
-		Mario35Handler.add_item_time_bonus()
-		AudioManager.play_sfx("power_up", global_position)
-		# Reset star timer so the new star gets its full duration
-		$StarTimer.start()
-		return
-		
-	DiscoLevel.combo_meter += 1
-	is_invincible = true
-	$StarTimer.start()
-
 var colour_palette: Texture = null
 
 func stop_all_timers() -> void:
-	flight_meter = -1
-	for i in [$StarTimer, $HammerTimer]:
-		i.stop()
+	for i in powerup_timers:
+		set(i, 0)
 
 func handle_invincible_palette() -> void:
 	sprite.material.set_shader_parameter("mode", !Settings.file.visuals.rainbow_style)
 	sprite.material.set_shader_parameter("player_palette", $PlayerPalette.texture)
 	sprite.material.set_shader_parameter("palette_size", colour_palette.get_width())
+	sprite.material.set_shader_parameter("palette_height", POWER_STATES.size())
 	sprite.material.set_shader_parameter("invincible_palette", $InvinciblePalette.texture)
+	sprite.material.set_shader_parameter("invincible_palette_size", $InvinciblePalette.texture.get_height())
 	sprite.material.set_shader_parameter("palette_idx", POWER_STATES.find(power_state.state_name))
-	sprite.material.set_shader_parameter("enabled", (is_invincible or (palette_transform and transforming)))
+	sprite.material.set_shader_parameter("enabled", (has_star or (palette_transform and transforming)))
 
 func handle_block_collision_detection() -> void:
 	if ["Pipe"].has(state_machine.state.name): return
-	match power_state.hitbox_size:
-		"Small":
-			var points: Array = $SmallCollision.polygon
-			points.sort_custom(func(a, b): return a.y < b.y)
-			$BlockCollision.position.y = points.front().y * $SmallCollision.scale.y
-		"Big", "Superball":
-			var points: Array = $BigCollision.polygon
-			points.sort_custom(func(a, b): return a.y < b.y)
-			$BlockCollision.position.y = points.front().y * $BigCollision.scale.y
-	if velocity.y <= FALL_GRAVITY:
+	if is_on_ceiling():
 		for i in $BlockCollision.get_overlapping_bodies():
 			if i is Block:
-				if is_on_ceiling():
-					i.player_block_hit.emit(self)
+				i.player_block_hit.emit(self)
 
 func handle_directions() -> void:
 	input_direction = 0
@@ -722,34 +1048,150 @@ func handle_directions() -> void:
 		input_direction = -1
 	velocity_direction = sign(velocity.x)
 
-func get_reverse_acceleration() -> float:
-	if FAST_REVERSE_ACCEL > 0.0 and input_direction != 0 and is_on_floor():
-		if sign(velocity.x) != 0 and sign(velocity.x) != input_direction:
-			if abs(velocity.x) < SKID_THRESHOLD:
-				return FAST_REVERSE_ACCEL
-	return 0.0
+# SkyanUltra: Moved projectile handling code into Player for compatibility
+# with other power-states, and easier manipulation through parameters.
+var projectile_amount = 0
+var projectile_type = load("res://Scenes/Prefabs/Entities/Items/Fireball.tscn")
 
-var use_big_collision := false
+const POWER_PARAM_LIST = {
+	"PARTICLE_OFFSET": "PROJ_PARTICLE_OFFSET",
+	"PARTICLE_ON_CONTACT": "PROJ_PARTICLE_ON_CONTACT",
+	"EXTRA_PROJECTILE": "PROJ_EXTRA_PROJ",
+	"EXTRA_PROJECTILE_OFFSET": "PROJ_EXTRA_PROJ_OFFSET",
+	"EXTRA_PROJECTILE_ON_CONTACT": "PROJ_EXTRA_PROJ_ON_CONTACT",
+	"SFX_COLLIDE": "PROJ_SFX_COLLIDE",
+	"SFX_HIT": "PROJ_SFX_HIT",
+	"HAS_COLLISION": "PROJ_COLLISION",
+	"PIERCE_COUNT": "PROJ_PIERCE_COUNT",
+	"PIERCE_HITRATE": "PROJ_PIERCE_HITRATE",
+	"BOUNCE_COUNT": "PROJ_BOUNCE_COUNT",
+	"GROUND_BOUNCE": "PROJ_GROUND_BOUNCE",
+	"WALL_BOUNCE": "PROJ_WALL_BOUNCE",
+	"CEIL_BOUNCE": "PROJ_CEIL_BOUNCE",
+	"COLLECT_COINS": "PROJ_COLLECT_COINS",
+	"LIFETIME": "PROJ_LIFETIME",
+	"GROUND_DECEL": "PROJ_GROUND_DECEL",
+	"AIR_DECEL": "PROJ_AIR_DECEL",
+	"GRAVITY": "PROJ_GRAVITY",
+	"BOUNCE_HEIGHT": "PROJ_BOUNCE_HEIGHT",
+	"MAX_FALL_SPEED": "PROJ_MAX_FALL_SPEED",
+	"MOVE_SPEED_CAP": "PROJ_SPEED_CAP",
+}
+
+func handle_projectile_firing(delta: float) -> void:
+	if physics_params("PROJ_TYPE", POWER_PARAMETERS) == "" or state_machine.state.name != "Normal":
+		return
+	if Global.player_action_just_pressed("action", player_id) and (projectile_amount < physics_params("MAX_PROJ_COUNT", POWER_PARAMETERS) or physics_params("MAX_PROJ_COUNT", POWER_PARAMETERS) < 0) and delta > 0:
+		throw_projectile()
+
+func throw_projectile() -> void:
+	attacked.emit()
+	projectile_type = load(physics_params("PROJ_TYPE", POWER_PARAMETERS) + ".tscn")
+	var node = projectile_type.instantiate()
+	var offset = physics_params("PROJ_OFFSET", POWER_PARAMETERS)
+	var angle = Vector2.ZERO if physics_params("PROJ_ANGLE", POWER_PARAMETERS) == null else Vector2.from_angle(deg_to_rad(physics_params("PROJ_ANGLE", POWER_PARAMETERS)))
+	var speed = physics_params("PROJ_SPEED", POWER_PARAMETERS)
+	var speed_scaling = 0
+	if physics_params("PROJ_SPEED_SCALING", POWER_PARAMETERS):
+		speed_scaling = velocity.x * direction
+	
+	node.global_position = global_position - Vector2(offset[0] * direction, offset[1] * gravity_vector.y)
+	if "direction" in node: node.direction = direction
+	if "velocity" in node: node.velocity = Vector2((speed[0] + speed_scaling) * direction, -speed[1])
+	if node is FireBall or node is SuperballProjectile:
+		if "is_friendly" in node:
+			node.is_friendly = true
+		if "character" in node:
+			node.character = character
+		if "PARTICLE" in node:
+			node.PARTICLE = load(physics_params("PROJ_PARTICLE", POWER_PARAMETERS) + ".tscn")
+		for param in POWER_PARAM_LIST:
+			if param in node:
+				node.set(param, physics_params(POWER_PARAM_LIST[param], POWER_PARAMETERS))
+		if "MOVE_SPEED" in node:
+			node.MOVE_SPEED = speed[0] + speed_scaling
+		if "MOVE_ANGLE" in node:
+			node.MOVE_ANGLE = angle
+	call_deferred("add_sibling", node)
+	projectile_amount += 1
+	node.tree_exited.connect(func(): projectile_amount -= 1)
+	AudioManager.play_sfx(physics_params("PROJ_SFX_THROW", POWER_PARAMETERS), global_position)
+	attacking = true
+	await get_tree().create_timer(0.1, false).timeout
+	attacking = false
 
 func handle_power_up_states(delta) -> void:
-	for i in get_tree().get_nodes_in_group("BigCollisions"):
-		if i.owner == self:
-			i.set_deferred("disabled", power_state.hitbox_size == "Small" or crouching)
-	$Checkpoint.position.y = -24 if power_state.hitbox_size == "Small" or crouching else -40
 	power_state.update(delta)
+
+func handle_collision_shapes() -> void:
+	var collision_size = physics_params("COLLISION_SIZE")
+	var hitbox_size = physics_params("COLLISION_SIZE")
+	if crouching:
+		collision_size = physics_params("CROUCH_COLLISION_SIZE")
+		if not normal_state.wall_pushing:
+			hitbox_size = physics_params("CROUCH_COLLISION_SIZE")
+	collision_size = Vector2(collision_size[0], collision_size[1])
+	hitbox_size = Vector2(hitbox_size[0], hitbox_size[1])
+	collision_size.x = max(collision_size.x, 6)
+	collision_size.y = max(collision_size.y, 8)
+	$SmallCollision.sloped_floor_corner = physics_params("ROUNDED_FLOOR_COLLISION")
+	$SmallCollision.hitbox = collision_size
+	$BigCollision.sloped_floor_corner = physics_params("ROUNDED_FLOOR_COLLISION")
+	$BigCollision.hitbox = collision_size
+	$Hitbox/SmallShape.shape.size = hitbox_size + Vector2(0.2, 0.2)
+	$Hitbox/BigShape.shape.size = hitbox_size + Vector2(0.2, 0.2)
+	$BlockCollision.position.y = -collision_size.y
+	$BlockCollision/SmallShape.shape.size.x = collision_size.x
+	$BlockCollision/BigShape.shape.size.x = collision_size.x
+
+func handle_step_collision() -> void:
+	var collision_size = physics_params("COLLISION_SIZE")
+	if crouching:
+		collision_size = physics_params("CROUCH_COLLISION_SIZE")
+	collision_size = Vector2(collision_size[0], collision_size[1])
+	for i in get_tree().get_nodes_in_group("StepCollision"):
+		var on_wall := false
+		for x in [$StepWallChecks/LWall, $StepWallChecks/RWall]:
+			x.position.x = ((collision_size.x / 2) + 1) * sign(x.position.x)
+			if x.is_colliding():
+				on_wall = true
+		var step_enabled = (not on_wall and (actual_velocity_y()) >= 0 and abs(velocity.x) > 5)
+		i.set_deferred("disabled", not step_enabled)
+		i.position.x = ((collision_size.x / 2)) * sign(i.position.x)
+		i.position.x += 1 * sign(i.position.x)
+
+func handle_star(delta:float) -> void:
+	star_meter -= delta
+	if star_meter <= 0 and has_star:
+		on_star_timeout()
+	
+func handle_hammer(delta:float) -> void:
+	hammer_meter -= delta
+	if hammer_meter <= 0 and has_hammer:
+		has_hammer = false
+		AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.HAMMER)
+	%Hammer.visible = has_hammer
+	%HammerHitbox.collision_layer = has_hammer
+	if has_hammer:
+		var hammer_offset = physics_params("HAMMER_OFFSET", COSMETIC_PARAMETERS)
+		%Hammer.offset = Vector2(hammer_offset[0], hammer_offset[1])
 
 func handle_wing_flight(delta: float) -> void:
 	flight_meter -= delta
-	if flight_meter <= 0 && %Wings.visible:
+	if flight_meter <= 0 and has_wings:
+		has_wings = false
 		AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.WING)
-		gravity = FALL_GRAVITY # Use the correct variable name
-	%Wings.visible = flight_meter >= 0
-	if flight_meter < 0:
-		return
+		gravity = calculate_speed_param("FALL_GRAVITY", velocity_x_jump_stored)
+	%Wings.visible = flight_meter > 0
 	%BigWing.visible = power_state.hitbox_size != "Small"
 	%SmallWing.visible = power_state.hitbox_size == "Small"
+	var wing_offset = physics_params("WING_OFFSET", COSMETIC_PARAMETERS)
 	for i in [%SmallWing, %BigWing]:
-		if velocity.y < 0:
+		i.offset = Vector2(wing_offset[0], wing_offset[1])
+	if flight_meter <= 0:
+		return
+	for i in [%SmallWing, %BigWing]:
+		if normal_state.swim_up_meter > 0:
 			i.play("Flap")
 		else:
 			i.play("Idle")
@@ -758,7 +1200,8 @@ func handle_wing_flight(delta: float) -> void:
 	else:
 		%Wings.get_node("AnimationPlayer").play("RESET")
 
-func damage() -> void:
+func damage(type: String = "") -> void:
+	last_damage_source = type
 	if can_hurt == false or is_invincible:
 		return
 		
@@ -781,12 +1224,13 @@ func damage() -> void:
 		velocity.x = -direction * 60
 		do_i_frames()
 		return
-		
+
 	times_hit += 1
 	var damage_state = power_state.damage_state
 	if damage_state != null:
+		damaged.emit()
 		if Settings.file.difficulty.damage_style == 0:
-			damage_state = get_node("PowerStates/Small")
+			damage_state = get_node("PowerStates/" +  POWER_STATES[0])
 		DiscoLevel.combo_meter -= 50
 		AudioManager.play_sfx("damage", global_position)
 		await power_up_animation(damage_state.state_name)
@@ -827,13 +1271,16 @@ func do_i_frames() -> void:
 	can_hurt = true
 	refresh_hitbox()
 
-func die(pit := false) -> void:
+var valid_death_types = ["", "Fire"]
+
+func die(pit: bool = false, type: String = "") -> void:
 	if ["Dead", "Pipe", "LevelExit"].has(state_machine.state.name):
 		return
+	if type != "": last_damage_source = type if type in valid_death_types else ""
 	is_dead = true
 	visible = not pit
-	flight_meter = 0
 	dead.emit()
+	AudioManager.play_sfx("die_sting", global_position)
 	Global.p_switch_active = false
 	Global.p_switch_timer = 0
 	stop_all_timers()
@@ -847,25 +1294,31 @@ func die(pit := false) -> void:
 		get_tree().paused = true
 	Level.can_set_time = true
 	Level.first_load = true
+	if Global.current_game_mode == Global.GameMode.MARATHON_PRACTICE:
+		SpeedrunHandler.timer_active = false
+	if physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS) > 0:
+		AudioManager.stop_all_music()
+		await get_tree().create_timer(physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS)).timeout
 	if Global.current_game_mode != Global.GameMode.BOO_RACE:
-		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.DEATH, 999, false)
+		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.DEATH, 9999, false)
 		await get_tree().create_timer(3).timeout
 	else:
-		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.RACE_LOSE, 999, false)
+		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.RACE_LOSE, 9999, false)
 		await get_tree().create_timer(5).timeout
 
 	death_load()
 
+func fire_die() -> void: die(false, "Fire")
+
 func death_load() -> void:
-	power_state = get_node("PowerStates/Small")
-	Global.player_power_states = "0000"
+	power_state = get_node("PowerStates/" + physics_params("STARTING_POWER_STATE", POWER_PARAMETERS))
+	Global.player_power_states[player_id] = "0"
 
 	if Global.death_load:
 		return
 	Global.death_load = true
-	
+
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
-		# Eliminated players can keep playing the level (Ghost mode)
 		pass
 
 	# Handle lives decrement for CAMPAIGN and MARATHON
@@ -873,49 +1326,38 @@ func death_load() -> void:
 		if Settings.file.difficulty.inf_lives == 0:
 			Global.lives -= 1
 
-	# Full dispatch table for death handling
-	var death_actions = {
-		Global.GameMode.CUSTOM_LEVEL: func():
+	# Handle deaths using a match statement for better parser stability
+	var action_taken = false
+	
+	match Global.current_game_mode:
+		Global.GameMode.CUSTOM_LEVEL:
 			LevelTransition.level_to_transition_to = "res://Scenes/Levels/LevelEditor.tscn"
-			Global.transition_to_scene("res://Scenes/Levels/LevelTransition.tscn"),
-
-		Global.GameMode.LEVEL_EDITOR: func():
-			owner.stop_testing(),
-
-
-		Global.GameMode.CHALLENGE: func():
-			Global.transition_to_scene("res://Scenes/Levels/ChallengeMiss.tscn"),
-
-		Global.GameMode.BOO_RACE: func():
+			Global.transition_to_scene("res://Scenes/Levels/LevelTransition.tscn")
+			action_taken = true
+		Global.GameMode.LEVEL_EDITOR:
+			Global.level_editor.stop_testing()
+			Global.death_load = false
+			action_taken = true
+		Global.GameMode.CHALLENGE:
+			Global.transition_to_scene("res://Scenes/Levels/ChallengeMiss.tscn")
+			action_taken = true
+		Global.GameMode.BOO_RACE:
 			Global.reset_values()
 			Global.clear_saved_values()
 			Global.death_load = false
-			if is_instance_valid(Global.current_level):
-				Level.start_level_path = Global.current_level.scene_file_path
-				Global.current_level.reload_level(),
+			Level.start_level_path = Global.current_level.scene_file_path
+			Global.current_level.reload_level()
+			action_taken = true
 
-		"time_up": func():
-			Global.transition_to_scene("res://Scenes/Levels/TimeUp.tscn"),
-
-		"game_over": func():
+	if not action_taken:
+		if Global.lives <= 0 and Settings.file.difficulty.inf_lives == 0:
 			Global.death_load = false
-			Global.transition_to_scene("res://Scenes/Levels/GameOver.tscn"),
-
-		"default_reload": func():
+			Global.transition_to_scene("res://Scenes/Levels/GameOver.tscn")
+		elif Global.time <= 0:
+			Global.transition_to_scene("res://Scenes/Levels/TimeUp.tscn")
+		else:
 			LevelPersistance.reset_states()
-			if is_instance_valid(Global.current_level):
-				Global.current_level.reload_level()
-	}
-
-	# Determine which action to take
-	if death_actions.has(Global.current_game_mode):
-		death_actions[Global.current_game_mode].call()
-	elif Global.lives <= 0 and Settings.file.difficulty.inf_lives == 0:
-		death_actions["game_over"].call()
-	elif Global.time <= 0:
-		death_actions["time_up"].call()
-	else:
-		death_actions["default_reload"].call()
+			Global.current_level.reload_level()
 
 func time_up() -> void:
 	die()
@@ -926,53 +1368,39 @@ func set_power_state_frame() -> void:
 	if power_state != null:
 		$ResourceSetterNew.resource_json = load(get_character_sprite_path())
 		$ResourceSetterNew.update_resource()
-	if %Sprite.sprite_frames != null:
-		can_pose = %Sprite.sprite_frames.has_animation("PoseDoor")
-		can_bump_jump = %Sprite.sprite_frames.has_animation("JumpBump")
-		can_bump_crouch = %Sprite.sprite_frames.has_animation("CrouchBump")
-		can_bump_swim = %Sprite.sprite_frames.has_animation("SwimBump")
-		can_bump_fly = %Sprite.sprite_frames.has_animation("FlyBump")
-		can_kick_anim = %Sprite.sprite_frames.has_animation("Kick")
-
+	var frames = %Sprite.sprite_frames
+	if frames:
+		can_pose_anim = frames.has_animation("PoseDoor")
+		can_pose_castle_anim = frames.has_animation("PoseToad") or frames.has_animation("PosePeach")
+		can_bump_jump_anim = frames.has_animation("JumpBump")
+		can_bump_crouch_anim = frames.has_animation("CrouchBump")
+		can_bump_swim_anim = frames.has_animation("SwimBump")
+		can_bump_fly_anim = frames.has_animation("FlyBump")
+		can_kick_anim = frames.has_animation("Kick")
+		can_push_anim = frames.has_animation("Push")
+		can_spring_land_anim = frames.has_animation("SpringLand")
+		can_spring_fall_anim = frames.has_animation("SpringFall")
+	$Checkpoint.position.y = physics_params("CHECKPOINT_ICON_HEIGHT", COSMETIC_PARAMETERS)
 func get_power_up(power_name := "", give_points := true) -> void:
 	if is_dead:
 		return
-		
-	if Global.current_game_mode == Global.GameMode.MARIO_35:
-		var bonus = false
-		if power_name == "Big" and power_state.state_name != "Small":
-			bonus = true
-		elif power_name == "Fire" and power_state.state_name == "Fire":
-			bonus = true
-		elif power_name == "Superball" and power_state.state_name == "Superball":
-			bonus = true
-			
-		if bonus:
-			Mario35Handler.add_item_time_bonus()
-			if give_points:
-				Global.score += 1000
-				score_note_spawner.spawn_note(1000)
-			AudioManager.play_sfx("power_up", global_position)
-			return
-			
 	if give_points:
 		Global.score += 1000
 		DiscoLevel.combo_amount += 1
 		score_note_spawner.spawn_note(1000)
 	AudioManager.play_sfx("power_up", global_position)
+	powered_up.emit()
 	if Settings.file.difficulty.damage_style == 0 and power_state.state_name != power_name:
 		if power_name != "Big" and power_state.state_name != "Big":
 			power_name = "Big"
 	var new_power_state = get_node("PowerStates/" + power_name)
-	if new_power_state.power_tier >= power_state.power_tier and new_power_state != power_state:
+	if power_state.power_tier <= new_power_state.power_tier and new_power_state != power_state:
 		can_hurt = false
 		await power_up_animation(power_name)
 	else:
 		return
 	power_state = new_power_state
-	# Concatenate string to update specific index
-	var s = Global.player_power_states
-	Global.player_power_states = s.substr(0, player_id) + str(power_state.get_index()) + s.substr(player_id + 1)
+	Global.player_power_states[player_id] = str(power_state.get_index())
 	handle_power_up_states(0)
 	can_hurt = true
 	refresh_hitbox()
@@ -980,43 +1408,67 @@ func get_power_up(power_name := "", give_points := true) -> void:
 	check_for_block()
 
 func check_for_block() -> void:
-	if test_move(global_transform, (Vector2.UP * gravity_vector) * 4):
+	var check_direction = Vector2.UP
+	if gravity_vector == Vector2.UP:
+		check_direction = Vector2(0, -2)
+	if test_move(global_transform, (check_direction * gravity_vector) * 4):
 		crouching = true
 
 func power_up_animation(new_power_state := "") -> void:
 	if normal_state.jump_buffer > 0:
 		normal_state.jump_buffer += 10
+
 	var old_frames = sprite.sprite_frames
 	var new_frames = $ResourceSetterNew.get_resource(load(get_character_sprite_path(new_power_state)))
+	var old_state = power_state
+	var new_state = get_node("PowerStates/" + new_power_state)
+
 	sprite.process_mode = Node.PROCESS_MODE_ALWAYS
 	sprite.show()
 	get_tree().paused = true
-	if get_node("PowerStates/" + new_power_state).hitbox_size != power_state.hitbox_size:
+	
+	var hitbox_changed = new_state.power_tier != old_state.power_tier
+	var shrinking = hitbox_changed and (new_state.power_tier < old_state.power_tier)
+	var can_powerup_jump = Global.player_action_pressed("jump", player_id) == false
+	var anim_name := ""
+	if old_state.state_name != "Small" and new_power_state != "Small":
+		if %Sprite.sprite_frames.has_animation(new_power_state + "Grow"): # SkyanUltra: Optional check for animations for going from Big to Fire-equivalent power states.
+			anim_name = new_power_state + "Shrink" if shrinking else new_power_state + "Grow"
+		else: anim_name = ""
+	else:
+		anim_name = "Shrink" if shrinking else "Grow"
+	handle_invincible_palette()
+	if hitbox_changed and anim_name != "":
 		if Settings.file.visuals.transform_style == 0:
 			sprite.speed_scale = 3
-			sprite.play("Grow")
-			var rainbow = new_power_state != "Big" and (power_state.state_name != "Big" and new_power_state != "Small")
+			play_animation(anim_name)
+			
+			var rainbow = physics_params("RAINBOW_POWERUP_FX", COSMETIC_PARAMETERS, new_power_state) or physics_params("RAINBOW_POWERUP_FX", COSMETIC_PARAMETERS, old_state.state_name)
 			if rainbow:
 				transforming = true
 				sprite.material.set_shader_parameter("enabled", true)
+			
 			await get_tree().create_timer(0.4, true).timeout
+			power_state = new_state
 			sprite.sprite_frames = new_frames
 			handle_invincible_palette()
-			sprite.play("Grow")
+			play_animation(anim_name, true)
 			await get_tree().create_timer(0.4, true).timeout
+			
 			if rainbow:
 				sprite.material.set_shader_parameter("enabled", false)
 			transforming = false
 		else:
 			sprite.speed_scale = 0
-			if new_power_state == "Small":
-				%GrowAnimation.play("Shrink")
+			if shrinking:
+				%GrowAnimation.play(anim_name)
 			else:
 				sprite.sprite_frames = new_frames
-				%GrowAnimation.play("Grow")
+				%GrowAnimation.play(anim_name)
 			await get_tree().create_timer(0.8, true).timeout
 			sprite.sprite_frames = new_frames
 			transforming = false
+
 	else:
 		if Settings.file.visuals.transform_style == 1:
 			for i in 6:
@@ -1025,16 +1477,21 @@ func power_up_animation(new_power_state := "") -> void:
 				sprite.sprite_frames = old_frames
 				await get_tree().create_timer(0.05).timeout
 		else:
+			var rainbow = physics_params("RAINBOW_POWERUP_FX", COSMETIC_PARAMETERS, new_power_state) or physics_params("RAINBOW_POWERUP_FX", COSMETIC_PARAMETERS, old_state.state_name)
+			if rainbow:
+				transforming = true
+				sprite.material.set_shader_parameter("enabled", true)
 			handle_invincible_palette()
 			sprite.stop()
-			sprite.material.set_shader_parameter("enabled", true)
-			transforming = true
 			await get_tree().create_timer(0.6).timeout
 			transforming = false
-	power_state = get_node("PowerStates/" + new_power_state)
+			if rainbow:
+				sprite.material.set_shader_parameter("enabled", false)
+	sprite.play("Idle")
 	get_tree().paused = false
 	sprite.process_mode = Node.PROCESS_MODE_INHERIT
-	if Global.player_action_just_pressed("jump", player_id):
+
+	if Global.player_action_pressed("jump", player_id) and can_powerup_jump:
 		jump()
 	return
 
@@ -1044,9 +1501,13 @@ func dispense_stored_item() -> void:
 	add_sibling(RESERVE_ITEM.instantiate())
 
 func get_character_sprite_path(power_stateto_use := power_state.state_name) -> String:
+	character = Player.CHARACTERS[Global.player_characters[player_id]]
 	var path = "res://Assets/Sprites/Players/" + character + "/" + power_stateto_use + ".json"
 	if int(Global.player_characters[player_id]) > 3:
 		path = path.replace("res://Assets/Sprites/Players", Global.config_path.path_join("custom_characters/"))
+		if FileAccess.file_exists(path) == false:
+			path = "res://Assets/Sprites/Players/Mario/" + power_stateto_use + ".json"
+			Global.log_error("No sprite found for: " + character + "/" + power_stateto_use  + "!")
 	return path
 
 func enter_pipe(pipe: PipeArea, warp_to_level := true) -> void:
@@ -1074,14 +1535,19 @@ func hide_pipe_animation() -> void:
 		await get_tree().create_timer(0.3, false).timeout
 		hide()
 	else:
-		await get_tree().create_timer(0.65, false).timeout
+		await get_tree().create_timer(0.6, false).timeout
 		hide()
+
+var exiting_pipe := false
 
 func go_to_exit_pipe(pipe: PipeArea) -> void:
 	Global.can_time_tick = false
+	exiting_pipe = true
 	pipe_enter_direction = Vector2.ZERO
-	state_machine.transition_to("Pipe")
+	state_machine.transition_to("Freeze")
+	can_hurt = false
 	global_position = pipe.global_position + (pipe.get_vector(pipe.enter_direction) * 32)
+	reset_physics_interpolation()
 	if pipe.enter_direction == 1:
 		global_position = pipe.global_position + Vector2(0, -8)
 	recenter_camera()
@@ -1091,80 +1557,52 @@ func go_to_exit_pipe(pipe: PipeArea) -> void:
 	reset_physics_interpolation()
 	hide()
 
+func do_earthquake() -> void:
+	if is_on_floor():
+		state_machine.transition_to("Stunned")
+
 func exit_pipe(pipe: PipeArea) -> void:
 	show()
 	pipe_enter_direction = -pipe.get_vector(pipe.enter_direction)
 	AudioManager.play_sfx("pipe", global_position)
 	state_machine.transition_to("Pipe")
+	can_hurt = false
 	await get_tree().create_timer(0.65, false).timeout
 	Global.can_pause = true
+	can_hurt = true
+	exiting_pipe = false
 	state_machine.transition_to("Normal")
 	Global.can_time_tick = true
+
 
 func jump() -> void:
 	if spring_bouncing:
 		return
-
-	if classic_physics:
-		set_classic_jump_parameters(false)
-	else:
-		velocity.y = calculate_jump_height() * gravity_vector.y
-		gravity = JUMP_GRAVITY
-
-	velocity_x_jump_stored = velocity.x # Store precise speed
-
-	AudioManager.play_sfx("small_jump" if power_state.hitbox_size == "Small" else "big_jump", global_position)
+	velocity.y = calculate_jump_height(calculate_speed_param("JUMP_SPEED")) * gravity_vector.y
+	velocity_x_jump_stored = velocity.x
+	gravity = calculate_speed_param("JUMP_GRAVITY")
+	AudioManager.play_sfx(physics_params("JUMP_SFX", COSMETIC_PARAMETERS), global_position)
 	has_jumped = true
-	jump_cancelled = false # Reset jump cancelled flag on new jump
+	jump_cancelled = false
+	jumped.emit()
 	await get_tree().physics_frame
 	has_jumped = true
 
-func set_classic_jump_parameters(enemy_bounce := false) -> void:
-	if abs(velocity.x) < 60.0:
-		jump_type = JumpType.CLASSIC
-		gravity = 7.5
-		jump_fall_gravity = 26.25
-	elif abs(velocity.x) < 135.0:
-		jump_type = JumpType.CLASSIC_WALK
-		gravity = 7.03
-		jump_fall_gravity = 22.5
+func calculate_speed_param(param := "", speed: Variant = null) -> Variant:
+	if speed == null: speed = velocity.x
+	if not physics_params("FALL_GRAVITY_PREDETERMINED"): speed = velocity.x
+	if abs(speed) < physics_params("JUMP_WALK_THRESHOLD"):
+		param += "_IDLE"
+	elif abs(speed) < physics_params("JUMP_RUN_THRESHOLD"):
+		param += "_WALK"
 	else:
-		jump_type = JumpType.CLASSIC_RUN
-		gravity = 9.375
-		jump_fall_gravity = 33.75
+		param += "_RUN"
+	return physics_params(param)
 
-	if enemy_bounce:
-		has_jumped = true
-		# Only allow controlling height of jumps if you hit enemy from below,
-		# recreating the original game's "super jumps".
-		if not classic_plus_enabled:
-			jump_cancelled = true
-		
-		# If Classic+, we respect the 'jump_cancelled' state set by Input in enemy_bounce_off.
-		# If Classic, we force it to true (fixed bounce).
-		if jump_cancelled:
-			gravity = jump_fall_gravity
-
-		# The original game has slightly different starting jump speeds
-		# depending on the enemy, but most enemies in each use these values.
-		if Global.current_campaign == "SMBLL":
-			velocity.y = -370.0 * gravity_vector.y
-		else:
-			velocity.y = -248.0 * gravity_vector.y
-	else:
-		if jump_type == JumpType.CLASSIC_RUN:
-			velocity.y = -310.0 * gravity_vector.y
-		else:
-			velocity.y = -248.0 * gravity_vector.y
-
-	AudioManager.play_sfx("small_jump" if power_state.hitbox_size == "Small" else "big_jump", global_position)
-	has_jumped = true
-	jump_cancelled = false # Reset jump cancelled flag on new jump
-	await get_tree().physics_frame
-	has_jumped = true
-
-func calculate_jump_height() -> float:
-	return -(JUMP_HEIGHT + JUMP_INCR * int(abs(velocity.x) / 25))
+func calculate_jump_height(jump_height: Variant = null, jump_incr: Variant = null) -> float: # Thanks wye love you xxx
+	if jump_height == null: jump_height = physics_params("JUMP_SPEED_IDLE")
+	if jump_incr == null: jump_incr = physics_params("JUMP_INCR")
+	return -(jump_height + jump_incr * int(abs(velocity.x) / 25))
 
 const SMOKE_PARTICLE = preload("res://Scenes/Prefabs/Particles/SmokeParticle.tscn")
 
@@ -1179,70 +1617,81 @@ func teleport_player(new_position := Vector2.ZERO) -> void:
 	await get_tree().create_timer(0.5, false).timeout
 	state_machine.transition_to(old_state)
 	show()
-	velocity.y = 0
+	velocity = Vector2.ZERO
 	do_smoke_effect()
 
 func do_smoke_effect() -> void:
 	for i in 2:
 		var node = SMOKE_PARTICLE.instantiate()
-		node.global_position = global_position - Vector2(0, 16 * i)
+		var target_position = global_position
+		if gravity_vector == Vector2.UP:
+			target_position += Vector2(0, 16)
+		node.global_position = target_position - Vector2(0, (16 * gravity_vector.y) * i)
 		add_sibling(node)
 		if power_state.hitbox_size == "Small":
 			break
 	AudioManager.play_sfx("magic", global_position)
 
-func on_timeout() -> void:
-	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.STAR)
-	await get_tree().create_timer(1, false).timeout
-	if $StarTimer.is_stopped():
-		is_invincible = false
-
-
 func on_area_entered(area: Area2D) -> void:
 	if area.owner is Player and area.owner != self:
 		if area.owner.velocity.y > 0 and area.owner.is_actually_on_floor() == false:
-			area.owner.enemy_bounce_off(self, false)
-			velocity.y = 50
+			area.owner.enemy_bounce_off(false)
+			velocity.y = sign(gravity_vector.y) * 50
 			AudioManager.play_sfx("bump", global_position)
+	elif area.owner is WaterArea:
+		water_entered()
+
+
+func super_star() -> void:
+	if physics_params("STAR_TIME", POWER_PARAMETERS) <= 0:
+		return
+	is_invincible = true
+	has_star = true
+	sprite.material.set_shader_parameter("speed", physics_params("RAINBOW_STAR_FX_SPEED", COSMETIC_PARAMETERS))
+	star_meter = clamp(physics_params("STAR_TIME", POWER_PARAMETERS) - 2, 0, INF)
+	$CanvasLayer/Control2/MarginContainer/Timers/StarTimer/TimerSprite.max_value = star_meter
+	DiscoLevel.combo_meter += 1
+	AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.STAR, 1, false)
 
 func hammer_get() -> void:
-	if Global.current_game_mode == Global.GameMode.MARIO_35 and has_hammer:
-		Mario35Handler.add_item_time_bonus()
-		AudioManager.play_sfx("power_up", global_position)
+	if physics_params("HAMMER_TIME", POWER_PARAMETERS) <= 0:
 		return
-		
 	has_hammer = true
-	$HammerTimer.start()
+	hammer_meter = physics_params("HAMMER_TIME", POWER_PARAMETERS)
+	DiscoLevel.combo_meter += 1
 	AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.HAMMER, 0, false)
 
 func wing_get() -> void:
-	if Global.current_game_mode == Global.GameMode.MARIO_35 and flight_meter >= 10:
-		Mario35Handler.add_item_time_bonus()
-		AudioManager.play_sfx("power_up", global_position)
+	if physics_params("WING_TIME", POWER_PARAMETERS) <= 0:
 		return
-		
+	has_wings = true
+	flight_meter = physics_params("WING_TIME", POWER_PARAMETERS)
+	DiscoLevel.combo_meter += 1
 	AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.WING, 0, false, false)
-	flight_meter = 10
 
-func on_hammer_timeout() -> void:
-	has_hammer = false
-	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.HAMMER)
+func on_star_timeout() -> void:
+	var time = clamp(physics_params("STAR_TIME", POWER_PARAMETERS), 0, 2) * 0.5
+	sprite.material.set_shader_parameter("speed", physics_params("RAINBOW_STAR_SLOW_FX_SPEED", COSMETIC_PARAMETERS))
+	await get_tree().create_timer(time, false).timeout
+	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.STAR)
+	await get_tree().create_timer(time, false).timeout
+	sprite.material.set_shader_parameter("speed", physics_params("RAINBOW_FX_SPEED", COSMETIC_PARAMETERS))
+	if star_meter <= 0:
+		has_star = false
+		is_invincible = false
 
 func water_exited() -> void:
 	await get_tree().physics_frame
 	if in_water: return
 	normal_state.swim_up_meter = 0
-	if velocity.y < 0:
-		velocity.y = -250.0 if velocity.y < -50.0 or Global.player_action_pressed("move_up", player_id) else velocity.y
+	if actual_velocity_y() < 0:
+		var holding_up = Global.player_action_pressed("move_up", player_id) if gravity_vector.y >= 0 else Global.player_action_pressed("move_down", player_id)
+		velocity.y = sign(gravity_vector.y) * -physics_params("SWIM_EXIT_SPEED") if actual_velocity_y() < -50.0 or holding_up else velocity.y
 	has_jumped = true
 	if Global.player_action_pressed("move_up", player_id):
-		# Set initial gravity based on classic physics rules if applicable
-		if classic_physics:
-			set_classic_jump_parameters(false)
-		else: # Remastered
-			gravity = JUMP_GRAVITY
+		gravity = calculate_speed_param("JUMP_GRAVITY")
 	else:
-		gravity = FALL_GRAVITY # Use the correct variable name
+		gravity = calculate_speed_param("FALL_GRAVITY", velocity_x_jump_stored)
 
 func reset_camera_to_center() -> void:
 	animating_camera = true
@@ -1258,3 +1707,10 @@ func reset_camera_to_center() -> void:
 func on_area_exited(area: Area2D) -> void:
 	if area is WaterArea:
 		water_exited()
+
+func water_entered() -> void:
+	velocity.y = max(-physics_params("SWIM_HEIGHT"), velocity.y)
+
+
+func on_modifier_applied() -> void:
+	pass

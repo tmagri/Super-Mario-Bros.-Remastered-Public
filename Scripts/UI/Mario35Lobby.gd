@@ -272,18 +272,25 @@ func _update_cursor_pos(node: Control) -> void:
 	var center_y = node.size.y / 2
 	var offset_x = -16 # Default offset for non-text inputs
 	
-	# For LineEdit nodes (text inputs), calculate position based on caret position
+	# For LineEdit nodes (text inputs), position cursor based on controller_cursor_index
 	if node is LineEdit:
 		var line_edit = node as LineEdit
 		var font = line_edit.get_theme_font("font")
 		var font_size = line_edit.get_theme_font_size("font_size")
 		
-		# Calculate width of text before caret
-		var text_before_caret = line_edit.text.substr(0, line_edit.caret_column)
-		var text_width = font.get_string_size(text_before_caret, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+		# Use single character width (NES font is monospace)
+		var char_width = font.get_string_size("A", HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
 		
-		# Position cursor at the caret position with a small offset
-		offset_x = text_width - 8
+		# Use the same padded length as char_indicator so centering stays in sync
+		var effective_len = max(line_edit.text.length(), controller_cursor_index + 1)
+		var total_text_width = char_width * effective_len
+		
+		# Account for left margin and BBCode [center] equivalent centering
+		var margin_left = 4.0
+		var centering_offset = max(0.0, (line_edit.size.x - total_text_width - margin_left * 2) / 2.0)
+		
+		# Place cursor directly on top of the selected character
+		offset_x = margin_left + centering_offset + (controller_cursor_index * char_width)
 	
 	var cursor_pos = node.global_position + Vector2(offset_x, center_y - 8)
 	

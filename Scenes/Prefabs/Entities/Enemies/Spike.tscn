@@ -206,7 +206,9 @@ metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 [node name="Animations" type="AnimationPlayer" parent="Sprite" unique_id=1247463656]
 unique_name_in_owner = true
 root_node = NodePath("../..")
-libraries/ = SubResource("AnimationLibrary_px5di")
+libraries = {
+"": SubResource("AnimationLibrary_px5di")
+}
 
 [node name="ResourceSetterNew" type="Node" parent="Sprite" unique_id=378954449 node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("5_ddx5o")

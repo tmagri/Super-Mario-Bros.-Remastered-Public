@@ -5293,7 +5293,9 @@ uppercase = true
 
 [node name="SaveAnimation" type="AnimationPlayer" parent="Info/SaveDialog" unique_id=436128472]
 unique_name_in_owner = true
-libraries/ = SubResource("AnimationLibrary_k1rrh")
+libraries = {
+"": SubResource("AnimationLibrary_k1rrh")
+}
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=640437452]
 

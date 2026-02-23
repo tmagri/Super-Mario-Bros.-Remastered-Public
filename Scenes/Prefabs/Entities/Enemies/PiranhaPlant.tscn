@@ -236,7 +236,9 @@ resource_json = ExtResource("4_xp8sq")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
 [node name="Animation" type="AnimationPlayer" parent="." unique_id=869170487]
-libraries/ = SubResource("AnimationLibrary_471w1")
+libraries = {
+"": SubResource("AnimationLibrary_471w1")
+}
 autoplay = &"Hide"
 
 [node name="Timer" type="Timer" parent="." unique_id=1369923643]

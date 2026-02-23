@@ -224,7 +224,9 @@ resource_json = ExtResource("8_0w8yj")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
 [node name="MovementAnimations" type="AnimationPlayer" parent="." unique_id=770615162]
-libraries/ = SubResource("AnimationLibrary_2vqj5")
+libraries = {
+"": SubResource("AnimationLibrary_2vqj5")
+}
 
 [node name="Collision" type="CollisionShape2D" parent="." unique_id=843193934]
 visible = false

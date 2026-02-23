@@ -80,7 +80,9 @@ scale = Vector2(3.2, 1.2)
 enable_node_path = NodePath("../..")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=343970031]
-libraries/ = SubResource("AnimationLibrary_kqk52")
+libraries = {
+"": SubResource("AnimationLibrary_kqk52")
+}
 autoplay = &"Move"
 
 [node name="LevelEditorVisibleNode" type="Node2D" parent="." unique_id=448114083]

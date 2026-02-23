@@ -454,11 +454,15 @@ z_as_relative = false
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1367751294]
 
 [node name="TextAnimation" type="AnimationPlayer" parent="." unique_id=1578764895]
-libraries/ = SubResource("AnimationLibrary_k7rel")
+libraries = {
+"": SubResource("AnimationLibrary_k7rel")
+}
 speed_scale = 0.5
 
 [node name="MainSequence" type="AnimationPlayer" parent="." unique_id=1753146042]
-libraries/ = SubResource("AnimationLibrary_3n3sl")
+libraries = {
+"": SubResource("AnimationLibrary_3n3sl")
+}
 autoplay = &"Main"
 
 [node name="Peach" type="AnimatedSprite2D" parent="." unique_id=1783490208]

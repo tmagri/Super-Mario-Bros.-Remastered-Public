@@ -302,7 +302,9 @@ script = ExtResource("4_hjivi")
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1489184519]
-libraries/ = SubResource("AnimationLibrary_6tdk1")
+libraries = {
+"": SubResource("AnimationLibrary_6tdk1")
+}
 autoplay = &"Go"
 
 [node name="SFX" type="AudioStreamPlayer2D" parent="." unique_id=1178612132]

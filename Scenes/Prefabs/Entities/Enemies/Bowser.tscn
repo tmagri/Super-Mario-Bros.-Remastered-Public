@@ -282,7 +282,9 @@ color = Color(1, 0, 0, 1)
 
 [node name="HurtAnimation" type="AnimationPlayer" parent="SpriteScaleJoint" unique_id=379849008]
 root_node = NodePath("../..")
-libraries/ = SubResource("AnimationLibrary_6fvct")
+libraries = {
+"": SubResource("AnimationLibrary_6fvct")
+}
 
 [node name="DeathSprite" type="AnimatedSprite2D" parent="SpriteScaleJoint" unique_id=405721964]
 visible = false
@@ -307,7 +309,9 @@ position = Vector2(0, -9)
 shape = SubResource("RectangleShape2D_va0n6")
 
 [node name="MoveAnimation" type="AnimationPlayer" parent="." unique_id=1212590413]
-libraries/ = SubResource("AnimationLibrary_v5oyl")
+libraries = {
+"": SubResource("AnimationLibrary_v5oyl")
+}
 autoplay = &"Move"
 
 [node name="JumpTimer" type="Timer" parent="." unique_id=1161655624]

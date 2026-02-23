@@ -151,7 +151,9 @@ resource_json = ExtResource("5_8m1k0")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
 [node name="Animations" type="AnimationPlayer" parent="." unique_id=1180602403]
-libraries/ = SubResource("AnimationLibrary_a5qfu")
+libraries = {
+"": SubResource("AnimationLibrary_a5qfu")
+}
 autoplay = &"Swim"
 
 [node name="EnemyPlayerDetection" type="Node" parent="." unique_id=794765352 node_paths=PackedStringArray("hitbox")]
@@ -160,7 +162,9 @@ hitbox = NodePath("../Sprite/Hitbox")
 metadata/_custom_type_script = "uid://chj8hu207lrh"
 
 [node name="WaveAnimations" type="AnimationPlayer" parent="." unique_id=303917756]
-libraries/ = SubResource("AnimationLibrary_reflr")
+libraries = {
+"": SubResource("AnimationLibrary_reflr")
+}
 
 [node name="FireballDetection" type="Node" parent="." unique_id=2044976720 node_paths=PackedStringArray("hitbox")]
 script = ExtResource("4_cd02n")

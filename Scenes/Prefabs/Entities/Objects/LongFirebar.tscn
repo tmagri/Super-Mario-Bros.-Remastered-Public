@@ -110,21 +110,31 @@ position = Vector2(56.5685, 56.5686)
 texture = ExtResource("2_s1hms")
 
 [node name="Animation2" type="AnimationPlayer" parent="Fireballs/Fireball7" parent_id_path=PackedInt32Array(168247843) index="0" unique_id=221722395]
-libraries/ = SubResource("AnimationLibrary_ytedt")
+libraries = {
+"": SubResource("AnimationLibrary_ytedt")
+}
 autoplay = &"Spin"
 
 [node name="Animation2" type="AnimationPlayer" parent="Fireballs/Fireball8" parent_id_path=PackedInt32Array(1396902215) index="0" unique_id=625292765]
-libraries/ = SubResource("AnimationLibrary_ytedt")
+libraries = {
+"": SubResource("AnimationLibrary_ytedt")
+}
 autoplay = &"Spin"
 
 [node name="Animation2" type="AnimationPlayer" parent="Fireballs/Fireball9" parent_id_path=PackedInt32Array(1043386431) index="0" unique_id=1880044048]
-libraries/ = SubResource("AnimationLibrary_ytedt")
+libraries = {
+"": SubResource("AnimationLibrary_ytedt")
+}
 autoplay = &"Spin"
 
 [node name="Animation2" type="AnimationPlayer" parent="Fireballs/Fireball10" parent_id_path=PackedInt32Array(1715418417) index="0" unique_id=910446327]
-libraries/ = SubResource("AnimationLibrary_ytedt")
+libraries = {
+"": SubResource("AnimationLibrary_ytedt")
+}
 autoplay = &"Spin"
 
 [node name="Animation2" type="AnimationPlayer" parent="Fireballs/Fireball11" parent_id_path=PackedInt32Array(822690954) index="0" unique_id=1940541112]
-libraries/ = SubResource("AnimationLibrary_ytedt")
+libraries = {
+"": SubResource("AnimationLibrary_ytedt")
+}
 autoplay = &"Spin"

@@ -27,7 +27,9 @@ normal = Vector2(-1, 0)
 script = ExtResource("1_nomt5")
 
 [node name="Animation" type="AnimationPlayer" parent="." unique_id=1138022348]
-libraries/ = SubResource("AnimationLibrary_y2uvy")
+libraries = {
+"": SubResource("AnimationLibrary_y2uvy")
+}
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1157743587]
 position = Vector2(48, -8)

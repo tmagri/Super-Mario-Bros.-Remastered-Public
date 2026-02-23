@@ -131,7 +131,9 @@ shape = SubResource("RectangleShape2D_4015b")
 
 [node name="Animations" type="AnimationPlayer" parent="." unique_id=2075472847]
 unique_name_in_owner = true
-libraries/ = SubResource("AnimationLibrary_pp28j")
+libraries = {
+"": SubResource("AnimationLibrary_pp28j")
+}
 
 [node name="EditorPropertyExposer" type="Node" parent="." unique_id=1916406125]
 script = ExtResource("6_jg54v")

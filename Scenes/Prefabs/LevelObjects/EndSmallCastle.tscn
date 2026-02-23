@@ -114,7 +114,9 @@ resource_json = ExtResource("4_7xlhl")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="FlagJoint/Flag" unique_id=1693353269]
-libraries/ = SubResource("AnimationLibrary_2hcdu")
+libraries = {
+"": SubResource("AnimationLibrary_2hcdu")
+}
 
 [node name="CameraRightLimit" type="Node2D" parent="." unique_id=1090024717]
 position = Vector2(128, 0)

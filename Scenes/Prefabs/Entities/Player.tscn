@@ -527,7 +527,9 @@ region_enabled = true
 region_rect = Rect2(0, 0, 16, 16)
 
 [node name="Animation" type="AnimationPlayer" parent="SpriteScaleJoint/Sprite/Hammer" unique_id=1767114398]
-libraries/ = SubResource("AnimationLibrary_bl5al")
+libraries = {
+"": SubResource("AnimationLibrary_bl5al")
+}
 autoplay = &"Swing"
 
 [node name="ResourceSetterNew" type="Node" parent="SpriteScaleJoint/Sprite/Hammer" unique_id=1978931382 node_paths=PackedStringArray("node_to_affect")]
@@ -585,11 +587,15 @@ resource_json = ExtResource("9_o70e0")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="SpriteScaleJoint/Sprite/Wings" unique_id=619658605]
-libraries/ = SubResource("AnimationLibrary_nbkfn")
+libraries = {
+"": SubResource("AnimationLibrary_nbkfn")
+}
 
 [node name="GrowAnimation" type="AnimationPlayer" parent="SpriteScaleJoint/Sprite" unique_id=413967307]
 unique_name_in_owner = true
-libraries/ = SubResource("AnimationLibrary_pm4ir")
+libraries = {
+"": SubResource("AnimationLibrary_pm4ir")
+}
 
 [node name="States" type="Node" parent="." unique_id=1356121136 node_paths=PackedStringArray("state")]
 script = ExtResource("2_1y62l")
@@ -775,7 +781,9 @@ position = Vector2(0, -40)
 texture = ExtResource("13_uo1a1")
 
 [node name="Animation" type="AnimationPlayer" parent="Checkpoint" unique_id=612899277]
-libraries/ = SubResource("AnimationLibrary_f873f")
+libraries = {
+"": SubResource("AnimationLibrary_f873f")
+}
 speed_scale = 2.0
 
 [node name="Label" type="Label" parent="Checkpoint" unique_id=1787346554]

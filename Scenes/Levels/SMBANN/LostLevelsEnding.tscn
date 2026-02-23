@@ -373,11 +373,15 @@ z_as_relative = false
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=149365424]
 
 [node name="TextAnimation" type="AnimationPlayer" parent="." unique_id=173368424]
-libraries/ = SubResource("AnimationLibrary_k7rel")
+libraries = {
+"": SubResource("AnimationLibrary_k7rel")
+}
 speed_scale = 0.5
 
 [node name="MainSequence" type="AnimationPlayer" parent="." unique_id=1020879134]
-libraries/ = SubResource("AnimationLibrary_3n3sl")
+libraries = {
+"": SubResource("AnimationLibrary_3n3sl")
+}
 autoplay = &"Main"
 
 [node name="Sprite2D2" type="Sprite2D" parent="." unique_id=1743420300]

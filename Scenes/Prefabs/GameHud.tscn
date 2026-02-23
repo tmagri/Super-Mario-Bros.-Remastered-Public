@@ -530,7 +530,9 @@ frame = 1
 region_rect = Rect2(0, 0, 8, 8)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Main/RedCoins/YoshiEgg/Radar" unique_id=1504354184]
-libraries/ = SubResource("AnimationLibrary_cfljn")
+libraries = {
+"": SubResource("AnimationLibrary_cfljn")
+}
 
 [node name="ScoreMedal" type="Sprite2D" parent="Main/RedCoins" unique_id=816385466]
 position = Vector2(43, -2)
@@ -1000,7 +1002,9 @@ vframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="ModernHUD/TopLeft/RedCoins/YoshiEgg/ModernRadar" unique_id=277378416]
-libraries/ = SubResource("AnimationLibrary_cfljn")
+libraries = {
+"": SubResource("AnimationLibrary_cfljn")
+}
 
 [node name="ScoreMedal" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=2059882277]
 position = Vector2(43, -2)

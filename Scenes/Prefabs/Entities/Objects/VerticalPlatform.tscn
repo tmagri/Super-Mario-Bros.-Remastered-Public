@@ -75,7 +75,9 @@ position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_mq7me")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1275917894]
-libraries/ = SubResource("AnimationLibrary_kqk52")
+libraries = {
+"": SubResource("AnimationLibrary_kqk52")
+}
 autoplay = &"Move"
 
 [node name="LevelEditorVisibleNode" type="Node2D" parent="." unique_id=1738705820]

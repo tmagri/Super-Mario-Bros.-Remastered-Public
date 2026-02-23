@@ -159,6 +159,8 @@ labels = [NodePath("..")]
 metadata/_custom_type_script = "uid://co6tjg3w6qpd8"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Label" unique_id=728507545]
-libraries/ = SubResource("AnimationLibrary_ov4xw")
+libraries = {
+"": SubResource("AnimationLibrary_ov4xw")
+}
 
 [connection signal="area_entered" from="Sprite/Hitbox" to="." method="on_area_entered"]

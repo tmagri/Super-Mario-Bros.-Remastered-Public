@@ -696,7 +696,9 @@ position = Vector2(172, 96)
 
 [node name="WaveAnimation" type="AnimationPlayer" parent="PanelContainer/Boos" unique_id=40918144]
 root_node = NodePath("../0")
-libraries/ = SubResource("AnimationLibrary_nk4wu")
+libraries = {
+"": SubResource("AnimationLibrary_nk4wu")
+}
 autoplay = &"Wave"
 
 [node name="0" type="AnimatedSprite2D" parent="PanelContainer/Boos" unique_id=540467503]

@@ -788,7 +788,9 @@ resource_json = ExtResource("12_y63tt")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
 [node name="MainSequence" type="AnimationPlayer" parent="." unique_id=877815898]
-libraries/ = SubResource("AnimationLibrary_nud7a")
+libraries = {
+"": SubResource("AnimationLibrary_nud7a")
+}
 autoplay = &"Main"
 speed_scale = 0.8
 

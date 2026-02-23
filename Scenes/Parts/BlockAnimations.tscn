@@ -68,7 +68,9 @@ _data = {
 script = ExtResource("1_j0pkw")
 
 [node name="Animations" type="AnimationPlayer" parent="." unique_id=1695126210]
-libraries/ = SubResource("AnimationLibrary_tid1o")
+libraries = {
+"": SubResource("AnimationLibrary_tid1o")
+}
 
 [node name="Joint" type="RemoteTransform2D" parent="." unique_id=1267190423]
 update_rotation = false

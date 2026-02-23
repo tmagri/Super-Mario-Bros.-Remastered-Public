@@ -59,7 +59,9 @@ script = ExtResource("1_00jom")
 z_index = 2
 
 [node name="Animation" type="AnimationPlayer" parent="Sprite" unique_id=1751787426]
-libraries/ = SubResource("AnimationLibrary_an01s")
+libraries = {
+"": SubResource("AnimationLibrary_an01s")
+}
 autoplay = &"Spin"
 speed_scale = 2.0
 

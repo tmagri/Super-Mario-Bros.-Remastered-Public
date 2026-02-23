@@ -147,7 +147,9 @@ script = ExtResource("6_00pvh")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
 [node name="Animation" type="AnimationPlayer" parent="." unique_id=1901998667]
-libraries/ = SubResource("AnimationLibrary_00pvh")
+libraries = {
+"": SubResource("AnimationLibrary_00pvh")
+}
 autoplay = &"new_animation"
 
 [node name="Music" type="AudioStreamPlayer" parent="." unique_id=1027459783]

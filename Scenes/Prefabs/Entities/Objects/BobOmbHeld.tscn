@@ -175,7 +175,9 @@ metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
 [node name="FlashAnimation" type="AnimationPlayer" parent="ScaleJoint/Sprite" unique_id=331786341]
 unique_name_in_owner = true
-libraries/ = SubResource("AnimationLibrary_tv0mo")
+libraries = {
+"": SubResource("AnimationLibrary_tv0mo")
+}
 
 [node name="FlashSprite" type="AnimatedSprite2D" parent="ScaleJoint/Sprite" unique_id=62360404]
 visible = false
@@ -233,7 +235,9 @@ can_change_direction = true
 metadata/_custom_type_script = "uid://cmg61722ktg2m"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=192238918]
-libraries/ = SubResource("AnimationLibrary_ll0jm")
+libraries = {
+"": SubResource("AnimationLibrary_ll0jm")
+}
 
 [node name="GibSpawner" type="Node" parent="." unique_id=1458529382 node_paths=PackedStringArray("visuals")]
 script = ExtResource("9_yf454")

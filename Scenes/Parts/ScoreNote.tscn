@@ -105,7 +105,9 @@ text = "8"
 
 [node name="Animation" type="AnimationPlayer" parent="." unique_id=609530757]
 root_node = NodePath("../Container")
-libraries/ = SubResource("AnimationLibrary_uog6q")
+libraries = {
+"": SubResource("AnimationLibrary_uog6q")
+}
 autoplay = &"Rise"
 speed_scale = 0.7
 

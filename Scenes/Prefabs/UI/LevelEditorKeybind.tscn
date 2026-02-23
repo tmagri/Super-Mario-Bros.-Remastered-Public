@@ -47,5 +47,7 @@ region_enabled = true
 region_rect = Rect2(0, 0, 58, 23)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=773625691]
-libraries/ = SubResource("AnimationLibrary_26est")
+libraries = {
+"": SubResource("AnimationLibrary_26est")
+}
 autoplay = &"Idle"

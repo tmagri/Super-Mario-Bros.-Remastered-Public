@@ -162,7 +162,9 @@ position = Vector2(0, -16)
 shape = SubResource("SegmentShape2D_hnd65")
 
 [node name="Animation" type="AnimationPlayer" parent="." unique_id=361461731]
-libraries/ = SubResource("AnimationLibrary_62gix")
+libraries = {
+"": SubResource("AnimationLibrary_62gix")
+}
 
 [node name="ScoreNoteSpawner" type="Node" parent="." unique_id=846381387]
 script = ExtResource("5_dm4yn")
@@ -181,7 +183,9 @@ text = "5000"
 
 [node name="Animation2" type="AnimationPlayer" parent="Score" unique_id=1673681545]
 root_node = NodePath("../..")
-libraries/ = SubResource("AnimationLibrary_jihtx")
+libraries = {
+"": SubResource("AnimationLibrary_jihtx")
+}
 
 [node name="TextShadowColourChanger" type="Node" parent="Score" unique_id=317375836 node_paths=PackedStringArray("labels")]
 script = ExtResource("9_jihtx")

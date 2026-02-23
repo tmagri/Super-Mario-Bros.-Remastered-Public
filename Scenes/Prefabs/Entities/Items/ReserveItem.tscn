@@ -58,7 +58,9 @@ wait_time = 8.0
 autostart = true
 
 [node name="Animation" type="AnimationPlayer" parent="." unique_id=1199098493]
-libraries/ = SubResource("AnimationLibrary_flkw7")
+libraries = {
+"": SubResource("AnimationLibrary_flkw7")
+}
 autoplay = &"Flash"
 speed_scale = 2.0
 

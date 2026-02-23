@@ -146,7 +146,9 @@ position = Vector2(0, -22)
 shape = SubResource("RectangleShape2D_butnk")
 
 [node name="Animation" type="AnimationPlayer" parent="." unique_id=1344648626]
-libraries/ = SubResource("AnimationLibrary_b27qj")
+libraries = {
+"": SubResource("AnimationLibrary_b27qj")
+}
 
 [node name="Base" type="StaticBody2D" parent="." unique_id=1749568789]
 collision_layer = 3

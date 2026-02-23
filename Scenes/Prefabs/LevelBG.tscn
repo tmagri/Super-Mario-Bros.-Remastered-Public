@@ -473,13 +473,17 @@ metadata/_custom_type_script = "uid://ca3bew33g45eq"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="DiscoBits/Rainbow/Joint/DiscoRainbow" unique_id=833346847]
 process_mode = 1
-libraries/ = SubResource("AnimationLibrary_joqdr")
+libraries = {
+"": SubResource("AnimationLibrary_joqdr")
+}
 autoplay = &"Rainbow"
 speed_scale = 0.1
 
 [node name="Rhythm" type="AnimationPlayer" parent="DiscoBits/Rainbow/Joint/DiscoRainbow" unique_id=2011743432]
 process_mode = 1
-libraries/ = SubResource("AnimationLibrary_lvidp")
+libraries = {
+"": SubResource("AnimationLibrary_lvidp")
+}
 autoplay = &"Bob"
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="DiscoBits/Rainbow/Joint/DiscoRainbow" unique_id=1640641009]
@@ -514,7 +518,9 @@ flip_h = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="DiscoBits/SpotLights" unique_id=71944910]
 process_mode = 1
-libraries/ = SubResource("AnimationLibrary_34fd5")
+libraries = {
+"": SubResource("AnimationLibrary_34fd5")
+}
 autoplay = &"Turn"
 speed_scale = 0.2
 

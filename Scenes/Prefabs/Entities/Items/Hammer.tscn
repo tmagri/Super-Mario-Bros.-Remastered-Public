@@ -69,7 +69,9 @@ resource_json = ExtResource("4_pmlpp")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
 [node name="Animations" type="AnimationPlayer" parent="." unique_id=2146457471]
-libraries/ = SubResource("AnimationLibrary_k3c6x")
+libraries = {
+"": SubResource("AnimationLibrary_k3c6x")
+}
 autoplay = &"Rotate"
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=1335738655]

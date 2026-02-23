@@ -153,7 +153,9 @@ grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1287600843]
-libraries/ = SubResource("AnimationLibrary_f4ecw")
+libraries = {
+"": SubResource("AnimationLibrary_f4ecw")
+}
 autoplay = &"Go"
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=453184953]

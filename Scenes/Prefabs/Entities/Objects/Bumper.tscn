@@ -93,7 +93,9 @@ metadata/_custom_type_script = "uid://cnheej0sxmoxg"
 shape = SubResource("CircleShape2D_tbo6k")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=320573357]
-libraries/ = SubResource("AnimationLibrary_cgc3p")
+libraries = {
+"": SubResource("AnimationLibrary_cgc3p")
+}
 autoplay = &"RESET"
 
 [node name="TrackJoint" type="Node" parent="." unique_id=530142017]

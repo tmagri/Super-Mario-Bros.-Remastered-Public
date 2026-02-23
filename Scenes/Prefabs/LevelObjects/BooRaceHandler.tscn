@@ -196,7 +196,9 @@ script = ExtResource("7_reyer")
 metadata/_custom_type_script = "uid://dmtw1jesw1vl7"
 
 [node name="Animation" type="AnimationPlayer" parent="." unique_id=347777438]
-libraries/ = SubResource("AnimationLibrary_qeaax")
+libraries = {
+"": SubResource("AnimationLibrary_qeaax")
+}
 
 [node name="Timer" type="Timer" parent="." unique_id=111448010]
 process_mode = 1

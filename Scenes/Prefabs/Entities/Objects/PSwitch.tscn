@@ -202,7 +202,9 @@ play_death_sfx = false
 metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=494717843]
-libraries/ = SubResource("AnimationLibrary_eeyhw")
+libraries = {
+"": SubResource("AnimationLibrary_eeyhw")
+}
 
 [node name="LCollision" type="CollisionShape2D" parent="." unique_id=833447796]
 position = Vector2(0, -6)

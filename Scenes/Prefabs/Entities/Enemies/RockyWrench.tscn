@@ -341,7 +341,9 @@ script = ExtResource("5_8y80u")
 metadata/_custom_type_script = "uid://bx6r8sjar6cwr"
 
 [node name="Animations" type="AnimationPlayer" parent="." unique_id=1235336002]
-libraries/ = SubResource("AnimationLibrary_3dqyr")
+libraries = {
+"": SubResource("AnimationLibrary_3dqyr")
+}
 
 [node name="AnimatableBody2D" type="AnimatableBody2D" parent="." unique_id=1672893021]
 position = Vector2(0, -2)

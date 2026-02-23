@@ -152,7 +152,9 @@ resource_json = ExtResource("4_woaa1")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=500212662]
-libraries/ = SubResource("AnimationLibrary_srhyq")
+libraries = {
+"": SubResource("AnimationLibrary_srhyq")
+}
 
 [node name="PlayerDetection" type="Area2D" parent="." unique_id=140063699]
 script = ExtResource("2_asdop")

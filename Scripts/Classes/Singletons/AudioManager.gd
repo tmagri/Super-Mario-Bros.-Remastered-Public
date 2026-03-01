@@ -5,6 +5,8 @@ const DEFAULT_SFX_LIBRARY := {
 	"big_jump": ("res://Assets/Audio/SFX/BigJump.wav"),
 	"coin": ("res://Assets/Audio/SFX/Coin.wav"),
 	"bump": ("res://Assets/Audio/SFX/Bump.wav"),
+	"walk": ("res://Assets/Audio/BGM/Silence.json"),
+	"run": ("res://Assets/Audio/BGM/Silence.json"),
 	"skid": ("res://Assets/Audio/SFX/Skid.wav"),
 	"pipe": ("res://Assets/Audio/SFX/Pipe.wav"),
 	"damage": ("res://Assets/Audio/SFX/Damage.wav"),
@@ -14,10 +16,17 @@ const DEFAULT_SFX_LIBRARY := {
 	"enemy_stomp": ("res://Assets/Audio/SFX/Stomp.wav"),
 	"kick": ("res://Assets/Audio/SFX/Kick.wav"),
 	"fireball": ("res://Assets/Audio/SFX/Fireball.wav"),
-	"superball": ("res://Assets/Audio/SFX/Superball.wav"),
+	"plant_fireball": ("res://Assets/Audio/SFX/Fireball.wav"),
+	"bowser_jr_fireball": ("res://Assets/Audio/SFX/Fireball.wav"),
+	"shell_spin": ("res://Assets/Audio/SFX/ShellSpin.wav"),
 	"1_up": ("res://Assets/Audio/SFX/1up.wav"),
+	"die_sting": ("res://Assets/Audio/SFX/DieSting.wav"),
 	"cannon": ("res://Assets/Audio/SFX/Cannon.wav"),
+	"explode": ("res://Assets/Audio/SFX/Cannon.wav"),
+	"pswitch_pressed": ("res://Assets/Audio/SFX/Cannon.wav"),
+	"thwomp_land": ("res://Assets/Audio/SFX/Cannon.wav"),
 	"checkpoint": ("res://Assets/Audio/SFX/Checkpoint.wav"),
+	"flag_slide": ("res://Assets/Audio/SFX/FlagSlide.wav"),
 	"magic": ("res://Assets/Audio/SFX/Magic.wav"),
 	"beep": ("res://Assets/Audio/SFX/Score.wav"),
 	"switch": ("res://Assets/Audio/SFX/Switch.wav"),
@@ -28,6 +37,10 @@ const DEFAULT_SFX_LIBRARY := {
 	"score_end": "res://Assets/Audio/SFX/Score.wav",
 	"pause": ("res://Assets/Audio/SFX/Pause.wav"),
 	"spring": ("res://Assets/Audio/SFX/Spring.wav"),
+	"small_trampoline": ("res://Assets/Audio/SFX/TrampolineSmall.wav"),
+	"big_trampoline": ("res://Assets/Audio/SFX/TrampolineBig.wav"),
+	"small_used_trampoline": ("res://Assets/Audio/SFX/TrampolineUsedSmall.wav"),
+	"big_used_trampoline": ("res://Assets/Audio/SFX/TrampolineUsedBig.wav"),
 	"swim": ("res://Assets/Audio/SFX/Swim.wav"),
 	"dry_bones_crumble": ("res://Assets/Audio/SFX/DryBonesCrumble.wav"),
 	"clock_get": ("res://Assets/Audio/SFX/ClockGet.wav"),
@@ -57,7 +70,21 @@ const DEFAULT_SFX_LIBRARY := {
 	"bumper": "res://Assets/Audio/SFX/Bumper.wav",
 	"bumper_high": "res://Assets/Audio/SFX/BumperHigh.wav",
 	"door_unlock": "res://Assets/Audio/SFX/DoorUnlock.wav",
-	"door_locked": "res://Assets/Audio/SFX/DoorLocked.wav"
+	"door_locked": "res://Assets/Audio/SFX/DoorLocked.wav",
+	"moon_wipe": "res://Assets/Audio/SFX/MoonWipe.wav",
+	"sp_coin": "res://Assets/Audio/SFX/SPCoin.wav",
+	"hidden_coin": "res://Assets/Audio/SFX/HiddenCoin.wav",
+	"bridge_break": "res://Assets/Audio/SFX/BreakBridge.wav",
+	"secret": "res://Assets/Audio/SFX/Secret.wav",
+	"red_coin_1": "res://Assets/Audio/SFX/RedCoin1.wav",
+	"red_coin_2": "res://Assets/Audio/SFX/RedCoin2.wav",
+	"red_coin_3": "res://Assets/Audio/SFX/RedCoin3.wav",
+	"red_coin_4": "res://Assets/Audio/SFX/RedCoin4.wav",
+	"red_coin_5": "res://Assets/Audio/SFX/RedCoin5.wav",
+	"speak": "res://Assets/Audio/SFX/Speaking.wav",
+	"countdown": "res://Assets/Audio/SFX/RaceCountdown.wav",
+	"bowser_fall": "res://Assets/Audio/SFX/BowserFall.wav",
+	"superball": "res://Assets/Audio/SFX/Superball.wav"
 }
 
 @onready var sfx_library = DEFAULT_SFX_LIBRARY.duplicate()
@@ -79,7 +106,7 @@ var queued_sfxs := []
 var current_music_override : MUSIC_OVERRIDES = MUSIC_OVERRIDES.NONE
 
 
-enum MUSIC_OVERRIDES{NONE=-1, STAR=0, DEATH, PSWITCH, BOWSER, TIME_WARNING, LEVEL_COMPLETE, CASTLE_COMPLETE, ENDING, FLAG_POLE, HAMMER, RACE_LOSE, RACE_WIN, WING, COIN_HEAVEN_BONUS, MEGA_MUSHROOM}
+enum MUSIC_OVERRIDES{NONE=-1, STAR=0, DEATH, PSWITCH, BOWSER, TIME_WARNING, LEVEL_COMPLETE, CASTLE_COMPLETE, ENDING, FLAG_POLE, HAMMER, RACE_LOSE, RACE_WIN, WING, COIN_HEAVEN_BONUS, MEGA_MUSHROOM, SILENCE}
 
 const OVERRIDE_STREAMS := [
 	("res://Assets/Audio/BGM/StarMan.json"),
@@ -96,7 +123,8 @@ const OVERRIDE_STREAMS := [
 	("res://Assets/Audio/BGM/WinRace.json"),
 	"res://Assets/Audio/BGM/Wing.json",
 	"res://Assets/Audio/BGM/PerfectCoinHeaven.mp3",
-	"res://Assets/Audio/BGM/MegaMushroom.json"
+	"res://Assets/Audio/BGM/MegaMushroom.json",
+	"res://Assets/Audio/BGM/Silence.json"
 ]
 
 const MUSIC_BASE = preload("uid://da4vqkrpqnma0")

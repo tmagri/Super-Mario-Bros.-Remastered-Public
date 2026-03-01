@@ -5,6 +5,7 @@ var can_land := true
 @export var castle: Node = null
 
 func enter(_msg := {}) -> void:
+	player.can_hurt = false
 	player.direction = 1
 	player.stop_all_timers()
 	# Pause Mario 35 timer immediately on flagpole touch & award level completion bonus
@@ -15,6 +16,7 @@ func enter(_msg := {}) -> void:
 	state_machine.transition_to("LevelExit")
 
 func physics_update(_delta: float) -> void:
+	player.can_hurt = false
 	player.velocity.y = 125
 	player.velocity.x = 0
 	player.sprite.scale.x = player.direction

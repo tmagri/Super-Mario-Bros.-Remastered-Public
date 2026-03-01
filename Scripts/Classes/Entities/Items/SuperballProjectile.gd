@@ -15,14 +15,16 @@ var LIFETIME := 10.0
 const SMOKE_PARTICLE = preload("res://Scenes/Prefabs/Particles/SmokeParticle.tscn")
 
 func _ready() -> void:
-	# Force correct SML mechanics layers
-	# SML Ball should bounce off ALL solids (typically Layers 1, 2, 3, etc.)
+	# SML Superballs must be in floating mode to travel in straight diagonals
+	motion_mode = MOTION_MODE_FLOATING
+	
+	# Force correct layers: Bounces off Solids (1), Blocks (2), and Pipes (4)
+	# Removed 32 (Water) and 64 to ensure it travels through water smoothly
 	collision_layer = 8 # Layer 4 - Projectiles
-	# 1 = World, 2 = Blocks, 4 = One-ways/Solids
-	collision_mask = 1 | 2 | 4 | 32 | 64 
+	collision_mask = 1 | 2 | 4 
 	
 	if has_node("Hitbox"):
-		# Set Hitbox to detect enemies (16), coins (1), and specific items
+		# Hitbox handles detection, Body handles bouncing
 		$Hitbox.collision_layer = 0
 		$Hitbox.collision_mask = 1 | 2 | 4 | 16 | 1024 
 		$Hitbox.area_entered.connect(_on_hitbox_area_entered)
@@ -72,20 +74,23 @@ func _on_hitbox_area_entered(area: Area2D) -> void:
 func _physics_process(delta: float) -> void:
 	$Sprite.scale.x = direction
 	
-	# Use move_and_collide for proper bounce reflection
 	var motion = velocity * delta
-	var collision = move_and_collide(motion)
+	var bounciness = 4 # Max bounces per frame to prevent infinite loops
 	
-	if collision:
+	while motion.length() > 0 and bounciness > 0:
+		var collision = move_and_collide(motion)
+		if not collision:
+			break
+			
 		var normal = collision.get_normal()
-		# Reflect velocity off the collision normal for right-angle bouncing
+		# Reflect velocity
 		velocity = velocity.bounce(normal)
-		# Update direction based on reflected horizontal velocity
 		if velocity.x != 0:
 			direction = sign(velocity.x)
-		# Move remaining distance after bounce
-		var remainder = collision.get_remainder()
-		move_and_collide(remainder.bounce(normal))
+			
+		# Reflect remaining motion and continue the loop
+		motion = collision.get_remainder().bounce(normal)
+		bounciness -= 1
 
 func hit(play_sfx := true) -> void:
 	if play_sfx:

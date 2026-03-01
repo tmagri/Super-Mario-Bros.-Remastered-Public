@@ -419,6 +419,10 @@ func get_attackers_count() -> int:
 
 
 func try_use_item() -> void:
+	# Item Roulette only allowed during active gameplay timer
+	if not game_active or is_timer_paused:
+		return
+		
 	# Eliminated players cannot use items
 	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1
 	if my_id in player_statuses and not player_statuses[my_id].alive:

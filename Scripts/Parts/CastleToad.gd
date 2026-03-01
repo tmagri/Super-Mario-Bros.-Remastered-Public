@@ -24,6 +24,9 @@ func begin() -> void:
 	%Time.text = tr(%Time.text).replace("{TIME}", SpeedrunHandler.gen_time_string(SpeedrunHandler.format_time(SpeedrunHandler.timer)))
 	$CameraRightLimit._enter_tree()
 	await get_tree().create_timer(3, false).timeout
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		_center_messages_to_screen()
+		
 	if Global.current_game_mode == Global.GameMode.MARATHON_PRACTICE or (Global.current_game_mode == Global.GameMode.MARATHON and play_end_music):
 		show_message($SpeedrunMSG)
 	else:
@@ -31,6 +34,15 @@ func begin() -> void:
 	if not play_end_music:
 		await get_tree().create_timer(7, false).timeout
 		exit_level()
+
+func _center_messages_to_screen() -> void:
+	var cam = get_viewport().get_camera_2d()
+	if not cam: return
+	var center_x = cam.get_screen_center_position().x
+	
+	for node_name in ["StandardMSG", "SpeedrunMSG", "EndingSpeech"]:
+		if has_node(node_name):
+			get_node(node_name).global_position.x = center_x
 
 func exit_level() -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:

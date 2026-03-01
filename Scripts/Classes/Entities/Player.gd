@@ -1225,6 +1225,14 @@ func damage(type: String = "") -> void:
 		
 	# Assist Mode: Special handling
 	if Global.assist_mode == Global.AssistMode.NORMAL or Global.assist_mode == Global.AssistMode.FULL:
+		# Special pushback for Bowser
+		if type == "Bowser":
+			if velocity.y > -220: velocity.y = -180
+			velocity.x = -direction * 240
+		else:
+			if velocity.y > -200: velocity.y = -120
+			velocity.x = -direction * 60
+			
 		# Fire/Superball Mario loses power-up to Super Mario
 		if power_state.state_name == "Fire" or power_state.state_name == "Superball":
 			var super_state = get_node("PowerStates/Big")
@@ -1238,8 +1246,6 @@ func damage(type: String = "") -> void:
 		
 		# Super or Small Mario: just flinch
 		AudioManager.play_sfx("damage", global_position)
-		if velocity.y > -200: velocity.y = -120
-		velocity.x = -direction * 60
 		do_i_frames()
 		return
 
@@ -1289,7 +1295,7 @@ func do_i_frames() -> void:
 	can_hurt = true
 	refresh_hitbox()
 
-var valid_death_types = ["", "Fire"]
+var valid_death_types = ["", "Fire", "Bowser"]
 
 func die(pit: bool = false, type: String = "") -> void:
 	if ["Dead", "Pipe", "LevelExit"].has(state_machine.state.name):
@@ -1319,7 +1325,10 @@ func die(pit: bool = false, type: String = "") -> void:
 		await get_tree().create_timer(physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS)).timeout
 	if Global.current_game_mode != Global.GameMode.BOO_RACE:
 		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.DEATH, 9999, false)
-		await get_tree().create_timer(3).timeout
+		var delay = 3.0
+		if Global.current_game_mode == Global.GameMode.MARATHON_PRACTICE:
+			delay = 3.0 # Explicitly set for clarity matches user request
+		await get_tree().create_timer(delay).timeout
 	else:
 		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.RACE_LOSE, 9999, false)
 		await get_tree().create_timer(5).timeout

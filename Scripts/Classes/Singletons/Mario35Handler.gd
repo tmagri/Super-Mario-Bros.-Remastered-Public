@@ -232,15 +232,10 @@ func _check_win_condition() -> void:
 		game_active = false
 		game_over.emit(winner_id)
 		
-		# Delayed return to lobby (unless in debug mode)
-		if is_practice:
-			get_tree().paused = false
-			var aspect = Window.CONTENT_SCALE_ASPECT_EXPAND if Settings.file.video.size == 1 else Window.CONTENT_SCALE_ASPECT_KEEP
-			get_tree().root.content_scale_aspect = aspect
-			Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")
-			return
-			
-		await get_tree().create_timer(5.0, false).timeout
+		# Delayed return to lobby
+		var delay = 3.0 if is_practice else 5.0
+		await get_tree().create_timer(delay, false).timeout
+		
 		get_tree().paused = false
 		var aspect = Window.CONTENT_SCALE_ASPECT_EXPAND if Settings.file.video.size == 1 else Window.CONTENT_SCALE_ASPECT_KEEP
 		get_tree().root.content_scale_aspect = aspect
@@ -485,11 +480,13 @@ func apply_item(item: String) -> void:
 		"Mushroom":
 			if player.power_state.state_name == "Small":
 				player.power_up_animation("Big")
+				AudioManager.play_global_sfx("power_up")
 				update_player_state(player.player_id, "1")
 			else:
 				add_time(10)
 		"Flower":
 			player.power_up_animation("Fire")
+			AudioManager.play_global_sfx("power_up")
 			update_player_state(player.player_id, "2")
 		"Star":
 			player.super_star()
@@ -508,12 +505,15 @@ func apply_item(item: String) -> void:
 			AudioManager.play_global_sfx("lucky_star")
 		"Wing":
 			player.wing_get()
+			AudioManager.play_sfx("power_up")
 		"Hammer":
 			player.hammer_get()
+			AudioManager.play_global_sfx("hammer_get")
 		"P-Switch":
 			Global.activate_p_switch()
 		"Superball":
 			player.power_up_animation("Superball")
+			AudioManager.play_global_sfx("power_up")
 			update_player_state(player.player_id, "3")
 		"MegaMushroom":
 			player.mega_mushroom_get()

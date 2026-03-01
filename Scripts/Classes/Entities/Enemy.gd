@@ -50,8 +50,10 @@ func _check_br_kill(time_reward: int = 2) -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
 		Mario35Handler.on_enemy_killed(self, time_reward)
 
+var damage_type := "Enemy"
+
 func damage_player(player: Player) -> void:
-	player.damage()
+	player.damage(damage_type)
 
 func apply_enemy_gravity(delta: float) -> void:
 	velocity.y += (Global.entity_gravity / delta) * delta

@@ -17,8 +17,10 @@ var can_fall := true
 var health := 5
 
 var move_dir := -1
+var dead := false
 
 func _ready() -> void:
+	damage_type = "Bowser"
 	for i in [$JumpTimer, $HammerTime, $FlameTimer]:
 		i.start()
 
@@ -49,6 +51,9 @@ func get_target_y(player: Player) -> float:
 	else:
 		return player.global_position.y - 8
 
+func damage_player(player: Player) -> void:
+	player.damage("Bowser")
+
 func show_smoke() -> void:
 	if is_real: return
 	var smoke = preload("res://Scenes/Prefabs/Particles/SmokeParticle.tscn").instantiate()
@@ -67,6 +72,7 @@ func breathe_fire() -> void:
 	flame.mode = 1
 	flame.direction = direction
 	flame.target_y = get_target_y(target_player)
+	flame.damage_type = "Bowser"
 	if $TrackJoint.is_attached:
 		get_parent().owner.add_sibling(flame)
 	else:
@@ -78,6 +84,8 @@ func breathe_fire() -> void:
 	sprite.play("Idle")
 
 func bridge_fall() -> void:
+	if dead: return
+	dead = true
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	direction = 1
 	$FlameTimer.queue_free()
@@ -89,7 +97,8 @@ func bridge_fall() -> void:
 	can_fall = false
 	velocity.y = 0
 	await get_tree().create_timer(2).timeout
-	$FallSFX.play()
+	if has_node("FallSFX"):
+		$FallSFX.play()
 	can_fall = true
 	$Collision.queue_free()
 	await get_tree().create_timer(2).timeout
@@ -107,6 +116,7 @@ func throw_hammers() -> void:
 		node.velocity.y = -200
 		node.global_position = $Hammer.global_position
 		node.direction = direction
+		node.damage_type = "Bowser"
 		if $TrackJoint.is_attached:
 			get_parent().owner.add_sibling(node)
 		else:
@@ -118,10 +128,19 @@ func throw_hammers() -> void:
 		$HammerTime.start()
 
 func die(time_reward: int = 20) -> void:
+	if dead: return
+	dead = true
 	super.die(time_reward)
 
 func die_from_object(obj: Node2D, time_reward: int = 20) -> void:
+	if dead: return
+	dead = true
 	super.die_from_object(obj, time_reward)
+
+func die_from_hammer(obj: Node2D) -> void:
+	if dead: return
+	dead = true
+	super.die_from_hammer(obj)
 
 func fireball_hit() -> void:
 	health -= 1
@@ -148,10 +167,11 @@ func on_timeout() -> void:
 	move_dir = [-1, 1].pick_random()
 
 func on_gib_about_to_spawn() -> void:
-	if is_real:
-		$FallSFX.play()
-		$FallSFX.finished.connect($FallSFX.queue_free)
-		$FallSFX.reparent(get_parent())
+	if is_real and has_node("FallSFX"):
+		var fall_sfx = $FallSFX
+		fall_sfx.play()
+		fall_sfx.finished.connect(fall_sfx.queue_free)
+		fall_sfx.reparent(get_parent())
 	# guzlad: ugly but it'll have to do until we move the metadata stuff to actual variables
 	if ((Global.current_game_mode == Global.GameMode.CUSTOM_LEVEL) or (Global.current_game_mode == Global.GameMode.LEVEL_EDITOR)) and !is_real:
 		$SpriteScaleJoint/DeathSprite/ResourceSetterNew.resource_json = load("res://Assets/Sprites/Enemies/Goomba.json")

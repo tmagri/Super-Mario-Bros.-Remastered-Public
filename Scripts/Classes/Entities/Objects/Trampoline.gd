@@ -17,6 +17,7 @@ func _physics_process(_delta: float) -> void:
 				players.append(i.owner)
 				$Animation.play("Bounce")
 				i.owner.spring_bouncing = true
+				i.owner.velocity_x_jump_stored = i.owner.velocity.x
 	for i in players:
 		i.global_position.y = $PlayerCollision/PlayerJoint.global_position.y
 
@@ -25,11 +26,11 @@ func bounce_players() -> void:
 		player.has_spring_jumped = true
 		if Global.player_action_pressed("jump", player.player_id):
 			player.velocity.y = -player.physics_params(trampoline_type + "_SPEED")
-			player.gravity = player.calculate_speed_param("JUMP_GRAVITY")
+			player.gravity = player.calculate_speed_param("JUMP_GRAVITY", player.velocity_x_jump_stored)
 			player.has_jumped = true
 			AudioManager.play_sfx(player.physics_params("TRAMPOLINE_USED_SFX", player.COSMETIC_PARAMETERS), global_position)
 		else:
-			player.velocity.y = -player.calculate_speed_param("JUMP_SPEED")
+			player.velocity.y = -player.calculate_jump_height(player.calculate_speed_param("JUMP_SPEED", player.velocity_x_jump_stored))
 			AudioManager.play_sfx(player.physics_params("TRAMPOLINE_SFX", player.COSMETIC_PARAMETERS), global_position)
 	players.clear()
 

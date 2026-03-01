@@ -103,7 +103,11 @@ extends CharacterBody2D
 	},
 	"Big": {},
 	"Fire": {},
-	"Superball": {}
+	"Superball": {},
+	"Mega": {
+		"COLLISION_SIZE": [8, 28],
+		"CAN_BREAK_BRICKS": true,
+	}
 }
 ## Determines the physics properties of the character while "Classic Physics" are enabled.
 @export var CLASSIC_PARAMETERS: Dictionary = {
@@ -206,7 +210,11 @@ extends CharacterBody2D
 	},
 	"Big": {},
 	"Fire": {},
-	"Superball": {}
+	"Superball": {},
+	"Mega": {
+		"COLLISION_SIZE": [8, 28],
+		"CAN_BREAK_BRICKS": true,
+	}
 }
 ## Determines parameters typically involved with power-up behavior, mainly projectiles fired by the player.
 @export var POWER_PARAMETERS: Dictionary = {
@@ -272,6 +280,9 @@ extends CharacterBody2D
 		"PROJ_FLOOR_BOUNCE": true,
 		"PROJ_COLLECT_COINS": true,
 		"PROJ_SPEED": [150.0, -150.0],
+	},
+	"Mega": {
+		"MEGA_TIME": 12.0,
 	}
 }
 ## Determines values involving various ending sequences, such as grabbing the flagpole and walking to an NPC at the end of a level.
@@ -341,6 +352,9 @@ extends CharacterBody2D
 	},
 	"Big": {
 		"RAINBOW_POWERUP_FX": false,
+	},
+	"Mega": {
+		"RAINBOW_POWERUP_FX": false,
 	}
 } 
 #endregion
@@ -363,7 +377,8 @@ var input_direction := 0
 var star_meter := 0.0
 var flight_meter := 0.0
 var hammer_meter := 0.0
-var powerup_timers := ["star_meter", "flight_meter", "hammer_meter"]
+var mega_meter := 0.0
+var powerup_timers := ["star_meter", "flight_meter", "hammer_meter", "mega_meter"]
 
 var velocity_direction := 1
 var velocity_x_jump_stored := 0
@@ -427,7 +442,7 @@ var can_spring_fall_anim = false
 
 const COMBO_VALS := [100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000, null]
 
-@export_enum("Small", "Big", "Fire", "Superball") var starting_power_state := 0
+@export_enum("Small", "Big", "Fire", "Superball", "Mega") var starting_power_state := 0
 @onready var state_machine: StateMachine = $States
 @onready var normal_state: Node = $States/Normal
 @export var auto_death_pit := true
@@ -441,6 +456,7 @@ var in_water := false
 var has_star := false
 var has_wings := false
 var has_hammer := false
+var has_mega_mushroom := false
 
 var spring_bouncing := false
 
@@ -462,7 +478,7 @@ static var classic_physics := false
 static var classic_plus_enabled := false
 
 static var CHARACTERS := ["Mario", "Luigi", "Toad", "Toadette"]
-const POWER_STATES := ["Small", "Big", "Fire", "Superball"]
+const POWER_STATES := ["Small", "Big", "Fire", "Superball", "Mega"]
 
 signal moved
 signal dead
@@ -815,6 +831,7 @@ func _physics_process(delta: float) -> void:
 	handle_star(delta)
 	handle_hammer(delta)
 	handle_wing_flight(delta)
+	handle_mega_mushroom(delta)
 	if has_node("%IceCheck"):
 		on_ice = %IceCheck.is_colliding() and is_on_floor()
 	else:
@@ -1149,16 +1166,17 @@ func handle_step_collision() -> void:
 	if crouching:
 		collision_size = physics_params("CROUCH_COLLISION_SIZE")
 	collision_size = Vector2(collision_size[0], collision_size[1])
+	var s = $SpriteScaleJoint.scale.x
 	for i in get_tree().get_nodes_in_group("StepCollision"):
 		var on_wall := false
 		for x in [$StepWallChecks/LWall, $StepWallChecks/RWall]:
-			x.position.x = ((collision_size.x / 2) + 1) * sign(x.position.x)
+			x.position.x = ((collision_size.x / 2) * s + 1) * sign(x.position.x)
 			if x.is_colliding():
 				on_wall = true
-		var step_enabled = (not on_wall and (actual_velocity_y()) >= 0 and abs(velocity.x) > 5)
+		var step_enabled = (not on_wall and (actual_velocity_y()) >= 0 and abs(velocity.x) > 5 and not has_mega_mushroom)
 		i.set_deferred("disabled", not step_enabled)
-		i.position.x = ((collision_size.x / 2)) * sign(i.position.x)
-		i.position.x += 1 * sign(i.position.x)
+		i.position.x = ((collision_size.x / 2) * s) * sign(i.position.x)
+		i.position.x += 1 * s * sign(i.position.x)
 
 func handle_star(delta:float) -> void:
 	star_meter -= delta
@@ -1382,7 +1400,7 @@ func set_power_state_frame() -> void:
 		can_spring_fall_anim = frames.has_animation("SpringFall")
 	$Checkpoint.position.y = physics_params("CHECKPOINT_ICON_HEIGHT", COSMETIC_PARAMETERS)
 func get_power_up(power_name := "", give_points := true) -> void:
-	if is_dead:
+	if is_dead or has_mega_mushroom:
 		return
 	if give_points:
 		Global.score += 1000
@@ -1686,7 +1704,276 @@ func on_star_timeout() -> void:
 		has_star = false
 		is_invincible = false
 
+func mega_mushroom_get() -> void:
+	var mega_time = physics_params("MEGA_TIME", POWER_PARAMETERS, "Mega")
+	if mega_time == null or mega_time <= 0:
+		mega_time = 12.0
+	
+	# Mega Mario must always be Super Mario (Big) — set regardless of current state
+	if power_state.state_name != "Big":
+		power_state = get_node("PowerStates/Big")
+		Global.player_power_states[player_id] = "1"
+		handle_power_up_states(0)
+		refresh_hitbox()
+	
+	has_mega_mushroom = true
+	is_invincible = true  # Kills enemies on contact like a star
+	mega_meter = mega_time
+	if has_node("CanvasLayer/Control2/MarginContainer/Timers/MegaMushroomTimer"):
+		$CanvasLayer/Control2/MarginContainer/Timers/MegaMushroomTimer/TimerSprite.max_value = mega_meter
+	# Grow to 4× with a tween
+	var tween = create_tween()
+	tween.tween_property($SpriteScaleJoint, "scale", Vector2(4.0, 4.0), 0.5)
+	scale_collision(4.0)
+	AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.MEGA_MUSHROOM, 1, false)
+	DiscoLevel.combo_meter += 1
+
+func scale_collision(s: float) -> void:
+	for group in ["SmallCollisions", "BigCollisions", "StepCollision"]:
+		for node in get_tree().get_nodes_in_group(group):
+			if node.owner == self:
+				node.scale = Vector2(s, s)
+				# Scale position for all children to keep them relative to the 4x body
+				if s > 1.0:
+					if not node.has_meta("position_stored"):
+						node.set_meta("position_stored", node.position)
+					node.position = node.get_meta("position_stored") * s
+				else:
+					# Resetting to baseline
+					if node.has_meta("position_stored"):
+						node.position = node.get_meta("position_stored")
+	
+	# Specifically scale the Area2D Hitbox position to ensure it centers on Mega Mario
+	var hitbox = get_node_or_null("Hitbox")
+	if is_instance_valid(hitbox):
+		if s > 1.0:
+			if not hitbox.has_meta("position_stored"):
+				hitbox.set_meta("position_stored", hitbox.position)
+			if not hitbox.has_meta("mask_stored"):
+				hitbox.set_meta("mask_stored", hitbox.collision_mask)
+			if not hitbox.has_meta("scale_stored"):
+				hitbox.set_meta("scale_stored", hitbox.scale)
+			
+			hitbox.position = Vector2(0, -32) # Lowered to ensure foot-level detection
+			hitbox.scale.x = 3.0 # Increase width for 4x body
+			hitbox.collision_mask |= 16 # Add Layer 5 (Enemies)
+		else:
+			# Resetting to baseline
+			if hitbox.has_meta("position_stored"):
+				hitbox.position = hitbox.get_meta("position_stored")
+			if hitbox.has_meta("mask_stored"):
+				hitbox.collision_mask = hitbox.get_meta("mask_stored")
+			if hitbox.has_meta("scale_stored"):
+				hitbox.scale = hitbox.get_meta("scale_stored")
+
+
+func handle_mega_mushroom(delta: float) -> void:
+	if not has_mega_mushroom:
+		# Return scale back to normal if somehow it got stuck
+		if $SpriteScaleJoint.scale != Vector2(1.0, 1.0) and not transforming:
+			$SpriteScaleJoint.scale = Vector2(1.0, 1.0)
+		return
+	
+	mega_meter -= delta
+	# Flash warning in the last 2 seconds (mirrors star warning behaviour)
+	if mega_meter <= 2.0:
+		if fmod(mega_meter, 0.25) < 0.125:
+			$SpriteScaleJoint.modulate.a = 0.4
+		else:
+			$SpriteScaleJoint.modulate.a = 1.0
+	else:
+		$SpriteScaleJoint.modulate.a = 1.0
+
+	# Proactive destruction to maintain speed:
+	# Check slightly ahead of move_and_slide to destroy blocks BEFORE hitting them
+	if abs(velocity.x) > 0 or velocity.y < 0:
+		var check_y = min(0.0, velocity.y) * delta * 3.0
+		var check_x = velocity.x * delta * 4.0
+		var test_vec = Vector2(check_x, check_y) 
+		var col = move_and_collide(test_vec, true)
+		if col:
+			handle_mega_collision(col)
+	
+	# Also check slide collisions from the actual movement
+	var stored_vx = velocity.x  # Preserve velocity before collision handling
+	
+	for i in get_slide_collision_count():
+		handle_mega_collision(get_slide_collision(i))
+			
+	# Restore horizontal velocity so destroying blocks doesn't slow Mario down
+	if abs(stored_vx) > abs(velocity.x):
+		velocity.x = stored_vx
+
+	if mega_meter <= 0:
+		on_mega_timeout()
+	
+	# Brute-force intersection rect for Mega Mario (100% reliable)
+	# Big Mario's collision box is ~10x30, so 4x is ~40x120. We use 48x128 for a generous scan.
+	var mega_rect := Rect2(global_position.x - 24, global_position.y - 128, 48, 128)
+	
+	for coin in get_tree().get_nodes_in_group("Coins"):
+		if not is_instance_valid(coin) or not coin is Node2D:
+			continue
+		var coin_rect = Rect2(coin.global_position - Vector2(8, 8), Vector2(16, 16))
+		if mega_rect.intersects(coin_rect):
+			if coin.has_method("collect"):
+				coin.collect()
+	
+	for enemy in get_tree().get_nodes_in_group("Enemies"):
+		if not is_instance_valid(enemy) or not enemy is Node2D:
+			continue
+		var enemy_rect = Rect2(enemy.global_position - Vector2(16, 16), Vector2(32, 32))
+		if mega_rect.intersects(enemy_rect):
+			if enemy.has_method("die_from_object"):
+				enemy.die_from_object(self)
+			elif enemy.has_method("die"):
+				enemy.die()
+
+	# Brute-force destruction for explicit Blocks (BrickBlocks, Questions) to never get stuck
+	for block in get_tree().get_nodes_in_group("Blocks"):
+		if not is_instance_valid(block) or not block is Node2D:
+			continue
+		# Only destroy if intersecting AND it's not the floor we are standing on
+		# (global_position.y is Mario's feet, so block.global_position.y < global_position.y - 8 ensures it's above feet)
+		var block_rect = Rect2(block.global_position - Vector2(8, 8), Vector2(16, 16))
+		if mega_rect.intersects(block_rect):
+			if block.global_position.y < global_position.y - 8:
+				if block.has_method("destroy"):
+					# We use call_deferred to avoid physics state errors during the loop
+					block.add_collision_exception_with(self)
+					block.destroy()
+					Global.score += 50
+	
+	# Brute-force TileMapLayer destruction (erases solid tiles inside Mario's AABB)
+	var level_root = get_tree().current_scene
+	if level_root:
+		for tilemap in level_root.find_children("*", "TileMapLayer", true, false):
+			var start_map = tilemap.local_to_map(tilemap.to_local(mega_rect.position))
+			var end_map = tilemap.local_to_map(tilemap.to_local(mega_rect.end))
+			for x in range(start_map.x, end_map.x + 1):
+				for y in range(start_map.y, end_map.y + 1):
+					var tile_pos = Vector2i(x, y)
+					var map_world_y = tilemap.to_global(tilemap.map_to_local(tile_pos)).y
+					# Ensure it's not the flat ground directly at/below his feet
+					if map_world_y < global_position.y - 8 or (in_water and map_world_y < global_position.y + 8):
+						_mega_destroy_tile(tilemap, tile_pos)
+
+const BRICK_BREAK_PARTICLES = preload("uid://55lw62f6ol33")
+
+func _spawn_break_particles(world_pos: Vector2) -> void:
+	var particles = BRICK_BREAK_PARTICLES.instantiate()
+	particles.global_position = world_pos
+	get_tree().current_scene.add_child(particles)
+
+func _mega_destroy_tile(tilemap: TileMapLayer, pos: Vector2i) -> bool:
+	var tile_data = tilemap.get_cell_tile_data(pos)
+	if tile_data == null:
+		return false
+	var atlas_coords = tilemap.get_cell_atlas_coords(pos)
+	var source_id = tilemap.get_cell_source_id(pos)
+	var world_pos = tilemap.to_global(tilemap.map_to_local(pos))
+	
+	var is_pipe = source_id == 0 and atlas_coords.x >= 8
+	var is_staircase = source_id == 0 and atlas_coords == Vector2i(4, 2)
+	var is_destructable = tile_data.get_custom_data("destructable") if tile_data else false
+	
+	# Check if this tile is near a warp pipe (never destroy warp pipes)
+	var is_warp_pipe_or_protected = false
+	for pipe_area in get_tree().get_nodes_in_group("Pipes"):
+		if pipe_area is PipeArea and (pipe_area.target_level != "" or pipe_area.pipe_id != 0 or pipe_area.exit_only):
+			# If it's a pipe tile within 64 pixels (protects the whole pipe shaft)
+			if is_pipe and pipe_area.global_position.distance_to(world_pos) < 64:
+				is_warp_pipe_or_protected = true
+				break
+			# If it's an underwater stage, protect a column around the pipe (keeps the "feet" floor intact)
+			elif in_water:
+				var dx = abs(pipe_area.global_position.x - world_pos.x)
+				var dy = world_pos.y - pipe_area.global_position.y
+				if dx <= 48 and dy >= -32 and dy <= 80:
+					is_warp_pipe_or_protected = true
+					break
+	
+	# ALL solid tiles are breakable by Mega Mario (except warp pipes)
+	# Only destroy solid tiles, ignore non-solid decorations like water/clouds
+	var has_collision = false
+	if tilemap.tile_set != null and tilemap.tile_set.get_physics_layers_count() > 0:
+		if tile_data.get_collision_polygons_count(0) > 0:
+			has_collision = true
+			
+	if not is_warp_pipe_or_protected and has_collision:
+		tilemap.erase_cell(pos)
+		AudioManager.play_sfx("block_break", world_pos)
+		_spawn_break_particles(world_pos)
+		Global.score += 50
+		return true
+
+	return false
+
+func handle_mega_collision(col: KinematicCollision2D) -> bool:
+	if col == null: return false
+	var collider = col.get_collider()
+	if collider == null: return false
+	
+	# Only destroy when contacting from the sides or from below (ceilings)
+	# Floor normals point UP (y < -0.7). Ceiling normals point DOWN (y > 0.7).
+	# We want to skip floor contacts so Mario can stand on things.
+	var normal = col.get_normal()
+	if normal.y < -0.7 and not in_water:
+		return false  # Skip floor contacts (allow standing on floor) in normal levels
+		
+	# Destroy brick blocks (including those with items)
+	if collider is BrickBlock:
+		collider.add_collision_exception_with(self)
+		collider.destroy()
+		Global.score += 50
+		return true
+	# Destroy any Block (e.g. question blocks, solid animatable bodies)
+	elif collider is Block:
+		collider.add_collision_exception_with(self)
+		collider.destroy()
+		Global.score += 50
+		return true
+	# Destroy pipe bodies: any StaticBody2D in the "Pipes" group (if it's not a warp)
+	elif collider is StaticBody2D and collider.is_in_group("Pipes"):
+		var is_warp = false
+		for pipe_area in get_tree().get_nodes_in_group("Pipes"):
+			if pipe_area is PipeArea and pipe_area.global_position.distance_to(collider.global_position) < 48:
+				if pipe_area.target_level != "" or pipe_area.pipe_id != 0 or pipe_area.exit_only:
+					is_warp = true
+					break
+		if not is_warp:
+			_spawn_break_particles(collider.global_position)
+			collider.queue_free()
+			AudioManager.play_sfx("block_break", global_position)
+			Global.score += 50
+			return true
+	# TileMapLayer tiles handled via the proactive column scan in handle_mega_mushroom
+	elif collider is TileMapLayer:
+		var contact_pos = col.get_position() - normal * 4.0
+		var map_pos = collider.local_to_map(collider.to_local(contact_pos))
+		return _mega_destroy_tile(collider, map_pos)
+
+	return false
+
+func on_mega_timeout() -> void:
+	has_mega_mushroom = false
+	is_invincible = false
+	mega_meter = 0.0
+	$SpriteScaleJoint.modulate.a = 1.0
+	# Shrink back to normal scale with tween
+	var tween = create_tween()
+	tween.tween_property($SpriteScaleJoint, "scale", Vector2(1.0, 1.0), 0.5)
+	scale_collision(1.0)
+	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.MEGA_MUSHROOM)
+
+	# Always revert to Big (Super Mario) after mega wears off
+	power_state = get_node("PowerStates/Big")
+	Global.player_power_states[player_id] = "1"
+	handle_power_up_states(0)
+	refresh_hitbox()
+
 func water_exited() -> void:
+
 	await get_tree().physics_frame
 	if in_water: return
 	normal_state.swim_up_meter = 0

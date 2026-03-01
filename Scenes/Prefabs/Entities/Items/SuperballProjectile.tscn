@@ -59,6 +59,8 @@ metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 shape = SubResource("RectangleShape2D_ajyso")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=763751467]
+collision_layer = 0
+collision_mask = 9
 visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=69547141]

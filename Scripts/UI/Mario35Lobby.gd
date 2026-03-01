@@ -626,9 +626,6 @@ func _on_assist_mode_changed(new_mode: Global.AssistMode):
 			Global.AssistMode.FULL: mode_name = "FULL"
 		assist_button.text = "ASSIST MODE: " + mode_name
 	
-	var assist_option = get_node_or_null("%AssistOption")
-	if is_instance_valid(assist_option):
-		assist_option.selected = int(new_mode)
 
 
 func _update_settings():

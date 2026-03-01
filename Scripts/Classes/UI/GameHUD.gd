@@ -18,10 +18,13 @@ const ITEM_JSONS := {
 	"QuestionBlock": preload("res://Assets/Sprites/Blocks/QuestionBlock.json"),
 	"ClearQuestionBlock": preload("res://Assets/Sprites/Blocks/ClearQuestionBlock.json"),
 	"Superball": preload("res://Assets/Sprites/Items/SuperballFlower.json"),
+	"MegaMushroom": preload("res://Assets/Sprites/Items/SuperMushroom.json"),
 }
+
 
 var delta_time := 0.0
 var is_item_displaying := false
+var current_roulette_item := ""
 
 func _ready() -> void:
 	Global.level_theme_changed.connect(update_character_info)
@@ -161,6 +164,17 @@ func handle_main_hud() -> void:
 			var target_json = ITEM_JSONS["QuestionBlock"] if Mario35Handler.coins >= 20 else ITEM_JSONS["ClearQuestionBlock"]
 			if box_rs.resource_json != target_json:
 				box_rs.resource_json = target_json
+			current_roulette_item = ""
+			
+		# Animate MegaMushroom
+		if is_instance_valid(box_rs) and is_instance_valid(box_rs.get_parent()):
+			var sprite = box_rs.get_parent()
+			if current_roulette_item == "MegaMushroom":
+				var time_sec = Time.get_ticks_msec() / 1000.0
+				var scale_val = 1.0 + sin(time_sec * 15.0) * 0.2
+				sprite.scale = Vector2(scale_val, scale_val)
+			else:
+				sprite.scale = Vector2.ONE
 		
 		# Watch out warning
 		%WarningLabel.visible = Mario35Handler.get_attackers_count() > 0
@@ -668,6 +682,7 @@ func show_item_roulette() -> void:
 	while Mario35Handler.coin_roulette_active:
 		var rand_key = keys.pick_random()
 		if not is_instance_valid(rs): return
+		current_roulette_item = rand_key
 		rs.resource_json = ITEM_JSONS[rand_key]
 		AudioManager.play_global_sfx("menu_move")
 		await get_tree().create_timer(0.05).timeout
@@ -686,6 +701,7 @@ func _on_roulette_stopped(item: String) -> void:
 	if not ITEM_JSONS.has(item): return
 	
 	is_item_displaying = true
+	current_roulette_item = item
 	
 	# Set final item
 	rs.resource_json = ITEM_JSONS[item]

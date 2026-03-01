@@ -76,9 +76,10 @@ signal music_beat
 
 var queued_sfxs := []
 
-var current_music_override: MUSIC_OVERRIDES
+var current_music_override : MUSIC_OVERRIDES = MUSIC_OVERRIDES.NONE
 
-enum MUSIC_OVERRIDES{NONE=-1, STAR=0, DEATH, PSWITCH, BOWSER, TIME_WARNING, LEVEL_COMPLETE, CASTLE_COMPLETE, ENDING, FLAG_POLE, HAMMER, RACE_LOSE, RACE_WIN, WING, COIN_HEAVEN_BONUS}
+
+enum MUSIC_OVERRIDES{NONE=-1, STAR=0, DEATH, PSWITCH, BOWSER, TIME_WARNING, LEVEL_COMPLETE, CASTLE_COMPLETE, ENDING, FLAG_POLE, HAMMER, RACE_LOSE, RACE_WIN, WING, COIN_HEAVEN_BONUS, MEGA_MUSHROOM}
 
 const OVERRIDE_STREAMS := [
 	("res://Assets/Audio/BGM/StarMan.json"),
@@ -94,7 +95,8 @@ const OVERRIDE_STREAMS := [
 	("res://Assets/Audio/BGM/LoseRace.json"),
 	("res://Assets/Audio/BGM/WinRace.json"),
 	"res://Assets/Audio/BGM/Wing.json",
-	"res://Assets/Audio/BGM/PerfectCoinHeaven.mp3"
+	"res://Assets/Audio/BGM/PerfectCoinHeaven.mp3",
+	"res://Assets/Audio/BGM/MegaMushroom.json"
 ]
 
 const MUSIC_BASE = preload("uid://da4vqkrpqnma0")
@@ -185,23 +187,28 @@ func set_music_override(stream: MUSIC_OVERRIDES, priority := 0, stop_on_finish :
 
 func stop_music_override(stream: MUSIC_OVERRIDES, force := false) -> void:
 	if not force:
-		if stream == null:
+		if stream == MUSIC_OVERRIDES.NONE:
 			return
 		elif stream != current_music_override:
-			audio_override_queue.erase(stream)
+			if audio_override_queue.has(stream):
+				audio_override_queue.erase(stream)
 			return
 	else:
 		audio_override_queue.clear()
-	audio_override_queue.pop_back()
+	
+	if not audio_override_queue.is_empty():
+		audio_override_queue.pop_back() # Remove the one we are stopping
+		
 	music_override_player.stop()
+	
 	if audio_override_queue.is_empty():
-		audio_override_queue.clear()
 		music_override_priority = -1
 		current_music_override = MUSIC_OVERRIDES.NONE
-		music_override_player.stop()
 	else:
-		current_music_override = audio_override_queue[audio_override_queue.size() - 1]
-		set_music_override(audio_override_queue[audio_override_queue.size() - 1])
+		var next_override = audio_override_queue[audio_override_queue.size() - 1]
+		current_music_override = next_override
+		set_music_override(next_override)
+
 
 func load_sfx_map(json := {}) -> void:
 	sfx_library = DEFAULT_SFX_LIBRARY.duplicate()
@@ -212,6 +219,9 @@ func load_sfx_map(json := {}) -> void:
 func handle_music() -> void:
 	if Global.in_title_screen:
 		current_level_theme = ""
+	
+	# print("DEBUG: AM.handle_music - level valid: ", is_instance_valid(Global.current_level), " in_title: ", Global.in_title_screen)
+
 	
 	# guzlad: hack in the elif because it doesn't unpause itself like the normal music_player does
 	if Global.game_paused and Settings.file.audio.pause_bgm == 0:
@@ -257,6 +267,8 @@ func handle_music_override() -> void:
 			music_override_player.get_stream_playback().switch_to_clip(0)
 
 func create_stream_from_json(json_path := "") -> AudioStream:
+	if json_path == "":
+		return null
 	var path := ""
 	if json_path.contains(".json") == false:
 		path = ResourceSetter.get_pure_resource_path(json_path)
@@ -270,11 +282,28 @@ func create_stream_from_json(json_path := "") -> AudioStream:
 					return AudioStreamOggVorbis.load_from_file(ResourceSetter.get_pure_resource_path(json_path))
 		elif path.contains("res://"):
 			return load(path)
-	var bgm_file = $ResourceSetterNew.get_variation_json(JSON.parse_string(FileAccess.open(ResourceSetter.get_pure_resource_path(json_path), FileAccess.READ).get_as_text()).variations).source
-	path = ResourceSetter.get_pure_resource_path(json_path.replace(json_path.get_file(), bgm_file))
+	
+	var file = FileAccess.open(ResourceSetter.get_pure_resource_path(json_path), FileAccess.READ)
+	if not file:
+		printerr("AudioManager: Could not open JSON file: ", json_path)
+		return null
+		
+	var json_data = JSON.parse_string(file.get_as_text())
+	if not json_data or not json_data.has("variations"):
+		printerr("AudioManager: Invalid music JSON: ", json_path)
+		return null
+		
+	var variation = $ResourceSetterNew.get_variation_json(json_data.variations)
+	if not variation or not variation.has("source"):
+		return null
+		
+	var bgm_file_name = variation.source
+	path = ResourceSetter.get_pure_resource_path(json_path.replace(json_path.get_file(), bgm_file_name))
 	var stream = null
 	if path.get_file().contains(".bgm"):
-		stream = generate_interactive_stream(JSON.parse_string(FileAccess.open(path, FileAccess.READ).get_as_text()))
+		var bgm_content = FileAccess.open(path, FileAccess.READ)
+		if bgm_content:
+			stream = generate_interactive_stream(JSON.parse_string(bgm_content.get_as_text()))
 	else:
 		if path.contains("res://"):
 			stream = load(path)
@@ -283,6 +312,7 @@ func create_stream_from_json(json_path := "") -> AudioStream:
 		elif path.contains(".ogg"):
 			stream = AudioStreamOggVorbis.load_from_file(path)
 	return stream
+
 
 func generate_interactive_stream(bgm_file := {}) -> AudioStreamInteractive:
 	var stream = MUSIC_BASE.duplicate()

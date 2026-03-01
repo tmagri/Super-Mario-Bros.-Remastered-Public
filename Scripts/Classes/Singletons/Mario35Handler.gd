@@ -445,7 +445,7 @@ func spin_roulette() -> void:
 	var items = ["Mushroom", "Flower", "Star"]
 	match item_pool_mode:
 		0: items.append("Lucky Star")
-		2: items.append_array(["Lucky Star", "Wing", "Hammer", "P-Switch", "Superball"])
+		2: items.append_array(["Lucky Star", "Wing", "Hammer", "P-Switch", "Superball", "MegaMushroom"])
 		
 	current_roulette_item = items.pick_random()
 	incoming_item_roulette.emit()
@@ -511,6 +511,8 @@ func apply_item(item: String) -> void:
 		"Superball":
 			player.power_up_animation("Superball")
 			update_player_state(player.player_id, "3")
+		"MegaMushroom":
+			player.mega_mushroom_get()
 
 func cycle_target_mode(direction: int) -> void:
 	var modes = TargetMode.values()

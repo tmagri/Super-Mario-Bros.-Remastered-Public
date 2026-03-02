@@ -232,14 +232,18 @@ func _check_win_condition() -> void:
 		game_active = false
 		game_over.emit(winner_id)
 		
-		# Delayed return to lobby
-		var delay = 3.0 if is_practice else 5.0
-		await get_tree().create_timer(delay, false).timeout
-		
+		# Ensure tree is unpaused so timer and transitions work
 		get_tree().paused = false
-		var aspect = Window.CONTENT_SCALE_ASPECT_EXPAND if Settings.file.video.size == 1 else Window.CONTENT_SCALE_ASPECT_KEEP
-		get_tree().root.content_scale_aspect = aspect
-		Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")
+		
+		# Delayed return to lobby (process_always timer to avoid pause blocking)
+		var delay = 3.0 if is_practice else 5.0
+		var timer = get_tree().create_timer(delay, false)
+		timer.timeout.connect(func():
+			get_tree().paused = false
+			var aspect = Window.CONTENT_SCALE_ASPECT_EXPAND if Settings.file.video.size == 1 else Window.CONTENT_SCALE_ASPECT_KEEP
+			get_tree().root.content_scale_aspect = aspect
+			Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")
+		)
 
 func _award_placement_points() -> void:
 	var pts_table = [15, 12, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]

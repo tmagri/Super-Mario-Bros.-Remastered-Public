@@ -4,6 +4,7 @@
 
 [node name="Mario35PlayerCard" type="Panel" unique_id=1992716486]
 clip_contents = true
+texture_filter = 2
 script = ExtResource("1_m35pc")
 
 [node name="VBox" type="VBoxContainer" parent="." unique_id=1940404303]

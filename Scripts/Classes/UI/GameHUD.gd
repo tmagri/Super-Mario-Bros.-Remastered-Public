@@ -53,7 +53,11 @@ func _on_mario35_game_started() -> void:
 	update_br_timer(int(Mario35Handler.current_time))
 	# Hide IncomingBar as per user request
 	%IncomingBar.visible = false
-	
+	%BRTimer.visible = true
+	var live_rank = %BattleRoyaleHUD.get_node_or_null("RankLabel")
+	if live_rank:
+		live_rank.visible = true
+		
 	# Robust Cleanup of previous game over / leaderboard
 	for child in %BattleRoyaleHUD.get_children():
 		if "GameOver" in child.name or child.name.begins_with("LRB_") or "RankLabel" in child.name:
@@ -757,6 +761,12 @@ func update_br_leaderboard() -> void:
 
 func _on_game_over(winner_id: int) -> void:
 	update_br_leaderboard()
+	
+	# Hide "ELIMINATED" timer text and live rank so they don't conflict with results
+	%BRTimer.visible = false
+	var live_rank = %BattleRoyaleHUD.get_node_or_null("RankLabel")
+	if live_rank:
+		live_rank.visible = false
 	
 	var message = "GAME OVER"
 	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1

@@ -17,34 +17,34 @@ func _process(delta: float) -> void:
 	var vp_size = get_viewport_rect().size
 	var target_game_width = 256.0
 	var total_extra = max(vp_size.x - target_game_width, 0.0)
-	var side_width = total_extra / 2.0
+	var side_width = floor(total_extra / 2.0)
 	
 	var h_sep = 2.0 # matches GridContainer h_separation
 	var v_sep = 2.0 # matches GridContainer v_separation
-	var card_w = max((side_width - h_sep * 2.0) / 3.0, 8.0)
+	var card_w = floor(max((side_width - h_sep * 2.0) / 3.0, 8.0))
 	# 6 rows of players + 2 rows of height for the Stat Headers = 8 total rows
-	var card_h = max((vp_size.y - v_sep * 7.0) / 8.0, 8.0)
+	var card_h = floor(max((vp_size.y - v_sep * 7.0) / 8.0, 8.0))
 	current_card_size = Vector2(card_w, card_h)
 	
 	if %LeftPanel:
 		%LeftPanel.visible = side_width >= 30.0
 		%LeftPanel.custom_minimum_size.x = side_width
-		%LeftPanel.size = Vector2(side_width, vp_size.y)
+		%LeftPanel.size = Vector2(side_width, floor(vp_size.y))
 		%LeftPanel.position = Vector2.ZERO
 		var vbox = %LeftPanel.get_node_or_null("VBox")
 		if vbox:
-			vbox.size = Vector2(side_width, vp_size.y)
+			vbox.size = Vector2(side_width, floor(vp_size.y))
 			vbox.position = Vector2.ZERO
 			
 	if %RightPanel:
 		%RightPanel.visible = side_width >= 30.0
 		%RightPanel.custom_minimum_size.x = side_width
-		%RightPanel.size = Vector2(side_width, vp_size.y)
-		%RightPanel.position.x = vp_size.x - side_width
+		%RightPanel.size = Vector2(side_width, floor(vp_size.y))
+		%RightPanel.position.x = floor(vp_size.x - side_width)
 		%RightPanel.position.y = 0
 		var vbox = %RightPanel.get_node_or_null("VBox")
 		if vbox:
-			vbox.size = Vector2(side_width, vp_size.y)
+			vbox.size = Vector2(side_width, floor(vp_size.y))
 			vbox.position = Vector2.ZERO
 		
 	# --- Sync Players ---

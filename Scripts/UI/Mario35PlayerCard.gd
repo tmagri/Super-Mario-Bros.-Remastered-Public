@@ -17,45 +17,31 @@ func _process(_delta: float) -> void:
 		return
 
 	if is_stat:
-		# For stat cards don't use the VBox supersample trick at all.
-		# Just set the VBox to fill the card 1:1 and pick a font size
-		# that is exactly half the card height so the two labels each
-		# fill their own row.
-		vbox.size = size
-		vbox.scale = Vector2.ONE
-		vbox.position = Vector2.ZERO
-
-		var name_font = int(size.y * 0.48)
-		var status_font = int(size.y * 0.48)
-		name_font = clamp(name_font, 8, 4096)
-		status_font = clamp(status_font, 8, 4096)
+		# Stat cards: font snapped to multiple of 4
+		# VBox fills card via FULL_RECT anchors — no manual sizing needed
+		var max_for_height = int(size.y * 0.48)
+		var font_size = (max_for_height / 4) * 4
+		font_size = clampi(font_size, 4, 16)
 		if name_label:
-			name_label.add_theme_font_size_override("font_size", name_font)
+			name_label.add_theme_font_size_override("font_size", font_size)
 		if status_label:
-			status_label.add_theme_font_size_override("font_size", status_font)
+			status_label.add_theme_font_size_override("font_size", font_size)
 		return
 
-	# --- Regular player cards: supersample for crisp text ---
-	var ss_mult = float(Settings.file.video.internal_res)
-	if ss_mult == 0.0:
-		var monitor_id = DisplayServer.window_get_current_screen()
-		var monitor_y = DisplayServer.screen_get_size(monitor_id).y
-		ss_mult = max(1.0, floor(monitor_y / 240.0))
-
-	var ss_width = size.x * ss_mult
-	var ss_height = size.y * ss_mult
-
-	var inv_scale = 1.0 / ss_mult
-
-	vbox.size = Vector2(ss_width, ss_height)
-	vbox.scale = Vector2(inv_scale, inv_scale)
-	vbox.position = Vector2.ZERO
-
-	var target_font = clamp(int(ss_width / 8.0), 8, 4096)
+	# --- Regular player cards: font fits both height and width ---
+	# VBox fills card via FULL_RECT anchors — no manual sizing needed
+	# Height constraint: each label gets ~half the card
+	var max_for_height = int(size.y * 0.48)
+	# Width constraint: "CPU-01" = 6 chars; each char ~= font_size at this pixel font
+	var max_for_width = int(size.x / 6.0)
+	# Pick the tighter constraint, snap to multiple of 4
+	var limit = mini(max_for_height, max_for_width)
+	var font_size = (limit / 4) * 4
+	font_size = clampi(font_size, 4, 16)
 	if name_label:
-		name_label.add_theme_font_size_override("font_size", target_font)
+		name_label.add_theme_font_size_override("font_size", font_size)
 	if status_label:
-		status_label.add_theme_font_size_override("font_size", target_font)
+		status_label.add_theme_font_size_override("font_size", font_size)
 
 func setup(player_data: Dictionary) -> void:
 	is_stat = false

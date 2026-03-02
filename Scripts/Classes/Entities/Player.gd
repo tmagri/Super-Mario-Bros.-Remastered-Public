@@ -1304,7 +1304,8 @@ func die(pit: bool = false, type: String = "") -> void:
 	is_dead = true
 	visible = not pit
 	dead.emit()
-	AudioManager.play_sfx("die_sting", global_position)
+	if Global.current_game_mode != Global.GameMode.MARIO_35:
+		AudioManager.play_sfx("die_sting", global_position)
 	Global.p_switch_active = false
 	Global.p_switch_timer = 0
 	stop_all_timers()
@@ -1314,6 +1315,10 @@ func die(pit: bool = false, type: String = "") -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
 		Mario35Handler.on_local_player_death()
+		# Stop level music, then play the death jingle (skip die_sting to avoid double sound)
+		AudioManager.stop_all_music()
+		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.DEATH, 9999, false)
+		return
 	else:
 		get_tree().paused = true
 	Level.can_set_time = true
@@ -1346,7 +1351,10 @@ func death_load() -> void:
 	Global.death_load = true
 
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
-		pass
+		# Mario35Handler manages all post-death transitions (lobby return, etc.)
+		# Do NOT fall through to standard GameOver/TimeUp/reload logic.
+		Global.death_load = false
+		return
 
 	# Handle lives decrement for CAMPAIGN and MARATHON
 	if [Global.GameMode.CAMPAIGN, Global.GameMode.MARATHON].has(Global.current_game_mode):

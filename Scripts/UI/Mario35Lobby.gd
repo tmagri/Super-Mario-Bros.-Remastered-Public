@@ -131,11 +131,13 @@ func _ready():
 		$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton,
 		$BG/Border/Content/ScrollContainer/VBoxContainer/BackButton,
 		practice_button,
-		%AssistButton
+		%AssistButton,
+		%SettingsPopup
 	]
 	
 	for node in nodes_to_shrink:
-		node.custom_minimum_size.y = font_size + 2
+		if not node is PanelContainer:
+			node.custom_minimum_size.y = font_size + 2
 		if node is Button:
 			node.add_theme_stylebox_override("normal", compact_style)
 			node.add_theme_stylebox_override("hover", compact_style)
@@ -145,6 +147,8 @@ func _ready():
 			node.add_theme_stylebox_override("normal", compact_style)
 			node.add_theme_stylebox_override("focus", compact_style)
 			node.add_theme_stylebox_override("read_only", compact_style)
+		elif node is PanelContainer:
+			node.add_theme_stylebox_override("panel", compact_style)
 
 	for btn in [$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/HostButton, 
 				$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer/JoinButton,

@@ -66,13 +66,24 @@ func _update_icon(chara_idx: int = 0, power_idx: int = 0) -> void:
 	mario_sprite.visible = true
 
 func _process(delta: float) -> void:
-	# Mega Mario pulsating effect
-	if mario_sprite and current_power_idx == 4:
-		time_passed += delta
-		var pulse = 1.0 + sin(time_passed * 10.0) * 0.15
-		mario_sprite.scale = Vector2(pulse, pulse)
-	elif mario_sprite:
-		mario_sprite.scale = Vector2.ONE
+	# Dynamic Scaling for any screen size (especially Ultrawide)
+	if mario_sprite:
+		var sprite_margin = 2.0
+		var sprite_target_w = size.x - sprite_margin * 2.0
+		var sprite_target_h = size.y * (0.5 if is_stat else 0.6) # Allocate portion of card to sprite
+		
+		var max_dim = 32.0 # Standard size
+		var calc_scale = min(sprite_target_w / max_dim, sprite_target_h / max_dim)
+		var base_scale = clamp(calc_scale, 0.15, 1.0) # Minimum 15% scale to remain visible
+		
+		mario_sprite.pivot_offset = mario_sprite.size / 2.0
+		
+		if current_power_idx == 4: # Mega
+			time_passed += delta
+			var pulse = base_scale + sin(time_passed * 10.0) * (base_scale * 0.15)
+			mario_sprite.scale = Vector2(pulse, pulse)
+		else:
+			mario_sprite.scale = Vector2(base_scale, base_scale)
 
 	# Snapshot injected sizes from WidescreenHUD before mathematical alterations
 	if custom_minimum_size.x > size.x:
@@ -86,20 +97,19 @@ func _process(delta: float) -> void:
 		var sprite_h = mario_sprite.size.y if mario_sprite and mario_sprite.visible else 0
 		var remaining_h = size.y - sprite_h - 4
 		
-		# Give title more space (2/3 of remainder)
-		var target_h_name = int(remaining_h * 0.7)
-		var target_h_stat = int(remaining_h * 0.3)
+		var target_h_name = int(remaining_h * 0.6)
+		var target_h_stat = int(remaining_h * 0.4)
 		
-		var fs_best = 24
+		var fs_best = 4 # Fallback to minimum
 		var font = name_label.get_theme_font("font") if name_label else null
 		if font:
+			# Loop down to 4px to ensure it fits in tiny sidebars
 			for fs in range(24, 4, -1):
 				var n_size = font.get_multiline_string_size(name_label.text, name_label.horizontal_alignment, target_w, fs)
 				var s_size = font.get_multiline_string_size(status_label.text, status_label.horizontal_alignment, target_w, fs)
 				if n_size.x <= target_w and n_size.y <= target_h_name and s_size.x <= target_w and s_size.y <= target_h_stat:
 					fs_best = fs
 					break
-				fs_best = fs
 		
 		if name_label:
 			name_label.add_theme_font_size_override("font_size", fs_best)
@@ -113,20 +123,19 @@ func _process(delta: float) -> void:
 		return
 
 	# Iterate to find the best font size that fits the space
-	var target_width = size.x - 6 # Increased margin for safety
-	var target_height = int(size.y * 0.45) # Nearly half the height
+	var target_width = size.x - 4
+	var target_height = int(size.y * 0.35) 
 	
-	var best_size = 16 
+	var best_size = 4 # Fallback to minimum
 	if name_label and name_label.text != "":
 		var font = name_label.get_theme_font("font")
 		if font:
 			# Loop down to 4px to ensure it fits in tiny sidebars
-			for fs in range(16, 3, -1):
+			for fs in range(16, 4, -1):
 				var string_size = font.get_string_size(name_label.text, name_label.horizontal_alignment, -1, fs)
 				if string_size.x <= target_width and string_size.y <= target_height:
 					best_size = fs
 					break
-				best_size = fs 
 
 	if name_label:
 		name_label.add_theme_font_size_override("font_size", best_size)

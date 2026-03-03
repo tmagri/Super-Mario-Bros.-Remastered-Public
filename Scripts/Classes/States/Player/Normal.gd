@@ -142,7 +142,7 @@ func ground_acceleration(delta: float) -> void:
 	
 	var target_move_speed: float = player.physics_params("WALK_SPEED")
 	if player.in_water or player.flight_meter > 0:
-		var speed_mult := 2.0 if (player.has_wings and player.in_water) else 1.0
+		var speed_mult := 1.5 if (player.has_wings and player.in_water) else 1.0
 		target_move_speed = player.physics_params("SWIM_GROUND_SPEED") * speed_mult
 	var target_accel: float = player.physics_params("GROUND_WALK_ACCEL")
 	var walk_speed_requirement = abs(player.velocity.x) >= player.physics_params("WALK_SPEED") if not player.physics_params("CAN_RUN_ACCEL_EARLY") else true
@@ -270,11 +270,11 @@ func handle_swimming(delta: float) -> void:
 		deceleration(delta, true)
 
 func swim_acceleration(delta: float) -> void:
-	var speed_mult := 2.0 if (player.has_wings and player.in_water) else 1.0
+	var speed_mult := 1.5 if (player.has_wings and player.in_water) else 1.0
 	player.velocity.x = move_toward(player.velocity.x, player.physics_params("SWIM_SPEED") * speed_mult * player.input_direction, (player.physics_params("GROUND_WALK_ACCEL") / delta) * delta)
 
 func swim_up() -> void:
-	var speed_mult := 2.0 if (player.has_wings and player.in_water) else 1.0
+	var speed_mult := 1.5 if (player.has_wings and player.in_water) else 1.0
 	if player.swim_stroke:
 		player.play_animation("SwimIdle")
 	player.velocity.y = -player.physics_params("SWIM_HEIGHT") * speed_mult * player.gravity_vector.y

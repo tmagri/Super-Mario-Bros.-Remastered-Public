@@ -1,0 +1,15 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://mario35font"]
+
+[ext_resource type="FontFile" uid="uid://bewajqll4jf22" path="res://Assets/Fonts/FontMario35.otf" id="1_font"]
+
+[resource]
+base_font = ExtResource("1_font")
+variation_opentype = {
+1667329140: 0
+}
+multichannel_signed_distance_field = true
+msdf_pixel_range = 16
+msdf_size = 128
+antialiased = true
+hinting = 3
+subpixel_positioning = 3

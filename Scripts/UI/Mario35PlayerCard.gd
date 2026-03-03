@@ -17,31 +17,45 @@ func _process(_delta: float) -> void:
 		return
 
 	if is_stat:
-		# Stat cards: font snapped to multiple of 4
-		# VBox fills card via FULL_RECT anchors — no manual sizing needed
-		var max_for_height = int(size.y * 0.48)
-		var font_size = (max_for_height / 4) * 4
-		font_size = clampi(font_size, 4, 16)
+		var target_w = size.x - 8
+		var target_h = int(size.y * 0.45)
+		var fs_best = 24 # Stats can be slightly larger
+		var font = name_label.get_theme_font("font") if name_label else null
+		if font:
+			# Measure both labels if they exist and pick the one that fits both
+			for fs in range(24, 7, -1):
+				var n_size = font.get_string_size(name_label.text, name_label.horizontal_alignment, -1, fs) if name_label and name_label.text != "" else Vector2.ZERO
+				var s_size = font.get_string_size(status_label.text, status_label.horizontal_alignment, -1, fs) if status_label and status_label.text != "" else Vector2.ZERO
+				if n_size.x <= target_w and n_size.y <= target_h and s_size.x <= target_w and s_size.y <= target_h:
+					fs_best = fs
+					break
+				fs_best = fs
 		if name_label:
-			name_label.add_theme_font_size_override("font_size", font_size)
+			name_label.add_theme_font_size_override("font_size", fs_best)
 		if status_label:
-			status_label.add_theme_font_size_override("font_size", font_size)
+			status_label.add_theme_font_size_override("font_size", fs_best)
 		return
 
-	# --- Regular player cards: font fits both height and width ---
-	# VBox fills card via FULL_RECT anchors — no manual sizing needed
-	# Height constraint: each label gets ~half the card
-	var max_for_height = int(size.y * 0.48)
-	# Width constraint: "CPU-01" = 6 chars; each char ~= font_size at this pixel font
-	var max_for_width = int(size.x / 6.0)
-	# Pick the tighter constraint, snap to multiple of 4
-	var limit = mini(max_for_height, max_for_width)
-	var font_size = (limit / 4) * 4
-	font_size = clampi(font_size, 4, 16)
+	# Iterate to find the best font size that fits the space
+	var target_width = size.x - 6 # Increased margin for safety
+	var target_height = int(size.y * 0.45) # Nearly half the height
+	
+	var best_size = 16 
+	if name_label and name_label.text != "":
+		var font = name_label.get_theme_font("font")
+		if font:
+			# Loop down to 4px to ensure it fits in tiny sidebars
+			for fs in range(16, 3, -1):
+				var string_size = font.get_string_size(name_label.text, name_label.horizontal_alignment, -1, fs)
+				if string_size.x <= target_width and string_size.y <= target_height:
+					best_size = fs
+					break
+				best_size = fs 
+
 	if name_label:
-		name_label.add_theme_font_size_override("font_size", font_size)
+		name_label.add_theme_font_size_override("font_size", best_size)
 	if status_label:
-		status_label.add_theme_font_size_override("font_size", font_size)
+		status_label.add_theme_font_size_override("font_size", best_size)
 
 func setup(player_data: Dictionary) -> void:
 	is_stat = false

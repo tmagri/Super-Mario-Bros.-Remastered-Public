@@ -4,6 +4,7 @@
 [ext_resource type="Theme" uid="uid://dtn507x2b5de7" path="res://Resources/Theme.tres" id="2_theme"]
 [ext_resource type="Texture2D" uid="uid://bhuybr2gtuco5" path="res://Assets/Sprites/UI/MenuBG.png" id="3_bg"]
 [ext_resource type="Texture2D" uid="uid://3ai0ggxah360" path="res://Assets/Sprites/UI/MenuBorder.png" id="4_border"]
+[ext_resource type="FontFile" uid="uid://mario35font" path="res://Resources/ThemedResources/FontMario35.tres" id="5_font"]
 
 [node name="Mario35Lobby" type="Control" unique_id=461849937]
 layout_mode = 3
@@ -76,7 +77,9 @@ alignment = 1
 
 [node name="Title" type="Label" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=1244503449]
 layout_mode = 2
+texture_filter = 1
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_font")
 text = "BATTLE ROYALE"
 horizontal_alignment = 1
 
@@ -123,7 +126,9 @@ text = "JOIN"
 
 [node name="StatusLabel" type="Label" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=1452149734]
 layout_mode = 2
+texture_filter = 1
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_font")
 horizontal_alignment = 1
 
 [node name="PlayerList" type="ItemList" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=361297900]

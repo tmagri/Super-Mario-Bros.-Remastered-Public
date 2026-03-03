@@ -86,9 +86,6 @@ func _ready():
 	practice_button.name = "PracticeButton"
 	$BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer.add_child(practice_button)
 	practice_button.pressed.connect(_on_practice_pressed)
-	practice_button.focus_entered.connect(_on_focus_entered.bind(practice_button))
-	practice_button.focus_exited.connect(_on_focus_exited.bind(practice_button))
-	practice_button.mouse_entered.connect(practice_button.grab_focus)
 	
 	# Setup Assist Button
 	_on_assist_mode_changed(Global.assist_mode)

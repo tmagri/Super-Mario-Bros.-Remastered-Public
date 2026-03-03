@@ -706,7 +706,7 @@ func _build_level_bag() -> void:
 					var level_file = "%d-%d" % [w, l]
 					
 					var path = "res://Scenes/Levels/%s/World%s/%s.tscn" % [prefix, world_folder, level_file]
-					if FileAccess.file_exists(path):
+					if ResourceLoader.exists(path):
 						for _i in range(copies):
 							tier_entries.append(path)
 		

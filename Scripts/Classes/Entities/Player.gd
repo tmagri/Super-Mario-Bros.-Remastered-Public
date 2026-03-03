@@ -1329,6 +1329,7 @@ func die(pit: bool = false, type: String = "") -> void:
 		AudioManager.stop_all_music()
 		await get_tree().create_timer(physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS)).timeout
 	if Global.current_game_mode != Global.GameMode.BOO_RACE:
+		AudioManager.kill_sfx("die_sting")
 		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.DEATH, 9999, false)
 		var delay = 3.0
 		if Global.current_game_mode == Global.GameMode.MARATHON_PRACTICE:

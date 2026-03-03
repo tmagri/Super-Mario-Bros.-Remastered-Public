@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bcwlng0ec7r1x"]
+[gd_scene load_steps=4 format=3 uid="uid://bcwlng0ec7r1x"]
 
 [ext_resource type="Script" uid="uid://6boalhkbg2fj" path="res://Scripts/UI/Mario35PlayerCard.gd" id="1_m35pc"]
 [ext_resource type="FontFile" uid="uid://mario35font" path="res://Resources/ThemedResources/FontMario35.tres" id="2_font"]

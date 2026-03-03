@@ -1,6 +1,7 @@
 extends Panel
 
 const SUPERSAMPLE = 4.0
+const COIN_JSON = preload("res://Assets/Sprites/Items/Coin.json")
 
 @onready var name_label = %NameLabel
 @onready var status_label = %StatusLabel
@@ -12,9 +13,26 @@ var current_chara_idx := 0
 var current_power_idx := 0
 var time_passed := 0.0
 
+var coin_icon: AnimatedSprite2D = null
+var coin_rs: ResourceSetterNew = null
+var _last_coin_theme := ""
+
 func _ready() -> void:
-	# Manual asset loading skipped here as it's now handled by setup/setup_as_stat with correct character support
-	pass
+	# Create coin icon programmatically (same pattern as GameHUD.gd)
+	coin_icon = AnimatedSprite2D.new()
+	coin_icon.name = "CoinIcon"
+	coin_icon.visible = false
+	coin_icon.z_index = 10
+	coin_icon.centered = true
+	add_child(coin_icon)
+	
+	coin_rs = ResourceSetterNew.new()
+	coin_rs.name = "CoinRS"
+	coin_rs.node_to_affect = coin_icon
+	coin_rs.property_name = "sprite_frames"
+	coin_rs.resource_json = COIN_JSON
+	coin_icon.add_child(coin_rs)
+	coin_icon.play("default")
 
 func _update_icon(chara_idx: int = 0, power_idx: int = 0) -> void:
 	if not mario_sprite: return
@@ -84,6 +102,9 @@ func _process(delta: float) -> void:
 			mario_sprite.scale = Vector2(pulse, pulse)
 		else:
 			mario_sprite.scale = Vector2(base_scale, base_scale)
+	
+	if coin_icon and coin_icon.visible:
+		_position_coin()
 
 	# Snapshot injected sizes from WidescreenHUD before mathematical alterations
 	if custom_minimum_size.x > size.x:
@@ -210,6 +231,34 @@ func update_state(is_alive: bool, coins: int, is_targeting_me: bool, theme: Stri
 		modulate = Color(1.0, 0.8, 0.8)
 	else:
 		modulate = Color.WHITE
+
+	if coin_icon:
+		var show_coin = coins >= 20
+		
+		# Practice Mode: Force show on all cards for testing
+		if Mario35Handler.is_practice:
+			show_coin = true
+		
+		coin_icon.visible = show_coin
+		if coin_icon.visible:
+			_position_coin()
+			
+			if coin_rs and _last_coin_theme != theme:
+				_last_coin_theme = theme
+				coin_rs.force_properties = {"Theme": theme}
+				coin_rs.update_resource()
+		else:
+			_last_coin_theme = ""
+
+func _position_coin() -> void:
+	if not coin_icon: return
+	# Position tightly in top-right corner
+	coin_icon.position = Vector2(size.x - 4, 4)
+	
+	# Half the mario sprite's current scale
+	var mario_scale = mario_sprite.scale.x if mario_sprite else 0.5
+	var coin_scale = mario_scale * 0.5
+	coin_icon.scale = Vector2(coin_scale, coin_scale)
 
 func _update_style(bg_color: Color, text_color: Color) -> void:
 	var style = StyleBoxFlat.new()

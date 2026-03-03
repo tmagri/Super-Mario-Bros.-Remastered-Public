@@ -49,7 +49,8 @@ var is_timer_paused := false
 var enemy_queue: Array[String] = []
 var spawn_timer := 0.0
 var session_points: Dictionary = {} # peer_id -> int (Persists between games)
-var levels_played := 0 # Counter for randomization weighting
+var levels_played := 0 # Counter for how many levels played this match
+var level_bag: Array[String] = [] # Bag of level paths to draw from
 var last_level_path := "" # Prevent back-to-back repeats
 const SPAWN_INTERVAL = 1.0 # Seconds between spawns (Faster for more pressure)
 
@@ -128,6 +129,7 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	Global.second_quest = (difficulty_mode == 1)
 	levels_played = 0
 	last_level_path = ""
+	level_bag.clear()
 	Global.score = 0
 	coins = 0
 	Global.lives = 1 # Start with 1 life in BR
@@ -637,95 +639,97 @@ func randomize_seed() -> void:
 	game_seed = randi()
 	print("[M35] New game seed generated: ", game_seed)
 
-func get_next_level_path() -> String:
-	# Determine game version prefix
-	var version_enum = game_version
-	if version_enum == GameVersion.RANDOM:
-		# Randomize between the core three for "Mixed" feel
-		version_enum = [GameVersion.SMB1, GameVersion.SMBLL, GameVersion.SMBS].pick_random()
-	
-	var max_w = 8
+func _get_version_info(version_enum: GameVersion) -> Dictionary:
 	var prefix = "SMB1"
-	
+	var max_w = 8
 	match version_enum:
 		GameVersion.SMB1:
 			prefix = "SMB1"
 			max_w = 8
 		GameVersion.SMBLL:
 			prefix = "SMBLL"
-			max_w = 13 # SMBLL has up to World D (13)
+			max_w = 13
 		GameVersion.SMBANN:
 			prefix = "SMBANN"
 			max_w = 8
 		GameVersion.SMBS:
 			prefix = "SMBS"
-			max_w = 4 # Usually 4 worlds for special editions
+			max_w = 4
+	return {"prefix": prefix, "max_w": max_w}
+
+func _build_level_bag() -> void:
+	level_bag.clear()
 	
-	# --- World Selection with Weighting ---
-	var w = 1
-	# Favor earlier worlds in initial rounds
-	if levels_played < 2: # First 2 levels
-		# 80% chance for World 1-2
-		if rng.randf() < 0.8:
-			w = rng.randi_range(1, 2)
-		else:
-			w = rng.randi_range(1, max_w)
-	elif levels_played < 5: # Levels 3-5
-		# 60% chance for World 1-4
-		if rng.randf() < 0.6:
-			w = rng.randi_range(1, 4)
-		else:
-			w = rng.randi_range(1, max_w)
-	else:
-		# Standard randomization
-		w = rng.randi_range(1, max_w)
+	var version_enum = game_version
+	if version_enum == GameVersion.RANDOM:
+		version_enum = [GameVersion.SMB1, GameVersion.SMBLL, GameVersion.SMBS][rng.randi() % 3]
 	
-	# --- Level Selection with Weighting ---
-	# Priority for X-1 stages, especially in round 1
-	var l = 1
-	var l_weights = [0.25, 0.25, 0.25, 0.25] # Default uniform
+	var info = _get_version_info(version_enum)
+	var prefix: String = info.prefix
+	var max_w: int = info.max_w
 	
-	if levels_played == 0:
-		# First level: zero chance for castle level
-		l_weights = [0.90, 0.07, 0.03, 0.0] 
-	elif levels_played < 10:
-		# Early rounds: strongly favor X-1/X-2
-		l_weights = [0.5, 0.3, 0.15, 0.05]
-	else:
-		# Later rounds: more balanced
-		l_weights = [0.35, 0.25, 0.20, 0.20]
+	# Build bag in TIERS so earlier worlds come first in the run
+	# Tier 1 (first ~8 draws): Worlds 1-2, levels 1-3 only (no castles)
+	# Tier 2 (next ~8):        Worlds 1-4, all levels
+	# Tier 3 (next ~8):        Worlds 3-6 (or max_w), all levels
+	# Tier 4 (rest):           All worlds, all levels
+	var tiers = [
+		{"worlds": [1, mini(2, max_w)], "levels": [1, 3], "copies": 3},
+		{"worlds": [1, mini(4, max_w)], "levels": [1, 4], "copies": 2},
+		{"worlds": [3, mini(6, max_w)], "levels": [1, 4], "copies": 2},
+		{"worlds": [1, max_w],          "levels": [1, 4], "copies": 1},
+	]
 	
-	var roll = rng.randf()
-	var weight_sum = 0.0
-	for i in range(l_weights.size()):
-		weight_sum += l_weights[i]
-		if roll <= weight_sum:
-			l = i + 1
-			break
+	for tier in tiers:
+		var tier_entries: Array[String] = []
+		var w_min: int = tier.worlds[0]
+		var w_max: int = tier.worlds[1]
+		var l_min: int = tier.levels[0]
+		var l_max: int = tier.levels[1]
+		var copies: int = tier.copies
+		
+		for w in range(w_min, w_max + 1):
+			for l in range(l_min, l_max + 1):
+				var path = "res://Scenes/Levels/%s/World%s/%d-%d.tscn" % [prefix, str(w), w, l]
+				for _i in range(copies):
+					tier_entries.append(path)
+		
+		# Shuffle within this tier
+		for i in range(tier_entries.size() - 1, 0, -1):
+			var j = rng.randi() % (i + 1)
+			var tmp = tier_entries[i]
+			tier_entries[i] = tier_entries[j]
+			tier_entries[j] = tmp
+		
+		level_bag.append_array(tier_entries)
 	
-	levels_played += 1
-	var world_str = str(w)
-	var level_str = "%d-%d" % [w, l]
+	# Ensure the first entry isn't the same as the last level played
+	if level_bag.size() > 1 and level_bag[0] == last_level_path:
+		var swap_idx = rng.randi_range(1, mini(level_bag.size() - 1, 5))
+		var tmp = level_bag[0]
+		level_bag[0] = level_bag[swap_idx]
+		level_bag[swap_idx] = tmp
 	
-	# Sync Global variables for HUD and transitions
+	print("[M35] Built tiered level bag with %d entries" % level_bag.size())
+
+func get_next_level_path() -> String:
+	# Refill bag if empty
+	if level_bag.is_empty():
+		_build_level_bag()
+	
+	# Draw from the bag
+	var level_path = level_bag.pop_front()
+	
+	# Parse world/level from path for Global sync (e.g. "1-3.tscn")
+	var file_name = level_path.get_file().get_basename() # e.g. "1-3"
+	var parts = file_name.split("-")
+	var w = int(parts[0]) if parts.size() >= 1 else 1
+	var l = int(parts[1]) if parts.size() >= 2 else 1
+	
 	Global.world_num = w
 	Global.level_num = l
-	
-	var level_path = "res://Scenes/Levels/%s/World%s/%s.tscn" % [prefix, world_str, level_str]
-	
-	# Prevent back-to-back repeats (retry up to 3 times)
-	if level_path == last_level_path and levels_played > 1:
-		for _retry in range(3):
-			w = rng.randi_range(1, max_w)
-			l = rng.randi_range(1, 4)
-			world_str = str(w)
-			level_str = "%d-%d" % [w, l]
-			level_path = "res://Scenes/Levels/%s/World%s/%s.tscn" % [prefix, world_str, level_str]
-			if level_path != last_level_path:
-				break
-		Global.world_num = w
-		Global.level_num = l
-	
+	levels_played += 1
 	last_level_path = level_path
-	print("[M35] Randomized next level (Round %d): %s" % [levels_played, level_path])
+	
+	print("[M35] Level %d: %s (%d remaining in bag)" % [levels_played, level_path, level_bag.size()])
 	return level_path

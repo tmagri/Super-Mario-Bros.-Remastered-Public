@@ -91,6 +91,14 @@ func _physics_process(delta: float) -> void:
 		# Reflect remaining motion and continue the loop
 		motion = collision.get_remainder().bounce(normal)
 		bounciness -= 1
+	
+	# Off-screen cleanup
+	var camera = get_viewport().get_camera_2d()
+	if camera:
+		var cam_pos = camera.get_screen_center_position()
+		var screen_size = get_viewport_rect().size / camera.zoom
+		if abs(global_position.x - cam_pos.x) > screen_size.x * 2 or abs(global_position.y - cam_pos.y) > screen_size.y * 2:
+			queue_free()
 
 func hit(play_sfx := true) -> void:
 	if play_sfx:

@@ -12,12 +12,12 @@ func _physics_process(_delta: float) -> void:
 		if i.owner is Player and i.owner.is_on_floor():
 			if i.owner.spring_bouncing or i.owner.velocity.y < 0:
 				continue
+			i.owner.velocity_x_jump_stored = i.owner.velocity.x
 			i.owner.velocity.x = 0
 			if players.has(i.owner) == false:
 				players.append(i.owner)
 				$Animation.play("Bounce")
 				i.owner.spring_bouncing = true
-				i.owner.velocity_x_jump_stored = i.owner.velocity.x
 	for i in players:
 		i.global_position.y = $PlayerCollision/PlayerJoint.global_position.y
 

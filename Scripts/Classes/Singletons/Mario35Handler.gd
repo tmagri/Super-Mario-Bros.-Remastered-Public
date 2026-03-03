@@ -660,24 +660,22 @@ func _get_version_info(version_enum: GameVersion) -> Dictionary:
 func _build_level_bag() -> void:
 	level_bag.clear()
 	
-	var version_enum = game_version
-	if version_enum == GameVersion.RANDOM:
-		version_enum = [GameVersion.SMB1, GameVersion.SMBLL, GameVersion.SMBS][rng.randi() % 3]
+	var versions_to_include := []
+	if game_version == GameVersion.RANDOM:
+		versions_to_include = [GameVersion.SMB1, GameVersion.SMBLL, GameVersion.SMBS]
+	else:
+		versions_to_include = [game_version]
 	
-	var info = _get_version_info(version_enum)
-	var prefix: String = info.prefix
-	var max_w: int = info.max_w
-	
-	# Build bag in TIERS so earlier worlds come first in the run
-	# Tier 1 (first ~8 draws): Worlds 1-2, levels 1-3 only (no castles)
-	# Tier 2 (next ~8):        Worlds 1-4, all levels
-	# Tier 3 (next ~8):        Worlds 3-6 (or max_w), all levels
-	# Tier 4 (rest):           All worlds, all levels
+	# Build bag in TIERS so earlier worlds come first in the run across ALL included games
+	# Tier 1: World 1-2, levels 1-3 only (no castles)
+	# Tier 2: World 1-4, all levels
+	# Tier 3: World 3-6, all levels
+	# Tier 4: All worlds, all levels
 	var tiers = [
-		{"worlds": [1, mini(2, max_w)], "levels": [1, 3], "copies": 3},
-		{"worlds": [1, mini(4, max_w)], "levels": [1, 4], "copies": 2},
-		{"worlds": [3, mini(6, max_w)], "levels": [1, 4], "copies": 2},
-		{"worlds": [1, max_w],          "levels": [1, 4], "copies": 1},
+		{"worlds": [1, 2], "levels": [1, 3], "copies": 3},
+		{"worlds": [1, 4], "levels": [1, 4], "copies": 2},
+		{"worlds": [3, 6], "levels": [1, 4], "copies": 2},
+		{"worlds": [1, 13], "levels": [1, 4], "copies": 1}, # 13 for Worlds 1-D in SMBLL
 	]
 	
 	for tier in tiers:
@@ -688,29 +686,54 @@ func _build_level_bag() -> void:
 		var l_max: int = tier.levels[1]
 		var copies: int = tier.copies
 		
-		for w in range(w_min, w_max + 1):
-			for l in range(l_min, l_max + 1):
-				var path = "res://Scenes/Levels/%s/World%s/%d-%d.tscn" % [prefix, str(w), w, l]
-				for _i in range(copies):
-					tier_entries.append(path)
+		for version_enum in versions_to_include:
+			var info = _get_version_info(version_enum)
+			var prefix: String = info.prefix
+			var v_max_w: int = info.max_w
+			
+			# Clamp tier range to the specific game's world count
+			var current_w_min = clampi(w_min, 1, v_max_w)
+			var current_w_max = clampi(w_max, 1, v_max_w)
+			
+			# Skip if this tier is beyond this version's max world (unless it's the final catch-all tier)
+			if w_min > v_max_w and tier != tiers.back():
+				continue
+				
+			for w in range(current_w_min, current_w_max + 1):
+				for l in range(l_min, l_max + 1):
+					# Map World 9, A, B, C, D for SMBLL if w > 8
+					var world_folder = str(w)
+					var level_file = "%d-%d" % [w, l]
+					
+					var path = "res://Scenes/Levels/%s/World%s/%s.tscn" % [prefix, world_folder, level_file]
+					if FileAccess.file_exists(path):
+						for _i in range(copies):
+							tier_entries.append(path)
 		
 		# Shuffle within this tier
 		for i in range(tier_entries.size() - 1, 0, -1):
-			var j = rng.randi() % (i + 1)
+			var j = rng.randi() % (tier_entries.size())
 			var tmp = tier_entries[i]
 			tier_entries[i] = tier_entries[j]
 			tier_entries[j] = tmp
 		
 		level_bag.append_array(tier_entries)
 	
+	# Final safety shuffle to mix the tier boundaries slightly
+	for i in range(mini(10, level_bag.size())):
+		var swap_idx = rng.randi() % level_bag.size()
+		var tmp = level_bag[i]
+		level_bag[i] = level_bag[swap_idx]
+		level_bag[swap_idx] = tmp
+
 	# Ensure the first entry isn't the same as the last level played
 	if level_bag.size() > 1 and level_bag[0] == last_level_path:
-		var swap_idx = rng.randi_range(1, mini(level_bag.size() - 1, 5))
+		var swap_idx = rng.randi_range(1, mini(level_bag.size() - 1, 10))
 		var tmp = level_bag[0]
 		level_bag[0] = level_bag[swap_idx]
 		level_bag[swap_idx] = tmp
 	
-	print("[M35] Built tiered level bag with %d entries" % level_bag.size())
+	print("[M35] Built mixed tiered level bag with %d entries" % level_bag.size())
 
 func get_next_level_path() -> String:
 	# Refill bag if empty
@@ -720,8 +743,13 @@ func get_next_level_path() -> String:
 	# Draw from the bag
 	var level_path = level_bag.pop_front()
 	
-	# Parse world/level from path for Global sync (e.g. "1-3.tscn")
-	var file_name = level_path.get_file().get_basename() # e.g. "1-3"
+	# Sync Global variables for HUD and transitions
+	# Path: res://Scenes/Levels/SMB1/World1/1-1.tscn
+	var path_parts = level_path.split("/")
+	if path_parts.size() >= 4:
+		Global.current_campaign = path_parts[3]
+		
+	var file_name = level_path.get_file().get_basename() # e.g. "1-3" or "9-1"
 	var parts = file_name.split("-")
 	var w = int(parts[0]) if parts.size() >= 1 else 1
 	var l = int(parts[1]) if parts.size() >= 2 else 1
@@ -731,5 +759,5 @@ func get_next_level_path() -> String:
 	levels_played += 1
 	last_level_path = level_path
 	
-	print("[M35] Level %d: %s (%d remaining in bag)" % [levels_played, level_path, level_bag.size()])
+	print("[M35] Level %d: [%s] %s (%d remaining in bag)" % [levels_played, Global.current_campaign, level_path, level_bag.size()])
 	return level_path

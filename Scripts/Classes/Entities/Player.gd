@@ -1316,6 +1316,8 @@ func die(pit: bool = false, type: String = "") -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
 		Mario35Handler.on_local_player_death()
 		AudioManager.stop_all_music()
+		if physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS) > 0:
+			await get_tree().create_timer(physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS)).timeout
 		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.DEATH, 9999, false)
 		return
 	else:

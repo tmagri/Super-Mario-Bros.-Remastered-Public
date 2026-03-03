@@ -109,7 +109,12 @@ func _process(delta: float) -> void:
 	if stat_broadcast_timer <= 0:
 		stat_broadcast_timer = 1.0
 		var my_kills = player_statuses.get(my_id, {}).get("kills", 0)
-		Mario35Network.broadcast_stats(int(current_time), coins, current_target_id, my_kills)
+		var my_power = int(Global.player_power_states[0])
+		var player_node = get_tree().get_first_node_in_group("Players")
+		if is_instance_valid(player_node) and player_node.get("has_mega_mushroom"):
+			my_power = 4 # Mega
+		
+		Mario35Network.broadcast_stats(int(current_time), coins, current_target_id, my_kills, my_power)
 		# Also re-evaluate target if auto-targeting logic requires it
 		if current_target_mode != TargetMode.RANDOM:
 			update_target()
@@ -580,8 +585,17 @@ func update_target() -> void:
 				if not current_target_id in potential_targets:
 					current_target_id = potential_targets.pick_random()
 
-func receive_stats(id: int, time: int, coins: int, target: int, kills: int) -> void:
-	last_known_stats[id] = {"time": time, "coins": coins, "target": target, "kills": kills}
+func receive_stats(id: int, time: int, coins: int, target: int, kills: int, world: int, level: int, theme: String, power_state: int) -> void:
+	last_known_stats[id] = {
+		"time": time, 
+		"coins": coins, 
+		"target": target, 
+		"kills": kills,
+		"world": world,
+		"level": level,
+		"theme": theme,
+		"power_state": power_state
+	}
 	# Also update player_statuses for leaderboard
 	if id in player_statuses:
 		player_statuses[id].kills = kills

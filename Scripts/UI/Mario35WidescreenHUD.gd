@@ -15,8 +15,9 @@ func _process(delta: float) -> void:
 	
 	# --- Resize Logic ---
 	var vp_size = get_viewport_rect().size
-	var target_game_width = 256.0
-	var total_extra = max(vp_size.x - target_game_width, 0.0)
+	var target_ratio = 256.0 / 224.0 # Aspect ratio of the original game
+	var game_w = vp_size.y * target_ratio
+	var total_extra = max(vp_size.x - game_w, 0.0)
 	var side_width = floor(total_extra / 2.0)
 	
 	var h_sep = 2.0 # matches GridContainer h_separation
@@ -138,7 +139,15 @@ func sync_players() -> void:
 	
 	var camp = Global.current_campaign
 	if camp == "SMB1": camp = "SMB"
-	stat_cards["LevelStat"].setup_as_stat(camp, level_name)
+	
+	var game_name = "Super\nMario\nBros."
+	match Global.current_campaign:
+		"SMB1": game_name = "Super\nMario\nBros."
+		"SMBLL": game_name = "Super\nMario\nBros.\nLost Levels"
+		"SMBS": game_name = "Super\nMario\nBros.\nSpecial"
+		"SMBANN": game_name = "All-Night\nNippon\nSMB"
+	
+	stat_cards["LevelStat"].setup_as_stat(game_name, level_name)
 	
 	var alive_count = Mario35Handler.alive_count
 	var total_count = Mario35Handler.player_statuses.size()
@@ -206,12 +215,15 @@ func _update_card_data(card: Control, pid: int) -> void:
 	var is_targeting_me = false
 	
 	if pid < -90:
-		data = { "name": "CPU-%02d" % (abs(pid) - 99), "alive": true, "coins": (abs(pid) * 3) % 99 }
+		data = { "name": "CPU-%02d" % (abs(pid) - 99), "alive": true, "coins": (abs(pid) * 3) % 99, "theme": "Overworld", "power_state": (abs(pid) % 5) }
 		if (abs(pid) % 5) == 0: is_targeting_me = true
 	else:
 		if not Mario35Handler.player_statuses.has(pid): return
-		data = Mario35Handler.player_statuses[pid]
+		data = Mario35Handler.player_statuses[pid].duplicate()
+		var stats = Mario35Handler.last_known_stats.get(pid, {})
+		data.merge(stats) # Add theme, world, level, power_state, etc.
 		is_targeting_me = data.get("target", 0) == my_id
 	
 	if card.has_method("setup"): card.setup(data)
-	if card.has_method("update_state"): card.update_state(data.get("alive", true), data.get("coins", 0), is_targeting_me)
+	if card.has_method("update_state"): 
+		card.update_state(data.get("alive", true), data.get("coins", 0), is_targeting_me, data.get("theme", "Overworld"), data.get("power_state", 0))

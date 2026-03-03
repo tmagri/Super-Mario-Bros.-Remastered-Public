@@ -1,0 +1,42 @@
+{
+    "variations": {
+        "default": {
+            "SMB1": {
+                "source": "../../Players/Mario/Small.png",
+                "rect": [
+                    0,
+                    0,
+                    32,
+                    32
+                ]
+            },
+            "SMBLL": {
+                "source": "../../Players/Mario/Small.png",
+                "rect": [
+                    0,
+                    0,
+                    32,
+                    32
+                ]
+            },
+            "SMBS": {
+                "source": "../../Players/Mario/Small.png",
+                "rect": [
+                    0,
+                    0,
+                    32,
+                    32
+                ]
+            },
+            "SMBANN": {
+                "source": "../../Players/Mario/Small.png",
+                "rect": [
+                    0,
+                    0,
+                    32,
+                    32
+                ]
+            }
+        }
+    }
+}

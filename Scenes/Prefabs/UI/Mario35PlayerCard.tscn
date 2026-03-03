@@ -1,7 +1,11 @@
-[gd_scene format=3 uid="uid://bcwlng0ec7r1x"]
+[gd_scene load_steps=5 format=3 uid="uid://bcwlng0ec7r1x"]
 
 [ext_resource type="Script" uid="uid://6boalhkbg2fj" path="res://Scripts/UI/Mario35PlayerCard.gd" id="1_m35pc"]
 [ext_resource type="FontFile" uid="uid://mario35font" path="res://Resources/ThemedResources/FontMario35.tres" id="2_font"]
+[ext_resource type="Shader" uid="uid://mario_hud_shader" path="res://Scenes/Parts/MarioHUDIcon.gdshader" id="3_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mario"]
+shader = ExtResource("3_shader")
 
 [node name="Mario35PlayerCard" type="Panel" unique_id=1992716486]
 clip_contents = true
@@ -17,6 +21,17 @@ grow_horizontal = 2
 grow_vertical = 2
 texture_filter = 2
 theme_override_constants/separation = 0
+
+[node name="MarioSprite" type="TextureRect" parent="VBox" unique_id=9999]
+unique_name_in_owner = true
+visible = false
+material = SubResource("ShaderMaterial_mario")
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+expand_mode = 1
+stretch_mode = 5
 
 [node name="NameLabel" type="Label" parent="VBox" unique_id=181540204]
 unique_name_in_owner = true

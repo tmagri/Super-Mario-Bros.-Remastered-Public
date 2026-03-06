@@ -491,6 +491,16 @@ func _on_name_input_changed(new_text: String) -> void:
 	Settings.file.mario_35.player_name = name_input.text.strip_edges().to_upper()
 	Settings.save_settings()
 
+func _save_player_name() -> void:
+	var current_name = name_input.text.strip_edges().to_upper()
+	if current_name.is_empty():
+		current_name = "PLAYER"
+		name_input.text = current_name
+	
+	Settings.file.mario_35.player_name = current_name
+	Settings.save_settings()
+	Mario35Network.player_info.name = current_name
+
 func _on_room_key_changed(new_text: String) -> void:
 	var caret_pos = %RoomKeyInput.caret_column
 	var sanitized = ""
@@ -513,7 +523,7 @@ func _on_host_pressed():
 		status_label.text = "ENTER NAME"
 		return
 	
-	Mario35Network.player_info.name = name_input.text.strip_edges().to_upper()
+	_save_player_name()
 	var key = %RoomKeyInput.text.strip_edges().to_upper()
 	var use_upnp = %NetworkOption.selected == 0 # 0: GLOBAL
 	
@@ -537,7 +547,7 @@ func _on_join_pressed():
 		status_label.text = "ENTER NAME"
 		return
 		
-	Mario35Network.player_info.name = name_input.text.strip_edges().to_upper()
+	_save_player_name()
 	var key = %RoomKeyInput.text.strip_edges().to_upper()
 	Mario35Handler.is_practice = false
 	var err = Mario35Network.join_game(ip_input.text, key)
@@ -690,9 +700,9 @@ func _on_practice_pressed():
 func _auto_host_for_debug() -> void:
 	# Auto-host for debug mode (single player)
 	if name_input.text.strip_edges().is_empty():
-		name_input.text = "DEBUG"
+		name_input.text = "PLAYER"
 	
-	Mario35Network.player_info.name = name_input.text.strip_edges().to_upper()
+	_save_player_name()
 	var err = Mario35Network.host_game("", false) # No UPNP, no room key
 	if err == OK:
 		status_label.text = "PRACTICE MODE - READY"

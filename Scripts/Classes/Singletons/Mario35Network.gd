@@ -25,6 +25,8 @@ var player_info = {
 	"skin_id": "0" # Default skin
 }
 
+var loading_ready_players := [] # Peers that have finished pre-loading the level
+
 func register_player(data_json):
 	var data = JSON.parse_string(data_json)
 	if not data: return
@@ -60,7 +62,14 @@ func start_game(settings = {}):
 	if not settings.is_empty():
 		Mario35Handler.apply_settings(settings)
 	Mario35Handler.start_game(Mario35Handler.start_time, Mario35Handler.max_time)
-	Global.transition_to_scene(Mario35Handler.get_next_level_path())
+	# Pause the timer until all players are loaded and synced
+	Mario35Handler.is_timer_paused = true
+	# Store the level path for the loading screen to pre-load
+	Mario35Handler.pending_level_path = Mario35Handler.get_next_level_path()
+	# Clear readiness tracking
+	loading_ready_players.clear()
+	# Transition to the loading screen instead of the level
+	Global.transition_to_scene("res://Scenes/UI/Mario35LoadingScreen.tscn")
 
 func send_enemy(type):
 	Mario35Handler.receive_enemy(type)
@@ -107,6 +116,8 @@ func _ready():
 	rpc_config("send_enemy", config_any)
 	rpc_config("notify_death", config_any)
 	rpc_config("receive_stats", config_any) # Using reliable config for simplicity even if func unchecked
+	rpc_config("client_scene_ready", config_any)
+	rpc_config("start_match", config_any)
 	# Dedicated server support
 	if "--server" in OS.get_cmdline_args():
 		print("Starting dedicated server...")
@@ -273,3 +284,24 @@ func _on_server_disconnected():
 	player_list_changed.emit()
 
 # Removed obsolete functions
+
+# --- Pre-match loading synchronization ---
+func client_scene_ready():
+	if not multiplayer.is_server():
+		return
+	var sender_id = multiplayer.get_remote_sender_id()
+	var actual_id = sender_id if sender_id != 0 else 1
+	if actual_id not in loading_ready_players:
+		loading_ready_players.append(actual_id)
+		print("[SYNC] Player %d ready (%d/%d)" % [actual_id, loading_ready_players.size(), players.size()])
+	
+	# Check if everyone is ready
+	if loading_ready_players.size() >= players.size():
+		print("[SYNC] All players ready – starting match!")
+		start_match.rpc()
+
+func start_match():
+	loading_ready_players.clear()
+	var loading_screen = get_tree().current_scene
+	if loading_screen and loading_screen.has_method("go_to_level"):
+		loading_screen.go_to_level()

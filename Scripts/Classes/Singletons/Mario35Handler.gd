@@ -52,6 +52,7 @@ var session_points: Dictionary = {} # peer_id -> int (Persists between games)
 var levels_played := 0 # Counter for how many levels played this match
 var level_bag: Array[String] = [] # Bag of level paths to draw from
 var last_level_path := "" # Prevent back-to-back repeats
+var pending_level_path := "" # Level path for loading screen to pre-load
 const SPAWN_INTERVAL = 1.0 # Seconds between spawns (Faster for more pressure)
 
 # Player status tracking

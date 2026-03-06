@@ -128,6 +128,15 @@ func update_m35_hud_positioning() -> void:
 		target_sel.size = Vector2(100, 32)
 		target_sel.position.x = game_right - 100 - 8
 		target_sel.position.y = vp_size.y - 32
+		
+	# Bottom Center: WATCH OUT! label (between Rank and Target)
+	var warning_lbl = %WarningLabel
+	if warning_lbl:
+		if warning_lbl.get_anchor(SIDE_LEFT) != 0 or warning_lbl.get_anchor(SIDE_TOP) != 0:
+			warning_lbl.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		warning_lbl.size = Vector2(120, 16)
+		warning_lbl.position.x = center_x - 60
+		warning_lbl.position.y = vp_size.y - 24
 
 func _process(delta: float) -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:

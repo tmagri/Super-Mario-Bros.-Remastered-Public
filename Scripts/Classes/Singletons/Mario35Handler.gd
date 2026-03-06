@@ -717,6 +717,24 @@ func _build_level_bag() -> void:
 		level_bag[0] = level_bag[swap_idx]
 		level_bag[swap_idx] = tmp
 	
+	# Ensure the first level is a friendly overworld stage (not castle -4 or underwater -2)
+	# Castle and underwater levels are hard to earn time on with a fresh 35s clock
+	if level_bag.size() > 1:
+		var first = level_bag[0].get_file().get_basename() # e.g. "1-4" or "2-2"
+		var parts = first.split("-")
+		var first_level_num = int(parts[1]) if parts.size() >= 2 else 1
+		if first_level_num == 4 or first_level_num == 2: # Castle or potential underwater
+			# Find the first friendly level (X-1 or X-3) in the bag to swap with
+			for i in range(1, level_bag.size()):
+				var candidate = level_bag[i].get_file().get_basename()
+				var c_parts = candidate.split("-")
+				var c_level = int(c_parts[1]) if c_parts.size() >= 2 else 1
+				if c_level == 1 or c_level == 3: # Overworld-style levels
+					var tmp = level_bag[0]
+					level_bag[0] = level_bag[i]
+					level_bag[i] = tmp
+					break
+	
 	print("[M35] Level bag built. Size: %d" % level_bag.size())
 
 func get_next_level_path() -> String:

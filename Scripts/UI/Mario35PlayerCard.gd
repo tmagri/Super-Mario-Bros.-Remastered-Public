@@ -2,6 +2,7 @@ extends Panel
 
 const SUPERSAMPLE = 4.0
 const COIN_JSON = preload("res://Assets/Sprites/Items/Coin.json")
+const HAMMER_JSON = preload("res://Assets/Sprites/Items/HammerIcon.json")
 const FONT_NORMAL = preload("res://Resources/ThemedResources/FontMario35.tres")
 const FONT_TITLE = preload("res://Assets/Fonts/FontMario35Title.otf")
 
@@ -15,9 +16,18 @@ var current_chara_idx := 0
 var current_power_idx := 0
 var time_passed := 0.0
 
+# Special state flags for visual effects
+var has_star := false
+var has_hammer := false
+var has_mega := false
+var blink_timer := 0.0
+
 var coin_icon: AnimatedSprite2D = null
 var coin_rs: ResourceSetterNew = null
 var _last_coin_theme := ""
+
+var hammer_icon: AnimatedSprite2D = null
+var hammer_rs: ResourceSetterNew = null
 
 func _ready() -> void:
 	# Create coin icon programmatically (same pattern as GameHUD.gd)
@@ -35,6 +45,22 @@ func _ready() -> void:
 	coin_rs.resource_json = COIN_JSON
 	coin_icon.add_child(coin_rs)
 	coin_icon.play("default")
+	
+	# Create hammer icon programmatically
+	hammer_icon = AnimatedSprite2D.new()
+	hammer_icon.name = "HammerIcon"
+	hammer_icon.visible = false
+	hammer_icon.z_index = 10
+	hammer_icon.centered = true
+	add_child(hammer_icon)
+	
+	hammer_rs = ResourceSetterNew.new()
+	hammer_rs.name = "HammerRS"
+	hammer_rs.node_to_affect = hammer_icon
+	hammer_rs.property_name = "sprite_frames"
+	hammer_rs.resource_json = HAMMER_JSON
+	hammer_icon.add_child(hammer_rs)
+	hammer_icon.play("default")
 
 func _update_icon(chara_idx: int = 0, power_idx: int = 0) -> void:
 	if not mario_sprite: return
@@ -98,15 +124,27 @@ func _process(delta: float) -> void:
 		
 		mario_sprite.pivot_offset = mario_sprite.size / 2.0
 		
-		if current_power_idx == 4: # Mega
+		if has_mega or current_power_idx == 4: # Mega: blink effect
 			time_passed += delta
 			var pulse = base_scale + sin(time_passed * 10.0) * (base_scale * 0.15)
 			mario_sprite.scale = Vector2(pulse, pulse)
+			# Blinking visibility
+			blink_timer += delta
+			mario_sprite.modulate.a = 1.0 if fmod(blink_timer, 0.3) < 0.15 else 0.5
+		elif has_star: # Star: palette cycle
+			time_passed += delta
+			mario_sprite.scale = Vector2(base_scale, base_scale)
+			# The shader overrides modulate, so we cycle the palette index to blink!
+			var cycle_idx = int(time_passed * 15.0) % 4
+			mario_sprite.material.set_shader_parameter("palette_idx", cycle_idx)
 		else:
 			mario_sprite.scale = Vector2(base_scale, base_scale)
+			mario_sprite.modulate = Color.WHITE
+			blink_timer = 0.0
+			mario_sprite.material.set_shader_parameter("palette_idx", current_power_idx)
 	
-	if coin_icon and coin_icon.visible:
-		_position_coin()
+	if (coin_icon and coin_icon.visible) or (hammer_icon and hammer_icon.visible):
+		_position_icons()
 
 	# Snapshot injected sizes from WidescreenHUD before mathematical alterations
 	if custom_minimum_size.x > size.x:
@@ -118,11 +156,14 @@ func _process(delta: float) -> void:
 	if is_stat:
 		var target_w = size.x - 4
 		var sprite_h = mario_sprite.size.y if mario_sprite and mario_sprite.visible else 0
-		var remaining_h = size.y - sprite_h - 4
+		var top_pad = vbox0.offset_top if vbox0 else 0
+		var remaining_h = size.y - sprite_h - top_pad - 4
 		
-		var target_h_name = int(remaining_h * 0.6)
-		var target_h_stat = int(remaining_h * 0.4)
+		# Add a generous safety margin
+		var safe_h = remaining_h - 4
 		
+		# Instead of counting lines mathematically, just calculate the best font size
+		# using Godot's multiline bounds and arbitrarily shrink it to guarantee fit.
 		var fs_best = 4 # Fallback to minimum
 		var font = name_label.get_theme_font("font") if name_label else null
 		if font:
@@ -130,13 +171,15 @@ func _process(delta: float) -> void:
 			for fs in range(24, 4, -1):
 				var n_size = font.get_multiline_string_size(name_label.text, name_label.horizontal_alignment, target_w, fs)
 				var s_size = font.get_multiline_string_size(status_label.text, status_label.horizontal_alignment, target_w, fs)
-				if n_size.x <= target_w and n_size.y <= target_h_name and s_size.x <= target_w and s_size.y <= target_h_stat:
-					fs_best = fs
+				if n_size.x <= target_w and s_size.x <= target_w and (n_size.y + s_size.y) <= remaining_h + 2:
+					# Force the font a couple points smaller unconditionally to prevent cutoff
+					fs_best = max(4, fs - 2) 
 					break
 		
+		# Apply the calculated font size
 		if name_label:
 			name_label.add_theme_font_size_override("font_size", fs_best)
-			name_label.add_theme_constant_override("line_spacing", 0)
+			name_label.add_theme_constant_override("line_spacing", 0) # Natural spacing
 			name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		if status_label:
 			status_label.add_theme_font_size_override("font_size", fs_best)
@@ -175,10 +218,17 @@ func setup(player_data: Dictionary) -> void:
 		name_label.add_theme_font_override("font", FONT_NORMAL)
 		name_label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
-func setup_as_stat(title: String, value: String) -> void:
+func setup_as_stat(title: String, value: String, power_state: int = 0, coins: int = 0, p_has_star: bool = false, p_has_hammer: bool = false, p_has_mega: bool = false) -> void:
 	is_stat = true
+	has_star = p_has_star
+	has_hammer = p_has_hammer
+	has_mega = p_has_mega
 	var chara_idx = int(Global.player_characters[0])
-	_update_icon(chara_idx)
+	_update_icon(chara_idx, power_state)
+	
+	# Add padding above the Mario sprite for stat cards by pushing the VBox down
+	if vbox0:
+		vbox0.offset_top = 8
 	
 	if name_label:
 		name_label.text = title
@@ -195,6 +245,23 @@ func setup_as_stat(title: String, value: String) -> void:
 		status_label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
 	
 	_update_style(Color.WHITE, Color.BLACK)
+	
+	# Show coin icon on stat cards when player has 20+ coins
+	if coin_icon:
+		var show_coin = coins >= 20
+		coin_icon.visible = show_coin
+		
+	# Show hammer icon on stat cards when player has hammer
+	if hammer_icon:
+		hammer_icon.visible = has_hammer
+		
+	if (coin_icon and coin_icon.visible) or (hammer_icon and hammer_icon.visible):
+		_position_icons()
+		var theme = Global.level_theme if Global.level_theme else "Overworld"
+		if coin_rs and _last_coin_theme != theme:
+			_last_coin_theme = theme
+			coin_rs.force_properties = {"Theme": theme}
+			coin_rs.update_resource()
 
 func update_state(is_alive: bool, coins: int, is_targeting_me: bool, theme: String = "Overworld", power_state: int = 0) -> void:
 	if is_stat: return
@@ -246,25 +313,33 @@ func update_state(is_alive: bool, coins: int, is_targeting_me: bool, theme: Stri
 			show_coin = true
 		
 		coin_icon.visible = show_coin
-		if coin_icon.visible:
-			_position_coin()
-			
-			if coin_rs and _last_coin_theme != theme:
-				_last_coin_theme = theme
-				coin_rs.force_properties = {"Theme": theme}
-				coin_rs.update_resource()
-		else:
-			_last_coin_theme = ""
+		
+	if hammer_icon:
+		hammer_icon.visible = has_hammer
+		
+	if (coin_icon and coin_icon.visible) or (hammer_icon and hammer_icon.visible):
+		_position_icons()
+		
+		if coin_rs and _last_coin_theme != theme:
+			_last_coin_theme = theme
+			coin_rs.force_properties = {"Theme": theme}
+			coin_rs.update_resource()
+	else:
+		_last_coin_theme = ""
 
-func _position_coin() -> void:
-	if not coin_icon: return
-	# Position tightly in top-right corner
-	coin_icon.position = Vector2(size.x - 4, 4)
-	
-	# Half the mario sprite's current scale
+func _position_icons() -> void:
 	var mario_scale = mario_sprite.scale.x if mario_sprite else 0.5
-	var coin_scale = mario_scale * 0.5
-	coin_icon.scale = Vector2(coin_scale, coin_scale)
+	var icon_scale = mario_scale * 0.5
+	
+	var right_offset = 4
+	if coin_icon and coin_icon.visible:
+		coin_icon.position = Vector2(size.x - right_offset, right_offset)
+		coin_icon.scale = Vector2(icon_scale, icon_scale)
+		right_offset += 16 * icon_scale + 2
+		
+	if hammer_icon and hammer_icon.visible:
+		hammer_icon.position = Vector2(size.x - right_offset, 4)
+		hammer_icon.scale = Vector2(icon_scale, icon_scale)
 
 func _update_style(bg_color: Color, text_color: Color) -> void:
 	var style = StyleBoxFlat.new()

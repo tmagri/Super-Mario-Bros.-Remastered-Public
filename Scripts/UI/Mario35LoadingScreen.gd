@@ -5,16 +5,18 @@ extends Control
 ## then signals the host that it is ready.  Once every connected player
 ## has reported in, the host fires `start_match` and everyone drops into
 ## the level simultaneously with a perfectly synchronised timer.
+## Practice mode skips the wait and goes straight to the level.
 
 @onready var status_label: Label = $BG/VBox/StatusLabel
-@onready var mario_sprite: TextureRect = $BG/VBox/MarioContainer/MarioSprite
 
 var level_path := ""
 var level_resource = null  # Will hold the loaded PackedScene
 var reported_ready := false
 var match_started := false
 
-# Mario run animation
+# Mario run animation — uses a Sprite2D added directly to the scene root
+# so it's not clipped by the VBox layout
+var mario_sprite: Sprite2D = null
 var mario_x := -32.0
 var mario_frame := 0
 var frame_timer := 0.0
@@ -39,22 +41,33 @@ func _ready() -> void:
 	if not level_path.is_empty():
 		ResourceLoader.load_threaded_request(level_path)
 	
-	# Setup Mario sprite from the spritesheet
+	# Setup Mario sprite as a free Sprite2D (not constrained by VBox)
 	_setup_mario_sprite()
 	
-	# Dot animation for "LOADING..."
+	# Remove the placeholder MarioContainer from the scene tree if present
+	var placeholder = get_node_or_null("BG/VBox/MarioContainer")
+	if placeholder:
+		placeholder.queue_free()
+	
 	status_label.text = "LOADING... PLEASE WAIT"
 
 func _setup_mario_sprite() -> void:
 	var tex = load("res://Assets/Sprites/Players/Mario/Small.png")
-	if tex and mario_sprite:
-		var atlas = AtlasTexture.new()
-		atlas.atlas = tex
-		atlas.region = run_frames[0]
-		mario_sprite.texture = atlas
-		mario_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		mario_sprite.custom_minimum_size = Vector2(64, 64)
-		mario_sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	if not tex:
+		return
+	
+	mario_sprite = Sprite2D.new()
+	mario_sprite.texture = AtlasTexture.new()
+	mario_sprite.texture.atlas = tex
+	mario_sprite.texture.region = run_frames[0]
+	mario_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	mario_sprite.scale = Vector2(2, 2) # 64×64 display size
+	mario_sprite.z_index = 10
+	add_child(mario_sprite)
+	
+	# Position vertically in the lower third of the screen
+	var vp_h = get_viewport_rect().size.y
+	mario_sprite.position.y = vp_h * 0.7
 
 func _process(delta: float) -> void:
 	if match_started:
@@ -67,7 +80,10 @@ func _process(delta: float) -> void:
 		dots_count = (dots_count + 1) % 4
 		var dots = ".".repeat(dots_count)
 		if reported_ready:
-			status_label.text = "WAITING FOR PLAYERS" + dots
+			if Mario35Handler.is_practice:
+				status_label.text = "STARTING" + dots
+			else:
+				status_label.text = "WAITING FOR PLAYERS" + dots
 		else:
 			status_label.text = "LOADING" + dots + " PLEASE WAIT"
 	
@@ -79,15 +95,26 @@ func _process(delta: float) -> void:
 		var status = ResourceLoader.load_threaded_get_status(level_path)
 		if status == ResourceLoader.THREAD_LOAD_LOADED:
 			level_resource = ResourceLoader.load_threaded_get(level_path)
-			reported_ready = true
-			status_label.text = "WAITING FOR PLAYERS..."
-			# Tell the host we are ready
-			Mario35Network.client_scene_ready.rpc_id(1)
+			_on_load_complete()
 		elif status == ResourceLoader.THREAD_LOAD_FAILED or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
 			# Fallback: load synchronously
 			level_resource = load(level_path)
-			reported_ready = true
-			Mario35Network.client_scene_ready.rpc_id(1)
+			_on_load_complete()
+
+func _on_load_complete() -> void:
+	reported_ready = true
+	
+	# Practice mode: skip waiting for other players, go straight to the level
+	if Mario35Handler.is_practice:
+		status_label.text = "STARTING..."
+		# Small delay so the player can see the screen
+		await get_tree().create_timer(0.5, false).timeout
+		go_to_level()
+		return
+	
+	status_label.text = "WAITING FOR PLAYERS..."
+	# Tell the host we are ready
+	Mario35Network.client_scene_ready.rpc_id(1)
 
 func _animate_mario(delta: float) -> void:
 	if not mario_sprite:
@@ -99,11 +126,9 @@ func _animate_mario(delta: float) -> void:
 	if mario_x > vp_width + 32:
 		mario_x = -64.0
 	
-	# Position the MarioContainer's offset so it moves left-to-right
-	var container = mario_sprite.get_parent()
-	if container:
-		# We move the sprite itself relative to its container
-		mario_sprite.position.x = mario_x - mario_sprite.size.x / 2.0
+	mario_sprite.position.x = mario_x
+	# Keep vertical position updated for window resize
+	mario_sprite.position.y = get_viewport_rect().size.y * 0.7
 	
 	# Cycle run frames
 	frame_timer += delta
@@ -121,9 +146,7 @@ func go_to_level() -> void:
 	# Unpause the game timer
 	Mario35Handler.is_timer_paused = false
 	
-	# Transition to the loaded level
-	if level_resource:
-		get_tree().change_scene_to_packed(level_resource)
-	else:
-		# Fallback
-		Global.transition_to_scene(level_path)
+	# Use Global.transition_to_scene to properly manage the transitioning_scene flag.
+	# Without this, the flag stays true and ALL subsequent transitions (pipe entry,
+	# level completion, etc.) silently fail, freezing the game.
+	Global.transition_to_scene(level_path)

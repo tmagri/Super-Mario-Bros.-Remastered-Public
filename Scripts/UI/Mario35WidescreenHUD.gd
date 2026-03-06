@@ -140,14 +140,28 @@ func sync_players() -> void:
 	var camp = Global.current_campaign
 	if camp == "SMB1": camp = "SMB"
 	
-	var game_name = "SUPER\nMARIO\nBROS."
+	var game_name = "SUPER\nMARIO BROS."
 	match Global.current_campaign:
-		"SMB1": game_name = "SUPER\nMARIO\nBROS."
-		"SMBLL": game_name = "SUPER\nMARIO\nBROS.\nLOST LEVELS"
-		"SMBS": game_name = "SUPER\nMARIO\nBROS.\nSPECIAL"
+		"SMB1": game_name = "SUPER\nMARIO BROS."
+		"SMBLL": game_name = "SUPER\nMARIO BROS.\nLOST LEVELS"
+		"SMBS": game_name = "SUPER\nMARIO BROS.\nSPECIAL"
 		"SMBANN": game_name = "ALL-NIGHT\nNIPPON\nSMB"
 	
-	stat_cards["LevelStat"].setup_as_stat(game_name, level_name)
+	# Get local player's power state, coins, and special states for the level stat card
+	var local_power = 0
+	var local_coins = Global.coins
+	var local_star = false
+	var local_hammer = false
+	var local_mega = false
+	for p in get_tree().get_nodes_in_group("Players"):
+		if p is Player and p.player_id == 0:
+			local_power = p.power_state.get_index() if p.power_state else 0
+			local_star = p.has_star
+			local_hammer = p.has_hammer
+			local_mega = p.has_mega_mushroom
+			break
+	
+	stat_cards["LevelStat"].setup_as_stat(game_name, level_name, local_power, local_coins, local_star, local_hammer, local_mega)
 	
 	var alive_count = Mario35Handler.alive_count
 	var total_count = Mario35Handler.player_statuses.size()

@@ -1225,15 +1225,7 @@ func damage(type: String = "") -> void:
 		
 	# Assist Mode: Special handling
 	if Global.assist_mode == Global.AssistMode.NORMAL or Global.assist_mode == Global.AssistMode.FULL:
-		# Special pushback for Bowser
-		if type == "Bowser":
-			if velocity.y > -220: velocity.y = -180
-			velocity.x = -direction * 240
-		else:
-			if velocity.y > -200: velocity.y = -120
-			velocity.x = -direction * 60
-			
-		# Fire/Superball Mario loses power-up to Super Mario
+		# Fire/Superball Mario loses power-up to Super Mario — standard powerdown, no knockback
 		if power_state.state_name == "Fire" or power_state.state_name == "Superball":
 			var super_state = get_node("PowerStates/Big")
 			if super_state:
@@ -1244,9 +1236,17 @@ func damage(type: String = "") -> void:
 				do_i_frames()
 				return
 		
-		# Super or Small Mario: just flinch
+		# Super or Small Mario: flinch with knockback
+		# Special pushback for Bowser
+		if type == "Bowser":
+			if velocity.y > -220: velocity.y = -180
+			velocity.x = -direction * 240
+		else:
+			if velocity.y > -200: velocity.y = -120
+			velocity.x = -direction * 60
+		
 		AudioManager.play_sfx("damage", global_position)
-		do_i_frames()
+		do_i_frames(true) # Halved i-frames in assist mode
 		return
 
 	times_hit += 1
@@ -1281,9 +1281,10 @@ func passed_checkpoint() -> void:
 		$Checkpoint/Animation.play("Show")
 	AudioManager.play_sfx("checkpoint", global_position)
 
-func do_i_frames() -> void:
+func do_i_frames(halved: bool = false) -> void:
 	can_hurt = false
-	for i in 25:
+	var cycles = 13 if halved else 25
+	for i in cycles:
 		sprite.hide()
 		if get_tree() == null:
 			return

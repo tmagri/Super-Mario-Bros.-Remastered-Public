@@ -129,7 +129,7 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	Global.second_quest = (difficulty_mode == 1)
 	levels_played = 0
 	last_level_path = ""
-	level_bag.clear()
+	# level_bag is cleared and rebuilt below after RNG seed is set
 	Global.score = 0
 	coins = 0
 	Global.lives = 1 # Start with 1 life in BR
@@ -144,6 +144,9 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 		game_seed = randi()
 	rng.seed = game_seed
 	
+	# Explicitly clear and rebuild the level bag for a fresh start
+	level_bag.clear()
+	_build_level_bag()
 	# Initialize player statuses
 	player_statuses = {}
 	# Reset local player power state for a fresh start
@@ -659,6 +662,7 @@ func _get_version_info(version_enum: GameVersion) -> Dictionary:
 
 func _build_level_bag() -> void:
 	level_bag.clear()
+	print("[M35] Resetting and building true 32-level bag...")
 	
 	var versions_to_include := []
 	if game_version == GameVersion.RANDOM:
@@ -666,78 +670,58 @@ func _build_level_bag() -> void:
 	else:
 		versions_to_include = [game_version]
 	
-	# Build bag in TIERS so earlier worlds come first in the run across ALL included games
-	# Tier 1: World 1-2, levels 1-3 only (no castles)
-	# Tier 2: World 1-4, all levels
-	# Tier 3: World 3-6, all levels
-	# Tier 4: All worlds, all levels
-	var tiers = [
-		{"worlds": [1, 2], "levels": [1, 3], "copies": 3},
-		{"worlds": [1, 4], "levels": [1, 4], "copies": 2},
-		{"worlds": [3, 6], "levels": [1, 4], "copies": 2},
-		{"worlds": [1, 13], "levels": [1, 4], "copies": 1}, # 13 for Worlds 1-D in SMBLL
+	# Build a true bag where each level appears exactly once
+	# To prioritize earlier worlds, we build the bag in waves
+	var world_tiers = [
+		[1, 2], # Tier 1
+		[3, 4], # Tier 2
+		[5, 6], # Tier 3
+		[7, 13] # Tier 4 (includes Worlds 9-D for Lost Levels)
 	]
 	
-	for tier in tiers:
+	for tier in world_tiers:
 		var tier_entries: Array[String] = []
-		var w_min: int = tier.worlds[0]
-		var w_max: int = tier.worlds[1]
-		var l_min: int = tier.levels[0]
-		var l_max: int = tier.levels[1]
-		var copies: int = tier.copies
+		var w_min = tier[0]
+		var w_max = tier[1]
 		
 		for version_enum in versions_to_include:
 			var info = _get_version_info(version_enum)
-			var prefix: String = info.prefix
-			var v_max_w: int = info.max_w
+			var prefix = info.prefix
+			var v_max_w = info.max_w
 			
-			# Clamp tier range to the specific game's world count
-			var current_w_min = clampi(w_min, 1, v_max_w)
-			var current_w_max = clampi(w_max, 1, v_max_w)
+			var start_w = clampi(w_min, 1, v_max_w)
+			var end_w = clampi(w_max, 1, v_max_w)
 			
-			# Skip if this tier is beyond this version's max world (unless it's the final catch-all tier)
-			if w_min > v_max_w and tier != tiers.back():
-				continue
-				
-			for w in range(current_w_min, current_w_max + 1):
-				for l in range(l_min, l_max + 1):
-					# Map World 9, A, B, C, D for SMBLL if w > 8
-					var world_folder = str(w)
-					var level_file = "%d-%d" % [w, l]
-					
-					var path = "res://Scenes/Levels/%s/World%s/%s.tscn" % [prefix, world_folder, level_file]
+			if w_min > v_max_w: continue
+			
+			for w in range(start_w, end_w + 1):
+				for l in range(1, 5):
+					var path = "res://Scenes/Levels/%s/World%s/%d-%d.tscn" % [prefix, str(w), w, l]
 					if ResourceLoader.exists(path):
-						for _i in range(copies):
-							tier_entries.append(path)
+						tier_entries.append(path)
 		
-		# Shuffle within this tier
+		# Shuffle this tier
 		for i in range(tier_entries.size() - 1, 0, -1):
 			var j = rng.randi() % (tier_entries.size())
 			var tmp = tier_entries[i]
 			tier_entries[i] = tier_entries[j]
 			tier_entries[j] = tmp
-		
+			
 		level_bag.append_array(tier_entries)
 	
-	# Final safety shuffle to mix the tier boundaries slightly
-	for i in range(mini(10, level_bag.size())):
-		var swap_idx = rng.randi() % level_bag.size()
-		var tmp = level_bag[i]
-		level_bag[i] = level_bag[swap_idx]
-		level_bag[swap_idx] = tmp
-
-	# Ensure the first entry isn't the same as the last level played
+	# Ensure the first entry isn't a direct repeat of the very last level played
 	if level_bag.size() > 1 and level_bag[0] == last_level_path:
-		var swap_idx = rng.randi_range(1, mini(level_bag.size() - 1, 10))
+		var swap_idx = rng.randi_range(1, mini(level_bag.size() - 1, 4))
 		var tmp = level_bag[0]
 		level_bag[0] = level_bag[swap_idx]
 		level_bag[swap_idx] = tmp
 	
-	print("[M35] Built mixed tiered level bag with %d entries" % level_bag.size())
+	print("[M35] Level bag built. Size: %d" % level_bag.size())
 
 func get_next_level_path() -> String:
-	# Refill bag if empty
+	# Refill bag if empty (during long matches)
 	if level_bag.is_empty():
+		print("[M35] Bag exhausted, refilling...")
 		_build_level_bag()
 	
 	# Draw from the bag

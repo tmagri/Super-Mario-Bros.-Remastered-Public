@@ -67,10 +67,10 @@ func handle_camera(delta: float) -> void:
 func update_camera_barriers() -> void:
 	if get_viewport() != null:
 		camera_center_joint.global_position = get_viewport().get_camera_2d().get_screen_center_position()
-		# M35: Walls at ±128 (4:3 game area). Standard: Walls at ±VP_half.
+		# M35: Walls at ±136 (4:3 + 8px - game area). Standard: Walls at ±VP_half.
 		var half_w = get_viewport_rect().size.x / 2.0
 		if Global.current_game_mode == Global.GameMode.MARIO_35:
-			half_w = 128.0
+			half_w = 136.0
 		camera_center_joint.get_node("LeftWall").position.x = -half_w
 		camera_center_joint.get_node("RightWall").position.x = half_w
 

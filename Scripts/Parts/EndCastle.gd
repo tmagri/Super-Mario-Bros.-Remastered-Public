@@ -32,6 +32,7 @@ func update_cam_limit() -> void:
 
 func _process(_delta: float) -> void:
 	$Overlay.modulate.a = int($SmallCastleVisual.use_sprite == false)
+	$OverlaySprite.modulate.a = int($SmallCastleVisual.use_sprite)
 	if Global.level_editor != null && scene_file_path == "res://Scenes/Prefabs/LevelObjects/EndFinalCastle.tscn":
 		var is_smbs: bool = Global.current_campaign == "SMBS"
 		$SmallCastleVisual.visible = !is_smbs

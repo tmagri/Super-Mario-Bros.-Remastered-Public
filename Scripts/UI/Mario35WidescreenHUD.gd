@@ -140,12 +140,12 @@ func sync_players() -> void:
 	var camp = Global.current_campaign
 	if camp == "SMB1": camp = "SMB"
 	
-	var game_name = "Super\nMario\nBros."
+	var game_name = "SUPER\nMARIO\nBROS."
 	match Global.current_campaign:
-		"SMB1": game_name = "Super\nMario\nBros."
-		"SMBLL": game_name = "Super\nMario\nBros.\nLost Levels"
-		"SMBS": game_name = "Super\nMario\nBros.\nSpecial"
-		"SMBANN": game_name = "All-Night\nNippon\nSMB"
+		"SMB1": game_name = "SUPER\nMARIO\nBROS."
+		"SMBLL": game_name = "SUPER\nMARIO\nBROS.\nLOST LEVELS"
+		"SMBS": game_name = "SUPER\nMARIO\nBROS.\nSPECIAL"
+		"SMBANN": game_name = "ALL-NIGHT\nNIPPON\nSMB"
 	
 	stat_cards["LevelStat"].setup_as_stat(game_name, level_name)
 	

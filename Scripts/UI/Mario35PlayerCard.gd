@@ -2,6 +2,8 @@ extends Panel
 
 const SUPERSAMPLE = 4.0
 const COIN_JSON = preload("res://Assets/Sprites/Items/Coin.json")
+const FONT_NORMAL = preload("res://Resources/ThemedResources/FontMario35.tres")
+const FONT_TITLE = preload("res://Assets/Fonts/FontMario35Title.otf")
 
 @onready var name_label = %NameLabel
 @onready var status_label = %StatusLabel
@@ -170,6 +172,8 @@ func setup(player_data: Dictionary) -> void:
 	_update_icon(chara_idx, power_idx)
 	if name_label:
 		name_label.text = player_data.get("name", "MARIO").to_upper()
+		name_label.add_theme_font_override("font", FONT_NORMAL)
+		name_label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 func setup_as_stat(title: String, value: String) -> void:
 	is_stat = true
@@ -182,6 +186,8 @@ func setup_as_stat(title: String, value: String) -> void:
 		name_label.clip_text = false
 		name_label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
 		name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		name_label.add_theme_font_override("font", FONT_TITLE)
+		name_label.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	if status_label:
 		status_label.text = value
 		status_label.visible = value != ""

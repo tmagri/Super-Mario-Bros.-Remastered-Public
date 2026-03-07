@@ -168,7 +168,12 @@ func kick(hit_player: Player, is_stomp: bool = false) -> void:
 		$ScoreNoteSpawner.spawn_note(8000)
 	else:
 		award_score(get_kick_award(hit_player))
-	AudioManager.play_sfx("kick", global_position)
+	
+	var pitch = 1.0
+	if is_instance_valid(hit_player) and hit_player.has_mega_mushroom:
+		pitch = 0.6
+	
+	AudioManager.play_sfx("kick", global_position, pitch)
 	
 	# Limit the number of times you can kick the same shell.
 	if Global.current_game_mode == Global.GameMode.CHALLENGE or Global.current_game_mode == Global.GameMode.MARIO_35:
@@ -214,6 +219,13 @@ func add_combo() -> void:
 		var reward = Mario35Handler.COMBO_TIME_REWARDS[clampi(combo + 3, 0, Mario35Handler.COMBO_TIME_REWARDS.size() - 1)]
 		Mario35Handler.add_time(reward)
 	award_score(combo + 3)
+	
+	var pitch = (1.0 + (combo * 0.05))
+	if is_instance_valid(player) and player.has_mega_mushroom:
+		pitch *= 0.6
+		
+	AudioManager.play_sfx("kick", global_position, pitch)
+	
 	if combo < 7:
 		combo += 1
 	elif Global.current_game_mode == Global.GameMode.CHALLENGE and moving_time > 12.0:

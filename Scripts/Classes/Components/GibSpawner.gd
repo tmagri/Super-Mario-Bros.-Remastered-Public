@@ -30,6 +30,8 @@ func summon_gib(direction := 1, play_sfx := play_death_sfx, override_gib_type :=
 	owner.add_sibling(node)
 
 func play_die_sfx() -> void:
+	if owner.get("last_killer") is Shell:
+		return
 	AudioManager.play_sfx("kick", owner.global_position)
 
 const SMOKE_PARTICLE = preload("uid://d08nv4qtfouv1")

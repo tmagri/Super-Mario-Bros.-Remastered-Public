@@ -15,6 +15,7 @@ var is_sent_enemy := false:
 			_update_sent_visuals()
 
 var _sent_tween: Tween
+var last_killer: Node2D = null
 
 func _enter_tree() -> void:
 	if is_sent_enemy:
@@ -68,10 +69,8 @@ func die(time_reward: int = 2) -> void:
 
 func die_from_object(obj: Node2D, time_reward: int = 2) -> void:
 	var dir = sign(global_position.x - obj.global_position.x)
-	if dir == 0:
-		dir = [-1, 1].pick_random()
-	
 	# If killed by a shell or player stomp, time is handled by the attacker to allow combos
+	last_killer = obj
 	# Special case: Star kills don't have combos, so they award time directly in Mario 35
 	var reward = time_reward
 	if (obj is Shell or obj is Player):

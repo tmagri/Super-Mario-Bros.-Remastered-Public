@@ -135,6 +135,8 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	Global.score = 0
 	coins = 0
 	Global.lives = 1 # Start with 1 life in BR
+	coin_roulette_active = false
+	current_roulette_item = ""
 	
 	# Disable pausing in Battle Royale (unless practice/debug mode)
 	if is_practice or Global.debug_mode:
@@ -430,8 +432,8 @@ func get_attackers_count() -> int:
 
 
 func try_use_item() -> void:
-	# Item Roulette only allowed during active gameplay timer
-	if not game_active or is_timer_paused:
+	# Item Roulette only allowed during active gameplay
+	if not game_active:
 		return
 		
 	# Eliminated players cannot use items
@@ -445,8 +447,8 @@ func try_use_item() -> void:
 		spin_roulette()
 
 func spend_coins(amount: int) -> bool:
-	if coins >= amount:
-		coins -= amount
+	if Global.coins >= amount:
+		Global.coins -= amount
 		return true
 	return false
 
@@ -457,11 +459,11 @@ func spin_roulette() -> void:
 	coin_roulette_active = true
 	AudioManager.play_global_sfx("coin")
 	
-	var items = ["MegaMushroom"]
-	#var items = ["Mushroom", "Flower", "Star"]
-	#match item_pool_mode:
-	#	0: items.append("Lucky Star")
-	#	2: items.append_array(["Lucky Star", "Wing", "Hammer", "P-Switch", "Superball", "MegaMushroom"])
+	#var items = ["MegaMushroom"]
+	var items = ["Mushroom", "Flower", "Star"]
+	match item_pool_mode:
+		0: items.append("Lucky Star")
+		2: items.append_array(["Lucky Star", "Wing", "Hammer", "P-Switch", "Superball", "MegaMushroom"])
 		
 	current_roulette_item = items.pick_random()
 	incoming_item_roulette.emit()

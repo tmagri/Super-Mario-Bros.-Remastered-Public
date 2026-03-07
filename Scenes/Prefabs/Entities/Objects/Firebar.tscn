@@ -33,7 +33,19 @@ func _physics_process(delta: float) -> void:
 
 func on_area_entered(area: Area2D) -> void:
 	if area.owner is Player and area.name != \"HammerHitbox\":
-		area.owner.damage()
+		if area.owner.get(\"has_mega_mushroom\"):
+			destroy()
+		else:
+			area.owner.damage()
+
+func destroy() -> void:
+	AudioManager.play_sfx(\"kick\", global_position)
+	var smoke_scn = load(\"res://Scenes/Prefabs/Particles/SmokeParticle.tscn\")
+	for i in range(length):
+		var smoke = smoke_scn.instantiate()
+		smoke.global_position = global_position + Vector2(0, -i * 8).rotated($RotationJoint.global_rotation)
+		get_parent().add_child(smoke)
+	queue_free()
 "
 
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_p4n6u"]

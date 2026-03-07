@@ -512,11 +512,25 @@ func apply_item(item: String) -> void:
 			var kill_count := 0
 			for enemy in enemies:
 				if is_instance_valid(enemy):
-					kill_count += 1
+					var in_view = false
+					if enemy.get("on_screen_enabler") and enemy.on_screen_enabler != null:
+						in_view = enemy.on_screen_enabler.is_on_screen()
+					else:
+						in_view = abs(enemy.global_position.x - player.global_position.x) < 320 and abs(enemy.global_position.y - player.global_position.y) < 240
+					
+					if in_view:
+						kill_count += 1
+						var detection = enemy.find_child("EnemyPlayerDetection", true, false)
+						if detection and detection.has_signal("invincible_player_hit"):
+							detection.invincible_player_hit.emit(player)
+						elif enemy.has_method("die_from_object"):
+							enemy.die_from_object(player)
+						elif enemy.has_method("die"):
+							enemy.die()
+			
 			# Award 2 seconds per enemy killed
 			if kill_count > 0:
 				add_time(kill_count * 2)
-			get_tree().call_group("Enemies", "die_from_object", player)
 			AudioManager.play_global_sfx("lucky_star")
 		"Wing":
 			player.wing_get()
@@ -749,8 +763,8 @@ func get_next_level_path() -> String:
 	# Sync Global variables for HUD and transitions
 	# Path: res://Scenes/Levels/SMB1/World1/1-1.tscn
 	var path_parts = level_path.split("/")
-	if path_parts.size() >= 4:
-		Global.current_campaign = path_parts[3]
+	if path_parts.size() >= 5:
+		Global.current_campaign = path_parts[4]
 		
 	var file_name = level_path.get_file().get_basename() # e.g. "1-3" or "9-1"
 	var parts = file_name.split("-")

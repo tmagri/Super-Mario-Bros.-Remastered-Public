@@ -24,11 +24,20 @@ func _process(_delta: float) -> void:
 	cursor.global_position.x = options[selected_index].global_position.x - 10
 
 func handle_inputs() -> void:
+	var move_dir = 0
 	if Input.is_action_just_pressed("ui_down"):
-		selected_index += 1
-	if Input.is_action_just_pressed("ui_up"):
-		selected_index -= 1
-	selected_index = clamp(selected_index, 0, options.size() - 1)
+		move_dir = 1
+	elif Input.is_action_just_pressed("ui_up"):
+		move_dir = -1
+		
+	if move_dir != 0:
+		var temp_index = selected_index + move_dir
+		while temp_index >= 0 and temp_index < options.size():
+			if options[temp_index].visible:
+				selected_index = temp_index
+				break
+			temp_index += move_dir
+
 	if Input.is_action_just_pressed("ui_accept"):
 		option_selected()
 	elif (Input.is_action_just_pressed("pause") or Input.is_action_just_pressed("ui_back")) and can_exit:
@@ -44,6 +53,14 @@ func open_settings() -> void:
 	active = true
 
 func open() -> void:
+	if options.size() >= 3:
+		if Global.current_game_mode == Global.GameMode.MARIO_35 and Mario35Handler.is_practice:
+			options[1].hide()
+			options[2].hide()
+		else:
+			options[1].show()
+			options[2].show()
+			
 	if is_pause:
 		Global.game_paused = true
 		AudioManager.play_global_sfx("pause")

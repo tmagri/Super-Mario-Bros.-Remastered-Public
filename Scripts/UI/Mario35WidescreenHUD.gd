@@ -140,11 +140,11 @@ func sync_players() -> void:
 	var camp = Global.current_campaign
 	if camp == "SMB1": camp = "SMB"
 	
-	var game_name = "SUPER\nMARIO BROS."
+	var game_name = "super\nMARIO BROS."
 	match Global.current_campaign:
-		"SMB1": game_name = "SUPER\nMARIO BROS."
-		"SMBLL": game_name = "SUPER\nMARIO BROS.\nLOST LEVELS"
-		"SMBS": game_name = "SUPER\nMARIO BROS.\nSPECIAL"
+		"SMB1": game_name = "super\nMARIO BROS."
+		"SMBLL": game_name = "super\nMARIO BROS.\nlost levels"
+		"SMBS": game_name = "super\nMARIO BROS.\nspecial"
 		"SMBANN": game_name = "ALL-NIGHT\nNIPPON\nSMB"
 	
 	# Get local player's power state, coins, and special states for the level stat card

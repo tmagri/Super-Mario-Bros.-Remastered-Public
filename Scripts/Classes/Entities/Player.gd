@@ -1554,6 +1554,9 @@ func get_character_sprite_path(power_stateto_use := power_state.state_name) -> S
 	return path
 
 func enter_pipe(pipe: PipeArea, warp_to_level := true) -> void:
+	if has_mega_mushroom:
+		on_mega_timeout()
+	
 	z_index = -10
 	can_bump_sfx = false
 	Global.can_pause = false
@@ -1773,8 +1776,8 @@ func scale_collision(s: float) -> void:
 			if not hitbox.has_meta("scale_stored"):
 				hitbox.set_meta("scale_stored", hitbox.scale)
 			
-			hitbox.position = Vector2(0, -32) # Lowered to ensure foot-level detection
-			hitbox.scale.x = 3.0 # Increase width for 4x body
+			hitbox.position = Vector2(0, -64) # Center vertically in 4x body
+			hitbox.scale = Vector2(4.0, 4.0) # Match full body scale
 			hitbox.collision_mask |= 16 # Add Layer 5 (Enemies)
 		else:
 			# Resetting to baseline

@@ -137,6 +137,9 @@ func fix_broken_settings() -> void:
 	# Fix any "permanently-enabled" resource packs from 1.0.2 snapshots after portable mode was added, but before this bug was fixed
 	for i in range(file.visuals.resource_packs.size()):
 		file.visuals.resource_packs[i] = str(file.visuals.resource_packs[i]).trim_prefix("/")
+	
+	if not file.game.campaign in ["SMB1", "SMBLL", "SMBS", "SMBANN"]:
+		file.game.campaign = "SMB1"
 
 func apply_settings() -> void:
 	for i in file.video.keys():

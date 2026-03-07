@@ -597,8 +597,8 @@ func handle_pausing() -> void:
 			# Battle Royale Pause Override
 			if Global.current_game_mode == Global.GameMode.MARIO_35:
 				# Pause is remapped to Target Change, so we don't open the menu here
-				# UNLESS we are in debug mode
-				if not Global.debug_mode:
+				# UNLESS we are in debug mode or practice mode
+				if not (Global.debug_mode or Mario35Handler.is_practice):
 					return
 			
 			if Input.is_action_just_pressed("pause"):

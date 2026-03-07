@@ -112,12 +112,19 @@ func in_game() -> void:
 	for i in hitbox.get_overlapping_areas():
 		if i.owner is Player and can_enter:
 			run_player_check(i.owner)
+	for i in hitbox.get_overlapping_bodies():
+		if i is Player and i.has_mega_mushroom and can_enter:
+			run_player_check(i)
 
 func run_player_check(player: Player) -> void:
 	# guzlad: Added support for characters with a hitbox height below 1.0 to enter pipes underwater
 	# SkyanUltra: Added distance check to prevent entering pipes from too low.
 	var distance = player.global_position.distance_to(hitbox.global_position)
-	if distance <= 6 and Global.player_action_pressed(get_input_direction(enter_direction), player.player_id) and (player.is_actually_on_floor() or enter_direction == 1 or player.in_water):
+	var max_distance = 6
+	if player.has_mega_mushroom and (enter_direction == 2 or enter_direction == 3):
+		max_distance = 64 # Mega Mario is much wider, relax horizontal check
+		
+	if distance <= max_distance and Global.player_action_pressed(get_input_direction(enter_direction), player.player_id) and (player.is_actually_on_floor() or enter_direction == 1 or player.in_water):
 		can_enter = false
 		pipe_entered.emit()
 		DiscoLevel.can_meter_tick = false

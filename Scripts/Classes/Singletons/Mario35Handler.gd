@@ -127,6 +127,7 @@ func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = 
 	max_time = max_time_setting
 	current_time = float(start_time)
 	game_active = true
+	is_timer_paused = true
 	Global.second_quest = (difficulty_mode == 1)
 	levels_played = 0
 	last_level_path = ""
@@ -456,10 +457,11 @@ func spin_roulette() -> void:
 	coin_roulette_active = true
 	AudioManager.play_global_sfx("coin")
 	
-	var items = ["Mushroom", "Flower", "Star"]
-	match item_pool_mode:
-		0: items.append("Lucky Star")
-		2: items.append_array(["Lucky Star", "Wing", "Hammer", "P-Switch", "Superball", "MegaMushroom"])
+	var items = ["MegaMushroom"]
+	#var items = ["Mushroom", "Flower", "Star"]
+	#match item_pool_mode:
+	#	0: items.append("Lucky Star")
+	#	2: items.append_array(["Lucky Star", "Wing", "Hammer", "P-Switch", "Superball", "MegaMushroom"])
 		
 	current_roulette_item = items.pick_random()
 	incoming_item_roulette.emit()

@@ -52,7 +52,7 @@ func _ready() -> void:
 	status_label.text = "LOADING... PLEASE WAIT"
 
 func _setup_mario_sprite() -> void:
-	var tex = load("res://Assets/Sprites/Players/Mario/Small.png")
+	var tex = load("res://Assets/Sprites/Players/Mario/Small.json")
 	if not tex:
 		return
 	
@@ -143,8 +143,11 @@ func go_to_level() -> void:
 		return
 	match_started = true
 	
-	# Unpause the game timer
-	Mario35Handler.is_timer_paused = false
+	# Unpause the game timer only after the transition is finished and player has control
+	Global.transition_finished.connect(func():
+		if Global.current_game_mode == Global.GameMode.MARIO_35:
+			Mario35Handler.is_timer_paused = false
+	, CONNECT_ONE_SHOT)
 	
 	# Use Global.transition_to_scene to properly manage the transitioning_scene flag.
 	# Without this, the flag stays true and ALL subsequent transitions (pipe entry,

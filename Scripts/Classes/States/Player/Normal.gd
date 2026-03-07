@@ -81,7 +81,7 @@ func grounded(delta: float) -> void:
 	if not player.crouching:
 		if Global.player_action_pressed("move_down", player.player_id):
 			player.crouching = true
-			AudioManager.play_sfx("crouch", player.global_position)
+			AudioManager.play_sfx("crouch", player.global_position, player.get_movement_pitch())
 			AudioManager.kill_sfx("uncrouch")
 	else:
 		can_wall_push = player.test_move(player.global_transform, Vector2.UP * 8 * player.gravity_vector.y) and player.physics_params("CAN_BE_WALL_EJECTED")
@@ -91,7 +91,7 @@ func grounded(delta: float) -> void:
 			else:
 				wall_pushing = false
 				player.crouching = false
-				AudioManager.play_sfx("uncrouch", player.global_position)
+				AudioManager.play_sfx("uncrouch", player.global_position, player.get_movement_pitch())
 				AudioManager.kill_sfx("crouch")
 		else:
 			player.crouching = true
@@ -101,12 +101,12 @@ func grounded(delta: float) -> void:
 	if not player.looking_up:
 		if Global.player_action_pressed("move_up", player.player_id) and not player.crouching:
 			player.looking_up = true
-			AudioManager.play_sfx("look_up", player.global_position)
+			AudioManager.play_sfx("look_up", player.global_position, player.get_movement_pitch())
 			AudioManager.kill_sfx("stop_look_up")
 	else:
 		if not Global.player_action_pressed("move_up", player.player_id) and not player.crouching:
 			player.looking_up = false
-			AudioManager.play_sfx("stop_look_up", player.global_position)
+			AudioManager.play_sfx("stop_look_up", player.global_position, player.get_movement_pitch())
 			AudioManager.kill_sfx("look_up")
 
 func handle_ground_movement(delta: float) -> void:
@@ -278,7 +278,7 @@ func swim_up() -> void:
 	if player.swim_stroke:
 		player.play_animation("SwimIdle")
 	player.velocity.y = -player.physics_params("SWIM_HEIGHT") * speed_mult * player.gravity_vector.y
-	AudioManager.play_sfx("swim", player.global_position)
+	AudioManager.play_sfx("swim", player.global_position, player.get_movement_pitch())
 	swim_up_meter = 0.5
 	player.crouching = false
 

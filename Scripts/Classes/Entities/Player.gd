@@ -667,7 +667,6 @@ func _ready() -> void:
 			physics_style = Mario35Handler.physics_mode
 			classic_physics = physics_style == 1
 			classic_plus_enabled = false # Usually MARIO 35 is strictly Classic or Remastered
-			Mario35Handler.is_timer_paused = false
 		else:
 			physics_style = 0  #Force Remastered
 			classic_physics = false
@@ -1009,18 +1008,21 @@ func add_stomp_combo(enemy: Node = null, award_score := true, award_m35_time := 
 		if award_score:
 			Global.score += COMBO_VALS[stomp_combo]
 			score_note_spawner.spawn_note(COMBO_VALS[stomp_combo])
+		
+		var pitch = 1.0 + (stomp_combo * 0.05)
+		AudioManager.play_sfx("enemy_stomp", global_position, pitch * get_movement_pitch())
 		stomp_combo += 1
 
 func land_on_ground() -> void:
 	if can_land_sfx:
-		AudioManager.play_sfx("land", global_position)
+		AudioManager.play_sfx("land", global_position, get_movement_pitch())
 		just_landed = true
 		can_land_sfx = false
 		await get_tree().create_timer(0.1).timeout
 		just_landed = false
 
 func bump_ceiling() -> void:
-	AudioManager.play_sfx("bump", global_position)
+	AudioManager.play_sfx("bump", global_position, get_movement_pitch())
 	velocity.y = sign(gravity_vector.y) * physics_params("CEILING_BUMP_SPEED")
 	can_bump_sfx = false
 	bumping = true
@@ -1651,7 +1653,7 @@ func jump() -> void:
 	velocity.y = calculate_jump_height(calculate_speed_param("JUMP_SPEED")) * gravity_vector.y
 	velocity_x_jump_stored = velocity.x
 	gravity = calculate_speed_param("JUMP_GRAVITY")
-	AudioManager.play_sfx(physics_params("JUMP_SFX", COSMETIC_PARAMETERS), global_position)
+	AudioManager.play_sfx(physics_params("JUMP_SFX", COSMETIC_PARAMETERS), global_position, get_movement_pitch())
 	has_jumped = true
 	jump_cancelled = false
 	jumped.emit()
@@ -2017,6 +2019,9 @@ func on_mega_timeout() -> void:
 	tween.tween_property($SpriteScaleJoint, "scale", Vector2(1.0, 1.0), 1.0)
 	scale_collision(1.0)
 	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.MEGA_MUSHROOM)
+
+func get_movement_pitch() -> float:
+	return 0.6 if has_mega_mushroom else 1.0
 
 	# Always revert to Big (Super Mario) after mega wears off
 	power_state = get_node("PowerStates/Big")

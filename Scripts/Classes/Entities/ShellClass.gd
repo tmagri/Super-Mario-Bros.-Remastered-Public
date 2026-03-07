@@ -50,7 +50,6 @@ func on_player_stomped_on(stomped_player: Player) -> void:
 	else:
 		DiscoLevel.combo_meter += 10
 		moving = false
-		AudioManager.play_sfx("enemy_stomp", global_position)
 		stomped_player.enemy_bounce_off(self, true, moving_time > 0.1, false)
 
 func block_bounced(_block: Block) -> void:

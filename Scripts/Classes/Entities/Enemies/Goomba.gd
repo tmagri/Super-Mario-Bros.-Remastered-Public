@@ -14,7 +14,6 @@ func _physics_process(_delta: float) -> void:
 		$Sprite.scale.x = direction
 
 func stomped_on(player: Player) -> void:
-	AudioManager.play_sfx("enemy_stomp", global_position)
 	can_move = false
 	DiscoLevel.combo_amount += 1
 	$BasicEnemyMovement.can_move = false

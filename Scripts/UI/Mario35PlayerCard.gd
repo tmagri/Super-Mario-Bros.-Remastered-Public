@@ -7,6 +7,7 @@ const FONT_NORMAL = preload("res://Resources/ThemedResources/FontMario35.tres")
 const FONT_TITLE = preload("res://Assets/Fonts/FontMario35Title.otf")
 
 @onready var name_label = %NameLabel
+@onready var subtitle_label = %SubtitleLabel
 @onready var status_label = %StatusLabel
 @onready var mario_sprite = %MarioSprite
 @onready var vbox0 = $VBox
@@ -20,7 +21,7 @@ var time_passed := 0.0
 var has_star := false
 var has_hammer := false
 var has_mega := false
-var blink_timer := 0.0
+var blink_timer := 0.03
 
 var coin_icon: AnimatedSprite2D = null
 var coin_rs: ResourceSetterNew = null
@@ -170,8 +171,11 @@ func _process(delta: float) -> void:
 			# Loop down to 4px to ensure it fits in tiny sidebars
 			for fs in range(24, 4, -1):
 				var n_size = font.get_multiline_string_size(name_label.text, name_label.horizontal_alignment, target_w, fs)
+				var sub_size = Vector2.ZERO
+				if subtitle_label and subtitle_label.visible:
+					sub_size = font.get_multiline_string_size(subtitle_label.text, subtitle_label.horizontal_alignment, target_w, fs)
 				var s_size = font.get_multiline_string_size(status_label.text, status_label.horizontal_alignment, target_w, fs)
-				if n_size.x <= target_w and s_size.x <= target_w and (n_size.y + s_size.y) <= remaining_h + 2:
+				if n_size.x <= target_w and sub_size.x <= target_w and s_size.x <= target_w and (n_size.y + sub_size.y + s_size.y) <= remaining_h + 2:
 					# Force the font a couple points smaller unconditionally to prevent cutoff
 					fs_best = max(4, fs - 2) 
 					break
@@ -181,6 +185,8 @@ func _process(delta: float) -> void:
 			name_label.add_theme_font_size_override("font_size", fs_best)
 			name_label.add_theme_constant_override("line_spacing", 0) # Natural spacing
 			name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		if subtitle_label:
+			subtitle_label.add_theme_font_size_override("font_size", fs_best)
 		if status_label:
 			status_label.add_theme_font_size_override("font_size", fs_best)
 		
@@ -205,6 +211,8 @@ func _process(delta: float) -> void:
 
 	if name_label:
 		name_label.add_theme_font_size_override("font_size", best_size)
+	if subtitle_label:
+		subtitle_label.add_theme_font_size_override("font_size", best_size)
 	if status_label:
 		status_label.add_theme_font_size_override("font_size", best_size)
 
@@ -217,8 +225,12 @@ func setup(player_data: Dictionary) -> void:
 		name_label.text = player_data.get("name", "MARIO").to_upper()
 		name_label.add_theme_font_override("font", FONT_NORMAL)
 		name_label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	if subtitle_label:
+		subtitle_label.visible = false
+		if subtitle_label.get_parent() is MarginContainer:
+			subtitle_label.get_parent().visible = false
 
-func setup_as_stat(title: String, value: String, power_state: int = 0, coins: int = 0, p_has_star: bool = false, p_has_hammer: bool = false, p_has_mega: bool = false) -> void:
+func setup_as_stat(title: String, value: String, power_state: int = 0, coins: int = 0, p_has_star: bool = false, p_has_hammer: bool = false, p_has_mega: bool = false, subtitle: String = "") -> void:
 	is_stat = true
 	has_star = p_has_star
 	has_hammer = p_has_hammer
@@ -238,6 +250,13 @@ func setup_as_stat(title: String, value: String, power_state: int = 0, coins: in
 		name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		name_label.add_theme_font_override("font", FONT_TITLE)
 		name_label.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	if subtitle_label:
+		subtitle_label.text = subtitle
+		subtitle_label.visible = subtitle != ""
+		if subtitle_label.get_parent() is MarginContainer:
+			subtitle_label.get_parent().visible = subtitle != ""
+		subtitle_label.clip_text = false
+		subtitle_label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
 	if status_label:
 		status_label.text = value
 		status_label.visible = value != ""
@@ -352,6 +371,8 @@ func _update_style(bg_color: Color, text_color: Color) -> void:
 	
 	if name_label:
 		name_label.add_theme_color_override("font_color", text_color)
+	if subtitle_label:
+		subtitle_label.add_theme_color_override("font_color", text_color)
 	if status_label:
 		status_label.modulate = Color.WHITE
 		status_label.add_theme_color_override("font_color", text_color)

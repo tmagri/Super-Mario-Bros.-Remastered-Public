@@ -141,10 +141,15 @@ func sync_players() -> void:
 	if camp == "SMB1": camp = "SMB"
 	
 	var game_name = "super\nMARIO BROS."
+	var sub_name = ""
 	match Global.current_campaign:
 		"SMB1": game_name = "super\nMARIO BROS."
-		"SMBLL": game_name = "super\nMARIO BROS.\nlost levels"
-		"SMBS": game_name = "super\nMARIO BROS.\nspecial"
+		"SMBLL": 
+			game_name = "super\nMARIO BROS."
+			sub_name = "lost levels"
+		"SMBS": 
+			game_name = "super\nMARIO BROS."
+			sub_name = "special"
 		"SMBANN": game_name = "ALL-NIGHT\nNIPPON\nSMB"
 	
 	# Get local player's power state, coins, and special states for the level stat card
@@ -161,11 +166,11 @@ func sync_players() -> void:
 			local_mega = p.has_mega_mushroom
 			break
 	
-	stat_cards["LevelStat"].setup_as_stat(game_name, level_name, local_power, local_coins, local_star, local_hammer, local_mega)
+	stat_cards["LevelStat"].setup_as_stat(game_name, level_name, local_power, local_coins, local_star, local_hammer, local_mega, sub_name)
 	
 	var alive_count = Mario35Handler.alive_count
 	var total_count = Mario35Handler.player_statuses.size()
-	stat_cards["AliveStat"].setup_as_stat("", "%d/%d" % [alive_count, total_count])
+	stat_cards["AliveStat"].setup_as_stat("", "%d/%d" % [alive_count, total_count], 0, 0, false, false, false, "")
 
 	# Placement Logic
 	# Explicit height/size updates for top-level Stat cards

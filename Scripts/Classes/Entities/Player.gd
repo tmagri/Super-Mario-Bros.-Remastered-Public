@@ -1554,10 +1554,34 @@ func get_character_sprite_path(power_stateto_use := power_state.state_name) -> S
 	return path
 
 func enter_pipe(pipe: PipeArea, warp_to_level := true) -> void:
-	if has_mega_mushroom:
-		on_mega_timeout()
-	
 	z_index = -10
+	if has_mega_mushroom:
+		# Freeze current state to prevent input/physics interference during the shrink
+		state_machine.set_physics_process(false)
+		state_machine.set_process(false)
+		velocity = Vector2.ZERO
+		on_mega_timeout()
+
+		# Calculate target position near the pipe entrance so the shrink
+		# visually moves Mario toward the pipe, not just shrinks in place.
+		var target_pos = global_position
+		var pipe_dir = pipe.get_vector(pipe.enter_direction)
+		if pipe_dir.x != 0:  # Horizontal pipe (left/right)
+			target_pos = Vector2(pipe.global_position.x, pipe.global_position.y + 14)
+		elif pipe_dir.y > 0:  # Down pipe
+			target_pos.y = pipe.global_position.y
+		
+		# Sync position and sprite joint offset in parallel
+		var tween = create_tween().set_parallel(true)
+		tween.tween_property(self, "global_position", target_pos, 1.0)
+		
+		await tween.finished
+		$SpriteScaleJoint.position = Vector2.ZERO
+		
+		# Restore state machine before the final pipe transition
+		state_machine.set_physics_process(true)
+		state_machine.set_process(true)
+	
 	can_bump_sfx = false
 	Global.can_pause = false
 	Global.can_time_tick = false
@@ -1860,11 +1884,12 @@ func handle_mega_mushroom(delta: float) -> void:
 		var block_rect = Rect2(block.global_position - Vector2(8, 8), Vector2(16, 16))
 		if mega_rect.intersects(block_rect):
 			if block.global_position.y < global_position.y - 8:
-				if block.has_method("destroy"):
-					# We use call_deferred to avoid physics state errors during the loop
-					block.add_collision_exception_with(self)
-					block.destroy()
-					Global.score += 50
+				if not is_near_warp_pipe(block.global_position):
+					if block.has_method("destroy"):
+						# We use call_deferred to avoid physics state errors during the loop
+						block.add_collision_exception_with(self)
+						block.destroy()
+						Global.score += 50
 	
 	# Brute-force TileMapLayer destruction (erases solid tiles inside Mario's AABB)
 	var level_root = get_tree().current_scene
@@ -1887,6 +1912,28 @@ func _spawn_break_particles(world_pos: Vector2) -> void:
 	particles.global_position = world_pos
 	get_tree().current_scene.add_child(particles)
 
+func is_near_warp_pipe(world_pos: Vector2, distance: float = 64.0) -> bool:
+	for pipe_area in get_tree().get_nodes_in_group("Pipes"):
+		if pipe_area is PipeArea and (pipe_area.target_level != "" or pipe_area.pipe_id != 0 or pipe_area.exit_only):
+			# Base protection for the pipe mouth itself (tight 32px radius)
+			if pipe_area.global_position.distance_to(world_pos) < 32:
+				return true
+			# Protect the "steps" in front of horizontal pipes
+			if pipe_area.enter_direction == 2 or pipe_area.enter_direction == 3:
+				var dx = abs(pipe_area.global_position.x - world_pos.x)
+				var dy = pipe_area.global_position.y - world_pos.y
+				var is_in_front = (pipe_area.enter_direction == 2 and world_pos.x > pipe_area.global_position.x) or (pipe_area.enter_direction == 3 and world_pos.x < pipe_area.global_position.x)
+				# Only protect blocks immediately in front of the mouth (3 blocks wide, 2-3 blocks deep)
+				if is_in_front and dx <= 24 and dy >= -8 and dy <= 8:
+					return true
+			# Underwater column protection
+			if in_water:
+				var dx = abs(pipe_area.global_position.x - world_pos.x)
+				var dy = world_pos.y - pipe_area.global_position.y
+				if dx <= 48 and dy >= -32 and dy <= 80:
+					return true
+	return false
+
 func _mega_destroy_tile(tilemap: TileMapLayer, pos: Vector2i) -> bool:
 	var tile_data = tilemap.get_cell_tile_data(pos)
 	if tile_data == null:
@@ -1900,20 +1947,7 @@ func _mega_destroy_tile(tilemap: TileMapLayer, pos: Vector2i) -> bool:
 	var is_destructable = tile_data.get_custom_data("destructable") if tile_data else false
 	
 	# Check if this tile is near a warp pipe (never destroy warp pipes)
-	var is_warp_pipe_or_protected = false
-	for pipe_area in get_tree().get_nodes_in_group("Pipes"):
-		if pipe_area is PipeArea and (pipe_area.target_level != "" or pipe_area.pipe_id != 0 or pipe_area.exit_only):
-			# If it's a pipe tile within 64 pixels (protects the whole pipe shaft)
-			if is_pipe and pipe_area.global_position.distance_to(world_pos) < 64:
-				is_warp_pipe_or_protected = true
-				break
-			# If it's an underwater stage, protect a column around the pipe (keeps the "feet" floor intact)
-			elif in_water:
-				var dx = abs(pipe_area.global_position.x - world_pos.x)
-				var dy = world_pos.y - pipe_area.global_position.y
-				if dx <= 48 and dy >= -32 and dy <= 80:
-					is_warp_pipe_or_protected = true
-					break
+	var is_warp_pipe_or_protected = is_pipe and is_near_warp_pipe(world_pos)
 	
 	# ALL solid tiles are breakable by Mega Mario (except warp pipes)
 	# Only destroy solid tiles, ignore non-solid decorations like water/clouds
@@ -1945,25 +1979,21 @@ func handle_mega_collision(col: KinematicCollision2D) -> bool:
 		
 	# Destroy brick blocks (including those with items)
 	if collider is BrickBlock:
-		collider.add_collision_exception_with(self)
-		collider.destroy()
-		Global.score += 50
-		return true
+		if not is_near_warp_pipe(collider.global_position):
+			collider.add_collision_exception_with(self)
+			collider.destroy()
+			Global.score += 50
+			return true
 	# Destroy any Block (e.g. question blocks, solid animatable bodies)
 	elif collider is Block:
-		collider.add_collision_exception_with(self)
-		collider.destroy()
-		Global.score += 50
-		return true
+		if not is_near_warp_pipe(collider.global_position):
+			collider.add_collision_exception_with(self)
+			collider.destroy()
+			Global.score += 50
+			return true
 	# Destroy pipe bodies: any StaticBody2D in the "Pipes" group (if it's not a warp)
 	elif collider is StaticBody2D and collider.is_in_group("Pipes"):
-		var is_warp = false
-		for pipe_area in get_tree().get_nodes_in_group("Pipes"):
-			if pipe_area is PipeArea and pipe_area.global_position.distance_to(collider.global_position) < 48:
-				if pipe_area.target_level != "" or pipe_area.pipe_id != 0 or pipe_area.exit_only:
-					is_warp = true
-					break
-		if not is_warp:
+		if not is_near_warp_pipe(collider.global_position, 48.0):
 			_spawn_break_particles(collider.global_position)
 			collider.queue_free()
 			AudioManager.play_sfx("block_break", global_position)
@@ -1984,7 +2014,7 @@ func on_mega_timeout() -> void:
 	$SpriteScaleJoint.modulate.a = 1.0
 	# Shrink back to normal scale with tween
 	var tween = create_tween()
-	tween.tween_property($SpriteScaleJoint, "scale", Vector2(1.0, 1.0), 0.5)
+	tween.tween_property($SpriteScaleJoint, "scale", Vector2(1.0, 1.0), 1.0)
 	scale_collision(1.0)
 	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.MEGA_MUSHROOM)
 

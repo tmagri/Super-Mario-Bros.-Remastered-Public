@@ -47,6 +47,27 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 3
 
+[node name="SubtitleMargin" type="MarginContainer" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_top = -2.5
+
+[node name="SubtitleLabel" type="Label" parent="VBox/SubtitleMargin" unique_id=7777777]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/line_spacing = -4
+theme_override_fonts/font = ExtResource("4_title_font")
+text = "LOST LEVELS"
+horizontal_alignment = 1
+vertical_alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+
 [node name="StatusLabel" type="Label" parent="VBox" unique_id=46803410]
 unique_name_in_owner = true
 texture_filter = 2

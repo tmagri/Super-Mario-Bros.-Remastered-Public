@@ -65,6 +65,10 @@ var stat_broadcast_timer := 0.0
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	Mario35Network.player_disconnected.connect(_on_player_disconnected)
+	Global.transition_finished.connect(func():
+		if Global.current_game_mode == Global.GameMode.MARIO_35:
+			is_timer_paused = false
+	)
 
 func _process(delta: float) -> void:
 	if not game_active or is_timer_paused:

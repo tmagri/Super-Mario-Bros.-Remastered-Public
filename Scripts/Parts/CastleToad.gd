@@ -16,6 +16,8 @@ func begin() -> void:
 		Mario35Handler.is_timer_paused = true
 		
 	$StaticBody2D/CollisionShape2D.set_deferred("disabled", false)
+	_center_messages_to_screen()
+	
 	%PBMessage.modulate.a = int(SpeedrunHandler.timer < SpeedrunHandler.best_time)
 	if play_end_music:
 		Global.game_beaten = true
@@ -24,9 +26,9 @@ func begin() -> void:
 	%Time.text = tr(%Time.text).replace("{TIME}", SpeedrunHandler.gen_time_string(SpeedrunHandler.format_time(SpeedrunHandler.timer)))
 	$CameraRightLimit._enter_tree()
 	await get_tree().create_timer(3, false).timeout
-	if Global.current_game_mode == Global.GameMode.MARIO_35:
-		_center_messages_to_screen()
-		
+	
+	_center_messages_to_screen()
+	
 	if Global.current_game_mode == Global.GameMode.MARATHON_PRACTICE or (Global.current_game_mode == Global.GameMode.MARATHON and play_end_music):
 		show_message($SpeedrunMSG)
 	else:
@@ -73,6 +75,7 @@ func play_music() -> void:
 	await AudioManager.music_override_player.finished
 	AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.ENDING, 999999, false)
 	if [Global.GameMode.MARATHON, Global.GameMode.MARATHON_PRACTICE].has(Global.current_game_mode) == false:
+		_center_messages_to_screen()
 		show_message($EndingSpeech)
 		await get_tree().create_timer(5, false).timeout
 		can_menu = true

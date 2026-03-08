@@ -45,6 +45,7 @@ func destroy_bridge(player: Player) -> void:
 	Global.can_time_tick = false
 	axe_touched.emit()
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.is_timer_paused = true
 		Mario35Handler.add_time(20)
 	$Axe.queue_free()
 	if bowser_present:

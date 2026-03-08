@@ -143,12 +143,6 @@ func go_to_level() -> void:
 		return
 	match_started = true
 	
-	# Unpause the game timer only after the transition is finished and player has control
-	Global.transition_finished.connect(func():
-		if Global.current_game_mode == Global.GameMode.MARIO_35:
-			Mario35Handler.is_timer_paused = false
-	, CONNECT_ONE_SHOT)
-	
 	# Use Global.transition_to_scene to properly manage the transitioning_scene flag.
 	# Without this, the flag stays true and ALL subsequent transitions (pipe entry,
 	# level completion, etc.) silently fail, freezing the game.

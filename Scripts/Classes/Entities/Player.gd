@@ -1314,13 +1314,14 @@ func die(pit: bool = false, type: String = "") -> void:
 	stop_all_timers()
 	Global.total_deaths += 1
 	sprite.process_mode = Node.PROCESS_MODE_ALWAYS
+	state_machine.process_mode = Node.PROCESS_MODE_ALWAYS
 	state_machine.transition_to("Dead", {"Pit": pit})
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
 		Mario35Handler.on_local_player_death()
 		AudioManager.stop_all_music()
 		if physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS) > 0:
-			await get_tree().create_timer(physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS)).timeout
+			await get_tree().create_timer(physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS), true).timeout
 		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.DEATH, 9999, false)
 		return
 	else:
@@ -1331,16 +1332,16 @@ func die(pit: bool = false, type: String = "") -> void:
 		SpeedrunHandler.timer_active = false
 	if physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS) > 0:
 		AudioManager.stop_all_music()
-		await get_tree().create_timer(physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS)).timeout
+		await get_tree().create_timer(physics_params("DEATH_HANG_TIMER", DEATH_PARAMETERS), true).timeout
 	if Global.current_game_mode != Global.GameMode.BOO_RACE:
 		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.DEATH, 9999, false)
 		var delay = 3.0
 		if Global.current_game_mode == Global.GameMode.MARATHON_PRACTICE:
 			delay = 3.0 # Explicitly set for clarity matches user request
-		await get_tree().create_timer(delay).timeout
+		await get_tree().create_timer(delay, true).timeout
 	else:
 		AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.RACE_LOSE, 9999, false)
-		await get_tree().create_timer(5).timeout
+		await get_tree().create_timer(5, true).timeout
 
 	death_load()
 

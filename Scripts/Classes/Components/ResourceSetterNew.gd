@@ -53,7 +53,7 @@ func update_resource() -> void:
 	randomize()
 	if is_inside_tree() == false or is_queued_for_deletion() or resource_json == null or node_to_affect == null:
 		return
-	if state != [Global.level_theme, Global.theme_time, Global.current_room]:
+	if state != [Global.level_theme, Global.theme_time, Global.current_room, Global.current_campaign]:
 		cache.clear()
 		property_cache.clear()
 	if node_to_affect != null:
@@ -61,7 +61,7 @@ func update_resource() -> void:
 		node_to_affect.set(property_name, resource)
 		if node_to_affect is AnimatedSprite2D:
 			node_to_affect.play()
-	state = [Global.level_theme, Global.theme_time, Global.current_room]
+	state = [Global.level_theme, Global.theme_time, Global.current_room, Global.current_campaign]
 	updated.emit()
 
 func get_resource(json_file: JSON) -> Resource:

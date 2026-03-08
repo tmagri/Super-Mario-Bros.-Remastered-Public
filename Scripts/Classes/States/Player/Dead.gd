@@ -3,6 +3,7 @@ extends PlayerState
 var can_fall := false
 
 func enter(msg := {}) -> void:
+	player.play_animation("Die")
 	if not death_params("DEATH_COLLISION"):
 		player.z_index = 20
 		for i in 16:
@@ -11,7 +12,7 @@ func enter(msg := {}) -> void:
 	player.velocity = Vector2.ZERO
 	player.stop_all_timers()
 	if death_params("DEATH_HANG_TIMER") > 0: # SkyanUltra: Not sure if this is needed, but its just there to avoid weird behavior with negative values.
-		await get_tree().create_timer(death_params("DEATH_HANG_TIMER")).timeout
+		await get_tree().create_timer(death_params("DEATH_HANG_TIMER"), true).timeout
 	can_fall = true
 	player.gravity = death_params("DEATH_FALL_GRAVITY")
 	if msg["Pit"] == false: 

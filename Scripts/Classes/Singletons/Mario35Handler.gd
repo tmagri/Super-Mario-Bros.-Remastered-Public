@@ -67,7 +67,9 @@ func _ready() -> void:
 	Mario35Network.player_disconnected.connect(_on_player_disconnected)
 	Global.transition_finished.connect(func():
 		if Global.current_game_mode == Global.GameMode.MARIO_35:
-			is_timer_paused = false
+			# Only unpause if we have successfully entered a level.
+			# This keeps it paused during loading screens and transitions.
+			is_timer_paused = not (get_tree().current_scene is Level)
 	)
 
 func _process(delta: float) -> void:
@@ -383,8 +385,8 @@ func spawn_from_queue() -> void:
 			# Hammer Bros and Bills usually have some air height
 			spawn_offset = Vector2(480, -64)
 		elif "PiranhaPlant" in type:
-			# Piranha Plants spawn well above ground to stand on surface
-			spawn_offset = Vector2(480, -160)
+			# Piranha Plants spawn on ground by default
+			spawn_offset = Vector2(480, 0)
 		
 		# Collision Check: Ensure not spawning in wall
 		var target_pos = player.global_position + spawn_offset
@@ -415,13 +417,12 @@ func spawn_from_queue() -> void:
 					break
 				target_pos.y -= 16
 		
-		enemy.global_position = target_pos
-		
 		# Visual feedback for sent enemies
 		if enemy is Enemy or enemy.has_method("set_is_sent_enemy") or "is_sent_enemy" in enemy:
 			enemy.is_sent_enemy = true
 			
 		Global.current_level.add_child(enemy)
+		enemy.global_position = target_pos
 		enemy_spawned.emit(type)
 
 func get_attackers_count() -> int:

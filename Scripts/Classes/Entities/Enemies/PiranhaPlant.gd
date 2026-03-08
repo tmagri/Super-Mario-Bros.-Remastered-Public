@@ -9,37 +9,46 @@ func _enter_tree() -> void:
 		$Animation.play("Hide")
 	else:
 		# Sent Piranha Plants: visible, stationary biter (no gravity, no pipe logic)
-		$Animation.play("Rise")
+		
+		# CRITICAL: Disable the VisibleOnScreenEnabler so it doesn't disable
+		# the plant when spawned off-screen (enemies spawn at x+480)
+		if has_node("VisibleOnScreenEnabler2D"):
+			$VisibleOnScreenEnabler2D.queue_free()
+		
+		# Override the autoplay "Hide" animation — stop and force visible
+		$Animation.stop()
+		
 		$Sprite.visible = true
+		$Sprite.position = Vector2(0, -12) # Sprite drawn above origin
+		$Sprite.play("default") # Biting animation
 		$Sprite/Hitbox.monitoring = true
 		
 		z_index = 0
 		collision_layer = 16
 		collision_mask = 50
 		
+		# Ensure the plant can't be disabled by parent process mode changes
+		process_mode = Node.PROCESS_MODE_INHERIT
+		
 		# Add a ground collision shape so it sits on terrain
 		var shape = CollisionShape2D.new()
 		var rect = RectangleShape2D.new()
-		rect.size = Vector2(12, 15)
+		rect.size = Vector2(12, 12)
 		shape.shape = rect
-		shape.position.y = -7.5
+		shape.position.y = -6
 		add_child(shape)
-		
-		# Snap to floor via raycast so it doesn't float mid-air
-		await get_tree().process_frame
-		var space_state = get_world_2d().direct_space_state
-		var ray = PhysicsRayQueryParameters2D.create(global_position, global_position + Vector2(0, 320), 6)
-		ray.exclude = [self.get_rid()]
-		var result = space_state.intersect_ray(ray)
-		if not result.is_empty():
-			global_position.y = result.position.y
 
 func _ready() -> void:
 	if is_equal_approx(abs(global_rotation_degrees), 180) == false:
 		if has_node("Sprite/Hitbox/UpsideDownExtension"):
 			$Sprite/Hitbox/UpsideDownExtension.queue_free()
 	
-	if not is_sent_enemy:
+	if is_sent_enemy:
+		# Stop the pipe-pop timer — sent plants don't use it
+		$Timer.stop()
+		# Re-force sprite visible in case _ready ran after autoplay "Hide"
+		$Sprite.visible = true
+	else:
 		$Timer.start()
 
 func _physics_process(_delta: float) -> void:

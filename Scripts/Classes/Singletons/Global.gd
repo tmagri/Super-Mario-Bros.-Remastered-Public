@@ -78,11 +78,11 @@ var score := 0:
 var coins := 0:
 	set(value):
 		if Global.current_game_mode == Global.GameMode.MARIO_35:
-			if value > coins:
-				var diff = value - coins
-				#if Mario35Handler.game_active:
-				#	Mario35Handler.add_time(diff * 1) # 1 second per coin
+			var old_coins = coins
 			coins = value
+			
+			if assist_mode == AssistMode.FULL and coins >= 20 and Mario35Handler.game_active and not Mario35Handler.coin_roulette_active and coins > old_coins:
+				Mario35Handler.spin_roulette()
 			return
 		coins = value
 		if coins >= 100:#

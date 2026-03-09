@@ -388,8 +388,8 @@ func spawn_from_queue() -> void:
 			# Hammer Bros and Bills usually have some air height
 			spawn_offset = Vector2(480, -64)
 		elif "PiranhaPlant" in type:
-			# Piranha Plants spawn on ground by default
-			spawn_offset = Vector2(480, 0)
+			# Piranha Plants spawn slightly above ground so the raycast can find the floor reliably
+			spawn_offset = Vector2(480, -32)
 		
 		# Collision Check: Ensure not spawning in wall
 		var target_pos = player.global_position + spawn_offset
@@ -431,8 +431,8 @@ func spawn_from_queue() -> void:
 		if enemy is Enemy or enemy.has_method("set_is_sent_enemy") or "is_sent_enemy" in enemy:
 			enemy.is_sent_enemy = true
 			
-		enemy.global_position = target_pos
 		Global.current_level.add_child(enemy)
+		enemy.global_position = target_pos
 		enemy_spawned.emit(type)
 
 func get_attackers_count() -> int:

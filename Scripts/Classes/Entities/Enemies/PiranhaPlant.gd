@@ -12,8 +12,12 @@ func _enter_tree() -> void:
 		
 		# CRITICAL: Disable the VisibleOnScreenEnabler so it doesn't disable
 		# the plant when spawned off-screen (enemies spawn at x+480)
-		if has_node("VisibleOnScreenEnabler2D"):
-			$VisibleOnScreenEnabler2D.queue_free()
+		var enabler = get_node_or_null("VisibleOnScreenEnabler2D")
+		if enabler:
+			on_screen_enabler = null
+			enabler.process_mode = Node.PROCESS_MODE_DISABLED
+			remove_child(enabler)
+			enabler.queue_free()
 		
 		# Override the autoplay "Hide" animation — stop and force visible
 		$Animation.stop()
@@ -43,10 +47,14 @@ func _ready() -> void:
 	else:
 		$Timer.start()
 
-func _physics_process(_delta: float) -> void:
-	# Sent Piranha Plants are stationary — no movement at all
+func _physics_process(delta: float) -> void:
+	# Sent Piranha Plants are stationary horizontally but still fall
 	if is_sent_enemy:
-		velocity = Vector2.ZERO
+		velocity.x = 0
+		apply_enemy_gravity(delta)
+		move_and_slide()
+		if global_position.y > 600: # Cleanup falling off screen
+			queue_free()
 		return
 
 func on_timeout() -> void:

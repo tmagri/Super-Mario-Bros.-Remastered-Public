@@ -52,7 +52,7 @@ func get_target_y(player: Player) -> float:
 		return player.global_position.y - 8
 
 func damage_player(player: Player) -> void:
-	player.damage("Bowser")
+	player.damage("Bowser", self)
 
 func show_smoke() -> void:
 	if is_real: return

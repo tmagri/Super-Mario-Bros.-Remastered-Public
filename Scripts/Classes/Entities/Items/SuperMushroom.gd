@@ -23,7 +23,7 @@ func _physics_process(delta: float) -> void:
 func on_area_entered(area: Area2D) -> void:
 	if area.owner is Player:
 		if has_meta("is_poison"):
-			area.owner.damage()
+			area.owner.damage("", self)
 			queue_free()
 		elif has_meta("is_oneup"):
 			give_life(area.owner)

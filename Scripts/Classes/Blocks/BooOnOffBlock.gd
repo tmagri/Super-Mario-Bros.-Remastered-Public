@@ -30,7 +30,7 @@ func update() -> void:
 		hurtbox.set_deferred("disabled", not active)
 
 func damage_player(player: Player) -> void:
-	player.damage()
+	player.damage("", self)
 
 func on_player_entered(_player: Player) -> void:
 	player_in_area = true

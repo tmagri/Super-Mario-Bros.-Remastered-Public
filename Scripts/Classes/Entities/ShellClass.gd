@@ -64,7 +64,7 @@ func on_player_hit(hit_player: Player) -> void:
 		direction = sign(global_position.x - hit_player.global_position.x )
 		kick(hit_player, false) # is_stomp = false
 	else:
-		hit_player.damage()
+		hit_player.damage("", self)
 		
 func award_score(award_level: int) -> void:
 	if award_level >= 10:

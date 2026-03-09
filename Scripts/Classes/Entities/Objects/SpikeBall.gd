@@ -46,4 +46,4 @@ func on_area_entered(area: Area2D) -> void:
 		if area.owner.is_invincible or area.name == "HammerHitbox":
 			destroy()
 		else:
-			area.owner.damage()
+			area.owner.damage("", self)

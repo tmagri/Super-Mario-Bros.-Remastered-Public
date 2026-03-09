@@ -54,7 +54,7 @@ func _check_br_kill(time_reward: int = 2) -> void:
 var damage_type := "Enemy"
 
 func damage_player(player: Player) -> void:
-	player.damage(damage_type)
+	player.damage(damage_type, self)
 
 func apply_enemy_gravity(delta: float) -> void:
 	velocity.y += (Global.entity_gravity / delta) * delta

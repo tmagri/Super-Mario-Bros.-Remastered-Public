@@ -1222,7 +1222,7 @@ func handle_wing_flight(delta: float) -> void:
 	else:
 		%Wings.get_node("AnimationPlayer").play("RESET")
 
-func damage(type: String = "") -> void:
+func damage(type: String = "", source: Node = null) -> void:
 	last_damage_source = type
 	if can_hurt == false or is_invincible:
 		return
@@ -1241,13 +1241,19 @@ func damage(type: String = "") -> void:
 				return
 		
 		# Super or Small Mario: flinch with knockback
+		var knockback_dir = -direction
+		if source and "global_position" in source:
+			knockback_dir = sign(global_position.x - source.global_position.x)
+			if knockback_dir == 0:
+				knockback_dir = -direction
+
 		# Special pushback for Bowser
 		if type == "Bowser":
 			if velocity.y > -220: velocity.y = -180
-			velocity.x = -direction * 240
+			velocity.x = knockback_dir * 240
 		else:
 			if velocity.y > -200: velocity.y = -120
-			velocity.x = -direction * 60
+			velocity.x = knockback_dir * 60
 		
 		AudioManager.play_sfx("damage", global_position)
 		do_i_frames(true) # Halved i-frames in assist mode

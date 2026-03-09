@@ -16,6 +16,7 @@ func spawn_note(amount = 100, amount_2 := 0) -> void:
 	note.get_node("Container/Label").text = str(amount)
 	if play_sfx:
 		play_death_sfx()
+	note.global_position = owner.global_position + note_offset
 	Global.current_level.add_child(note)
 
 func play_death_sfx() -> void:

@@ -89,6 +89,7 @@ func _process(_delta: float) -> void:
 
 func show_message(message_node: Node) -> void:
 	for i in message_node.get_children():
+		_center_messages_to_screen() # Re-center before each reveal to prevent 1-frame position glitch
 		i.show()
 		await get_tree().create_timer(1).timeout
 

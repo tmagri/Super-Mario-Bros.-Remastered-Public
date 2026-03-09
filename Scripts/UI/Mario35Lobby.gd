@@ -660,6 +660,9 @@ func _update_settings():
 func _on_back_pressed():
 	Mario35Network.leave_game()
 	Global.current_game_mode = Global.GameMode.NONE
+	# Reset power state so Mario 35 doesn't pollute Story mode
+	Global.player_power_states = "0000"
+	Global.second_quest = false
 	Global.transition_to_scene("res://Scenes/Levels/TitleScreen.tscn")
 
 func _set_lobby_interaction_active(active: bool) -> void:

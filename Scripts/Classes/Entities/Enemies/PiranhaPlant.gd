@@ -19,7 +19,7 @@ func _enter_tree() -> void:
 		$Animation.stop()
 		
 		$Sprite.visible = true
-		$Sprite.position = Vector2(0, -12) # Sprite drawn above origin
+		$Sprite.position = Vector2(0, 0) # Centered on origin so plant sits on ground
 		$Sprite.play("default") # Biting animation
 		$Sprite/Hitbox.monitoring = true
 		
@@ -29,14 +29,6 @@ func _enter_tree() -> void:
 		
 		# Ensure the plant can't be disabled by parent process mode changes
 		process_mode = Node.PROCESS_MODE_INHERIT
-		
-		# Add a ground collision shape so it sits on terrain
-		var shape = CollisionShape2D.new()
-		var rect = RectangleShape2D.new()
-		rect.size = Vector2(12, 12)
-		shape.shape = rect
-		shape.position.y = -6
-		add_child(shape)
 
 func _ready() -> void:
 	if is_equal_approx(abs(global_rotation_degrees), 180) == false:

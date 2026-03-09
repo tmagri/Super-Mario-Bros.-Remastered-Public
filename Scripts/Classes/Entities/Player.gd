@@ -267,6 +267,7 @@ extends CharacterBody2D
 	"Fire": {
 		"PROJ_TYPE": "res://Scenes/Prefabs/Entities/Items/Fireball",
 		"PROJ_PARTICLE": "res://Scenes/Prefabs/Particles/FireballExplosion",
+		"RAINBOW_POWERUP_FX": false,
 	},
 	"Superball": {
 		"PROJ_TYPE": "res://Scenes/Prefabs/Entities/Items/SuperballProjectile",
@@ -280,6 +281,7 @@ extends CharacterBody2D
 		"PROJ_FLOOR_BOUNCE": true,
 		"PROJ_COLLECT_COINS": true,
 		"PROJ_SPEED": [150.0, -150.0],
+		"RAINBOW_POWERUP_FX": false,
 	},
 	"Mega": {
 		"MEGA_TIME": 12.0,

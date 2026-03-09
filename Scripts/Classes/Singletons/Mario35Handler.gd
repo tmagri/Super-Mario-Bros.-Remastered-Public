@@ -260,6 +260,9 @@ func _check_win_condition() -> void:
 		var timer = get_tree().create_timer(delay, false)
 		timer.timeout.connect(func():
 			get_tree().paused = false
+			# Reset power state so Mario 35 doesn't pollute Story mode
+			Global.player_power_states = "0000"
+			Global.second_quest = false
 			var aspect = Window.CONTENT_SCALE_ASPECT_EXPAND if Settings.file.video.size == 1 else Window.CONTENT_SCALE_ASPECT_KEEP
 			get_tree().root.content_scale_aspect = aspect
 			Global.transition_to_scene("res://Scenes/UI/Mario35Lobby.tscn")
@@ -412,8 +415,15 @@ func spawn_from_queue() -> void:
 			# If we are inside a wall, move up until we are free
 			for i in range(16): # Check up to 16 tiles up
 				point_params.position = target_pos - Vector2(0, 8) # Check slightly above point
-				var hits = space_state.intersect_point(point_params, 1)
-				if hits.is_empty():
+				var center_hit = space_state.intersect_point(point_params, 1)
+				
+				point_params.position = target_pos - Vector2(6, 8) # Check left side
+				var left_hit = space_state.intersect_point(point_params, 1)
+				
+				point_params.position = target_pos - Vector2(-6, 8) # Check right side
+				var right_hit = space_state.intersect_point(point_params, 1)
+				
+				if center_hit.is_empty() and left_hit.is_empty() and right_hit.is_empty():
 					break
 				target_pos.y -= 16
 		
@@ -421,8 +431,8 @@ func spawn_from_queue() -> void:
 		if enemy is Enemy or enemy.has_method("set_is_sent_enemy") or "is_sent_enemy" in enemy:
 			enemy.is_sent_enemy = true
 			
-		Global.current_level.add_child(enemy)
 		enemy.global_position = target_pos
+		Global.current_level.add_child(enemy)
 		enemy_spawned.emit(type)
 
 func get_attackers_count() -> int:

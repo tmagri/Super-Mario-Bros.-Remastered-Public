@@ -427,9 +427,25 @@ func spawn_from_queue() -> void:
 					break
 				target_pos.y -= 16
 		
+		# [FIX]: Robust 1-frame invisibility.
+		# DISABLED process_mode prevents all scripts/animations from running for 1 frame.
+		# modulate.a = 0 prevents any rendering (including default sprites/states).
+		if enemy is CanvasItem:
+			enemy.modulate.a = 0
+			enemy.process_mode = Node.PROCESS_MODE_DISABLED
+			
 		# Visual feedback for sent enemies
 		if enemy is Enemy or enemy.has_method("set_is_sent_enemy") or "is_sent_enemy" in enemy:
 			enemy.is_sent_enemy = true
+			if enemy is Enemy:
+				enemy.call_deferred("_finalize_spawn")
+			else:
+				enemy.set_deferred("process_mode", Node.PROCESS_MODE_INHERIT)
+				enemy.set_deferred("modulate:a", 1.0)
+		elif enemy is CanvasItem:
+			# For non-enemies that are CanvasItems, still perform the 1-frame hide
+			enemy.set_deferred("process_mode", Node.PROCESS_MODE_INHERIT)
+			enemy.set_deferred("modulate:a", 1.0)
 			
 		Global.current_level.add_child(enemy)
 		enemy.global_position = target_pos

@@ -34,18 +34,30 @@ func _update_sent_visuals() -> void:
 
 		# R=1.2, G=1.2: Increases base brightness
 		# B=3.0: High blue boost for the tint
-		modulate = Color(1.2, 1.2, 3.0, 1.0)
+		# Preserve alpha if we are explicitly hiding for a 1-frame spawn delay
+		var target_alpha = modulate.a
+		modulate = Color(1.2, 1.2, 3.0, target_alpha)
 
 		_sent_tween = create_tween().set_loops()
 		
-		# Fast blink effect (flickering transparency)
-		# Note: We keep alpha (a) separate so it doesn't override the RGB boost above
-		_sent_tween.tween_property(self, "modulate:a", 0.4, 0.15)
-		_sent_tween.tween_property(self, "modulate:a", 1.0, 0.15)
+		# If the enemy was spawned hidden (modulate.a == 0) to prevent 1-frame glitches, fade it in first
+		if is_equal_approx(modulate.a, 0.0):
+			_sent_tween.tween_property(self, "modulate:a", 1.0, 0.15)
+			_sent_tween.tween_property(self, "modulate:a", 0.4, 0.15)
+		else:
+			# Fast blink effect (flickering transparency)
+			# Note: We keep alpha (a) separate so it doesn't override the RGB boost above
+			_sent_tween.tween_property(self, "modulate:a", 0.4, 0.15)
+			_sent_tween.tween_property(self, "modulate:a", 1.0, 0.15)
 	else:
 		if _sent_tween: _sent_tween.kill()
 		_sent_tween = null
 		modulate = Color.WHITE
+
+func _finalize_spawn() -> void:
+	# Restore processing and fade in
+	process_mode = Node.PROCESS_MODE_INHERIT
+	_update_sent_visuals()
 
 func _check_br_kill(time_reward: int = 2) -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:

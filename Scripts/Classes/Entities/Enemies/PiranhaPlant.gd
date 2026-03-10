@@ -30,9 +30,6 @@ func _enter_tree() -> void:
 		z_index = 0
 		collision_layer = 16
 		collision_mask = 50
-		
-		# Ensure the plant can't be disabled by parent process mode changes
-		process_mode = Node.PROCESS_MODE_INHERIT
 
 func _ready() -> void:
 	if is_equal_approx(abs(global_rotation_degrees), 180) == false:

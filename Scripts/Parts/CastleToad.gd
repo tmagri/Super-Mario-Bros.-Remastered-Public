@@ -10,6 +10,12 @@ func _ready() -> void:
 	Global.level_complete_begin.connect(begin)
 	for i in [$SpeedrunMSG/ThankYou, $StandardMSG/ThankYou]:
 		i.text = tr(i.text).replace("{PLAYER}", tr(Player.CHARACTER_NAMES[int(Global.player_characters[0])]))
+	
+	# Explicitly hide all messages to prevent 1-frame glitch before drawing
+	for node_name in ["StandardMSG", "SpeedrunMSG", "EndingSpeech"]:
+		if has_node(node_name):
+			for child_node in get_node(node_name).get_children():
+				child_node.hide()
 
 func begin() -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
@@ -88,6 +94,18 @@ func _process(_delta: float) -> void:
 		peach_level_exit()
 
 func show_message(message_node: Node) -> void:
+	var players = get_tree().get_nodes_in_group("Players")
+	if players.size() > 0:
+		var mario = players[0]
+		var prev_x = mario.global_position.x - 10.0
+		# Wait until Mario reaches the wall and actually stops moving
+		while abs(mario.global_position.x - prev_x) > 0.1:
+			prev_x = mario.global_position.x
+			await get_tree().physics_frame
+
+	_center_messages_to_screen()
+	await get_tree().process_frame # Let Godot update parent positions
+	
 	for i in message_node.get_children():
 		_center_messages_to_screen() # Re-center before each reveal to prevent 1-frame position glitch
 		i.show()

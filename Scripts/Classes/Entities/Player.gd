@@ -829,6 +829,7 @@ func _physics_process(delta: float) -> void:
 	handle_directions()
 	handle_projectile_firing(delta)
 	handle_block_collision_detection()
+	handle_jammed_ejection(delta)
 	handle_star(delta)
 	handle_hammer(delta)
 	handle_wing_flight(delta)
@@ -1060,6 +1061,20 @@ func handle_block_collision_detection() -> void:
 		for i in $BlockCollision.get_overlapping_bodies():
 			if i is Block:
 				i.player_block_hit.emit(self)
+
+func handle_jammed_ejection(delta: float) -> void:
+	if not ["Normal", "Swim"].has(state_machine.state.name): return
+	if not physics_params("CAN_BE_WALL_EJECTED"): return
+	if test_move(global_transform, Vector2.ZERO):
+		# Robust ejection: Try horizontal first (exit way we came), then vertical to escape floor blocks.
+		var horizontal_eject = Vector2(-direction * 128 * delta, 0)
+		var vertical_eject = Vector2(0, -128 * delta * gravity_vector.y)
+		
+		# Move horizontally if it helps clear the overlap, otherwise try vertical
+		if not test_move(global_transform.translated(horizontal_eject), Vector2.ZERO):
+			global_position += horizontal_eject
+		else:
+			global_position += vertical_eject
 
 func handle_directions() -> void:
 	input_direction = 0
@@ -2029,14 +2044,14 @@ func on_mega_timeout() -> void:
 	scale_collision(1.0)
 	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.MEGA_MUSHROOM)
 
-func get_movement_pitch() -> float:
-	return 0.6 if has_mega_mushroom else 1.0
-
 	# Always revert to Big (Super Mario) after mega wears off
 	power_state = get_node("PowerStates/Big")
 	Global.player_power_states[player_id] = "1"
 	handle_power_up_states(0)
 	refresh_hitbox()
+
+func get_movement_pitch() -> float:
+	return 0.6 if has_mega_mushroom else 1.0
 
 func water_exited() -> void:
 

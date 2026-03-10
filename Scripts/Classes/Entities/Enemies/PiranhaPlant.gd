@@ -23,13 +23,13 @@ func _enter_tree() -> void:
 		$Animation.stop()
 		
 		$Sprite.visible = true
-		$Sprite.position = Vector2(0, 0) # Centered on origin so plant sits on ground
+		$Sprite.position = Vector2(0, -12) # [FIX]: Sitting ON the origin (ground)
 		$Sprite.play("default") # Biting animation
 		$Sprite/Hitbox.monitoring = true
 		
-		z_index = 0
+		z_index = -5 # Maintain behind-pipes look if needed, but above ground
 		collision_layer = 16
-		collision_mask = 50 # Match Goomba (excl. Layer 3/Blocks to avoid tree canopies)
+		collision_mask = 50 # Match Goomba (excl. Layer 3/Blocks)
 		
 		# [FIX]: Add a CollisionShape2D to the root CharacterBody2D.
 		# Piranha Plants in pipes don't have one because they are moved by AnimationPlayer,
@@ -49,8 +49,10 @@ func _ready() -> void:
 	if is_sent_enemy:
 		# Stop the pipe-pop timer — sent plants don't use it
 		$Timer.stop()
-		# Re-force sprite visible in case _ready ran after autoplay "Hide"
+		# Re-force sprite visible and position in case _ready ran after autoplay "Hide"
+		$Animation.stop()
 		$Sprite.visible = true
+		$Sprite.position = Vector2(0, -12)
 	else:
 		$Timer.start()
 

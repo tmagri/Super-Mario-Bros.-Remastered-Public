@@ -388,8 +388,8 @@ func spawn_from_queue() -> void:
 			# Hammer Bros and Bills usually have some air height
 			spawn_offset = Vector2(480, -64)
 		elif "PiranhaPlant" in type:
-			# Piranha Plants spawn slightly above ground so the raycast can find the floor reliably
-			spawn_offset = Vector2(480, -32)
+			# Piranha Plants spawn  above ground so the raycast can find the floor reliably
+			spawn_offset = Vector2(480, -160)
 		
 		# Collision Check: Ensure not spawning in wall
 		var target_pos = player.global_position + spawn_offset

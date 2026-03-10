@@ -29,7 +29,17 @@ func _enter_tree() -> void:
 		
 		z_index = 0
 		collision_layer = 16
-		collision_mask = 50
+		collision_mask = 50 # Match Goomba (excl. Layer 3/Blocks to avoid tree canopies)
+		
+		# [FIX]: Add a CollisionShape2D to the root CharacterBody2D.
+		# Piranha Plants in pipes don't have one because they are moved by AnimationPlayer,
+		# but "Grounded" Piranha Plants need one for move_and_slide() floor detection.
+		var shape = CollisionShape2D.new()
+		var rect = RectangleShape2D.new()
+		rect.size = Vector2(12, 16) # Standard enemy size
+		shape.shape = rect
+		shape.position = Vector2(0, -8) # Center of the 16px height
+		add_child(shape)
 
 func _ready() -> void:
 	if is_equal_approx(abs(global_rotation_degrees), 180) == false:

@@ -278,7 +278,7 @@ func handle_music() -> void:
 		if music_player.stream is AudioStreamInteractive and music_player.is_playing():
 			var fast_music = Global.time <= 100
 			if Global.current_game_mode == Global.GameMode.MARIO_35:
-				fast_music = (Mario35Handler.current_time <= 100 or Mario35Handler.alive_count <= 3) and not Mario35Handler.is_practice
+				fast_music = Mario35Handler.alive_count < 3 and not Mario35Handler.is_practice
 				
 			if fast_music:
 				if music_player.get_stream_playback().get_current_clip_index() != 1:
@@ -288,7 +288,11 @@ func handle_music() -> void:
 
 func handle_music_override() -> void:
 	if music_override_player.stream is AudioStreamInteractive and music_override_player.is_playing():
-		if Global.time <= 100:
+		var fast_music = Global.time <= 100
+		if Global.current_game_mode == Global.GameMode.MARIO_35:
+			fast_music = Mario35Handler.alive_count < 3 and not Mario35Handler.is_practice
+			
+		if fast_music:
 			if music_override_player.get_stream_playback().get_current_clip_index() != 1:
 				music_override_player.get_stream_playback().switch_to_clip(1)
 		elif music_override_player.get_stream_playback().get_current_clip_index() != 0:

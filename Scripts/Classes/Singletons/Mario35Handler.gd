@@ -712,7 +712,7 @@ func _get_version_info(version_enum: GameVersion) -> Dictionary:
 
 func _build_level_bag() -> void:
 	level_bag.clear()
-	print("[M35] Resetting and building true 32-level bag...")
+	print("[M35] Resetting and building dynamic difficulty bag...")
 	
 	var versions_to_include := []
 	if game_version == GameVersion.RANDOM:
@@ -720,44 +720,39 @@ func _build_level_bag() -> void:
 	else:
 		versions_to_include = [game_version]
 	
-	# Build a true bag where each level appears exactly once
-	# To prioritize earlier worlds, we build the bag in waves
-	var world_tiers = [
-		[1, 2], # Tier 1
-		[3, 4], # Tier 2
-		[5, 6], # Tier 3
-		[7, 13] # Tier 4 (includes Worlds 9-D for Lost Levels)
-	]
+	var early_pool: Array[String] = []
+	var remaining_pool: Array[String] = []
 	
-	for tier in world_tiers:
-		var tier_entries: Array[String] = []
-		var w_min = tier[0]
-		var w_max = tier[1]
+	# Categorize all available levels into two pools
+	for version_enum in versions_to_include:
+		var info = _get_version_info(version_enum)
+		var prefix = info.prefix
+		var v_max_w = info.max_w
 		
-		for version_enum in versions_to_include:
-			var info = _get_version_info(version_enum)
-			var prefix = info.prefix
-			var v_max_w = info.max_w
-			
-			var start_w = clampi(w_min, 1, v_max_w)
-			var end_w = clampi(w_max, 1, v_max_w)
-			
-			if w_min > v_max_w: continue
-			
-			for w in range(start_w, end_w + 1):
-				for l in range(1, 5):
-					var path = "res://Scenes/Levels/%s/World%s/%d-%d.tscn" % [prefix, str(w), w, l]
-					if ResourceLoader.exists(path):
-						tier_entries.append(path)
+		for w in range(1, v_max_w + 1):
+			for l in range(1, 5):
+				var path = "res://Scenes/Levels/%s/World%s/%d-%d.tscn" % [prefix, str(w), w, l]
+				if ResourceLoader.exists(path):
+					if w <= 2:
+						early_pool.append(path)
+					else:
+						remaining_pool.append(path)
+	
+	# Shuffle both pools
+	early_pool.shuffle()
+	remaining_pool.shuffle()
+	
+	# 1. Take 5 early levels for the start
+	var start_count = mini(5, early_pool.size())
+	for i in range(start_count):
+		level_bag.append(early_pool.pop_front())
 		
-		# Shuffle this tier
-		for i in range(tier_entries.size() - 1, 0, -1):
-			var j = rng.randi() % (tier_entries.size())
-			var tmp = tier_entries[i]
-			tier_entries[i] = tier_entries[j]
-			tier_entries[j] = tmp
-			
-		level_bag.append_array(tier_entries)
+	# 2. Mix the rest of the early levels into the remaining pool and shuffle everything
+	remaining_pool.append_array(early_pool)
+	remaining_pool.shuffle()
+	
+	# 3. Add everything else to the bag
+	level_bag.append_array(remaining_pool)
 	
 	# Ensure the first entry isn't a direct repeat of the very last level played
 	if level_bag.size() > 1 and level_bag[0] == last_level_path:
@@ -767,24 +762,22 @@ func _build_level_bag() -> void:
 		level_bag[swap_idx] = tmp
 	
 	# Ensure the first level is a friendly overworld stage (not castle -4 or underwater -2)
-	# Castle and underwater levels are hard to earn time on with a fresh 35s clock
 	if level_bag.size() > 1:
-		var first = level_bag[0].get_file().get_basename() # e.g. "1-4" or "2-2"
+		var first = level_bag[0].get_file().get_basename() # e.g. "1-1"
 		var parts = first.split("-")
 		var first_level_num = int(parts[1]) if parts.size() >= 2 else 1
-		if first_level_num == 4 or first_level_num == 2: # Castle or potential underwater
-			# Find the first friendly level (X-1 or X-3) in the bag to swap with
+		if first_level_num == 4 or first_level_num == 2:
 			for i in range(1, level_bag.size()):
 				var candidate = level_bag[i].get_file().get_basename()
 				var c_parts = candidate.split("-")
 				var c_level = int(c_parts[1]) if c_parts.size() >= 2 else 1
-				if c_level == 1 or c_level == 3: # Overworld-style levels
+				if c_level == 1 or c_level == 3:
 					var tmp = level_bag[0]
 					level_bag[0] = level_bag[i]
 					level_bag[i] = tmp
 					break
 	
-	print("[M35] Level bag built. Size: %d" % level_bag.size())
+	print("[M35] Level bag built. Size: %d. First 5 stages guaranteed early." % level_bag.size())
 
 func get_next_level_path() -> String:
 	# Refill bag if empty (during long matches)

@@ -46,6 +46,12 @@ func _enter_tree() -> void:
 		shape.shape = rect
 		shape.position = Vector2(0, -8) # Center of the 16px height
 		add_child(shape)
+		
+		# [FIX]: Add BlockBouncingDetection to allow Mario to kill it from below.
+		var bounce_detect = BlockBouncingDetection.new()
+		bounce_detect.detection_type = 0 # Collision
+		bounce_detect.block_bounced.connect(die_from_object)
+		add_child(bounce_detect)
 
 func _ready() -> void:
 	if is_equal_approx(abs(global_rotation_degrees), 180) == false:

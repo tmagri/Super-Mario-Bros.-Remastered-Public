@@ -19,6 +19,8 @@ func player_touch(player: Player) -> void:
 		SpeedrunHandler.run_finished()
 	Global.can_pause = false
 	Global.can_time_tick = false
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.is_timer_paused = true
 	if get_node_or_null("Top") != null:
 		$Top.queue_free()
 	$Hitbox.queue_free()
@@ -41,7 +43,6 @@ func player_touch(player: Player) -> void:
 	if [Global.GameMode.BOO_RACE, Global.GameMode.MARIO_35].has(Global.current_game_mode) == false:
 		Global.tally_time()
 	elif Global.current_game_mode == Global.GameMode.MARIO_35:
-		Mario35Handler.is_timer_paused = true
 		Global.current_level.transition_to_next_level()
 
 func give_points(player: Player) -> void:

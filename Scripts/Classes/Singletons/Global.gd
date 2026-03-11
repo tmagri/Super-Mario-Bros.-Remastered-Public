@@ -81,7 +81,7 @@ var coins := 0:
 			var old_coins = coins
 			coins = value
 			
-			if assist_mode == AssistMode.FULL and coins >= 20 and Mario35Handler.game_active and not Mario35Handler.coin_roulette_active and coins > old_coins:
+			if assist_mode == AssistMode.FULL and coins >= 20 and Mario35Handler.game_active and not Mario35Handler.is_timer_paused and not Mario35Handler.coin_roulette_active and coins > old_coins:
 				Mario35Handler.spin_roulette()
 			return
 		coins = value
@@ -412,6 +412,8 @@ func reset_level_state() -> void:
 	p_switch_active = false
 	Lakitu.present = false
 	p_switch_timer = -1
+	Checkpoint.passed_checkpoints.clear()
+	PipeArea.exiting_pipe_id = -1
 
 func clear_saved_values() -> void:
 	coins = 0
@@ -424,6 +426,8 @@ func transition_to_scene(scene_path := "") -> void:
 	if transitioning_scene:
 		return
 	transitioning_scene = true
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.is_timer_paused = true
 	if fade_transition:
 		$Transition/AnimationPlayer.play("FadeIn")
 		await _await_with_timeout($Transition/AnimationPlayer.animation_finished, 2.0)
@@ -444,6 +448,8 @@ func transition_to_scene(scene_path := "") -> void:
 		$Transition/AnimationPlayer.play("RESET")
 		$Transition.hide()
 	transitioning_scene = false
+	if Global.current_game_mode == Global.GameMode.MARIO_35 and get_tree().current_scene is Level:
+		Mario35Handler.is_timer_paused = false
 	transition_finished.emit()
 
 ## Awaits the given signal, but proceeds after timeout_seconds if it hasn't fired.
@@ -464,16 +470,21 @@ func _await_with_timeout(sig: Signal, timeout_seconds: float) -> void:
 
 
 func do_fake_transition(duration := 0.2) -> void:
+	if transitioning_scene:
+		return
+	transitioning_scene = true
 	if fade_transition:
 		$Transition/AnimationPlayer.play("FadeIn")
-		await $Transition/AnimationPlayer.animation_finished
-		await get_tree().create_timer(duration, false).timeout
+		await _await_with_timeout($Transition/AnimationPlayer.animation_finished, 2.0)
+		await get_tree().create_timer(duration, true).timeout # Changed to true for process_always
 		$Transition/AnimationPlayer.play_backwards("FadeIn")
+		await _await_with_timeout($Transition/AnimationPlayer.animation_finished, 2.0)
 	else:
 		%TransitionBlock.modulate.a = 1
 		$Transition.show()
-		await get_tree().create_timer(duration + 0.05, false).timeout
+		await get_tree().create_timer(duration + 0.05, true).timeout
 		$Transition.hide()
+	transitioning_scene = false
 
 func freeze_screen() -> void:
 	if Settings.file.video.visuals == 1:

@@ -779,8 +779,9 @@ func apply_character_physics() -> void:
 
 func apply_classic_physics() -> void:
 	var json = JSON.parse_string(FileAccess.open("res://Resources/ClassicPhysics.json", FileAccess.READ).get_as_text())
-	for i in json:
-		set(i, json[i])
+	if json:
+		for i in json:
+			CLASSIC_PARAMETERS["Default"][i] = json[i]
 
 func recenter_camera() -> void:
 	%CameraHandler.recenter_camera()
@@ -873,7 +874,7 @@ func _process(delta: float) -> void:
 		DiscoLevel.combo_meter = 100
 
 func apply_gravity(delta: float) -> void:
-	if in_water or flight_meter > 0:
+	if in_water or (flight_meter > 0 and sign(gravity_vector.y) * velocity.y >= 0):
 		gravity = physics_params("SWIM_GRAVITY")
 	else:
 		if sign(gravity_vector.y) * velocity.y + physics_params("JUMP_HOLD_SPEED_THRESHOLD") > 0.0:

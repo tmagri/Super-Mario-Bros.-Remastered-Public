@@ -9,12 +9,14 @@ extends Node
 signal block_bounced(block: Block)
 
 func _physics_process(_delta: float) -> void:
+	if not is_instance_valid(owner): return
 	if detection_type == 0:
 		collision_detect()
 	else:
 		hitbox_detect()
 
 func collision_detect() -> void:
+	if not owner.has_method("move_and_collide"): return
 	var collision: KinematicCollision2D = owner.move_and_collide(Vector2.DOWN, true)
 	if is_instance_valid(collision):
 		if collision.get_collider() is Block:
@@ -28,6 +30,6 @@ func hitbox_detect() -> void:
 		if i is Block:
 			if i.bouncing:
 				block_bounced.emit(i)
-				if can_change_direction:
+				if can_change_direction and "direction" in owner:
 					owner.direction = sign(owner.global_position.x - i.global_position.x)
 				return

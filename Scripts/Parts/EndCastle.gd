@@ -20,6 +20,8 @@ func _ready() -> void:
 	$Overlay.show()
 	$OverlaySprite.show()
 	$Overlay/PlayerDetection.set_collision_layer_value(1, true)
+	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		Mario35Handler.is_timer_paused = true
 	Global.score_tally_finished.connect(on_tally_finished)
 	if Global.current_game_mode == Global.GameMode.BOO_RACE:
 		get_tree().create_timer(3.5, false).timeout.connect(on_music_finished)

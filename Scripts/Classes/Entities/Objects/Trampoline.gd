@@ -30,7 +30,7 @@ func bounce_players() -> void:
 			player.has_jumped = true
 			AudioManager.play_sfx(player.physics_params("TRAMPOLINE_USED_SFX", player.COSMETIC_PARAMETERS), global_position)
 		else:
-			player.velocity.y = -player.calculate_jump_height(player.calculate_speed_param("JUMP_SPEED", player.velocity_x_jump_stored))
+			player.velocity.y = -player.calculate_speed_param("JUMP_SPEED", player.velocity_x_jump_stored)
 			AudioManager.play_sfx(player.physics_params("TRAMPOLINE_SFX", player.COSMETIC_PARAMETERS), global_position)
 	players.clear()
 

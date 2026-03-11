@@ -426,14 +426,17 @@ func transition_to_scene(scene_path := "") -> void:
 	transitioning_scene = true
 	if fade_transition:
 		$Transition/AnimationPlayer.play("FadeIn")
-		await $Transition/AnimationPlayer.animation_finished
+		await _await_with_timeout($Transition/AnimationPlayer.animation_finished, 2.0)
 		await get_tree().create_timer(0.1, true).timeout
 	else:
 		%TransitionBlock.modulate.a = 1
 		$Transition.show()
 		await get_tree().create_timer(0.1, true).timeout
-	get_tree().change_scene_to_file(scene_path)
-	await get_tree().scene_changed
+	var err = get_tree().change_scene_to_file(scene_path)
+	if err == OK:
+		await _await_with_timeout(get_tree().scene_changed, 10.0)
+	else:
+		push_error("transition_to_scene: change_scene_to_file failed for '%s': %s" % [scene_path, error_string(err)])
 	await get_tree().create_timer(0.15, true).timeout
 	if fade_transition:
 		$Transition/AnimationPlayer.play_backwards("FadeIn")
@@ -442,6 +445,21 @@ func transition_to_scene(scene_path := "") -> void:
 		$Transition.hide()
 	transitioning_scene = false
 	transition_finished.emit()
+
+## Awaits the given signal, but proceeds after timeout_seconds if it hasn't fired.
+func _await_with_timeout(sig: Signal, timeout_seconds: float) -> void:
+	var done = [false] # Use a reference to avoid capture issues
+	var handler = func(_a=null, _b=null): done[0] = true
+	
+	if sig.is_connected(handler): sig.disconnect(handler)
+	sig.connect(handler, CONNECT_ONE_SHOT)
+	
+	var timer = get_tree().create_timer(timeout_seconds, true)
+	timer.timeout.connect(handler, CONNECT_ONE_SHOT)
+	
+	while not done[0]:
+		if not is_inside_tree(): break
+		await get_tree().process_frame
 
 
 

@@ -45,7 +45,23 @@ func player_touch(player: Player) -> void:
 		Global.current_level.transition_to_next_level()
 
 func give_points(player: Player) -> void:
-	var value = clamp(int(lerp(0, 4, (player.global_position.y / -144))), 0, 4)
+	# Calculate player's relative position on the pole (0.0 = bottom, 1.0 = top)
+	# Pole hitbox: Shape at local Y=-16, segment extends -152px upward
+	var pole_bottom := global_position.y - 16.0
+	var pole_top := global_position.y - 168.0
+	var ratio := clampf(inverse_lerp(pole_bottom, pole_top, player.global_position.y), 0.0, 1.0)
+	# Map to 5 score tiers matching original NES FlagpoleYPosData thresholds
+	var value: int
+	if ratio >= 0.92:
+		value = 4  # Top of pole
+	elif ratio >= 0.53:
+		value = 3
+	elif ratio >= 0.33:
+		value = 2
+	elif ratio > 0.0:
+		value = 1
+	else:
+		value = 0  # Bottom of pole
 	var nearest_value = FLAG_POINTS[value]
 	if Settings.file.difficulty.flagpole_lives:
 		nearest_value = FLAG_POINTS_MODERN[value]

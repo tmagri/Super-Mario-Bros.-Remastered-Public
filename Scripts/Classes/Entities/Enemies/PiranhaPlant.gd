@@ -23,8 +23,14 @@ func _enter_tree() -> void:
 		$Animation.stop()
 		
 		$Sprite.visible = true
-		$Sprite.position = Vector2(0, -12) # [FIX]: Sitting ON the origin (ground)
+		$Sprite.position = Vector2(0, -12) # sitting ON the origin (ground)
 		$Sprite.play("default") # Biting animation
+		
+		# [FIX]: Ensure the hitbox is correctly positioned and monitoring.
+		# In the original scene, the hitbox is child of Sprite and its local position is (0, 12).
+		# Since we moved the Sprite to (0, -12), the hitbox's global position was at (0, 0),
+		# which is LODGED in the ground. We need to move it to (0, 0) relative to Sprite.
+		$Sprite/Hitbox.position = Vector2(0, 0)
 		$Sprite/Hitbox.monitoring = true
 		
 		z_index = -5 # Maintain behind-pipes look if needed, but above ground
@@ -53,6 +59,9 @@ func _ready() -> void:
 		$Animation.stop()
 		$Sprite.visible = true
 		$Sprite.position = Vector2(0, -12)
+		# Re-force hitbox monitoring in case animation reset it
+		$Sprite/Hitbox.position = Vector2(0, 0)
+		$Sprite/Hitbox.monitoring = true
 	else:
 		$Timer.start()
 

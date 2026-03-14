@@ -155,12 +155,9 @@ func handle_main_hud() -> void:
 		$Main.visible = false
 		$ModernHUD.visible = false
 		
-		# Hide during level transitions to prevent overlap with "World X-X" black screen
 		var in_transition = Global.transitioning_scene or get_tree().current_scene is LevelTransition
 		# User requested it to persist:
 		%BattleRoyaleHUD.visible = self.visible #and not in_transition
-		
-		handle_br_input()
 		
 		# Update ItemBox coin count
 		var lbl = %BattleRoyaleHUD.get_node_or_null("CoinContainer/CoinLabel")
@@ -661,13 +658,15 @@ func update_m35_rank(_dummy = null) -> void:
 		rank_lbl.text = "---"
 		rank_lbl.visible = true
 
-func handle_br_input():
+func _unhandled_input(event: InputEvent) -> void:
+	if Global.current_game_mode != Global.GameMode.MARIO_35: return
+	
 	# Targeting: Cycle with 'm35_target' (dedicated action, defaults to Start)
-	if Input.is_action_just_pressed("m35_target") and not Global.debug_mode:
+	if event.is_action_pressed("m35_target") and not Global.debug_mode:
 		Mario35Handler.cycle_target_mode(1)
 
 	# Item Use: 'drop_item' (Select) or 'ui_focus_next' (Tab)
-	if Input.is_action_just_pressed("ui_focus_next") or Input.is_action_just_pressed("drop_item"): 
+	if event.is_action_pressed("ui_focus_next") or event.is_action_pressed("drop_item"): 
 		Mario35Handler.try_use_item()
 
 func add_incoming_enemy_icon(_type: String) -> void:

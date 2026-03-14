@@ -122,32 +122,37 @@ func _process(delta: float) -> void:
 	if mario_sprite:
 		var sprite_margin = 2.0
 		var sprite_target_w = size.x - sprite_margin * 2.0
-		var sprite_target_h = size.y * (0.5 if is_stat else 0.6) # Allocate portion of card to sprite
+		var sprite_target_h = size.y * (0.35 if is_stat else 0.55) # Reduced to prevent text cropping
 		
-		var max_dim = 32.0 # Standard size
-		var calc_scale = min(sprite_target_w / max_dim, sprite_target_h / max_dim)
-		var base_scale = clamp(calc_scale, 0.15, 1.0) # Minimum 15% scale to remain visible
+		# Base size in pixels (not scale!) — this is the target dimension for the sprite
+		var base_w = clamp(sprite_target_w, 8, sprite_target_w)
+		var base_h = clamp(sprite_target_h, 8, sprite_target_h)
 		
-		mario_sprite.pivot_offset = mario_sprite.size / 2.0
+		var final_w = base_w
+		var final_h = base_h
 		
-		if has_mega or current_power_idx == 4: # Mega: blink effect
+		if has_mega or current_power_idx == 4: # Mega: blink effect (no size change to keep text stable)
 			time_passed += delta
-			var pulse = base_scale + sin(time_passed * 10.0) * (base_scale * 0.15)
-			mario_sprite.scale = Vector2(pulse, pulse)
-			# Blinking visibility
-			blink_timer += delta
-			mario_sprite.modulate.a = 1.0 if fmod(blink_timer, 0.3) < 0.15 else 0.5
+			
+			# Smooth alpha pulse instead of size change — keeps VBox layout stable
+			var alpha = 0.65 + 0.35 * abs(sin(time_passed * 3.0))
+			mario_sprite.modulate.a = alpha
 		elif has_star: # Star: palette cycle
 			time_passed += delta
-			mario_sprite.scale = Vector2(base_scale, base_scale)
 			# The shader overrides modulate, so we cycle the palette index to blink!
 			var cycle_idx = int(time_passed * 15.0) % 4
 			mario_sprite.material.set_shader_parameter("palette_idx", cycle_idx)
+			blink_timer = 0.0
+			mario_sprite.modulate = Color.WHITE
 		else:
-			mario_sprite.scale = Vector2(base_scale, base_scale)
 			mario_sprite.modulate = Color.WHITE
 			blink_timer = 0.0
 			mario_sprite.material.set_shader_parameter("palette_idx", current_power_idx)
+		
+		# Drive size via custom_minimum_size — .scale is ignored by VBoxContainer layout
+		mario_sprite.custom_minimum_size = Vector2(final_w, final_h)
+		# Save base size for icon positioning so they don't pulse and move around
+		mario_sprite.set_meta("base_scale", base_w / 32.0)
 	
 	if (coin_icon and coin_icon.visible) or (hammer_icon and hammer_icon.visible):
 		_position_icons()
@@ -254,8 +259,14 @@ func setup_as_stat(title: String, value: String, power_state: int = 0, coins: in
 	has_star = p_has_star
 	has_hammer = p_has_hammer
 	has_mega = p_has_mega
+	
+	if has_mega:
+		power_state = 4
+		
 	var chara_idx = int(Global.player_characters[0])
-	_update_icon(chara_idx, power_state)
+	
+	if chara_idx != current_chara_idx or power_state != current_power_idx or not mario_sprite.texture:
+		_update_icon(chara_idx, power_state)
 	
 	# Add padding above the Mario sprite for stat cards by pushing the VBox down
 	if vbox0:
@@ -366,8 +377,8 @@ func update_state(is_alive: bool, coins: int, is_targeting_me: bool, theme: Stri
 		_last_coin_theme = ""
 
 func _position_icons() -> void:
-	var mario_scale = mario_sprite.scale.x if mario_sprite else 0.5
-	var icon_scale = mario_scale * 0.5
+	var base_scale = mario_sprite.get_meta("base_scale") if mario_sprite and mario_sprite.has_meta("base_scale") else 0.5
+	var icon_scale = base_scale * 0.5
 	
 	var right_offset = 4
 	if coin_icon and coin_icon.visible:

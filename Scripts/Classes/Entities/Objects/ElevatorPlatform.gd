@@ -3,7 +3,7 @@ extends AnimatableBody2D
 @export var vertical_direction := 1
 const MOVE_SPEED := 50
 @export var top := -244
-@export var bottom := 480
+@export var bottom := 64
 
 var destroyed := false
 var destroy_velocity := Vector2.ZERO
@@ -32,7 +32,17 @@ func _physics_process(delta: float) -> void:
 				speed_mult = 2.0 if vertical_direction == 1 else 0.2
 	
 	global_position.y += (MOVE_SPEED * speed_mult * delta) * vertical_direction
-	global_position.y = wrapf(global_position.y, top, bottom)
+	
+	# Wrap around without creating a velocity spike in AnimatableBody2D.
+	# Directly setting global_position causes a huge delta that the physics
+	# engine interprets as velocity, pushing the player. Use PhysicsServer2D
+	# to teleport the body's transform without affecting velocity computation.
+	if global_position.y > bottom or global_position.y < top:
+		var wrapped_y = wrapf(global_position.y, top, bottom)
+		var new_transform = Transform2D(global_transform.x, global_transform.y, Vector2(global_position.x, wrapped_y))
+		PhysicsServer2D.body_set_state(get_rid(), PhysicsServer2D.BODY_STATE_TRANSFORM, new_transform)
+		global_transform = new_transform
+		reset_physics_interpolation()
 
 func destroy_platform(dir: float) -> void:
 	if destroyed: return

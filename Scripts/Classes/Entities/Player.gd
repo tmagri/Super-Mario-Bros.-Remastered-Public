@@ -1992,7 +1992,15 @@ func _mega_destroy_tile(tilemap: TileMapLayer, pos: Vector2i) -> bool:
 	
 	var is_pipe = source_id == 0 and atlas_coords.x >= 8
 	var is_staircase = source_id == 0 and atlas_coords == Vector2i(4, 2)
-	var is_destructable = tile_data.get_custom_data("destructable") if tile_data else false
+	var is_destructable = false
+	if tile_data != null:
+		# check if the custom data layer exists to avoid error
+		var ts = tilemap.tile_set
+		if ts:
+			for i in ts.get_custom_data_layers_count():
+				if ts.get_custom_data_layer_name(i) == "destructable":
+					is_destructable = tile_data.get_custom_data("destructable")
+					break
 	
 	# Check if this tile is near a warp pipe (never destroy warp pipes)
 	var is_warp_pipe_or_protected = is_pipe and is_near_warp_pipe(world_pos)
@@ -2052,6 +2060,21 @@ func handle_mega_collision(col: KinematicCollision2D) -> bool:
 		var contact_pos = col.get_position() - normal * 4.0
 		var map_pos = collider.local_to_map(collider.to_local(contact_pos))
 		return _mega_destroy_tile(collider, map_pos)
+		
+	# Destroy Moving Platforms on side impact
+	var target_platform = null
+	if collider.has_method("destroy_platform"):
+		target_platform = collider
+	elif collider.get_parent() and collider.get_parent().has_method("destroy_platform"):
+		target_platform = collider.get_parent()
+		
+	if target_platform != null:
+		# If contact normal is horizontal (side) or positive Y (hitting from below/ceiling)
+		# floor contact normal is ~ -1.0. Ceiling normal is ~ 1.0. Side normal is ~ +/-1.0 X.
+		# We destroy IF it's not a floor contact (normal.y < -0.6)
+		if normal.y > -0.6:
+			target_platform.destroy_platform(sign(-normal.x) if abs(normal.x) > 0.1 else sign(global_position.x - target_platform.global_position.x))
+			return true
 
 	return false
 

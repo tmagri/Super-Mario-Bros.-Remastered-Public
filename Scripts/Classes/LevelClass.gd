@@ -110,6 +110,8 @@ func _enter_tree() -> void:
 	Global.current_campaign = campaign
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
 		Mario35Handler.current_level_display = str(world_id) + "-" + str(level_id)
+		Mario35Handler.current_campaign_display = campaign
+		Mario35Handler.is_transitioning = false # Scene loaded, transition over
 	await get_tree().process_frame
 	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.NONE, true)
 
@@ -153,6 +155,10 @@ static func get_world_count() -> int:
 
 func transition_to_next_level() -> void:
 	if Global.current_game_mode == Global.GameMode.MARIO_35:
+		if Mario35Handler.is_transitioning:
+			return
+		Mario35Handler.is_transitioning = true
+		
 		var next_level_path = Mario35Handler.get_next_level_path()
 		Mario35Handler.sync_level_globals(next_level_path)
 		# Global variables are now updated inside get_next_level_path()

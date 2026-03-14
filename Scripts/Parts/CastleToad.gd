@@ -53,7 +53,7 @@ func _center_messages_to_screen() -> void:
 			get_node(node_name).global_position.x = center_x
 
 func exit_level() -> void:
-	if Global.current_game_mode == Global.GameMode.MARIO_35:
+	if Global.current_game_mode == Global.GameMode.MARIO_35 and not Mario35Handler.is_transitioning:
 		Mario35Handler.is_timer_paused = false
 	
 	match Global.current_game_mode:
@@ -112,7 +112,7 @@ func show_message(message_node: Node) -> void:
 		await get_tree().create_timer(1).timeout
 
 func peach_level_exit() -> void:
-	if Global.current_game_mode == Global.GameMode.MARIO_35:
+	if Global.current_game_mode == Global.GameMode.MARIO_35 and not Mario35Handler.is_transitioning:
 		Mario35Handler.is_timer_paused = false
 		
 	match Global.current_game_mode:

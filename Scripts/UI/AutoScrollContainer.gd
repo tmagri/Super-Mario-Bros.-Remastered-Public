@@ -60,6 +60,6 @@ func wave(delta: float) -> void:
 		scroll_vertical = scroll_pos
 
 func endless(delta: float) -> void:
-	scroll = wrap(scroll - delta, 0, 1)
+	scroll = wrapf(scroll - delta, 0, 1)
 	var amount = lerpf(0.0, get_child(0).size.x - size.x, scroll)
 	scroll_horizontal = amount

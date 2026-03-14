@@ -62,6 +62,8 @@ var alive_count := 0
 var last_known_stats := {} # peer_id -> { "time": int, "coins": int, "target": int }
 var stat_broadcast_timer := 0.0
 var current_level_display := "1-1"
+var current_campaign_display := "SMB1"
+var is_transitioning := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -798,9 +800,8 @@ func get_next_level_path() -> String:
 func sync_level_globals(level_path: String) -> void:
 	# Path: res://Scenes/Levels/SMB1/World1/1-1.tscn
 	var path_parts = level_path.split("/")
-	if path_parts.size() >= 5:
-		Global.current_campaign = path_parts[4]
-		
+	# We DO NOT update any display variables here yet.
+	
 	var file_name = level_path.get_file().get_basename() # e.g. "1-3" or "9-1"
 	var parts = file_name.split("-")
 	var w = int(parts[0]) if parts.size() >= 1 else 1
@@ -808,3 +809,6 @@ func sync_level_globals(level_path: String) -> void:
 	
 	Global.world_num = w
 	Global.level_num = l
+	# We DO NOT update Global.current_campaign here yet, 
+	# as it would flip the HUD background/icons prematurey.
+	# It will be updated by Level._enter_tree() in the next scene.

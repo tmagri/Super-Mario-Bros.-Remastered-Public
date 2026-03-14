@@ -5,6 +5,6 @@ extends Enemy
 @export var spread_boos := false
 
 func _physics_process(delta: float) -> void:
-	%RotationJoint.global_rotation_degrees = wrap(%RotationJoint.global_rotation_degrees + (45 * [1, -1][direction]) * delta, 0, 360)
+	%RotationJoint.global_rotation_degrees = wrapf(%RotationJoint.global_rotation_degrees + (45 * [1, -1][direction]) * delta, 0, 360)
 	for i in $Boos.get_children():
 		i.get_node("Sprite").scale.x = sign(get_tree().get_first_node_in_group("Players").global_position.x + 1 - i.global_position.x)

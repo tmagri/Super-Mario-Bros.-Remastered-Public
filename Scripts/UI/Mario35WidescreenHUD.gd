@@ -142,7 +142,7 @@ func sync_players() -> void:
 	# Update Stats
 	var level_name = Mario35Handler.current_level_display
 	
-	var camp = Global.current_campaign
+	var camp = Mario35Handler.current_campaign_display
 	if camp == "SMB1": camp = "SMB"
 	
 	var game_name = "super\nMARIO BROS."

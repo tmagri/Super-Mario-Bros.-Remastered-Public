@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://d0mqkvopasu8k" path="res://Scripts/Classes/Components/SecondQuestReplaceComponent.gd" id="10_xreuf"]
 [ext_resource type="Script" uid="uid://ba18grqjixded" path="res://Scripts/Classes/Components/ExplosionDetection.gd" id="11_8y1e5"]
 [ext_resource type="Script" uid="uid://ctfbuoxtnnl0q" path="res://Scripts/Classes/Components/EditorPropertyExposer.gd" id="12_ofvpu"]
+[ext_resource type="Script" uid="uid://c3gg32ivrlq8n" path="res://Scripts/Classes/Components/GibSpawner.gd" id="13_gibsp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xp8sq"]
 atlas = ExtResource("1_2imih")
@@ -304,6 +305,11 @@ script = ExtResource("12_ofvpu")
 properties = Array[String](["plant_direction"])
 metadata/_custom_type_script = "uid://ctfbuoxtnnl0q"
 
+[node name="GibSpawner" type="Node" parent="." unique_id=550169083 node_paths=PackedStringArray("visuals")]
+script = ExtResource("13_gibsp")
+visuals = NodePath("../Sprite")
+metadata/_custom_type_script = "uid://c3gg32ivrlq8n"
+
 [node name="Node" type="Node" parent="." unique_id=1208084393]
 process_mode = 3
 script = SubResource("GDScript_ofvpu")
@@ -313,6 +319,7 @@ script = SubResource("GDScript_ofvpu")
 [connection signal="hammer_player_hit" from="EnemyPlayerDetection" to="ScoreNoteSpawner" method="spawn_note" binds= [200]]
 [connection signal="invincible_player_hit" from="EnemyPlayerDetection" to="." method="die_from_object"]
 [connection signal="invincible_player_hit" from="EnemyPlayerDetection" to="ScoreNoteSpawner" method="spawn_note" binds= [200]]
+[connection signal="killed" from="." to="GibSpawner" method="summon_gib"]
 [connection signal="player_hit" from="EnemyPlayerDetection" to="." method="damage_player"]
 [connection signal="player_stomped_on" from="EnemyPlayerDetection" to="." method="damage_player"]
 [connection signal="fireball_hit" from="FireballDetection" to="." method="die_from_object"]

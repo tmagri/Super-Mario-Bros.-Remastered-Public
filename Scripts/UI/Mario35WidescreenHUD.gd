@@ -9,47 +9,54 @@ var stat_cards := {} # name -> instance
 @onready var right_grid = %RightGrid
 
 var current_card_size := Vector2(32, 40)
+var _sync_timer := 0.0
+var _last_vp_size := Vector2.ZERO
 
 func _process(delta: float) -> void:
 	if not visible: return
 	
-	# --- Resize Logic ---
+	# --- Resize Logic (Only when viewport changes) ---
 	var vp_size = get_viewport_rect().size
-	var target_ratio = 256.0 / 224.0 # Aspect ratio of the original game
-	var game_w = vp_size.y * target_ratio
-	var total_extra = max(vp_size.x - game_w, 0.0)
-	var side_width = floor(total_extra / 2.0)
-	
-	var h_sep = 2.0 # matches GridContainer h_separation
-	var v_sep = 2.0 # matches GridContainer v_separation
-	var card_w = floor(max((side_width - h_sep * 2.0) / 3.0, 8.0))
-	# 6 rows of players + 2 rows of height for the Stat Headers = 8 total rows
-	var card_h = floor(max((vp_size.y - v_sep * 7.0) / 8.0, 8.0))
-	current_card_size = Vector2(card_w, card_h)
-	
-	if %LeftPanel:
-		%LeftPanel.visible = side_width >= 30.0
-		%LeftPanel.custom_minimum_size.x = side_width
-		%LeftPanel.size = Vector2(side_width, floor(vp_size.y))
-		%LeftPanel.position = Vector2.ZERO
-		var vbox = %LeftPanel.get_node_or_null("VBox")
-		if vbox:
-			vbox.size = Vector2(side_width, floor(vp_size.y))
-			vbox.position = Vector2.ZERO
-			
-	if %RightPanel:
-		%RightPanel.visible = side_width >= 30.0
-		%RightPanel.custom_minimum_size.x = side_width
-		%RightPanel.size = Vector2(side_width, floor(vp_size.y))
-		%RightPanel.position.x = floor(vp_size.x - side_width)
-		%RightPanel.position.y = 0
-		var vbox = %RightPanel.get_node_or_null("VBox")
-		if vbox:
-			vbox.size = Vector2(side_width, floor(vp_size.y))
-			vbox.position = Vector2.ZERO
+	if vp_size != _last_vp_size:
+		_last_vp_size = vp_size
+		var target_ratio = 256.0 / 224.0 # Aspect ratio of the original game
+		var game_w = vp_size.y * target_ratio
+		var total_extra = max(vp_size.x - game_w, 0.0)
+		var side_width = floor(total_extra / 2.0)
 		
-	# --- Sync Players ---
-	sync_players()
+		var h_sep = 2.0 # matches GridContainer h_separation
+		var v_sep = 2.0 # matches GridContainer v_separation
+		var card_w = floor(max((side_width - h_sep * 2.0) / 3.0, 8.0))
+		# 6 rows of players + 2 rows of height for the Stat Headers = 8 total rows
+		var card_h = floor(max((vp_size.y - v_sep * 7.0) / 8.0, 8.0))
+		current_card_size = Vector2(card_w, card_h)
+		
+		if %LeftPanel:
+			%LeftPanel.visible = side_width >= 30.0
+			%LeftPanel.custom_minimum_size.x = side_width
+			%LeftPanel.size = Vector2(side_width, floor(vp_size.y))
+			%LeftPanel.position = Vector2.ZERO
+			var vbox = %LeftPanel.get_node_or_null("VBox")
+			if vbox:
+				vbox.size = Vector2(side_width, floor(vp_size.y))
+				vbox.position = Vector2.ZERO
+				
+		if %RightPanel:
+			%RightPanel.visible = side_width >= 30.0
+			%RightPanel.custom_minimum_size.x = side_width
+			%RightPanel.size = Vector2(side_width, floor(vp_size.y))
+			%RightPanel.position.x = floor(vp_size.x - side_width)
+			%RightPanel.position.y = 0
+			var vbox = %RightPanel.get_node_or_null("VBox")
+			if vbox:
+				vbox.size = Vector2(side_width, floor(vp_size.y))
+				vbox.position = Vector2.ZERO
+		
+	# --- Sync Players (Throttled to 10 FPS) ---
+	_sync_timer += delta
+	if _sync_timer >= 0.1:
+		_sync_timer -= 0.1
+		sync_players()
 
 func sync_players() -> void:
 	var my_id = multiplayer.get_unique_id() if multiplayer.multiplayer_peer else 1

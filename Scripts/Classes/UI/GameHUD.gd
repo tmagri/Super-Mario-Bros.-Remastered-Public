@@ -639,6 +639,8 @@ func update_br_timer(time: int) -> void:
 	%BRTimer.text = str(time).pad_zeros(3)
 	if time <= 10:
 		%BRTimer.modulate = Color.RED
+		if time > 0:
+			AudioManager.play_global_sfx("mario35_countdown")
 	else:
 		%BRTimer.modulate = Color.YELLOW
 

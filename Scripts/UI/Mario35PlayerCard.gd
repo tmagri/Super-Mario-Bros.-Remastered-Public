@@ -30,6 +30,11 @@ var _last_coin_theme := ""
 var hammer_icon: AnimatedSprite2D = null
 var hammer_rs: ResourceSetterNew = null
 
+var _last_calc_w := 0.0
+var _last_calc_h := 0.0
+var _last_calc_text := ""
+var _cached_font_size := 4
+
 func _ready() -> void:
 	# Create coin icon programmatically (same pattern as GameHUD.gd)
 	coin_icon = AnimatedSprite2D.new()
@@ -163,32 +168,39 @@ func _process(delta: float) -> void:
 		# Add a generous safety margin
 		var safe_h = remaining_h - 4
 		
-		# Instead of counting lines mathematically, just calculate the best font size
-		# using Godot's multiline bounds and arbitrarily shrink it to guarantee fit.
-		var fs_best = 4 # Fallback to minimum
-		var font = name_label.get_theme_font("font") if name_label else null
-		if font:
-			# Loop down to 4px to ensure it fits in tiny sidebars
-			for fs in range(24, 4, -1):
-				var n_size = font.get_multiline_string_size(name_label.text, name_label.horizontal_alignment, target_w, fs)
-				var sub_size = Vector2.ZERO
-				if subtitle_label and subtitle_label.visible:
-					sub_size = font.get_multiline_string_size(subtitle_label.text, subtitle_label.horizontal_alignment, target_w, fs)
-				var s_size = font.get_multiline_string_size(status_label.text, status_label.horizontal_alignment, target_w, fs)
-				if n_size.x <= target_w and sub_size.x <= target_w and s_size.x <= target_w and (n_size.y + sub_size.y + s_size.y) <= remaining_h + 2:
-					# Force the font a couple points smaller unconditionally to prevent cutoff
-					fs_best = max(4, fs - 2) 
-					break
+		var current_text = name_label.text if name_label else ""
+		if target_w != _last_calc_w or remaining_h != _last_calc_h or current_text != _last_calc_text:
+			_last_calc_w = target_w
+			_last_calc_h = remaining_h
+			_last_calc_text = current_text
+			
+			# Instead of counting lines mathematically, just calculate the best font size
+			# using Godot's multiline bounds and arbitrarily shrink it to guarantee fit.
+			var fs_best = 4 # Fallback to minimum
+			var font = name_label.get_theme_font("font") if name_label else null
+			if font:
+				# Loop down to 4px to ensure it fits in tiny sidebars
+				for fs in range(24, 4, -1):
+					var n_size = font.get_multiline_string_size(name_label.text, name_label.horizontal_alignment, target_w, fs)
+					var sub_size = Vector2.ZERO
+					if subtitle_label and subtitle_label.visible:
+						sub_size = font.get_multiline_string_size(subtitle_label.text, subtitle_label.horizontal_alignment, target_w, fs)
+					var s_size = font.get_multiline_string_size(status_label.text, status_label.horizontal_alignment, target_w, fs)
+					if n_size.x <= target_w and sub_size.x <= target_w and s_size.x <= target_w and (n_size.y + sub_size.y + s_size.y) <= remaining_h + 2:
+						# Force the font a couple points smaller unconditionally to prevent cutoff
+						fs_best = max(4, fs - 2) 
+						break
+			_cached_font_size = fs_best
 		
 		# Apply the calculated font size
 		if name_label:
-			name_label.add_theme_font_size_override("font_size", fs_best)
+			name_label.add_theme_font_size_override("font_size", _cached_font_size)
 			name_label.add_theme_constant_override("line_spacing", 0) # Natural spacing
 			name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		if subtitle_label:
-			subtitle_label.add_theme_font_size_override("font_size", fs_best)
+			subtitle_label.add_theme_font_size_override("font_size", _cached_font_size)
 		if status_label:
-			status_label.add_theme_font_size_override("font_size", fs_best)
+			status_label.add_theme_font_size_override("font_size", _cached_font_size)
 		
 		if vbox0:
 			vbox0.add_theme_constant_override("separation", 1)
@@ -198,23 +210,30 @@ func _process(delta: float) -> void:
 	var target_width = size.x - 4
 	var target_height = int(size.y * 0.35) 
 	
-	var best_size = 4 # Fallback to minimum
-	if name_label and name_label.text != "":
-		var font = name_label.get_theme_font("font")
-		if font:
-			# Loop down to 4px to ensure it fits in tiny sidebars
-			for fs in range(16, 4, -1):
-				var string_size = font.get_string_size(name_label.text, name_label.horizontal_alignment, -1, fs)
-				if string_size.x <= target_width and string_size.y <= target_height:
-					best_size = fs
-					break
+	var current_text = name_label.text if name_label else ""
+	if target_width != _last_calc_w or target_height != _last_calc_h or current_text != _last_calc_text:
+		_last_calc_w = target_width
+		_last_calc_h = target_height
+		_last_calc_text = current_text
+		
+		var best_size = 4 # Fallback to minimum
+		if name_label and name_label.text != "":
+			var font = name_label.get_theme_font("font")
+			if font:
+				# Loop down to 4px to ensure it fits in tiny sidebars
+				for fs in range(16, 4, -1):
+					var string_size = font.get_string_size(name_label.text, name_label.horizontal_alignment, -1, fs)
+					if string_size.x <= target_width and string_size.y <= target_height:
+						best_size = fs
+						break
+		_cached_font_size = best_size
 
 	if name_label:
-		name_label.add_theme_font_size_override("font_size", best_size)
+		name_label.add_theme_font_size_override("font_size", _cached_font_size)
 	if subtitle_label:
-		subtitle_label.add_theme_font_size_override("font_size", best_size)
+		subtitle_label.add_theme_font_size_override("font_size", _cached_font_size)
 	if status_label:
-		status_label.add_theme_font_size_override("font_size", best_size)
+		status_label.add_theme_font_size_override("font_size", _cached_font_size)
 
 func setup(player_data: Dictionary) -> void:
 	is_stat = false

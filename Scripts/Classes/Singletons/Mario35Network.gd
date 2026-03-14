@@ -66,6 +66,7 @@ func start_game(settings = {}):
 	Mario35Handler.is_timer_paused = true
 	# Store the level path for the loading screen to pre-load
 	Mario35Handler.pending_level_path = Mario35Handler.get_next_level_path()
+	Mario35Handler.sync_level_globals(Mario35Handler.pending_level_path)
 	# Clear readiness tracking
 	loading_ready_players.clear()
 	# Transition to the loading screen instead of the level

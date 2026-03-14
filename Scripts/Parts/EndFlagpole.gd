@@ -53,14 +53,15 @@ func give_points(player: Player) -> void:
 	var ratio := clampf(inverse_lerp(pole_bottom, pole_top, player.global_position.y), 0.0, 1.0)
 	# Map to 5 score tiers matching original NES FlagpoleYPosData thresholds
 	var value: int
-	if ratio >= 0.92:
-		value = 4  # Top of pole
-	elif ratio >= 0.53:
-		value = 3
-	elif ratio >= 0.33:
-		value = 2
+	# More lenient threshold for top score (originally 0.92, now 0.85)
+	if ratio >= 0.85:
+		value = 4  # Top of pole (5000 pt / 1-Up)
+	elif ratio >= 0.45:
+		value = 3  # (2000 pt)
+	elif ratio >= 0.25:
+		value = 2  # (800 pt)
 	elif ratio > 0.0:
-		value = 1
+		value = 1  # (400 pt)
 	else:
 		value = 0  # Bottom of pole
 	var nearest_value = FLAG_POINTS[value]

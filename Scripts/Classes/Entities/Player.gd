@@ -1587,8 +1587,6 @@ func enter_pipe(pipe: PipeArea, warp_to_level := true) -> void:
 		state_machine.set_physics_process(false)
 		state_machine.set_process(false)
 		velocity = Vector2.ZERO
-		on_mega_timeout()
-
 		# Calculate target position near the pipe entrance so the shrink
 		# visually moves Mario toward the pipe, not just shrinks in place.
 		var target_pos = global_position
@@ -1600,9 +1598,10 @@ func enter_pipe(pipe: PipeArea, warp_to_level := true) -> void:
 		
 		# Sync position and sprite joint offset in parallel
 		var tween = create_tween().set_parallel(true)
+		tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 		tween.tween_property(self, "global_position", target_pos, 1.0)
 		
-		await tween.finished
+		await on_mega_timeout()
 		$SpriteScaleJoint.position = Vector2.ZERO
 		
 		# Restore state machine before the final pipe transition
@@ -1794,10 +1793,32 @@ func mega_mushroom_get() -> void:
 	mega_meter = mega_time
 	if has_node("CanvasLayer/Control2/MarginContainer/Timers/MegaMushroomTimer"):
 		$CanvasLayer/Control2/MarginContainer/Timers/MegaMushroomTimer/TimerSprite.max_value = mega_meter
-	# Grow to 4× with a tween
+	# Grow to 4× with a tween while pausing the game
+	get_tree().paused = true
+	$SpriteScaleJoint.process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	transforming = true
+	sprite.material.set_shader_parameter("enabled", true)
+	handle_invincible_palette()
+	
+	AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.SILENCE, 1, false)
+	
 	var tween = create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	tween.tween_property($SpriteScaleJoint, "scale", Vector2(4.0, 4.0), 0.5)
+	
+	AudioManager.play_sfx("power_up", global_position, 0.5)
+	
+	await tween.finished
 	scale_collision(4.0)
+	
+	$SpriteScaleJoint.process_mode = Node.PROCESS_MODE_INHERIT
+	get_tree().paused = false
+	
+	transforming = false
+	sprite.material.set_shader_parameter("enabled", false)
+	
+	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.SILENCE)
 	AudioManager.set_music_override(AudioManager.MUSIC_OVERRIDES.MEGA_MUSHROOM, 1, false)
 	DiscoLevel.combo_meter += 1
 
@@ -2039,17 +2060,37 @@ func on_mega_timeout() -> void:
 	is_invincible = false
 	mega_meter = 0.0
 	$SpriteScaleJoint.modulate.a = 1.0
-	# Shrink back to normal scale with tween
-	var tween = create_tween()
-	tween.tween_property($SpriteScaleJoint, "scale", Vector2(1.0, 1.0), 1.0)
-	scale_collision(1.0)
+	
+	# Shrink back to normal scale with tween while pausing the game
+	get_tree().paused = true
+	$SpriteScaleJoint.process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	transforming = true
+	sprite.material.set_shader_parameter("enabled", true)
+	handle_invincible_palette()
+	
 	AudioManager.stop_music_override(AudioManager.MUSIC_OVERRIDES.MEGA_MUSHROOM)
+	
+	var tween = create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.tween_property($SpriteScaleJoint, "scale", Vector2(1.0, 1.0), 1.0)
+	
+	AudioManager.play_sfx("damage", global_position, 0.5)
+	
+	await tween.finished
+	scale_collision(1.0)
+	$SpriteScaleJoint.process_mode = Node.PROCESS_MODE_INHERIT
 
 	# Always revert to Big (Super Mario) after mega wears off
 	power_state = get_node("PowerStates/Big")
 	Global.player_power_states[player_id] = "1"
 	handle_power_up_states(0)
 	refresh_hitbox()
+	
+	transforming = false
+	sprite.material.set_shader_parameter("enabled", false)
+	
+	get_tree().paused = false
 
 func get_movement_pitch() -> float:
 	return 0.6 if has_mega_mushroom else 1.0

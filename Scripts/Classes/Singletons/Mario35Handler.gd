@@ -61,6 +61,7 @@ var player_statuses := {} # peer_id -> { "name": String, "alive": bool, "rank": 
 var alive_count := 0
 var last_known_stats := {} # peer_id -> { "time": int, "coins": int, "target": int }
 var stat_broadcast_timer := 0.0
+var current_level_display := "1-1"
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -788,7 +789,13 @@ func get_next_level_path() -> String:
 	# Draw from the bag
 	var level_path = level_bag.pop_front()
 	
-	# Sync Global variables for HUD and transitions
+	levels_played += 1
+	last_level_path = level_path
+	
+	print("[M35] Level %d: [%s] %s (%d remaining in bag)" % [levels_played, Global.current_campaign, level_path, level_bag.size()])
+	return level_path
+
+func sync_level_globals(level_path: String) -> void:
 	# Path: res://Scenes/Levels/SMB1/World1/1-1.tscn
 	var path_parts = level_path.split("/")
 	if path_parts.size() >= 5:
@@ -801,8 +808,3 @@ func get_next_level_path() -> String:
 	
 	Global.world_num = w
 	Global.level_num = l
-	levels_played += 1
-	last_level_path = level_path
-	
-	print("[M35] Level %d: [%s] %s (%d remaining in bag)" % [levels_played, Global.current_campaign, level_path, level_bag.size()])
-	return level_path

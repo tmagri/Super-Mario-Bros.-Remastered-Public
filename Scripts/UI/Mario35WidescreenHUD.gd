@@ -140,9 +140,7 @@ func sync_players() -> void:
 		right_vbox.move_child(alive_stat, 0) # Top of sidebar
 	
 	# Update Stats
-	var level_name = "X-X"
-	if is_instance_valid(Global.current_level):
-		level_name = str(Global.world_num) + "-" + str(Global.level_num)
+	var level_name = Mario35Handler.current_level_display
 	
 	var camp = Global.current_campaign
 	if camp == "SMB1": camp = "SMB"

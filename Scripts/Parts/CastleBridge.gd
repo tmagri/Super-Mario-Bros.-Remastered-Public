@@ -17,8 +17,12 @@ func _ready() -> void:
 	await get_tree().physics_frame
 	$Axe/CameraRightLimit._enter_tree()
 
+var triggered := false
+
 func on_area_entered(area: Area2D) -> void:
+	if triggered: return
 	if area.owner is Player:
+		triggered = true
 		destroy_bridge(area.owner)
 
 func destroy_bridge(player: Player) -> void:
@@ -43,7 +47,8 @@ func destroy_bridge(player: Player) -> void:
 	bowser_present = get_tree().get_first_node_in_group("Bowser") != null
 	player.velocity = Vector2.ZERO
 	if player.has_mega_mushroom:
-		player.on_mega_timeout()
+		Global.can_time_tick = false
+		await player.on_mega_timeout()
 	Global.can_time_tick = false
 	axe_touched.emit()
 	if Global.current_game_mode == Global.GameMode.MARIO_35:

@@ -4,6 +4,9 @@ extends Node
 @export var state: State = null
 
 func transition_to(state_name := "", state_msg := {}) -> void:
+	if not has_node(state_name):
+		printerr("StateMachine Error: State '", state_name, "' not found under ", get_path())
+		return
 	state.exit()
 	state.state_exited.emit()
 	state = get_node(state_name)

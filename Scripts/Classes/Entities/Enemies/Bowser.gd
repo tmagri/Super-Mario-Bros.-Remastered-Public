@@ -158,6 +158,9 @@ func fireball_hit() -> void:
 		AudioManager.play_sfx("kick", global_position)
 
 func play_music() -> void:
+	var players = get_tree().get_nodes_in_group("Players")
+	if players.is_empty():
+		return
 	for i: EntityGenerator in get_tree().get_nodes_in_group("EntityGenerators"):
 		if i.entity_scene != null:
 			if i.entity_scene.resource_path == "res://Scenes/Prefabs/Entities/Enemies/BowserFlame.tscn":

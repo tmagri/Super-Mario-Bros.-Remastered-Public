@@ -2,6 +2,9 @@ extends Node2D
 
 @export var reset_pos := Vector2.ZERO
 
+static var last_teleport_time := 0.0
+const SMOKE_PARTICLE = preload("res://Scenes/Prefabs/Particles/SmokeParticle.tscn")
+
 signal player_teleported
 
 func on_player_entered(_player: Player) -> void:
@@ -18,8 +21,22 @@ func on_player_entered(_player: Player) -> void:
 	queue_free()
 
 func teleport_player(player: Player) -> void:
+	if Global.is_teleporting: return
+	Global.is_teleporting = true
+	
 	for i in get_children():
 		if i is PickAPathPoint:
 			i.crossed = false
-	player.teleport_player(reset_pos)
+	
+	# Visual "Out"
+	player.do_smoke_effect()
+	player.hide()
+	if player.state_machine:
+		player.state_machine.transition_to("Freeze")
+	
+	await get_tree().create_timer(0.4, false).timeout
+	
+	Level.spawn_position_override = reset_pos
+	LevelPersistance.reset_enemies()
+	Global.transition_to_scene(get_tree().current_scene.scene_file_path, true)
 	player_teleported.emit()

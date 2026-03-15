@@ -187,7 +187,6 @@ func stop_all_music() -> void:
 	AudioManager.stop_music_override(MUSIC_OVERRIDES.NONE, true)
 
 func kill_sfx(sfx_name := "") -> void:
-	print(active_sfxs)
 	if active_sfxs.has(sfx_name):
 		active_sfxs[sfx_name].queue_free()
 		active_sfxs.erase(sfx_name)
@@ -205,7 +204,6 @@ func set_music_override(stream: MUSIC_OVERRIDES, priority := 0, stop_on_finish :
 	else:
 		audio_override_queue.append(stream)
 	current_music_override = stream
-	print(OVERRIDE_STREAMS[stream])
 	music_override_player.stream = create_stream_from_json(OVERRIDE_STREAMS[stream])
 	music_override_player.bus = "Music" if stream != MUSIC_OVERRIDES.FLAG_POLE else "SFX"
 	music_override_player.play()
@@ -243,7 +241,6 @@ func load_sfx_map(json := {}) -> void:
 	sfx_library = DEFAULT_SFX_LIBRARY.duplicate()
 	for i in json:
 		sfx_library[i] = json[i]
-	print(json)
 
 func handle_music() -> void:
 	if Global.in_title_screen:

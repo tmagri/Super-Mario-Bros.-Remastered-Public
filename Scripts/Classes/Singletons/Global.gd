@@ -21,6 +21,7 @@ var entity_max_fall_speed := 280
 
 var level_editor: LevelEditor = null
 var current_level: Level = null
+var is_teleporting := false
 
 var second_quest := false
 var extra_worlds_win := false
@@ -421,7 +422,11 @@ func clear_saved_values() -> void:
 	lives = 3
 	player_power_states = "0000"
 
-func transition_to_scene(scene_path := "") -> void:
+func transition_to_scene(scene_path := "", instant := false) -> void:
+	if instant:
+		get_tree().change_scene_to_file(scene_path)
+		return
+	
 	Global.fade_transition = bool(Settings.file.visuals.transition_animation)
 	if transitioning_scene:
 		return

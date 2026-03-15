@@ -81,6 +81,7 @@ static var vine_return_level := ""
 static var in_vine_level := false
 
 static var can_set_time := true
+static var spawn_position_override := Vector2.INF
 
 func _enter_tree() -> void:
 	Global.current_level = self
@@ -118,6 +119,27 @@ func _enter_tree() -> void:
 
 func spawn_in_extra_players() -> void:
 	return
+
+func _ready() -> void:
+	if spawn_position_override != Vector2.INF:
+		var target_pos = spawn_position_override
+		spawn_position_override = Vector2.INF
+		for player in get_tree().get_nodes_in_group("Players"):
+			player.global_position = target_pos
+			player.hide()
+			if player.state_machine:
+				player.state_machine.transition_to("Freeze")
+			if player.has_method("recenter_camera"):
+				player.recenter_camera()
+			
+			get_tree().create_timer(0.4, false).timeout.connect(func():
+				player.show()
+				if player.state_machine:
+					player.state_machine.transition_to("Normal")
+				player.velocity = Vector2.ZERO
+				player.do_smoke_effect()
+				Global.is_teleporting = false
+			)
 
 func update_theme() -> void:
 	if auto_set_theme:

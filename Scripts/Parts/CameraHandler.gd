@@ -65,7 +65,7 @@ func handle_camera(delta: float) -> void:
 	update_camera_barriers()
 
 func update_camera_barriers() -> void:
-	if get_viewport() != null:
+	if get_viewport() != null and get_viewport().get_camera_2d() != null:
 		camera_center_joint.global_position = get_viewport().get_camera_2d().get_screen_center_position()
 		# M35: Walls at ±136 (4:3 + 8px - game area). Standard: Walls at ±VP_half.
 		var half_w = get_viewport_rect().size.x / 2.0
@@ -123,6 +123,7 @@ func handle_vertical_scrolling(_delta: float) -> void:
 		camera_position.y = global_position.y - 32
 
 func handle_sp_scrolling() -> void:
+	if get_viewport() == null: return
 	var distance = camera_position.x - owner.global_position.x
 	var limit = get_viewport().get_visible_rect().size.x / 2 - 16
 	if abs(distance) > limit:
@@ -130,6 +131,7 @@ func handle_sp_scrolling() -> void:
 
 func do_sp_scroll(direction := 1) -> void:
 	if sp_scrolling: return
+	if get_viewport() == null: return
 	sp_scrolling = true
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
@@ -176,6 +178,7 @@ func handle_offsets(delta: float) -> void:
 		camera_offset.x = 8
 
 func do_limits() -> void:
+	if get_viewport() == null: return
 	# M35: Use 256px (4:3) for camera calculations. Standard: Use actual viewport width.
 	var effective_width = get_viewport().get_visible_rect().size.x
 	if Global.current_game_mode == Global.GameMode.MARIO_35:

@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://cpwloakvp672a" path="res://Scripts/Parts/EditorVisibleNode.gd" id="4_kqk52"]
 [ext_resource type="Texture2D" uid="uid://dpdrrkqtcedgm" path="res://Assets/Sprites/Tilesets/DottedLine.png" id="5_b0jr6"]
 [ext_resource type="Script" uid="uid://d0mqkvopasu8k" path="res://Scripts/Classes/Components/SecondQuestReplaceComponent.gd" id="6_b0jr6"]
+[ext_resource type="Script" path="res://Scripts/Classes/Entities/Objects/SidewaysPlatform.gd" id="7_q8r4n"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mq7me"]
 size = Vector2(48, 8)
@@ -51,6 +52,7 @@ _data = {
 [node name="SidewaysPlatform" type="Node2D" unique_id=634337125]
 
 [node name="AnimatableBody2D" type="AnimatableBody2D" parent="." unique_id=1819437000]
+script = ExtResource("7_q8r4n")
 
 [node name="Sprite" type="NinePatchRect" parent="AnimatableBody2D" unique_id=1863178267]
 offset_left = -24.0

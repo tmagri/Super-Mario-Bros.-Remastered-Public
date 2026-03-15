@@ -25,7 +25,9 @@ func _ready() -> void:
 		i.start()
 
 func _physics_process(delta: float) -> void:
-	target_player = get_tree().get_nodes_in_group("Players")[0]
+	var players = get_tree().get_nodes_in_group("Players")
+	if players.is_empty(): return
+	target_player = players[0]
 	if is_on_floor():
 		direction = sign(target_player.global_position.x - global_position.x)
 		velocity.x = 0
@@ -71,7 +73,10 @@ func breathe_fire() -> void:
 	flame.global_position = global_position + Vector2(18 * direction, -20)
 	flame.mode = 1
 	flame.direction = direction
-	flame.target_y = get_target_y(target_player)
+	if is_instance_valid(target_player):
+		flame.target_y = get_target_y(target_player)
+	else:
+		flame.target_y = global_position.y - 16
 	flame.damage_type = "Bowser"
 	if $TrackJoint.is_attached:
 		get_parent().owner.add_sibling(flame)

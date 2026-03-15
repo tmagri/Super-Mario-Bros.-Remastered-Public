@@ -7,6 +7,9 @@ var destroy_rotation := 0.0
 func _ready() -> void:
 	pass
 
+var falling := false
+var momentum_timer := 0.0
+
 func _physics_process(delta: float) -> void:
 	if destroyed:
 		destroy_velocity.y += Global.entity_gravity * delta * 50
@@ -16,11 +19,22 @@ func _physics_process(delta: float) -> void:
 			queue_free()
 		return
 
-	if $PlayerDetect.get_overlapping_areas().any(is_player):
+	var is_stood_on = $PlayerDetect.get_overlapping_areas().any(is_player)
+	
+	if is_stood_on:
+		falling = true
+		momentum_timer = 0.1 # Persistence for 0.1s
+	
+	if momentum_timer > 0:
+		momentum_timer -= delta
+		if momentum_timer <= 0:
+			falling = false
+
+	if falling:
 		var speed_mult = 1.0
 		var player = get_tree().get_first_node_in_group("Players")
 		if is_instance_valid(player) and player.has_mega_mushroom:
-			speed_mult = 2.5
+			speed_mult = 4.0
 		position.y += 96 * speed_mult * delta
 
 func destroy_platform(dir: float) -> void:
@@ -34,5 +48,9 @@ func destroy_platform(dir: float) -> void:
 
 func is_player(area: Area2D) -> bool:
 	if area.owner is Player:
-		return area.owner.is_on_floor() and area.owner.global_position.y - 4 <= global_position.y
+		var player_node: Player = area.owner
+		var height_diff = 4
+		if player_node.has_mega_mushroom:
+			height_diff = 16
+		return player_node.is_actually_on_floor() and player_node.global_position.y - height_diff <= global_position.y
 	return false

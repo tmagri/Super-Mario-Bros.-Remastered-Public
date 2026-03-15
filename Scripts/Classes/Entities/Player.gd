@@ -2025,6 +2025,12 @@ func _mega_destroy_tile(tilemap: TileMapLayer, pos: Vector2i) -> bool:
 		_spawn_break_particles(world_pos)
 		Global.score += 50
 		return true
+	elif has_collision:
+		# Specifically for side-hits on non-destructable tiles (like pipes or stairs)
+		# We don't have the normal here, but we can check if it's within side-bump distance
+		var dx = abs(global_position.x - world_pos.x)
+		if dx < 36: # Close enough to the side of the 16x16 tile (Mario is ~24px wide)
+			AudioManager.play_sfx("bump", global_position, 0.5)
 
 	return false
 
@@ -2047,6 +2053,8 @@ func handle_mega_collision(col: KinematicCollision2D) -> bool:
 			collider.destroy()
 			Global.score += 50
 			return true
+		elif abs(normal.x) > 0.7:
+			AudioManager.play_sfx("bump", global_position, 0.5)
 	# Destroy any Block (e.g. question blocks, solid animatable bodies)
 	elif collider is Block:
 		if not is_near_warp_pipe(collider.global_position):
@@ -2054,6 +2062,8 @@ func handle_mega_collision(col: KinematicCollision2D) -> bool:
 			collider.destroy()
 			Global.score += 50
 			return true
+		elif abs(normal.x) > 0.7:
+			AudioManager.play_sfx("bump", global_position, 0.5)
 	# Destroy pipe bodies: any StaticBody2D in the "Pipes" group (if it's not a warp)
 	elif collider is StaticBody2D and collider.is_in_group("Pipes"):
 		if not is_near_warp_pipe(collider.global_position, 48.0):
@@ -2062,11 +2072,16 @@ func handle_mega_collision(col: KinematicCollision2D) -> bool:
 			AudioManager.play_sfx("block_break", global_position)
 			Global.score += 50
 			return true
+		elif abs(normal.x) > 0.7:
+			AudioManager.play_sfx("bump", global_position, 0.5)
 	# TileMapLayer tiles handled via the proactive column scan in handle_mega_mushroom
 	elif collider is TileMapLayer:
 		var contact_pos = col.get_position() - normal * 4.0
 		var map_pos = collider.local_to_map(collider.to_local(contact_pos))
-		return _mega_destroy_tile(collider, map_pos)
+		var destroyed = _mega_destroy_tile(collider, map_pos)
+		if not destroyed and abs(normal.x) > 0.7:
+			AudioManager.play_sfx("bump", global_position, 0.5)
+		return destroyed
 		
 	# Destroy Moving Platforms on side impact
 	var target_platform = null

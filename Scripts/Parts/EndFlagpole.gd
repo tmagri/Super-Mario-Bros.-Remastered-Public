@@ -50,7 +50,14 @@ func give_points(player: Player) -> void:
 	# Pole hitbox: Shape at local Y=-16, segment extends -152px upward
 	var pole_bottom := global_position.y - 16.0
 	var pole_top := global_position.y - 168.0
-	var ratio := clampf(inverse_lerp(pole_bottom, pole_top, player.global_position.y), 0.0, 1.0)
+	
+	# Use player's top/center for scoring so Big Mario isn't penalized for height
+	# Small Mario reference stays same, Big Mario gets a ~16px boost to match SMB1's head-based scoring
+	var player_height_offset := 0.0
+	if player.power_state.hitbox_size != "Small":
+		player_height_offset = 16.0
+		
+	var ratio := clampf(inverse_lerp(pole_bottom, pole_top, player.global_position.y - player_height_offset), 0.0, 1.0)
 	# Map to 5 score tiers matching original NES FlagpoleYPosData thresholds
 	var value: int
 	# More lenient threshold for top score (originally 0.92, now 0.85)

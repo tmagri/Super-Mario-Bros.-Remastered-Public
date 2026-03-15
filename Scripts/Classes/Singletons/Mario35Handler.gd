@@ -76,7 +76,7 @@ func _ready() -> void:
 	)
 
 func _process(delta: float) -> void:
-	if not game_active or is_timer_paused:
+	if not game_active or is_timer_paused or get_tree().paused:
 		return
 		
 	# Personal timer only ticks if alive

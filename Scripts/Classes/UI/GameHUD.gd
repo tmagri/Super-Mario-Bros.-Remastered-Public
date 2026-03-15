@@ -589,7 +589,8 @@ func handle_speedrun_timer() -> void:
 	%ModernPB.modulate = %PB.modulate
 
 func handle_pausing() -> void:
-	if get_tree().get_first_node_in_group("Players") != null and Global.can_pause and (Global.current_game_mode != Global.GameMode.LEVEL_EDITOR) and (Global.current_game_mode != Global.GameMode.MARIO_35):
+	var can_open_m35_pause: bool = Global.current_game_mode == Global.GameMode.MARIO_35 and (Mario35Handler.is_practice or Global.debug_mode)
+	if (get_tree().get_first_node_in_group("Players") != null or can_open_m35_pause) and Global.can_pause and (Global.current_game_mode != Global.GameMode.LEVEL_EDITOR):
 		if get_tree().paused == false and Global.game_paused == false:
 			# Battle Royale Pause Override
 			if Global.current_game_mode == Global.GameMode.MARIO_35:
@@ -597,6 +598,10 @@ func handle_pausing() -> void:
 				# UNLESS we are in debug mode or practice mode
 				if not (Global.debug_mode or Mario35Handler.is_practice):
 					return
+				
+				if Input.is_action_just_pressed("pause"):
+					activate_pause_menu()
+				return
 			
 			if Input.is_action_just_pressed("pause"):
 				activate_pause_menu()
@@ -639,7 +644,7 @@ func update_br_timer(time: int) -> void:
 	%BRTimer.text = str(time).pad_zeros(3)
 	if time <= 10:
 		%BRTimer.modulate = Color.RED
-		if time > 0:
+		if time >= 0:
 			AudioManager.play_global_sfx("mario35_countdown")
 	else:
 		%BRTimer.modulate = Color.YELLOW

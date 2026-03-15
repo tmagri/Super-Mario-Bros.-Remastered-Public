@@ -733,7 +733,7 @@ func _build_level_bag() -> void:
 		var v_max_w = info.max_w
 		
 		for w in range(1, v_max_w + 1):
-			for l in range(1, 5):
+			for l in range(1, 3):
 				var path = "res://Scenes/Levels/%s/World%s/%d-%d.tscn" % [prefix, str(w), w, l]
 				if ResourceLoader.exists(path):
 					if w <= 2:
@@ -745,8 +745,8 @@ func _build_level_bag() -> void:
 	early_pool.shuffle()
 	remaining_pool.shuffle()
 	
-	# 1. Take 5 early levels for the start
-	var start_count = mini(5, early_pool.size())
+	# 1. Take 3 early levels for the start
+	var start_count = mini(3, early_pool.size())
 	for i in range(start_count):
 		level_bag.append(early_pool.pop_front())
 		
@@ -764,12 +764,12 @@ func _build_level_bag() -> void:
 		level_bag[0] = level_bag[swap_idx]
 		level_bag[swap_idx] = tmp
 	
-	# Ensure the first level is a friendly overworld stage (not castle -4 or underwater -2)
+	# Ensure the first level is a friendly overworld stage (not castle -4 or underwater -2 or athetic -3)
 	if level_bag.size() > 1:
 		var first = level_bag[0].get_file().get_basename() # e.g. "1-1"
 		var parts = first.split("-")
 		var first_level_num = int(parts[1]) if parts.size() >= 2 else 1
-		if first_level_num == 4 or first_level_num == 2:
+		if first_level_num == 4 or first_level_num == 2 or first_level_num == 3:
 			for i in range(1, level_bag.size()):
 				var candidate = level_bag[i].get_file().get_basename()
 				var c_parts = candidate.split("-")
@@ -780,7 +780,7 @@ func _build_level_bag() -> void:
 					level_bag[i] = tmp
 					break
 	
-	print("[M35] Level bag built. Size: %d. First 5 stages guaranteed early." % level_bag.size())
+	print("[M35] Level bag built. Size: %d. First 3 stages guaranteed early." % level_bag.size())
 
 func get_next_level_path() -> String:
 	# Refill bag if empty (during long matches)

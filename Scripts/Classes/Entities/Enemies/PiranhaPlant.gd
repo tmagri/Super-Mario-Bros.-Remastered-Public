@@ -27,10 +27,10 @@ func _enter_tree() -> void:
 		$Sprite.play("default") # Biting animation
 		
 		# [FIX]: Ensure the hitbox is correctly positioned and monitoring.
-		# In the original scene, the hitbox is child of Sprite and its local position is (0, 12).
-		# Since we moved the Sprite to (0, -12), the hitbox's global position was at (0, 0),
-		# which correctly aligns its nested shape (0, -6) to the ground. 
-		$Sprite/Hitbox.position = Vector2(0, 12)
+		# Hitbox global position needs to be below ground for BlockBouncingDetection.
+		# Sprite is at -12. Hitbox at Sprite + 13 = +1 relative to root (1.5px overlap).
+		$Sprite/Hitbox.position = Vector2(0, 13)
+		$Sprite/Hitbox.collision_mask = 7 # [FIX]: Include Layers 1, 2, and 3 (Blocks)
 		$Sprite/Hitbox.monitoring = true
 		
 		z_index = -5 # Maintain behind-pipes look if needed, but above ground
@@ -66,8 +66,9 @@ func _ready() -> void:
 		$Animation.stop()
 		$Sprite.visible = true
 		$Sprite.position = Vector2(0, -12)
-		# Re-force hitbox monitoring in case animation reset it
-		$Sprite/Hitbox.position = Vector2(0, 12)
+		# Re-force hitbox settings in case animation reset them
+		$Sprite/Hitbox.position = Vector2(0, 13)
+		$Sprite/Hitbox.collision_mask = 7
 		$Sprite/Hitbox.monitoring = true
 	else:
 		$Timer.start()

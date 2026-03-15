@@ -40,6 +40,18 @@ func _physics_process(delta: float) -> void:
 func destroy_platform(dir: float) -> void:
 	if destroyed: return
 	destroyed = true
+	
+	# Unparent to allow free falling
+	var old_global_pos = global_position
+	var level = get_tree().current_scene
+	if level and get_parent() != level:
+		get_parent().remove_child(self)
+		level.add_child(self)
+		global_position = old_global_pos
+
+	sync_to_physics = false
+	z_index = 10
+	
 	destroy_velocity = Vector2(dir * 200, -300)
 	destroy_rotation = dir * 10.0
 	set_collision_layer_value(1, false)

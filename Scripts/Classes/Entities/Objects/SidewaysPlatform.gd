@@ -16,6 +16,22 @@ func _physics_process(delta: float) -> void:
 func destroy_platform(dir: float) -> void:
 	if destroyed: return
 	destroyed = true
+	
+	# Unparent from animated parent to allow free falling
+	var old_global_pos = global_position
+	var level = get_tree().current_scene
+	if level and get_parent() != level:
+		# If parent has AnimationPlayer, stop it
+		if get_parent().has_node("AnimationPlayer"):
+			get_parent().get_node("AnimationPlayer").stop()
+			
+		get_parent().remove_child(self)
+		level.add_child(self)
+		global_position = old_global_pos
+
+	sync_to_physics = false
+	z_index = 10 
+	
 	# Give it a "knock-out" toss
 	destroy_velocity = Vector2(dir * 200, -300)
 	destroy_rotation = dir * 10.0
@@ -24,9 +40,3 @@ func destroy_platform(dir: float) -> void:
 	set_collision_mask_value(1, false)
 	# Play a kick/break sound
 	AudioManager.play_sfx("kick", global_position)
-	
-	# Stop the animation player if it's on a path/animation
-	var parent = get_parent()
-	if parent and parent.has_node("AnimationPlayer"):
-		var ap: AnimationPlayer = parent.get_node("AnimationPlayer")
-		ap.stop()

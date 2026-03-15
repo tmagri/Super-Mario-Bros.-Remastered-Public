@@ -28,6 +28,14 @@ func teleport_player(player: Player) -> void:
 		if i is PickAPathPoint:
 			i.crossed = false
 	
+	# Handle Mega Mario shrink before warp
+	if player.has_mega_mushroom:
+		player.on_mega_timeout()
+		# Wait for the shrink animation to finish (approx 1s)
+		# We check if it's still transforming to be safe
+		while player.transforming:
+			await get_tree().process_frame
+	
 	# Visual "Out"
 	player.do_smoke_effect()
 	player.hide()

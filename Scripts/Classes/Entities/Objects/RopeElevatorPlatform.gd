@@ -44,9 +44,10 @@ func _physics_process(delta: float) -> void:
 		platform.position.y += velocity * delta
 		return
 	else:
-		if platform.global_position.y <= rope_top or linked_platform.dropped:
+		var linked_is_dropped = is_instance_valid(linked_platform) and linked_platform.dropped
+		if platform.global_position.y <= rope_top or linked_is_dropped or not is_instance_valid(linked_platform):
 			dropped = true
-			if linked_platform.dropped:
+			if linked_is_dropped:
 				if Settings.file.audio.extra_sfx == 1:
 					AudioManager.play_sfx("lift_fall", global_position)
 				$Platform/ScoreNoteSpawner.spawn_note(1000)
@@ -61,11 +62,12 @@ func _physics_process(delta: float) -> void:
 	else:
 		# If Mega Mario is on the LINKED platform, we move up slower/resistant
 		var resistance = 1.0
-		if linked_platform.player_stood_on and is_instance_valid(player) and player.has_mega_mushroom:
+		if is_instance_valid(linked_platform) and linked_platform.player_stood_on and is_instance_valid(player) and player.has_mega_mushroom:
 			resistance = 0.5 # Difficult to pull up Mega Mario
 		velocity = lerpf(velocity, 0, delta * 2 * resistance)
 		
-	linked_platform.velocity = -velocity
+	if is_instance_valid(linked_platform):
+		linked_platform.velocity = -velocity
 	platform.position.y += velocity * delta
 
 func destroy_platform(dir: float) -> void:

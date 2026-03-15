@@ -36,7 +36,13 @@ func fire() -> void:
 		AudioManager.play_sfx("cannon", global_position)
 	else:
 		node.cannon = true
-	add_sibling(node)
+	get_parent().add_sibling(node)
+
+func die(_reward: int = 2) -> void:
+	queue_free()
+
+func die_from_object(_obj: Node2D, _reward: int = 2) -> void:
+	queue_free()
 
 func flag_die() -> void:
 	queue_free()

@@ -122,7 +122,7 @@ func _process(delta: float) -> void:
 	if mario_sprite:
 		var sprite_margin = 2.0
 		var sprite_target_w = size.x - sprite_margin * 2.0
-		var sprite_target_h = size.y * (0.35 if is_stat else 0.55) # Reduced to prevent text cropping
+		var sprite_target_h = size.y * 0.3
 		
 		# Base size in pixels (not scale!) — this is the target dimension for the sprite
 		var base_w = clamp(sprite_target_w, 8, sprite_target_w)

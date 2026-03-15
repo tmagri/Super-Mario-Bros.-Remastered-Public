@@ -1071,6 +1071,13 @@ func handle_jammed_ejection(delta: float) -> void:
 		var horizontal_eject = Vector2(-direction * 128 * delta, 0)
 		var vertical_eject = Vector2(0, -128 * delta * gravity_vector.y)
 		
+		# New: Support for forward wall-pushing in Classic Physics (allows -1 glitch)
+		if classic_physics and input_direction == direction:
+			var forward_eject = Vector2(direction * 128 * delta, 0)
+			# If we are holding forward, prioritize pushing forward through the wall
+			global_position += forward_eject
+			return
+		
 		# Move horizontally if it helps clear the overlap, otherwise try vertical
 		if not test_move(global_transform.translated(horizontal_eject), Vector2.ZERO):
 			global_position += horizontal_eject

@@ -97,7 +97,11 @@ func grounded(delta: float) -> void:
 			player.crouching = true
 			wall_pushing = false
 		if wall_pushing:
-			player.global_position.x += (-50 * player.direction * delta)
+			var push_dir = -player.direction # Default: backward
+			if player.classic_physics and player.input_direction == player.direction:
+				push_dir = player.direction # Force forward pushing
+			
+			player.global_position.x += (50 * push_dir * delta)
 	if not player.looking_up:
 		if Global.player_action_pressed("move_up", player.player_id) and not player.crouching:
 			player.looking_up = true

@@ -18,7 +18,7 @@ const ITEM_JSONS := {
 	"QuestionBlock": preload("res://Assets/Sprites/Blocks/QuestionBlock.json"),
 	"ClearQuestionBlock": preload("res://Assets/Sprites/Blocks/ClearQuestionBlock.json"),
 	"Superball": preload("res://Assets/Sprites/Items/SuperballFlower.json"),
-	"MegaMushroom": preload("res://Assets/Sprites/Items/SuperMushroom.json"),
+	"MegaMushroom": preload("res://Assets/Sprites/Items/MegaMushroom.json"),
 }
 
 

@@ -1812,7 +1812,11 @@ func mega_mushroom_get() -> void:
 	
 	var tween = create_tween()
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.set_parallel(true)
 	tween.tween_property($SpriteScaleJoint, "scale", Vector2(4.0, 4.0), 0.5)
+	# The default sprite has a 1px visual offset at the bottom to align exactly. 
+	# At 4x scale, this pushes him 4px into the ground visually. We offset the Y position to compensate.
+	tween.tween_property($SpriteScaleJoint, "position", Vector2(0, -3.0), 0.5)
 	
 	AudioManager.play_sfx("power_up", global_position, 0.5)
 	
@@ -1833,12 +1837,18 @@ func scale_collision(s: float) -> void:
 	for group in ["SmallCollisions", "BigCollisions", "StepCollision"]:
 		for node in get_tree().get_nodes_in_group(group):
 			if node.owner == self:
-				node.scale = Vector2(s, s)
+				if group in ["SmallCollisions", "BigCollisions"] and s > 1.0:
+					node.scale = Vector2(s * 2.0, s)
+				else:
+					node.scale = Vector2(s, s)
+				
 				# Scale position for all children to keep them relative to the 4x body
 				if s > 1.0:
 					if not node.has_meta("position_stored"):
 						node.set_meta("position_stored", node.position)
-					node.position = node.get_meta("position_stored") * s
+					
+					var pos_scale = Vector2(s * 2.0, s) if group == "StepCollision" else Vector2(s, s)
+					node.position = node.get_meta("position_stored") * pos_scale
 				else:
 					# Resetting to baseline
 					if node.has_meta("position_stored"):
@@ -1856,7 +1866,7 @@ func scale_collision(s: float) -> void:
 				hitbox.set_meta("scale_stored", hitbox.scale)
 			
 			hitbox.position = Vector2(0, -64) # Center vertically in 4x body
-			hitbox.scale = Vector2(4.0, 4.0) # Match full body scale
+			hitbox.scale = Vector2(s * 2.0, s) # Match full body scale with 2x width
 			hitbox.collision_mask |= 16 # Add Layer 5 (Enemies)
 		else:
 			# Resetting to baseline
@@ -2095,6 +2105,7 @@ func handle_mega_collision(col: KinematicCollision2D) -> bool:
 		# floor contact normal is ~ -1.0. Ceiling normal is ~ 1.0. Side normal is ~ +/-1.0 X.
 		# We destroy IF it's not a floor contact (normal.y < -0.6)
 		if normal.y > -0.6:
+			add_collision_exception_with(target_platform) # Allow walking through on side impact
 			target_platform.destroy_platform(sign(-normal.x) if abs(normal.x) > 0.1 else sign(global_position.x - target_platform.global_position.x))
 			return true
 
@@ -2118,7 +2129,9 @@ func on_mega_timeout() -> void:
 	
 	var tween = create_tween()
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.set_parallel(true)
 	tween.tween_property($SpriteScaleJoint, "scale", Vector2(1.0, 1.0), 1.0)
+	tween.tween_property($SpriteScaleJoint, "position", Vector2(0, 0), 1.0)
 	
 	AudioManager.play_sfx("damage", global_position, 0.5)
 	

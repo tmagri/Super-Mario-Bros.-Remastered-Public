@@ -24,16 +24,23 @@ func _physics_process(_delta: float) -> void:
 func bounce_players() -> void:
 	for player in players:
 		player.has_spring_jumped = true
+		var speed_mult = 0.5 if player.has_mega_mushroom else 1.0
 		if Global.player_action_pressed("jump", player.player_id):
-			player.velocity.y = -player.physics_params(trampoline_type + "_SPEED")
+			player.velocity.y = -player.physics_params(trampoline_type + "_SPEED") * speed_mult
 			player.gravity = player.calculate_speed_param("JUMP_GRAVITY", player.velocity_x_jump_stored)
 			player.has_jumped = true
 			AudioManager.play_sfx(player.physics_params("TRAMPOLINE_USED_SFX", player.COSMETIC_PARAMETERS), global_position)
 		else:
-			player.velocity.y = -player.calculate_speed_param("JUMP_SPEED", player.velocity_x_jump_stored)
+			player.velocity.y = -player.calculate_speed_param("JUMP_SPEED", player.velocity_x_jump_stored) * speed_mult
 			AudioManager.play_sfx(player.physics_params("TRAMPOLINE_SFX", player.COSMETIC_PARAMETERS), global_position)
 	players.clear()
 
 func on_area_exited(area: Area2D) -> void:
 	if area.owner is Player:
 		area.owner.spring_bouncing = false
+
+func destroy_platform(_dir: float) -> void:
+	pass # Mega Mario cannot crush trampolines
+
+func is_hidden() -> bool:
+	return false

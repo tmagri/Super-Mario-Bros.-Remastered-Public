@@ -10,7 +10,7 @@ const RANK_COLOURS := {"F": Color.DIM_GRAY, "D": Color.WEB_MAROON, "C": Color.PA
 const ITEM_JSONS := {
 	"Mushroom": preload("res://Assets/Sprites/Items/SuperMushroom.json"),
 	"Flower": preload("res://Assets/Sprites/Items/FireFlower.json"),
-	"Star": preload("res://Assets/Sprites/Items/StarMan.json"), # StarMan.json? Checked list: StarMan.json exists. SuperStar.png exists.
+	"Star": preload("res://Assets/Sprites/Items/StarMan.json"), 
 	"Lucky Star": preload("res://Assets/Sprites/Items/LuckyStar.json"),
 	"Wing": preload("res://Assets/Sprites/Items/WingItem.json"),
 	"Hammer": preload("res://Assets/Sprites/Items/HammerIcon.json"),

@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bod0jkf7jc5pm"]
+[gd_scene load_steps=41 format=3 uid="uid://bod0jkf7jc5pm"]
 
 [ext_resource type="Script" uid="uid://bjbd3a6su47si" path="res://Scripts/Classes/UI/GameHUD.gd" id="1_f34v2"]
 [ext_resource type="Script" uid="uid://caq1qiwmy0mox" path="res://Scripts/Parts/BetterAnimatedSprite.gd" id="2_cbrve"]
@@ -155,12 +155,12 @@ func update_sprites() -> void:
 		i.texture = ResourceSetter.get_resource(i.texture, i)
 "
 
-[node name="GameHUD" type="CanvasLayer" unique_id=255730289]
+[node name="GameHUD" type="CanvasLayer"]
 process_mode = 3
 layer = 0
 script = ExtResource("1_f34v2")
 
-[node name="Main" type="HBoxContainer" parent="." unique_id=432718262]
+[node name="Main" type="HBoxContainer" parent="."]
 visible = false
 custom_minimum_size = Vector2(256, 32)
 anchors_preset = 10
@@ -169,18 +169,18 @@ offset_bottom = 16.0
 grow_horizontal = 2
 theme_override_constants/separation = 0
 
-[node name="Buffer" type="Control" parent="Main" unique_id=2126468957]
+[node name="Buffer" type="Control" parent="Main"]
 custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
 
-[node name="ScoreName" type="Control" parent="Main" unique_id=1815033506]
+[node name="ScoreName" type="Control" parent="Main"]
 custom_minimum_size = Vector2(48, 16)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 8
 metadata/_edit_use_anchors_ = true
 
-[node name="CharacterName" type="Label" parent="Main/ScoreName" unique_id=807402321]
+[node name="CharacterName" type="Label" parent="Main/ScoreName"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -191,7 +191,7 @@ offset_bottom = 4.0
 text = "Mario"
 uppercase = true
 
-[node name="Score" type="Label" parent="Main/ScoreName" unique_id=1796316796]
+[node name="Score" type="Label" parent="Main/ScoreName"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -203,22 +203,22 @@ text = "000000"
 horizontal_alignment = 2
 uppercase = true
 
-[node name="Buffer2" type="Control" parent="Main" unique_id=107216327]
+[node name="Buffer2" type="Control" parent="Main"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CoinCount" type="Control" parent="Main" unique_id=820212280]
+[node name="CoinCount" type="Control" parent="Main"]
 custom_minimum_size = Vector2(32, 8)
 layout_mode = 2
 size_flags_vertical = 8
 metadata/_edit_use_anchors_ = true
 
-[node name="KeyCount" type="Control" parent="Main/CoinCount" unique_id=133930722]
+[node name="KeyCount" type="Control" parent="Main/CoinCount"]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Icon" type="AnimatedSprite2D" parent="Main/CoinCount/KeyCount" unique_id=1664015465]
+[node name="Icon" type="AnimatedSprite2D" parent="Main/CoinCount/KeyCount"]
 process_mode = 1
 position = Vector2(0, -8)
 centered = false
@@ -226,7 +226,7 @@ script = ExtResource("2_cbrve")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="Shadow" type="AnimatedSprite2D" parent="Main/CoinCount/KeyCount/Icon" unique_id=1411398740]
+[node name="Shadow" type="AnimatedSprite2D" parent="Main/CoinCount/KeyCount/Icon"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -235,21 +235,21 @@ script = ExtResource("2_cbrve")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="Main/CoinCount/KeyCount/Icon/Shadow" unique_id=1697028933 node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Main/CoinCount/KeyCount/Icon/Shadow" node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_jt73e")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("6_mqa5s")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="ResourceSetterNew" type="Node" parent="Main/CoinCount/KeyCount/Icon" unique_id=1991755845 node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="Main/CoinCount/KeyCount/Icon" node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_jt73e")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("6_mqa5s")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="KeyAmount" type="Label" parent="Main/CoinCount/KeyCount" unique_id=648796710]
+[node name="KeyAmount" type="Label" parent="Main/CoinCount/KeyCount"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -259,21 +259,21 @@ offset_right = 36.0
 offset_bottom = 4.0
 text = "*03"
 
-[node name="CoinIcon" type="AnimatedSprite2D" parent="Main/CoinCount" unique_id=1181021211]
+[node name="CoinIcon" type="AnimatedSprite2D" parent="Main/CoinCount"]
 process_mode = 1
 sprite_frames = SubResource("SpriteFrames_40ba1")
 autoplay = "default"
 frame_progress = 0.132926
 centered = false
 
-[node name="ResourceSetter" type="Node" parent="Main/CoinCount/CoinIcon" unique_id=1420060252 node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetter" type="Node" parent="Main/CoinCount/CoinIcon" node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_jt73e")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("4_niy8w")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="CoinLabel" type="Label" parent="Main/CoinCount" unique_id=2107026659]
+[node name="CoinLabel" type="Label" parent="Main/CoinCount"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -283,14 +283,14 @@ offset_right = 36.0
 offset_bottom = 12.0
 text = "*00"
 
-[node name="RedCoins" type="Control" parent="Main" unique_id=352078155]
+[node name="RedCoins" type="Control" parent="Main"]
 visible = false
 custom_minimum_size = Vector2(32, 8)
 layout_mode = 2
 size_flags_vertical = 8
 metadata/_edit_use_anchors_ = true
 
-[node name="BorderL" type="Sprite2D" parent="Main/RedCoins" unique_id=803590673]
+[node name="BorderL" type="Sprite2D" parent="Main/RedCoins"]
 position = Vector2(-16, 0)
 texture = ExtResource("5_gmuut")
 centered = false
@@ -298,7 +298,7 @@ flip_h = true
 region_enabled = true
 region_rect = Rect2(8, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/BorderL" unique_id=1409131204]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/BorderL"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -308,14 +308,14 @@ flip_h = true
 region_enabled = true
 region_rect = Rect2(8, 0, 8, 8)
 
-[node name="Coin1" type="Sprite2D" parent="Main/RedCoins" unique_id=973457022]
+[node name="Coin1" type="Sprite2D" parent="Main/RedCoins"]
 position = Vector2(-8, 0)
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin1" unique_id=2067465691]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin1"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -324,13 +324,13 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin2" type="Sprite2D" parent="Main/RedCoins" unique_id=1787349646]
+[node name="Coin2" type="Sprite2D" parent="Main/RedCoins"]
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin2" unique_id=929648755]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin2"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -339,14 +339,14 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin3" type="Sprite2D" parent="Main/RedCoins" unique_id=1853442730]
+[node name="Coin3" type="Sprite2D" parent="Main/RedCoins"]
 position = Vector2(8, 0)
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin3" unique_id=276355949]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin3"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -355,14 +355,14 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin4" type="Sprite2D" parent="Main/RedCoins" unique_id=1449050242]
+[node name="Coin4" type="Sprite2D" parent="Main/RedCoins"]
 position = Vector2(16, 0)
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin4" unique_id=1100333448]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin4"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -371,14 +371,14 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin5" type="Sprite2D" parent="Main/RedCoins" unique_id=562686552]
+[node name="Coin5" type="Sprite2D" parent="Main/RedCoins"]
 position = Vector2(24, 0)
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin5" unique_id=143816243]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin5"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -387,7 +387,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin1Transparent" type="Sprite2D" parent="Main/RedCoins" unique_id=328439829]
+[node name="Coin1Transparent" type="Sprite2D" parent="Main/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 position = Vector2(-8, 0)
 texture = ExtResource("6_2ww58")
@@ -395,7 +395,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin1Transparent" unique_id=5246010]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin1Transparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -404,14 +404,14 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin2Transparent" type="Sprite2D" parent="Main/RedCoins" unique_id=990671633]
+[node name="Coin2Transparent" type="Sprite2D" parent="Main/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin2Transparent" unique_id=634520628]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin2Transparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -420,7 +420,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin3Transparent" type="Sprite2D" parent="Main/RedCoins" unique_id=2008547934]
+[node name="Coin3Transparent" type="Sprite2D" parent="Main/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 position = Vector2(8, 0)
 texture = ExtResource("6_2ww58")
@@ -428,7 +428,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin3Transparent" unique_id=991084733]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin3Transparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -437,7 +437,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin4Transparent" type="Sprite2D" parent="Main/RedCoins" unique_id=256042727]
+[node name="Coin4Transparent" type="Sprite2D" parent="Main/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 position = Vector2(16, 0)
 texture = ExtResource("6_2ww58")
@@ -445,7 +445,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin4Transparent" unique_id=137399208]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin4Transparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -454,7 +454,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin5Transparent" type="Sprite2D" parent="Main/RedCoins" unique_id=1025292847]
+[node name="Coin5Transparent" type="Sprite2D" parent="Main/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 position = Vector2(24, 0)
 texture = ExtResource("6_2ww58")
@@ -462,7 +462,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin5Transparent" unique_id=806129740]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/Coin5Transparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -471,14 +471,14 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="BorderR" type="Sprite2D" parent="Main/RedCoins" unique_id=2031264327]
+[node name="BorderR" type="Sprite2D" parent="Main/RedCoins"]
 position = Vector2(32, 0)
 texture = ExtResource("5_gmuut")
 centered = false
 region_enabled = true
 region_rect = Rect2(8, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/BorderR" unique_id=598738732]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/BorderR"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -487,7 +487,7 @@ centered = false
 region_enabled = true
 region_rect = Rect2(8, 0, 8, 8)
 
-[node name="YoshiEgg" type="Sprite2D" parent="Main/RedCoins" unique_id=1323822712]
+[node name="YoshiEgg" type="Sprite2D" parent="Main/RedCoins"]
 position = Vector2(36, 0)
 texture = ExtResource("7_r3m7e")
 centered = false
@@ -495,7 +495,7 @@ hframes = 3
 vframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/YoshiEgg" unique_id=539936517]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/YoshiEgg"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -505,7 +505,7 @@ hframes = 3
 vframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Radar" type="Sprite2D" parent="Main/RedCoins/YoshiEgg" unique_id=418569197]
+[node name="Radar" type="Sprite2D" parent="Main/RedCoins/YoshiEgg"]
 unique_name_in_owner = true
 visible = false
 material = SubResource("ShaderMaterial_cfljn")
@@ -518,7 +518,7 @@ region_rect = Rect2(0, 0, 8, 8)
 script = ExtResource("13_h6dkv")
 metadata/_custom_type_script = "uid://364rywt44hy6"
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/YoshiEgg/Radar" unique_id=1335555574]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/YoshiEgg/Radar"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -529,19 +529,19 @@ vframes = 2
 frame = 1
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Main/RedCoins/YoshiEgg/Radar" unique_id=1504354184]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Main/RedCoins/YoshiEgg/Radar"]
 libraries = {
-"": SubResource("AnimationLibrary_cfljn")
+&"": SubResource("AnimationLibrary_cfljn")
 }
 
-[node name="ScoreMedal" type="Sprite2D" parent="Main/RedCoins" unique_id=816385466]
+[node name="ScoreMedal" type="Sprite2D" parent="Main/RedCoins"]
 position = Vector2(43, -2)
 texture = ExtResource("9_m8toq")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/ScoreMedal" unique_id=72596983]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/ScoreMedal"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -550,7 +550,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="ScoreMedalTransparent" type="Sprite2D" parent="Main/RedCoins" unique_id=13976692]
+[node name="ScoreMedalTransparent" type="Sprite2D" parent="Main/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 position = Vector2(43, -2)
 texture = ExtResource("9_m8toq")
@@ -558,7 +558,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/ScoreMedalTransparent" unique_id=1634324539]
+[node name="Shadow" type="Sprite2D" parent="Main/RedCoins/ScoreMedalTransparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -567,18 +567,18 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Buffer3" type="Control" parent="Main" unique_id=1933825851]
+[node name="Buffer3" type="Control" parent="Main"]
 custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="LevelDisplay" type="Control" parent="Main" unique_id=1456653190]
+[node name="LevelDisplay" type="Control" parent="Main"]
 custom_minimum_size = Vector2(40, 16)
 layout_mode = 2
 size_flags_vertical = 8
 metadata/_edit_use_anchors_ = true
 
-[node name="WorldTitle" type="Label" parent="Main/LevelDisplay" unique_id=1753878404]
+[node name="WorldTitle" type="Label" parent="Main/LevelDisplay"]
 layout_mode = 1
 anchors_preset = -1
 offset_left = -4.0
@@ -589,7 +589,7 @@ text = "HUD_WORLD"
 horizontal_alignment = 1
 uppercase = true
 
-[node name="LevelNum" type="Label" parent="Main/LevelDisplay/WorldTitle" unique_id=1451674421]
+[node name="LevelNum" type="Label" parent="Main/LevelDisplay/WorldTitle"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -600,7 +600,7 @@ offset_bottom = 16.0
 text = "1-1"
 uppercase = true
 
-[node name="Crown" type="Label" parent="Main/LevelDisplay/WorldTitle/LevelNum" unique_id=617207616]
+[node name="Crown" type="Label" parent="Main/LevelDisplay/WorldTitle/LevelNum"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -610,7 +610,7 @@ offset_bottom = 16.0
 text = "♕"
 uppercase = true
 
-[node name="Shadow" type="Label" parent="Main/LevelDisplay/WorldTitle/LevelNum/Crown" unique_id=1983504736]
+[node name="Shadow" type="Label" parent="Main/LevelDisplay/WorldTitle/LevelNum/Crown"]
 unique_name_in_owner = true
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
@@ -623,18 +623,18 @@ offset_bottom = 17.0
 text = "♕"
 uppercase = true
 
-[node name="Buffer4" type="Control" parent="Main" unique_id=1153489382]
+[node name="Buffer4" type="Control" parent="Main"]
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="TimeDisplay" type="Control" parent="Main" unique_id=1475969687]
+[node name="TimeDisplay" type="Control" parent="Main"]
 custom_minimum_size = Vector2(32, 16)
 layout_mode = 2
 size_flags_vertical = 8
 metadata/_edit_use_anchors_ = true
 
-[node name="TimeLabel" type="Label" parent="Main/TimeDisplay" unique_id=1538245699]
+[node name="TimeLabel" type="Label" parent="Main/TimeDisplay"]
 layout_mode = 1
 anchors_preset = -1
 offset_left = -4.0
@@ -644,7 +644,7 @@ offset_bottom = 4.0
 text = "HUD_TIME"
 uppercase = true
 
-[node name="Time" type="Label" parent="Main/TimeDisplay/TimeLabel" unique_id=1849885670]
+[node name="Time" type="Label" parent="Main/TimeDisplay/TimeLabel"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -657,7 +657,7 @@ text = " 000"
 horizontal_alignment = 2
 uppercase = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Main/TimeDisplay/TimeLabel" unique_id=578394443]
+[node name="VBoxContainer" type="VBoxContainer" parent="Main/TimeDisplay/TimeLabel"]
 layout_mode = 0
 offset_left = -24.0
 offset_top = 8.0
@@ -666,7 +666,7 @@ offset_bottom = 40.0
 theme_override_constants/separation = -8
 alignment = 1
 
-[node name="Stopwatch" type="Label" parent="Main/TimeDisplay/TimeLabel/VBoxContainer" unique_id=1673057197]
+[node name="Stopwatch" type="Label" parent="Main/TimeDisplay/TimeLabel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
@@ -674,7 +674,7 @@ text = "00:00:00"
 horizontal_alignment = 2
 uppercase = true
 
-[node name="PB" type="Label" parent="Main/TimeDisplay/TimeLabel/VBoxContainer" unique_id=887800732]
+[node name="PB" type="Label" parent="Main/TimeDisplay/TimeLabel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
@@ -682,11 +682,11 @@ text = "+00:00:00"
 horizontal_alignment = 2
 uppercase = true
 
-[node name="Control" type="Control" parent="Main/TimeDisplay/TimeLabel/VBoxContainer" unique_id=2035126194]
+[node name="Control" type="Control" parent="Main/TimeDisplay/TimeLabel/VBoxContainer"]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 
-[node name="IGT" type="Label" parent="Main/TimeDisplay/TimeLabel/VBoxContainer" unique_id=1491454969]
+[node name="IGT" type="Label" parent="Main/TimeDisplay/TimeLabel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 2
@@ -694,11 +694,11 @@ text = " ⏲000"
 horizontal_alignment = 2
 uppercase = true
 
-[node name="Buffer5" type="Control" parent="Main" unique_id=121797350]
+[node name="Buffer5" type="Control" parent="Main"]
 custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
 
-[node name="ModernHUD" type="Control" parent="." unique_id=868713995]
+[node name="ModernHUD" type="Control" parent="."]
 custom_minimum_size = Vector2(256, 0)
 layout_mode = 3
 anchors_preset = 10
@@ -706,7 +706,7 @@ anchor_right = 1.0
 offset_bottom = 8.0
 grow_horizontal = 2
 
-[node name="TopLeft" type="Control" parent="ModernHUD" unique_id=1323220993]
+[node name="TopLeft" type="Control" parent="ModernHUD"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -715,7 +715,7 @@ offset_top = -32.0
 offset_right = 64.0
 grow_vertical = 0
 
-[node name="CoinCount" type="Control" parent="ModernHUD/TopLeft" unique_id=2136964936]
+[node name="CoinCount" type="Control" parent="ModernHUD/TopLeft"]
 custom_minimum_size = Vector2(0, 8)
 anchors_preset = 0
 offset_left = 16.0
@@ -724,7 +724,7 @@ offset_right = 64.0
 offset_bottom = 44.0
 size_flags_vertical = 8
 
-[node name="Coin" type="AnimatedSprite2D" parent="ModernHUD/TopLeft/CoinCount" unique_id=1290136394]
+[node name="Coin" type="AnimatedSprite2D" parent="ModernHUD/TopLeft/CoinCount"]
 process_mode = 1
 position = Vector2(4, 0)
 sprite_frames = SubResource("SpriteFrames_40ba1")
@@ -732,14 +732,14 @@ autoplay = "default"
 frame_progress = 0.982312
 centered = false
 
-[node name="ResourceSetter" type="Node" parent="ModernHUD/TopLeft/CoinCount/Coin" unique_id=139157856 node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetter" type="Node" parent="ModernHUD/TopLeft/CoinCount/Coin" node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_jt73e")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("4_niy8w")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="ModernCoinCount" type="Label" parent="ModernHUD/TopLeft/CoinCount" unique_id=846300260]
+[node name="ModernCoinCount" type="Label" parent="ModernHUD/TopLeft/CoinCount"]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 8.0
@@ -748,7 +748,7 @@ offset_right = 48.0
 offset_bottom = 4.0
 text = "*100"
 
-[node name="RedCoins" type="Control" parent="ModernHUD/TopLeft" unique_id=1955235606]
+[node name="RedCoins" type="Control" parent="ModernHUD/TopLeft"]
 custom_minimum_size = Vector2(32, 8)
 layout_mode = 1
 anchor_left = 0.125
@@ -762,7 +762,7 @@ offset_bottom = 6.666664
 size_flags_vertical = 8
 metadata/_edit_use_anchors_ = true
 
-[node name="BorderL" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=71832745]
+[node name="BorderL" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 position = Vector2(-16, 0)
 texture = ExtResource("5_gmuut")
 centered = false
@@ -770,7 +770,7 @@ flip_h = true
 region_enabled = true
 region_rect = Rect2(8, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/BorderL" unique_id=1884180520]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/BorderL"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -780,14 +780,14 @@ flip_h = true
 region_enabled = true
 region_rect = Rect2(8, 0, 8, 8)
 
-[node name="Coin1" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=1941593261]
+[node name="Coin1" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 position = Vector2(-8, 0)
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin1" unique_id=1290721901]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin1"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -796,13 +796,13 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin2" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=1223153762]
+[node name="Coin2" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin2" unique_id=1982757022]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin2"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -811,14 +811,14 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin3" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=358823677]
+[node name="Coin3" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 position = Vector2(8, 0)
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin3" unique_id=2134825149]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin3"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -827,14 +827,14 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin4" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=1302463103]
+[node name="Coin4" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 position = Vector2(16, 0)
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin4" unique_id=2063203798]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin4"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -843,14 +843,14 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin5" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=1394266315]
+[node name="Coin5" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 position = Vector2(24, 0)
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin5" unique_id=856573612]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin5"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -859,7 +859,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin1Transparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=1922389976]
+[node name="Coin1Transparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 position = Vector2(-8, 0)
 texture = ExtResource("6_2ww58")
@@ -867,7 +867,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin1Transparent" unique_id=1994301428]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin1Transparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -876,14 +876,14 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin2Transparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=1441990046]
+[node name="Coin2Transparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 texture = ExtResource("6_2ww58")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin2Transparent" unique_id=1097202141]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin2Transparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -892,7 +892,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin3Transparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=693065006]
+[node name="Coin3Transparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 position = Vector2(8, 0)
 texture = ExtResource("6_2ww58")
@@ -900,7 +900,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin3Transparent" unique_id=829827606]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin3Transparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -909,7 +909,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin4Transparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=835106793]
+[node name="Coin4Transparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 position = Vector2(16, 0)
 texture = ExtResource("6_2ww58")
@@ -917,7 +917,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin4Transparent" unique_id=726105959]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin4Transparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -926,7 +926,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Coin5Transparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=116436029]
+[node name="Coin5Transparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 position = Vector2(24, 0)
 texture = ExtResource("6_2ww58")
@@ -934,7 +934,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin5Transparent" unique_id=547411541]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/Coin5Transparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -943,14 +943,14 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="BorderR" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=781848500]
+[node name="BorderR" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 position = Vector2(32, 0)
 texture = ExtResource("5_gmuut")
 centered = false
 region_enabled = true
 region_rect = Rect2(8, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/BorderR" unique_id=1072286271]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/BorderR"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -959,7 +959,7 @@ centered = false
 region_enabled = true
 region_rect = Rect2(8, 0, 8, 8)
 
-[node name="YoshiEgg" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=1351771255]
+[node name="YoshiEgg" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 position = Vector2(36, 0)
 texture = ExtResource("7_r3m7e")
 centered = false
@@ -967,7 +967,7 @@ hframes = 3
 vframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/YoshiEgg" unique_id=650642573]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/YoshiEgg"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -978,7 +978,7 @@ vframes = 2
 frame = 1
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="ModernRadar" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/YoshiEgg" unique_id=525814067]
+[node name="ModernRadar" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/YoshiEgg"]
 unique_name_in_owner = true
 visible = false
 material = SubResource("ShaderMaterial_cfljn")
@@ -991,7 +991,7 @@ region_rect = Rect2(0, 0, 8, 8)
 script = ExtResource("13_h6dkv")
 metadata/_custom_type_script = "uid://364rywt44hy6"
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/YoshiEgg/ModernRadar" unique_id=1973926061]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/YoshiEgg/ModernRadar"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -1001,19 +1001,19 @@ hframes = 3
 vframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="ModernHUD/TopLeft/RedCoins/YoshiEgg/ModernRadar" unique_id=277378416]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="ModernHUD/TopLeft/RedCoins/YoshiEgg/ModernRadar"]
 libraries = {
-"": SubResource("AnimationLibrary_cfljn")
+&"": SubResource("AnimationLibrary_cfljn")
 }
 
-[node name="ScoreMedal" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=2059882277]
+[node name="ScoreMedal" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 position = Vector2(43, -2)
 texture = ExtResource("9_m8toq")
 centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/ScoreMedal" unique_id=1167944987]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/ScoreMedal"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -1022,7 +1022,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="ScoreMedalTransparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins" unique_id=1125692890]
+[node name="ScoreMedalTransparent" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins"]
 material = SubResource("ShaderMaterial_cfljn")
 position = Vector2(43, -2)
 texture = ExtResource("9_m8toq")
@@ -1030,7 +1030,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/ScoreMedalTransparent" unique_id=1917017498]
+[node name="Shadow" type="Sprite2D" parent="ModernHUD/TopLeft/RedCoins/ScoreMedalTransparent"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -1039,7 +1039,7 @@ centered = false
 hframes = 2
 region_rect = Rect2(0, 0, 8, 8)
 
-[node name="LifeCount" type="HBoxContainer" parent="ModernHUD/TopLeft" unique_id=2118457882]
+[node name="LifeCount" type="HBoxContainer" parent="ModernHUD/TopLeft"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 44.0
@@ -1047,14 +1047,14 @@ offset_right = 56.0
 offset_bottom = 60.0
 theme_override_constants/separation = -4
 
-[node name="CharacterIcon" type="TextureRect" parent="ModernHUD/TopLeft/LifeCount" unique_id=226295517]
+[node name="CharacterIcon" type="TextureRect" parent="ModernHUD/TopLeft/LifeCount"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("10_2w8b3")
 stretch_mode = 2
 
-[node name="Shadow" type="TextureRect" parent="ModernHUD/TopLeft/LifeCount/CharacterIcon" unique_id=624810319]
+[node name="Shadow" type="TextureRect" parent="ModernHUD/TopLeft/LifeCount/CharacterIcon"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 layout_mode = 0
@@ -1065,20 +1065,20 @@ offset_bottom = 9.0
 texture = ExtResource("10_2w8b3")
 stretch_mode = 3
 
-[node name="ResourceSetterNew" type="Node" parent="ModernHUD/TopLeft/LifeCount/CharacterIcon" unique_id=1321706665 node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="ModernHUD/TopLeft/LifeCount/CharacterIcon" node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_jt73e")
 node_to_affect = NodePath("..")
 property_name = "texture"
 mode = 1
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="ModernLifeCount" type="Label" parent="ModernHUD/TopLeft/LifeCount" unique_id=132062062]
+[node name="ModernLifeCount" type="Label" parent="ModernHUD/TopLeft/LifeCount"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 2
 text = "*"
 
-[node name="ModernKeyCount" type="Control" parent="ModernHUD/TopLeft" unique_id=98186414]
+[node name="ModernKeyCount" type="Control" parent="ModernHUD/TopLeft"]
 unique_name_in_owner = true
 anchors_preset = 0
 offset_left = 20.0
@@ -1086,7 +1086,7 @@ offset_top = 68.0
 offset_right = 60.0
 offset_bottom = 108.0
 
-[node name="Icon" type="AnimatedSprite2D" parent="ModernHUD/TopLeft/ModernKeyCount" unique_id=1171072820]
+[node name="Icon" type="AnimatedSprite2D" parent="ModernHUD/TopLeft/ModernKeyCount"]
 process_mode = 1
 position = Vector2(0, -8)
 centered = false
@@ -1094,7 +1094,7 @@ script = ExtResource("2_cbrve")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="Shadow" type="AnimatedSprite2D" parent="ModernHUD/TopLeft/ModernKeyCount/Icon" unique_id=1693391341]
+[node name="Shadow" type="AnimatedSprite2D" parent="ModernHUD/TopLeft/ModernKeyCount/Icon"]
 show_behind_parent = true
 material = SubResource("ShaderMaterial_eon7h")
 position = Vector2(1, 1)
@@ -1103,21 +1103,21 @@ script = ExtResource("2_cbrve")
 do_offset = false
 metadata/_custom_type_script = "uid://caq1qiwmy0mox"
 
-[node name="ResourceSetterNew" type="Node" parent="ModernHUD/TopLeft/ModernKeyCount/Icon/Shadow" unique_id=2065916754 node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="ModernHUD/TopLeft/ModernKeyCount/Icon/Shadow" node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_jt73e")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("6_mqa5s")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="ResourceSetterNew" type="Node" parent="ModernHUD/TopLeft/ModernKeyCount/Icon" unique_id=90438431 node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="ModernHUD/TopLeft/ModernKeyCount/Icon" node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_jt73e")
 node_to_affect = NodePath("..")
 property_name = "sprite_frames"
 resource_json = ExtResource("6_mqa5s")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="ModernKeyAmount" type="Label" parent="ModernHUD/TopLeft/ModernKeyCount" unique_id=700473946]
+[node name="ModernKeyAmount" type="Label" parent="ModernHUD/TopLeft/ModernKeyCount"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -1127,7 +1127,7 @@ offset_right = 36.0
 offset_bottom = 4.0
 text = "*03"
 
-[node name="Right" type="Control" parent="ModernHUD" unique_id=214684522]
+[node name="Right" type="Control" parent="ModernHUD"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -1136,7 +1136,7 @@ offset_left = -128.0
 offset_bottom = 32.0
 grow_horizontal = 0
 
-[node name="ModernTime" type="Label" parent="ModernHUD/Right" unique_id=376371595]
+[node name="ModernTime" type="Label" parent="ModernHUD/Right"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -1155,7 +1155,7 @@ size_flags_vertical = 8
 text = "⏲00:00:00"
 horizontal_alignment = 2
 
-[node name="ModernScore" type="Label" parent="ModernHUD/Right/ModernTime" unique_id=1944873139]
+[node name="ModernScore" type="Label" parent="ModernHUD/Right/ModernTime"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -1166,14 +1166,14 @@ size_flags_horizontal = 8
 size_flags_vertical = 8
 text = "000000000"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ModernHUD/Right/ModernTime" unique_id=1647685992]
+[node name="VBoxContainer" type="VBoxContainer" parent="ModernHUD/Right/ModernTime"]
 layout_mode = 0
 offset_top = 9.0
 offset_right = 80.0
 offset_bottom = 41.0
 theme_override_constants/separation = -4
 
-[node name="ModernPB" type="Label" parent="ModernHUD/Right/ModernTime/VBoxContainer" unique_id=1946307289]
+[node name="ModernPB" type="Label" parent="ModernHUD/Right/ModernTime/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
@@ -1181,7 +1181,7 @@ size_flags_vertical = 8
 text = "⏲00:00:00"
 horizontal_alignment = 2
 
-[node name="ModernIGT" type="Label" parent="ModernHUD/Right/ModernTime/VBoxContainer" unique_id=658272079]
+[node name="ModernIGT" type="Label" parent="ModernHUD/Right/ModernTime/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
@@ -1189,12 +1189,12 @@ size_flags_vertical = 8
 text = "⏲000"
 horizontal_alignment = 2
 
-[node name="Timer" type="Timer" parent="." unique_id=1269298365]
+[node name="Timer" type="Timer" parent="."]
 process_mode = 1
 wait_time = 0.4
 autostart = true
 
-[node name="Combo" type="Control" parent="." unique_id=274734984]
+[node name="Combo" type="Control" parent="."]
 unique_name_in_owner = true
 visible = false
 layout_mode = 3
@@ -1205,7 +1205,7 @@ offset_left = -88.0
 offset_bottom = 48.0
 grow_horizontal = 0
 
-[node name="ComboAmount" type="Label" parent="Combo" unique_id=1054647877]
+[node name="ComboAmount" type="Label" parent="Combo"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 2
@@ -1217,7 +1217,7 @@ grow_vertical = 0
 text = "COMBO*10"
 uppercase = true
 
-[node name="ComboMeter" type="ProgressBar" parent="Combo/ComboAmount" unique_id=922778444]
+[node name="ComboMeter" type="ProgressBar" parent="Combo/ComboAmount"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 12
@@ -1232,7 +1232,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_2w8b3")
 value = 100.0
 show_percentage = false
 
-[node name="MedalIcon" type="NinePatchRect" parent="Combo" unique_id=150943834]
+[node name="MedalIcon" type="NinePatchRect" parent="Combo"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 3
@@ -1249,29 +1249,29 @@ region_rect = Rect2(0, 0, 16, 16)
 script = ExtResource("14_h6dkv")
 metadata/_custom_type_script = "uid://xem6lai3ufyj"
 
-[node name="StoryPause" parent="." unique_id=981718009 instance=ExtResource("5_6nbcw")]
+[node name="StoryPause" parent="." instance=ExtResource("5_6nbcw")]
 visible = false
 
-[node name="MarathonPause" parent="." unique_id=740112441 instance=ExtResource("6_h6tvq")]
+[node name="MarathonPause" parent="." instance=ExtResource("6_h6tvq")]
 visible = false
 
-[node name="BooRacePause" parent="." unique_id=1119524291 instance=ExtResource("7_35c0k")]
+[node name="BooRacePause" parent="." instance=ExtResource("7_35c0k")]
 visible = false
 
-[node name="MarathonResults" parent="." unique_id=1185524288 instance=ExtResource("16_cfljn")]
+[node name="MarathonResults" parent="." instance=ExtResource("16_cfljn")]
 visible = false
 
-[node name="DiscoResults" parent="." unique_id=1165943285 instance=ExtResource("17_ocsy5")]
+[node name="DiscoResults" parent="." instance=ExtResource("17_ocsy5")]
 visible = false
 
-[node name="ColourPaletteSampler" type="Node" parent="." unique_id=641852854 node_paths=PackedStringArray("node_to_affect")]
+[node name="ColourPaletteSampler" type="Node" parent="." node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("15_8qasw")
 texture = ExtResource("24_h6dkv")
 node_to_affect = NodePath("../TextShadowColourChanger")
 value_to_set = "global_text_shadow_color"
 metadata/_custom_type_script = "uid://dwtrmo82e12ud"
 
-[node name="ResourceSetterNew" type="Node" parent="ColourPaletteSampler" unique_id=1628491847 node_paths=PackedStringArray("node_to_affect")]
+[node name="ResourceSetterNew" type="Node" parent="ColourPaletteSampler" node_paths=PackedStringArray("node_to_affect")]
 script = ExtResource("3_jt73e")
 node_to_affect = NodePath("..")
 property_name = "texture"
@@ -1279,28 +1279,28 @@ mode = 1
 resource_json = ExtResource("25_oeqb4")
 metadata/_custom_type_script = "uid://cbal8ms2oe1ik"
 
-[node name="TextShadowColourChanger" type="Node" parent="." unique_id=1792590933 node_paths=PackedStringArray("labels", "shadow_node")]
+[node name="TextShadowColourChanger" type="Node" parent="." node_paths=PackedStringArray("labels", "shadow_node")]
 script = ExtResource("18_jwl8o")
 labels = [NodePath("../Main/ScoreName/CharacterName"), NodePath("../Main/ScoreName/Score"), NodePath("../Main/CoinCount/CoinLabel"), NodePath("../Main/LevelDisplay/WorldTitle"), NodePath("../Main/LevelDisplay/WorldTitle/LevelNum"), NodePath("../Main/TimeDisplay/TimeLabel"), NodePath("../Main/TimeDisplay/TimeLabel/Time"), NodePath("../Main/TimeDisplay/TimeLabel/VBoxContainer/Stopwatch"), NodePath("../Main/TimeDisplay/TimeLabel/VBoxContainer/PB"), NodePath("../ModernHUD/TopLeft/CoinCount/ModernCoinCount"), NodePath("../ModernHUD/Right/ModernTime"), NodePath("../ModernHUD/Right/ModernTime/ModernScore"), NodePath("../Main/CoinCount/KeyCount/KeyAmount"), NodePath("../ModernHUD/TopLeft/ModernKeyCount/ModernKeyAmount"), NodePath("../ModernHUD/TopLeft/LifeCount/ModernLifeCount"), NodePath("../Combo/ComboAmount"), null, null, NodePath("../ModernHUD/Right/ModernTime/VBoxContainer/ModernPB"), NodePath("../Main/TimeDisplay/TimeLabel/VBoxContainer/IGT"), NodePath("../ModernHUD/Right/ModernTime/VBoxContainer/ModernIGT")]
 shadow_node = NodePath("../Main/RedCoins/BorderL/Shadow")
 
-[node name="HudTemplate" type="Sprite2D" parent="." unique_id=898361844]
+[node name="HudTemplate" type="Sprite2D" parent="."]
 visible = false
 modulate = Color(0.418279, 0.418279, 0.418279, 1)
 z_index = -50
 texture = ExtResource("13_r3m7e")
 centered = false
 
-[node name="LabelFontChanger" type="Node" parent="." unique_id=1213706122 node_paths=PackedStringArray("labels")]
+[node name="LabelFontChanger" type="Node" parent="." node_paths=PackedStringArray("labels")]
 script = ExtResource("15_jwl8o")
 labels = [NodePath("../Main/ScoreName/CharacterName"), NodePath("../Main/ScoreName/Score"), NodePath("../Main/CoinCount/CoinLabel"), NodePath("../Main/LevelDisplay/WorldTitle"), NodePath("../Main/LevelDisplay/WorldTitle/LevelNum"), NodePath("../Main/TimeDisplay/TimeLabel"), NodePath("../Main/TimeDisplay/TimeLabel/Time"), NodePath("../ModernHUD/TopLeft/CoinCount/ModernCoinCount"), NodePath("../ModernHUD/Right/ModernTime"), NodePath("../ModernHUD/Right/ModernTime/ModernScore"), NodePath("../Main/CoinCount/KeyCount/KeyAmount"), NodePath("../Main/TimeDisplay/TimeLabel/VBoxContainer/Stopwatch"), NodePath("../Main/TimeDisplay/TimeLabel/VBoxContainer/PB"), NodePath("../ModernHUD/TopLeft/LifeCount/ModernLifeCount"), NodePath("../Main/CoinCount/KeyCount/KeyAmount"), NodePath("../Combo/ComboAmount"), NodePath("../ModernHUD/TopLeft/ModernKeyCount/ModernKeyAmount"), NodePath("../Main/LevelDisplay/WorldTitle/LevelNum/Crown"), NodePath("../ModernHUD/Right/ModernTime/VBoxContainer/ModernPB"), NodePath("../Main/TimeDisplay/TimeLabel/VBoxContainer/IGT"), NodePath("../ModernHUD/Right/ModernTime/VBoxContainer/ModernIGT")]
 metadata/_custom_type_script = "uid://co6tjg3w6qpd8"
 
-[node name="TextureUpdater" type="Node" parent="." unique_id=532197109 node_paths=PackedStringArray("sprites")]
+[node name="TextureUpdater" type="Node" parent="." node_paths=PackedStringArray("sprites")]
 script = SubResource("GDScript_jwl8o")
 sprites = [NodePath("../Main/RedCoins/BorderL"), NodePath("../Main/RedCoins/BorderL/Shadow"), NodePath("../Main/RedCoins/Coin1"), NodePath("../Main/RedCoins/Coin1/Shadow"), NodePath("../Main/RedCoins/Coin2"), NodePath("../Main/RedCoins/Coin2/Shadow"), NodePath("../Main/RedCoins/Coin3"), NodePath("../Main/RedCoins/Coin3/Shadow"), NodePath("../Main/RedCoins/Coin4"), NodePath("../Main/RedCoins/Coin4/Shadow"), NodePath("../Main/RedCoins/Coin5"), NodePath("../Main/RedCoins/Coin5/Shadow"), NodePath("../Main/RedCoins/Coin1Transparent"), NodePath("../Main/RedCoins/Coin1Transparent/Shadow"), NodePath("../Main/RedCoins/Coin2Transparent"), NodePath("../Main/RedCoins/Coin2Transparent/Shadow"), NodePath("../Main/RedCoins/Coin3Transparent"), NodePath("../Main/RedCoins/Coin3Transparent/Shadow"), NodePath("../Main/RedCoins/Coin4Transparent"), NodePath("../Main/RedCoins/Coin4Transparent/Shadow"), NodePath("../Main/RedCoins/Coin5Transparent"), NodePath("../Main/RedCoins/Coin5Transparent/Shadow"), NodePath("../Main/RedCoins/BorderR"), NodePath("../Main/RedCoins/BorderR/Shadow"), NodePath("../Main/RedCoins/YoshiEgg"), NodePath("../Main/RedCoins/YoshiEgg/Shadow"), NodePath("../Main/RedCoins/ScoreMedalTransparent"), NodePath("../Main/RedCoins/ScoreMedalTransparent/Shadow"), NodePath("../Main/RedCoins/ScoreMedal"), NodePath("../Main/RedCoins/ScoreMedal/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/BorderL"), NodePath("../ModernHUD/TopLeft/RedCoins/BorderL/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin1"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin1/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin2"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin2/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin3"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin3/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin4"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin4/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin5"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin5/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin1Transparent"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin1Transparent/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin2Transparent"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin2Transparent/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin3Transparent"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin3Transparent/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin4Transparent"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin4Transparent/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin5Transparent"), NodePath("../ModernHUD/TopLeft/RedCoins/Coin5Transparent/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/BorderR"), NodePath("../ModernHUD/TopLeft/RedCoins/BorderR/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/YoshiEgg"), NodePath("../ModernHUD/TopLeft/RedCoins/YoshiEgg/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/ScoreMedalTransparent"), NodePath("../ModernHUD/TopLeft/RedCoins/ScoreMedalTransparent/Shadow"), NodePath("../ModernHUD/TopLeft/RedCoins/ScoreMedal"), NodePath("../ModernHUD/TopLeft/RedCoins/ScoreMedal/Shadow")]
 
-[node name="BattleRoyaleHUD" type="Control" parent="." unique_id=999999999]
+[node name="BattleRoyaleHUD" type="Control" parent="."]
 unique_name_in_owner = true
 visible = false
 layout_mode = 3
@@ -1311,7 +1311,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="BRTimer" type="Label" parent="BattleRoyaleHUD" unique_id=888888888]
+[node name="BRTimer" type="Label" parent="BattleRoyaleHUD"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 5
@@ -1328,7 +1328,7 @@ text = "35"
 horizontal_alignment = 1
 uppercase = true
 
-[node name="TargetSelector" type="VBoxContainer" parent="BattleRoyaleHUD" unique_id=777777777]
+[node name="TargetSelector" type="VBoxContainer" parent="BattleRoyaleHUD"]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -1343,14 +1343,14 @@ grow_horizontal = 0
 grow_vertical = 0
 alignment = 2
 
-[node name="Label" type="Label" parent="BattleRoyaleHUD/TargetSelector" unique_id=1392852580]
+[node name="Label" type="Label" parent="BattleRoyaleHUD/TargetSelector"]
 layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "TARGET:"
 horizontal_alignment = 2
 uppercase = true
 
-[node name="TargetLabel" type="Label" parent="BattleRoyaleHUD/TargetSelector" unique_id=666666666]
+[node name="TargetLabel" type="Label" parent="BattleRoyaleHUD/TargetSelector"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 0, 1)
@@ -1359,7 +1359,7 @@ text = "RANDOM"
 horizontal_alignment = 2
 uppercase = true
 
-[node name="IncomingBar" type="HBoxContainer" parent="BattleRoyaleHUD" unique_id=555555555]
+[node name="IncomingBar" type="HBoxContainer" parent="BattleRoyaleHUD"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 7
@@ -1375,7 +1375,7 @@ grow_horizontal = 2
 grow_vertical = 0
 alignment = 1
 
-[node name="WarningLabel" type="Label" parent="BattleRoyaleHUD" unique_id=444444444]
+[node name="WarningLabel" type="Label" parent="BattleRoyaleHUD"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1

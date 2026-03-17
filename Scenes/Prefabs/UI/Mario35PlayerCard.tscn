@@ -1,29 +1,32 @@
-[gd_scene load_steps=5 format=3 uid="uid://bcwlng0ec7r1x"]
+[gd_scene load_steps=6 format=3 uid="uid://bcwlng0ec7r1x"]
 
-[ext_resource type="Script" uid="uid://6boalhkbg2fj" path="res://Scripts/UI/Mario35PlayerCard.gd" id="1_m35pc"]
-[ext_resource type="FontFile" uid="uid://mario35font" path="res://Resources/ThemedResources/FontMario35.tres" id="2_font"]
-[ext_resource type="Shader" uid="uid://mario_hud_shader" path="res://Scenes/Parts/MarioHUDIcon.gdshader" id="3_shader"]
+[ext_resource type="Script" uid="uid://c74hgeu70oipe" path="res://Scripts/UI/Mario35PlayerCard.gd" id="1_m35pc"]
+[ext_resource type="FontVariation" uid="uid://mario35font" path="res://Resources/ThemedResources/FontMario35.tres" id="2_font"]
+[ext_resource type="Shader" uid="uid://du4ku1rqsjhry" path="res://Scenes/Parts/MarioHUDIcon.gdshader" id="3_shader"]
 [ext_resource type="FontFile" uid="uid://cxkosb8lhhgn0" path="res://Assets/Fonts/FontMario35Title.otf" id="4_title_font"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mario"]
 shader = ExtResource("3_shader")
+shader_parameter/palette_idx = 0
+shader_parameter/palette_height = 5
+shader_parameter/palette_size = 3
 
-[node name="Mario35PlayerCard" type="Panel" unique_id=1992716486]
-clip_contents = true
+[node name="Mario35PlayerCard" type="Panel"]
 texture_filter = 2
+clip_contents = true
 script = ExtResource("1_m35pc")
 
-[node name="VBox" type="VBoxContainer" parent="." unique_id=1940404303]
+[node name="VBox" type="VBoxContainer" parent="."]
+texture_filter = 2
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture_filter = 2
 theme_override_constants/separation = 0
 
-[node name="MarioSprite" type="TextureRect" parent="VBox" unique_id=9999]
+[node name="MarioSprite" type="TextureRect" parent="VBox"]
 unique_name_in_owner = true
 visible = false
 material = SubResource("ShaderMaterial_mario")
@@ -34,7 +37,7 @@ size_flags_vertical = 6
 expand_mode = 1
 stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="VBox" unique_id=181540204]
+[node name="NameLabel" type="Label" parent="VBox"]
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
@@ -51,9 +54,9 @@ text_overrun_behavior = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/margin_top = -2.5
+theme_override_constants/margin_top = -2
 
-[node name="SubtitleLabel" type="Label" parent="VBox/SubtitleMargin" unique_id=7777777]
+[node name="SubtitleLabel" type="Label" parent="VBox/SubtitleMargin"]
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
@@ -63,19 +66,17 @@ theme_override_constants/line_spacing = -4
 theme_override_fonts/font = ExtResource("4_title_font")
 text = "LOST LEVELS"
 horizontal_alignment = 1
-vertical_alignment = 0
 clip_text = true
 text_overrun_behavior = 3
 
-
-[node name="StatusLabel" type="Label" parent="VBox" unique_id=46803410]
+[node name="StatusLabel" type="Label" parent="VBox"]
 unique_name_in_owner = true
 texture_filter = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 10
 theme_override_fonts/font = ExtResource("4_title_font")
+theme_override_font_sizes/font_size = 10
 horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true

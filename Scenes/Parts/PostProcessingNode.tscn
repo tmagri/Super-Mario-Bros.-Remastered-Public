@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dcilapu1q4pgk"]
+[gd_scene load_steps=5 format=3 uid="uid://dcilapu1q4pgk"]
 
 [ext_resource type="Shader" uid="uid://dic2q1vuqqxce" path="res://Scenes/Parts/colour_palette.gdshader" id="1_4tvwn"]
 [ext_resource type="Script" uid="uid://bt8mlibikh6ah" path="res://Scripts/Parts/PostProcessingNode.gd" id="1_enso0"]
@@ -11,12 +11,12 @@ shader_parameter/y_offset = 1.0
 shader_parameter/palette_size = 64
 shader_parameter/is_debug = false
 
-[node name="PostProcessingNode" type="Node" unique_id=461815778]
+[node name="PostProcessingNode" type="Node"]
 script = ExtResource("1_enso0")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=897863375]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1686477461]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
 unique_name_in_owner = true
 visibility_layer = 2
 z_index = 4096
@@ -33,4 +33,4 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0)
 
-[node name="DropShadow" parent="." unique_id=838664609 instance=ExtResource("3_r14f3")]
+[node name="DropShadow" parent="." instance=ExtResource("3_r14f3")]

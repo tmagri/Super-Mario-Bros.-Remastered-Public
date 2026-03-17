@@ -18,12 +18,12 @@ warnings/check_angle_interpolation_type_conflicting=false
 config/name="SMB1R"
 run/main_scene="uid://bn66tnn8nlpi7"
 config/use_custom_user_dir=true
-config/features=PackedStringArray("4.6", "Forward Plus")
 boot_splash/bg_color=Color(0, 0, 0, 1)
+config/features=PackedStringArray("26.1", "Forward Plus", "Redot")
 boot_splash/show_image=false
-boot_splash/stretch_mode=0
 boot_splash/use_filter=false
 config/icon="res://icon.png"
+boot_splash/stretch_mode=0
 run/single_instance=true
 use_discord=true
 

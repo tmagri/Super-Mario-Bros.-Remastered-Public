@@ -1,43 +1,43 @@
-[gd_scene format=3 uid="uid://dc82gh8lmkuwa"]
+[gd_scene load_steps=2 format=3 uid="uid://dc82gh8lmkuwa"]
 
 [ext_resource type="Script" uid="uid://uu3ra0v727ro" path="res://addons/mod_tool/interface/config_editor/json_editor.gd" id="1"]
 
-[node name="Mod Config Editor" type="PanelContainer" unique_id=1012936635]
+[node name="Mod Config Editor" type="PanelContainer"]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 24.0
 
-[node name="VBox" type="VBoxContainer" parent="." unique_id=1842735431]
+[node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="HBox" type="HBoxContainer" parent="VBox" unique_id=625607994]
+[node name="HBox" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBox/HBox" unique_id=266939750]
+[node name="Label" type="Label" parent="VBox/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Default json for user mod configuration"
 
-[node name="ErrorLabel" type="Label" parent="VBox/HBox" unique_id=2008078941]
+[node name="ErrorLabel" type="Label" parent="VBox/HBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "JSON is valid"
 
-[node name="ShouldValidate" type="CheckButton" parent="VBox/HBox" unique_id=625039734]
+[node name="ShouldValidate" type="CheckButton" parent="VBox/HBox"]
 unique_name_in_owner = true
 layout_mode = 2
 flat = true
 
-[node name="VSeparator" type="VSeparator" parent="VBox/HBox" unique_id=711418054]
+[node name="VSeparator" type="VSeparator" parent="VBox/HBox"]
 layout_mode = 2
 
-[node name="SaveConfig" type="Button" parent="VBox/HBox" unique_id=1897634239]
+[node name="SaveConfig" type="Button" parent="VBox/HBox"]
 layout_mode = 2
 text = "Save config to manifest.json"
 
-[node name="ConfigEditor" type="TextEdit" parent="VBox" unique_id=358092545]
+[node name="ConfigEditor" type="TextEdit" parent="VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -48,7 +48,7 @@ highlight_all_occurrences = true
 highlight_current_line = true
 script = ExtResource("1")
 
-[node name="ValidationDelay" type="Timer" parent="VBox/ConfigEditor" unique_id=987575150]
+[node name="ValidationDelay" type="Timer" parent="VBox/ConfigEditor"]
 one_shot = true
 
 [connection signal="text_changed" from="VBox/ConfigEditor" to="VBox/ConfigEditor" method="_on_text_changed"]

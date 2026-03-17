@@ -7,9 +7,3 @@ base_font = ExtResource("1_font")
 variation_opentype = {
 1667329140: 0
 }
-multichannel_signed_distance_field = true
-msdf_pixel_range = 16
-msdf_size = 128
-antialiased = true
-hinting = 3
-subpixel_positioning = 3

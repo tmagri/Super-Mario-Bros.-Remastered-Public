@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b8q6y3x2l5k4j"]
 
-[ext_resource type="Script" path="res://Scripts/UI/Mario35WidescreenHUD.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://bpibfjoaxpa0d" path="res://Scripts/UI/Mario35WidescreenHUD.gd" id="1_script"]
 
 [node name="Mario35WidescreenHUD" type="Control"]
 layout_mode = 3
@@ -13,8 +13,8 @@ script = ExtResource("1_script")
 
 [node name="LeftPanel" type="ColorRect" parent="."]
 unique_name_in_owner = true
-clip_contents = true
 texture_filter = 1
+clip_contents = true
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
@@ -39,8 +39,8 @@ columns = 3
 
 [node name="RightPanel" type="ColorRect" parent="."]
 unique_name_in_owner = true
-clip_contents = true
 texture_filter = 1
+clip_contents = true
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -65,8 +65,6 @@ size_flags_vertical = 3
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
 columns = 3
-
-
 
 [node name="Content" type="Control" parent="."]
 layout_mode = 1

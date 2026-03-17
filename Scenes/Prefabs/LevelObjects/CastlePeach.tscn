@@ -1,23 +1,23 @@
-[gd_scene format=3 uid="uid://ckrna543ixu1b"]
+[gd_scene load_steps=3 format=3 uid="uid://ckrna543ixu1b"]
 
 [ext_resource type="PackedScene" uid="uid://c2ntyej6ddm72" path="res://Scenes/Prefabs/LevelObjects/CastleToad.tscn" id="1_ln8qg"]
 [ext_resource type="JSON" path="res://Assets/Sprites/Players/PeachNPC.json" id="2_dujhx"]
 
-[node name="CastleToad" unique_id=1730771620 instance=ExtResource("1_ln8qg")]
+[node name="CastleToad" instance=ExtResource("1_ln8qg")]
 play_end_music = true
 
-[node name="ResourceSetterNew" parent="Sprite" parent_id_path=PackedInt32Array(202618338) index="0" unique_id=1729926095]
+[node name="ResourceSetterNew" parent="Sprite" index="0"]
 resource_json = ExtResource("2_dujhx")
 
-[node name="ThankYou" parent="StandardMSG" parent_id_path=PackedInt32Array(1991921705) index="0" unique_id=1386068379]
+[node name="ThankYou" parent="StandardMSG" index="0"]
 text = "CUTSCENE_CASTLE_PEACH_1"
 
-[node name="AnotherCastle" parent="StandardMSG" parent_id_path=PackedInt32Array(1991921705) index="1" unique_id=2098458463]
+[node name="AnotherCastle" parent="StandardMSG" index="1"]
 text = ""
 
-[node name="EndingSpeech" type="Node2D" parent="." index="2" unique_id=749026136]
+[node name="EndingSpeech" type="Node2D" parent="." index="2"]
 
-[node name="AnotherCastle4" type="Label" parent="EndingSpeech" index="0" unique_id=1052910977]
+[node name="AnotherCastle4" type="Label" parent="EndingSpeech" index="0"]
 visible = false
 visibility_layer = 2
 offset_left = -112.0
@@ -31,7 +31,7 @@ vertical_alignment = 3
 autowrap_mode = 2
 uppercase = true
 
-[node name="AnotherCastle5" type="Label" parent="EndingSpeech" index="1" unique_id=1198504553]
+[node name="AnotherCastle5" type="Label" parent="EndingSpeech" index="1"]
 visible = false
 visibility_layer = 2
 offset_left = -112.0
@@ -45,7 +45,7 @@ vertical_alignment = 3
 autowrap_mode = 2
 uppercase = true
 
-[node name="AnotherCastle6" type="Label" parent="EndingSpeech" index="2" unique_id=1002171253]
+[node name="AnotherCastle6" type="Label" parent="EndingSpeech" index="2"]
 visible = false
 visibility_layer = 2
 offset_left = -112.0
@@ -59,8 +59,8 @@ vertical_alignment = 3
 autowrap_mode = 2
 uppercase = true
 
-[node name="TextShadowColourChanger" parent="." index="6" unique_id=1526229200 node_paths=PackedStringArray("labels")]
+[node name="TextShadowColourChanger" parent="." index="6" node_paths=PackedStringArray("labels")]
 labels = [NodePath("../StandardMSG/ThankYou"), NodePath("../StandardMSG/AnotherCastle"), NodePath("../SpeedrunMSG/ThankYou"), NodePath("../SpeedrunMSG/Time"), NodePath("../SpeedrunMSG/PBMessage"), NodePath("../EndingSpeech/AnotherCastle4"), NodePath("../EndingSpeech/AnotherCastle5"), NodePath("../EndingSpeech/AnotherCastle6")]
 
-[node name="LabelFontChanger" parent="." index="7" unique_id=1997967686 node_paths=PackedStringArray("labels")]
+[node name="LabelFontChanger" parent="." index="7" node_paths=PackedStringArray("labels")]
 labels = [NodePath("../StandardMSG/ThankYou"), NodePath("../StandardMSG/AnotherCastle"), NodePath("../EndingSpeech/AnotherCastle4"), NodePath("../EndingSpeech/AnotherCastle5"), NodePath("../EndingSpeech/AnotherCastle6"), NodePath("../SpeedrunMSG/ThankYou"), NodePath("../SpeedrunMSG/Time"), NodePath("../SpeedrunMSG/PBMessage")]

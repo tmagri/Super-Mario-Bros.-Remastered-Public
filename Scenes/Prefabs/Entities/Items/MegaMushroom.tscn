@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene load_steps=13 format=3 uid="uid://c5ovrwc05pxu"]
 
-[ext_resource type="Script" path="res://Scripts/Classes/Entities/Items/MegaMushroom.gd" id="1_megam"]
+[ext_resource type="Script" uid="uid://cmswy5b75ebi6" path="res://Scripts/Classes/Entities/Items/MegaMushroom.gd" id="1_megam"]
 [ext_resource type="Texture2D" uid="uid://hfh5i32uji5t" path="res://Assets/Sprites/Items/SuperMushroom.png" id="2_kycr3"]
 [ext_resource type="Script" uid="uid://caq1qiwmy0mox" path="res://Scripts/Parts/BetterAnimatedSprite.gd" id="3_20ogn"]
 [ext_resource type="Script" uid="uid://cbal8ms2oe1ik" path="res://Scripts/Classes/Components/ResourceSetterNew.gd" id="3_i28px"]

@@ -1,13 +1,13 @@
-[gd_scene format=3 uid="uid://mario35lobby"]
+[gd_scene load_steps=7 format=3 uid="uid://mario35lobby"]
 
 [ext_resource type="Script" uid="uid://cx37qsk1iae7a" path="res://Scripts/UI/Mario35Lobby.gd" id="1_script"]
 [ext_resource type="Theme" uid="uid://dtn507x2b5de7" path="res://Resources/Theme.tres" id="2_theme"]
 [ext_resource type="Texture2D" uid="uid://bhuybr2gtuco5" path="res://Assets/Sprites/UI/MenuBG.png" id="3_bg"]
 [ext_resource type="Texture2D" uid="uid://3ai0ggxah360" path="res://Assets/Sprites/UI/MenuBorder.png" id="4_border"]
-[ext_resource type="FontFile" uid="uid://mario35font" path="res://Resources/ThemedResources/FontMario35.tres" id="5_font"]
+[ext_resource type="FontVariation" uid="uid://mario35font" path="res://Resources/ThemedResources/FontMario35.tres" id="5_font"]
 [ext_resource type="FontFile" uid="uid://cxkosb8lhhgn0" path="res://Assets/Fonts/FontMario35Title.otf" id="6_title_font"]
 
-[node name="Mario35Lobby" type="Control" unique_id=461849937]
+[node name="Mario35Lobby" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,7 +17,7 @@ grow_vertical = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1_script")
 
-[node name="BG" type="NinePatchRect" parent="." unique_id=421909333]
+[node name="BG" type="NinePatchRect" parent="."]
 texture_filter = 1
 layout_mode = 1
 anchors_preset = 15
@@ -30,7 +30,7 @@ region_rect = Rect2(0, 0, 16, 16)
 axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 
-[node name="Border" type="NinePatchRect" parent="BG" unique_id=1762768922]
+[node name="Border" type="NinePatchRect" parent="BG"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.05
@@ -47,7 +47,7 @@ patch_margin_bottom = 8
 axis_stretch_horizontal = 2
 axis_stretch_vertical = 2
 
-[node name="Content" type="Control" parent="BG/Border" unique_id=118826961]
+[node name="Content" type="Control" parent="BG/Border"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -59,7 +59,7 @@ offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="BG/Border/Content" unique_id=999999]
+[node name="ScrollContainer" type="ScrollContainer" parent="BG/Border/Content"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -69,95 +69,95 @@ grow_vertical = 2
 follow_focus = true
 horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="BG/Border/Content/ScrollContainer" unique_id=1528656957]
+[node name="VBoxContainer" type="VBoxContainer" parent="BG/Border/Content/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 5
 alignment = 1
 
-[node name="Title" type="Label" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=1244503449]
-layout_mode = 2
+[node name="Title" type="Label" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 texture_filter = 2
+layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 10
 theme_override_fonts/font = ExtResource("6_title_font")
+theme_override_font_sizes/font_size = 10
 text = "SUPER MARIO BROS. BATTLE ROYALE"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=299677368]
+[node name="HSeparator" type="HSeparator" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="NameInput" type="LineEdit" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=151462485]
+[node name="NameInput" type="LineEdit" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 placeholder_text = "ENTER NAME"
 alignment = 1
 
-[node name="IPInput" type="LineEdit" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=205563528]
+[node name="IPInput" type="LineEdit" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 text = "127.0.0.1"
 placeholder_text = "HOST IP"
 alignment = 1
 
-[node name="RoomKeyInput" type="LineEdit" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=1711149245]
+[node name="RoomKeyInput" type="LineEdit" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "ROOM KEY (OPTIONAL)"
 alignment = 1
 max_length = 8
 context_menu_enabled = false
+virtual_keyboard_enabled = false
 shortcut_keys_enabled = false
 middle_mouse_paste_enabled = false
 selecting_enabled = false
 deselect_on_focus_loss_enabled = false
 drag_and_drop_selection_enabled = false
-virtual_keyboard_enabled = false
 
-[node name="HBoxContainer" type="HBoxContainer" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=2002901664]
+[node name="HBoxContainer" type="HBoxContainer" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="HostButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1717025384]
+[node name="HostButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 text = "HOST"
 
-[node name="JoinButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1393456898]
+[node name="JoinButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 text = "JOIN"
 
-[node name="StatusLabel" type="Label" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=1452149734]
-layout_mode = 2
+[node name="StatusLabel" type="Label" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 texture_filter = 1
+layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_font")
 horizontal_alignment = 1
 
-[node name="PlayerList" type="ItemList" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=361297900]
+[node name="PlayerList" type="ItemList" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 
-[node name="AssistButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=555555555]
+[node name="AssistButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "ASSIST MODE: OFF"
 
-[node name="StartButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=910970228]
+[node name="StartButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 visible = false
 layout_mode = 2
 text = "START GAME"
 
-[node name="SettingsButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=888888888]
+[node name="SettingsButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 text = "SETTINGS"
 
-[node name="BackButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer" unique_id=1238572278]
+[node name="BackButton" type="Button" parent="BG/Border/Content/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 text = "BACK"
 
-[node name="SettingsPopup" type="PanelContainer" parent="." unique_id=777777777]
+[node name="SettingsPopup" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -173,50 +173,50 @@ offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="SettingsPopup" unique_id=2012578718]
+[node name="VBox" type="VBoxContainer" parent="SettingsPopup"]
 layout_mode = 2
 theme_override_constants/separation = 1
 
-[node name="Title" type="Label" parent="SettingsPopup/VBox" unique_id=97681201]
+[node name="Title" type="Label" parent="SettingsPopup/VBox"]
 layout_mode = 2
 text = "ROOM SETTINGS"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="SettingsPopup/VBox" unique_id=1694212309]
+[node name="HSeparator" type="HSeparator" parent="SettingsPopup/VBox"]
 layout_mode = 2
 
-[node name="Grid" type="GridContainer" parent="SettingsPopup/VBox" unique_id=2083791130]
+[node name="Grid" type="GridContainer" parent="SettingsPopup/VBox"]
 layout_mode = 2
 theme_override_constants/v_separation = 1
 columns = 2
 
-[node name="LabelTime" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=1882600765]
+[node name="LabelTime" type="Label" parent="SettingsPopup/VBox/Grid"]
 layout_mode = 2
 text = "START"
 
-[node name="StartTimeInput" type="SpinBox" parent="SettingsPopup/VBox/Grid" unique_id=165352490]
+[node name="StartTimeInput" type="SpinBox" parent="SettingsPopup/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 10.0
 max_value = 400.0
 value = 35.0
 
-[node name="LabelMax" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=277431956]
+[node name="LabelMax" type="Label" parent="SettingsPopup/VBox/Grid"]
 layout_mode = 2
 text = "MAX"
 
-[node name="MaxTimeInput" type="SpinBox" parent="SettingsPopup/VBox/Grid" unique_id=262424150]
+[node name="MaxTimeInput" type="SpinBox" parent="SettingsPopup/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 30.0
 max_value = 999.0
 value = 400.0
 
-[node name="LabelItems" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=623987702]
+[node name="LabelItems" type="Label" parent="SettingsPopup/VBox/Grid"]
 layout_mode = 2
 text = "ITEMS"
 
-[node name="ItemOption" type="OptionButton" parent="SettingsPopup/VBox/Grid" unique_id=1576485282]
+[node name="ItemOption" type="OptionButton" parent="SettingsPopup/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 selected = 0
@@ -228,11 +228,11 @@ popup/item_1/id = 1
 popup/item_2/text = "REMASTERED"
 popup/item_2/id = 2
 
-[node name="LabelLevels" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=1247002715]
+[node name="LabelLevels" type="Label" parent="SettingsPopup/VBox/Grid"]
 layout_mode = 2
 text = "LEVELS"
 
-[node name="LevelOption" type="OptionButton" parent="SettingsPopup/VBox/Grid" unique_id=15434008]
+[node name="LevelOption" type="OptionButton" parent="SettingsPopup/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 selected = 0
@@ -242,11 +242,11 @@ popup/item_0/id = 0
 popup/item_1/text = "SMB1"
 popup/item_1/id = 1
 
-[node name="LabelNetwork" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=1889075894]
+[node name="LabelNetwork" type="Label" parent="SettingsPopup/VBox/Grid"]
 layout_mode = 2
 text = "NET"
 
-[node name="NetworkOption" type="OptionButton" parent="SettingsPopup/VBox/Grid" unique_id=1126016423]
+[node name="NetworkOption" type="OptionButton" parent="SettingsPopup/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 selected = 0
@@ -256,16 +256,16 @@ popup/item_0/id = 0
 popup/item_1/text = "LOCAL"
 popup/item_1/id = 1
 
-[node name="LabelKey" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=989126478]
+[node name="LabelKey" type="Label" parent="SettingsPopup/VBox/Grid"]
 visible = false
 layout_mode = 2
 text = "ROOM KEY"
 
-[node name="LabelPhysics" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=114592518]
+[node name="LabelPhysics" type="Label" parent="SettingsPopup/VBox/Grid"]
 layout_mode = 2
 text = "PHYSICS"
 
-[node name="PhysicsOption" type="OptionButton" parent="SettingsPopup/VBox/Grid" unique_id=1786640728]
+[node name="PhysicsOption" type="OptionButton" parent="SettingsPopup/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 selected = 0
@@ -275,11 +275,11 @@ popup/item_0/id = 0
 popup/item_1/text = "CLASSIC"
 popup/item_1/id = 1
 
-[node name="LabelDifficulty" type="Label" parent="SettingsPopup/VBox/Grid" unique_id=335577889]
+[node name="LabelDifficulty" type="Label" parent="SettingsPopup/VBox/Grid"]
 layout_mode = 2
 text = "DIFFICULTY"
 
-[node name="DifficultyOption" type="OptionButton" parent="SettingsPopup/VBox/Grid" unique_id=335577890]
+[node name="DifficultyOption" type="OptionButton" parent="SettingsPopup/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 selected = 0
@@ -289,11 +289,10 @@ popup/item_0/id = 0
 popup/item_1/text = "SECOND QUEST"
 popup/item_1/id = 1
 
-
-[node name="HSeparator2" type="HSeparator" parent="SettingsPopup/VBox" unique_id=191166437]
+[node name="HSeparator2" type="HSeparator" parent="SettingsPopup/VBox"]
 layout_mode = 2
 
-[node name="CloseSettingsButton" type="Button" parent="SettingsPopup/VBox" unique_id=1687543956]
+[node name="CloseSettingsButton" type="Button" parent="SettingsPopup/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "CLOSE"

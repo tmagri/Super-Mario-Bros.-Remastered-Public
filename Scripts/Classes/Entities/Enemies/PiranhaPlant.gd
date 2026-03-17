@@ -94,3 +94,12 @@ func on_timeout() -> void:
 	elif (abs(player.global_position.y - global_position.y) >= player_range and abs(player.global_position.x - global_position.x) >= player_range * 2):
 		$Animation.play("Rise")
 
+func flag_die() -> void:
+	# Piranha Plants should always die on flagpole clear, even if off-screen (in pipes)
+	_check_br_kill()
+	if score_note_adder != null:
+		if score_note_adder.add_score == false:
+			Global.score += 500
+		score_note_adder.spawn_note(500)
+	queue_free()
+

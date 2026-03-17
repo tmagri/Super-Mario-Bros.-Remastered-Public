@@ -1939,7 +1939,7 @@ func handle_mega_mushroom(delta: float) -> void:
 		var block_rect = Rect2(block.global_position - Vector2(8, 8), Vector2(16, 16))
 		if mega_rect.intersects(block_rect):
 			if block.global_position.y < global_position.y - 8:
-				if not is_near_warp_pipe(block.global_position):
+				if not block.is_hidden() and not is_near_warp_pipe(block.global_position):
 					if block.has_method("destroy"):
 						# We use call_deferred to avoid physics state errors during the loop
 						block.add_collision_exception_with(self)
@@ -2048,7 +2048,7 @@ func handle_mega_collision(col: KinematicCollision2D) -> bool:
 		
 	# Destroy brick blocks (including those with items)
 	if collider is BrickBlock:
-		if not is_near_warp_pipe(collider.global_position):
+		if not collider.is_hidden() and not is_near_warp_pipe(collider.global_position):
 			collider.add_collision_exception_with(self)
 			collider.destroy()
 			Global.score += 50
@@ -2057,7 +2057,7 @@ func handle_mega_collision(col: KinematicCollision2D) -> bool:
 			AudioManager.play_sfx("bump", global_position, 0.5)
 	# Destroy any Block (e.g. question blocks, solid animatable bodies)
 	elif collider is Block:
-		if not is_near_warp_pipe(collider.global_position):
+		if not collider.is_hidden() and not is_near_warp_pipe(collider.global_position):
 			collider.add_collision_exception_with(self)
 			collider.destroy()
 			Global.score += 50

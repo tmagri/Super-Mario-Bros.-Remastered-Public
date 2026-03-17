@@ -100,3 +100,6 @@ func destroy() -> void:
 		get_parent().erase_cell(get_parent().local_to_map(position))
 	add_sibling(particles)
 	queue_free()
+
+func is_hidden() -> bool:
+	return false

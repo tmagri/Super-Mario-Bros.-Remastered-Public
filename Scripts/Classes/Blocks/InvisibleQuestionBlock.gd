@@ -31,3 +31,6 @@ func on_area_entered(area: Area2D) -> void:
 			player.velocity.y = 0
 			player.bump_ceiling()
 			$Collision.set_deferred("disabled", false)
+
+func is_hidden() -> bool:
+	return $Collision.disabled

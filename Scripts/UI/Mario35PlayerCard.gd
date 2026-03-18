@@ -378,7 +378,7 @@ func update_state(is_alive: bool, coins: int, is_targeting_me: bool, theme: Stri
 
 func _position_icons() -> void:
 	var base_scale = mario_sprite.get_meta("base_scale") if mario_sprite and mario_sprite.has_meta("base_scale") else 0.5
-	var icon_scale = base_scale * 0.5
+	var icon_scale = base_scale * 0.3
 	
 	var right_offset = 4
 	if coin_icon and coin_icon.visible:

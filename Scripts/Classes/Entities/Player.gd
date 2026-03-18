@@ -1834,9 +1834,14 @@ func mega_mushroom_get() -> void:
 	DiscoLevel.combo_meter += 1
 
 func scale_collision(s: float) -> void:
+	var hitbox = get_node_or_null("Hitbox")
 	for group in ["SmallCollisions", "BigCollisions", "StepCollision"]:
 		for node in get_tree().get_nodes_in_group(group):
 			if node.owner == self:
+				# Skip children of Hitbox — it's handled separately below
+				if is_instance_valid(hitbox) and node.get_parent() == hitbox:
+					continue
+				
 				if group in ["SmallCollisions", "BigCollisions"] and s > 1.0:
 					node.scale = Vector2(s * 2.0, s)
 				else:
@@ -1855,7 +1860,7 @@ func scale_collision(s: float) -> void:
 						node.position = node.get_meta("position_stored")
 	
 	# Specifically scale the Area2D Hitbox position to ensure it centers on Mega Mario
-	var hitbox = get_node_or_null("Hitbox")
+	hitbox = get_node_or_null("Hitbox")
 	if is_instance_valid(hitbox):
 		if s > 1.0:
 			if not hitbox.has_meta("position_stored"):
@@ -1865,7 +1870,7 @@ func scale_collision(s: float) -> void:
 			if not hitbox.has_meta("scale_stored"):
 				hitbox.set_meta("scale_stored", hitbox.scale)
 			
-			hitbox.position = Vector2(0, -64) # Center vertically in 4x body
+			hitbox.position = hitbox.get_meta("position_stored") * s
 			hitbox.scale = Vector2(s * 2.0, s) # Match full body scale with 2x width
 			hitbox.collision_mask |= 16 # Add Layer 5 (Enemies)
 		else:
@@ -2093,11 +2098,13 @@ func handle_mega_collision(col: KinematicCollision2D) -> bool:
 			AudioManager.play_sfx("bump", global_position, 0.5)
 		return destroyed
 		
-	# Destroy Moving Platforms on side impact
+	# Destroy Moving Platforms on side impact (but skip Trampolines — they handle their own bounce)
 	var target_platform = null
-	if collider.has_method("destroy_platform"):
+	var _is_trampoline = func(node) -> bool:
+		return "trampoline_type" in node
+	if collider.has_method("destroy_platform") and not _is_trampoline.call(collider):
 		target_platform = collider
-	elif collider.get_parent() and collider.get_parent().has_method("destroy_platform"):
+	elif collider.get_parent() and collider.get_parent().has_method("destroy_platform") and not _is_trampoline.call(collider.get_parent()):
 		target_platform = collider.get_parent()
 		
 	if target_platform != null:

@@ -397,6 +397,15 @@ func spawn_from_queue() -> void:
 		# Collision Check: Ensure not spawning in wall
 		var target_pos = player.global_position + spawn_offset
 		
+		# Clamp spawn position to level bounds (essential for small bonus rooms)
+		if is_instance_valid(player.get("camera")):
+			var cam = player.camera
+			var limit_l = cam.limit_left + 16
+			var limit_r = cam.limit_right - 16
+			# Only clamp if the limits are reasonable (not the default +/- 1000000)
+			if limit_r < 100000:
+				target_pos.x = clamp(target_pos.x, limit_l, limit_r)
+
 		# Raycast for floor detection
 		var needs_snapping = true
 		if "Lakitu" in type or "BulletBill" in type or "CheepCheep" in type or "Blooper" in type or "LeapingCheepCheep" in type:

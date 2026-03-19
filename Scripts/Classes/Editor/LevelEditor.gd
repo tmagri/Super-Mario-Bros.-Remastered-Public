@@ -284,13 +284,14 @@ func parse_tiles() -> void:
 			continue
 		if load_play == false:
 			saved_entity_layers[idx] = i.duplicate(DUPLICATE_USE_INSTANTIATION)
-		if i is Player:
-			i.direction = 1
-			i.velocity = Vector2.ZERO
-			i.global_position = i.global_position.snapped(Vector2(8, 8))
 		i.ready.emit()
 		i.set_process_mode(Node.PROCESS_MODE_INHERIT)
 		idx += 1
+		
+	for p: Player in get_tree().get_nodes_in_group("Players"):
+		p.direction = 1
+		p.velocity = Vector2.ZERO
+		p.global_position = p.global_position.snapped(Vector2(8, 8))
 
 func return_to_editor() -> void:
 	AudioManager.stop_all_music()

@@ -892,6 +892,10 @@ func camera_make_current() -> void:
 	camera.enabled = true
 	camera.make_current()
 
+func editor_level_start() -> void:
+	camera_make_current()
+	recenter_camera()
+
 func play_animation(animation_name := "", force := false) -> void:
 	if sprite.sprite_frames == null: return
 	animation_name = get_fallback_animation(animation_name)

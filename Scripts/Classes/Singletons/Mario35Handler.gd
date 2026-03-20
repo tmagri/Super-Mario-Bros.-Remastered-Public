@@ -413,12 +413,16 @@ func spawn_from_queue() -> void:
 			
 		if needs_snapping:
 			var space_state = player.get_world_2d().direct_space_state
-			var ray_params = PhysicsRayQueryParameters2D.create(target_pos, target_pos + Vector2(0, 320), 6) # Check down 20 tiles
+			# Shift start pos up by 16 pixels so we successfully hit the surface of one-way platforms
+			var ray_start = target_pos - Vector2(0, 16)
+			var ray_params = PhysicsRayQueryParameters2D.create(ray_start, ray_start + Vector2(0, 336), 6) # Check down ~21 tiles
 			var result = space_state.intersect_ray(ray_params)
 			
 			if not result.is_empty():
 				# Found ground, spawn there
 				target_pos = result.position
+				# Offset slightly to ensure they don't spawn exactly inside one-way platforms
+				target_pos.y -= 1.0
 			
 			# Ensure we aren't spawning inside a block/wall at this position
 			var point_params = PhysicsPointQueryParameters2D.new()

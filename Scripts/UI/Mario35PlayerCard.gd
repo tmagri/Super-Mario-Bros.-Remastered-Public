@@ -35,6 +35,9 @@ var _last_calc_h := 0.0
 var _last_calc_text := ""
 var _cached_font_size := 4
 
+var _last_bg_color := Color.TRANSPARENT
+var _last_text_color := Color.TRANSPARENT
+
 func _ready() -> void:
 	# Create coin icon programmatically (same pattern as GameHUD.gd)
 	coin_icon = AnimatedSprite2D.new()
@@ -150,7 +153,9 @@ func _process(delta: float) -> void:
 			mario_sprite.material.set_shader_parameter("palette_idx", current_power_idx)
 		
 		# Drive size via custom_minimum_size — .scale is ignored by VBoxContainer layout
-		mario_sprite.custom_minimum_size = Vector2(final_w, final_h)
+		var new_size = Vector2(final_w, final_h)
+		if mario_sprite.custom_minimum_size != new_size:
+			mario_sprite.custom_minimum_size = new_size
 		# Save base size for icon positioning so they don't pulse and move around
 		mario_sprite.set_meta("base_scale", base_w / 32.0)
 	
@@ -158,7 +163,7 @@ func _process(delta: float) -> void:
 		_position_icons()
 
 	# Snapshot injected sizes from WidescreenHUD before mathematical alterations
-	if custom_minimum_size.x > size.x:
+	if custom_minimum_size.x > size.x and size != custom_minimum_size:
 		size = custom_minimum_size
 
 	if not vbox0 or size.x <= 0 or size.y <= 0:
@@ -391,6 +396,12 @@ func _position_icons() -> void:
 		hammer_icon.scale = Vector2(icon_scale, icon_scale)
 
 func _update_style(bg_color: Color, text_color: Color) -> void:
+	if bg_color == _last_bg_color and text_color == _last_text_color:
+		return
+		
+	_last_bg_color = bg_color
+	_last_text_color = text_color
+	
 	var style = StyleBoxFlat.new()
 	style.bg_color = bg_color
 	style.corner_radius_top_left = 2

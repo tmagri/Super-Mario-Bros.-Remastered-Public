@@ -129,6 +129,15 @@ func _process(delta: float) -> void:
 		# Also re-evaluate target if auto-targeting logic requires it
 		if current_target_mode != TargetMode.RANDOM:
 			update_target()
+			
+		# [FIX]: Aggressive off-screen Garbage Collection
+		# Prevents Mario35 memory leak of thousands of left-behind enemies trailing off-camera
+		var player_node_ref = get_tree().get_first_node_in_group("Players")
+		if is_instance_valid(player_node_ref) and is_instance_valid(player_node_ref.get("camera")):
+			var cull_x = player_node_ref.camera.get_screen_center_position().x - 640
+			for enemy in get_tree().get_nodes_in_group("Enemies"):
+				if is_instance_valid(enemy) and enemy.global_position.x < cull_x:
+					enemy.queue_free()
 
 func start_game(time_setting: int = DEFAULT_START_TIME, max_time_setting: int = DEFAULT_MAX_TIME) -> void:
 	print("[M35] start_game called, is_practice = ", is_practice)

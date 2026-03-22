@@ -179,10 +179,15 @@ func sync_players() -> void:
 
 	# Placement Logic
 	# Explicit height/size updates for top-level Stat cards
-	stat_cards["LevelStat"].custom_minimum_size = Vector2(current_card_size.x * 3, current_card_size.y * 2)
-	stat_cards["LevelStat"].size = stat_cards["LevelStat"].custom_minimum_size
-	stat_cards["AliveStat"].custom_minimum_size = Vector2(current_card_size.x * 3, current_card_size.y * 2)
-	stat_cards["AliveStat"].size = stat_cards["AliveStat"].custom_minimum_size
+	var current_stat_size = Vector2(current_card_size.x * 3, current_card_size.y * 2)
+	
+	if stat_cards["LevelStat"].custom_minimum_size != current_stat_size:
+		stat_cards["LevelStat"].custom_minimum_size = current_stat_size
+		stat_cards["LevelStat"].size = current_stat_size
+		
+	if stat_cards["AliveStat"].custom_minimum_size != current_stat_size:
+		stat_cards["AliveStat"].custom_minimum_size = current_stat_size
+		stat_cards["AliveStat"].size = current_stat_size
 	
 	for i in range(17): # Left Grid (LevelStat removed, capacity is just players)
 		var target_node = null
@@ -197,10 +202,12 @@ func sync_players() -> void:
 			elif parent != left_grid:
 				target_node.reparent(left_grid)
 			
-			if target_node.get_parent() == left_grid:
+			if target_node.get_parent() == left_grid and target_node.get_index() != i:
 				left_grid.move_child(target_node, i)
 			
-			target_node.custom_minimum_size = current_card_size
+			if target_node.custom_minimum_size != current_card_size:
+				target_node.custom_minimum_size = current_card_size
+				
 			_update_card_data(target_node, target_node.get_meta("player_id", 0) if target_node.has_meta("player_id") else 0)
 
 	for i in range(17): # Right Grid (AliveStat removed, capacity is just players)
@@ -217,10 +224,12 @@ func sync_players() -> void:
 			elif parent != right_grid:
 				target_node.reparent(right_grid)
 				
-			if target_node.get_parent() == right_grid:
+			if target_node.get_parent() == right_grid and target_node.get_index() != i:
 				right_grid.move_child(target_node, i)
 				
-			target_node.custom_minimum_size = current_card_size
+			if target_node.custom_minimum_size != current_card_size:
+				target_node.custom_minimum_size = current_card_size
+				
 			_update_card_data(target_node, target_node.get_meta("player_id", 0) if target_node.has_meta("player_id") else 0)
 
 func _get_or_create_player_card(pid: int) -> Control:

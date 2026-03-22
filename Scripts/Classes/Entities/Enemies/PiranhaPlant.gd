@@ -52,24 +52,46 @@ func _ready() -> void:
 		if has_node("Sprite/Hitbox/UpsideDownExtension"):
 			$Sprite/Hitbox/UpsideDownExtension.queue_free()
 	
-	# Enable block-hit detection for all piranha plants
+	# [FIX]: Dedicated block hit area to securely overlap grid-placed blocks.
+	# Standard Piranhas lack gravity so their root stays 16px above the block.
+	# Sent Piranhas rest on the block directly.
+	var block_detect_area = Area2D.new()
+	block_detect_area.collision_layer = 0
+	# Mask 7 allows detecting Layers 1, 2, and 3 (the block layers).
+	block_detect_area.collision_mask = 7
+	var block_shape = CollisionShape2D.new()
+	var block_rect = RectangleShape2D.new()
+	block_rect.size = Vector2(10, 20)
+	block_shape.shape = block_rect
+	# Positioned downward to reach the block below the Piranha Plant.
+	block_shape.position = Vector2(0, 16)
+	block_detect_area.add_child(block_shape)
+	add_child(block_detect_area)
+	block_detect_area.owner = self
+	
+	# Enable block-hit detection using the dedicated area
 	var bounce_detect = BlockBouncingDetection.new()
 	bounce_detect.detection_type = 1 # Hitbox
-	bounce_detect.hitbox = $Sprite/Hitbox
+	bounce_detect.hitbox = block_detect_area
 	bounce_detect.block_bounced.connect(die_from_object)
 	add_child(bounce_detect)
+	bounce_detect.owner = self
 
 	if is_sent_enemy:
 		# Stop the pipe-pop timer — sent plants don't use it
 		$Timer.stop()
-		# Re-force sprite visible and position in case _ready ran after autoplay "Hide"
+		# Completely disable the AnimationPlayer to prevent `autoplay` from resetting properties
+		$Animation.active = false
+		$Animation.autoplay = ""
 		$Animation.stop()
+		
+		# Re-force sprite visible and position in case _ready ran after autoplay "Hide"
 		$Sprite.visible = true
 		$Sprite.position = Vector2(0, -12)
 		# Re-force hitbox settings in case animation reset them
 		$Sprite/Hitbox.position = Vector2(0, 13)
 		$Sprite/Hitbox.collision_mask = 7
-		$Sprite/Hitbox.monitoring = true
+		$Sprite/Hitbox.set_deferred("monitoring", true)
 	else:
 		$Timer.start()
 

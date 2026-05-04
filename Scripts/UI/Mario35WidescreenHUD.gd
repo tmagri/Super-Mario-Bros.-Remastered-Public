@@ -10,48 +10,58 @@ var stat_cards := {} # name -> instance
 
 var current_card_size := Vector2(32, 40)
 var _sync_timer := 0.0
-var _last_vp_size := Vector2.ZERO
+
+# Performance caches
+var _last_layout_ids := []          # tracks when layout (reparent/move_child) is needed
+var _last_card_data_hashes := {}    # pid -> snapshot key, skips redundant _update_card_data
+var _last_stat_key := ""            # skips redundant stat card setup_as_stat calls
+
+func _ready() -> void:
+	get_viewport().size_changed.connect(_on_viewport_size_changed)
+	_on_viewport_size_changed() # Run once immediately to set initial layout
+
+func _on_viewport_size_changed() -> void:
+	var vp_size = get_viewport_rect().size
+	var target_ratio = 256.0 / 224.0 # Aspect ratio of the original game
+	var game_w = vp_size.y * target_ratio
+	var total_extra = max(vp_size.x - game_w, 0.0)
+	var side_width = floor(total_extra / 2.0)
+	
+	var h_sep = 2.0 # matches GridContainer h_separation
+	var v_sep = 2.0 # matches GridContainer v_separation
+	var card_w = floor(max((side_width - h_sep * 2.0) / 3.0, 8.0))
+	# 6 rows of players + 2 rows of height for the Stat Headers = 8 total rows
+	var card_h = floor(max((vp_size.y - v_sep * 7.0) / 8.0, 8.0))
+	current_card_size = Vector2(card_w, card_h)
+	
+	if %LeftPanel:
+		%LeftPanel.visible = side_width >= 30.0
+		%LeftPanel.custom_minimum_size.x = side_width
+		%LeftPanel.size = Vector2(side_width, floor(vp_size.y))
+		%LeftPanel.position = Vector2.ZERO
+		var vbox = %LeftPanel.get_node_or_null("VBox")
+		if vbox:
+			vbox.size = Vector2(side_width, floor(vp_size.y))
+			vbox.position = Vector2.ZERO
+			
+	if %RightPanel:
+		%RightPanel.visible = side_width >= 30.0
+		%RightPanel.custom_minimum_size.x = side_width
+		%RightPanel.size = Vector2(side_width, floor(vp_size.y))
+		%RightPanel.position.x = floor(vp_size.x - side_width)
+		%RightPanel.position.y = 0
+		var vbox = %RightPanel.get_node_or_null("VBox")
+		if vbox:
+			vbox.size = Vector2(side_width, floor(vp_size.y))
+			vbox.position = Vector2.ZERO
+	
+	# Force a layout re-sync on next player update since card sizes changed
+	_last_layout_ids.clear()
+	_last_stat_key = ""
 
 func _process(delta: float) -> void:
 	if not visible: return
 	
-	# --- Resize Logic (Only when viewport changes) ---
-	var vp_size = get_viewport_rect().size
-	if vp_size != _last_vp_size:
-		_last_vp_size = vp_size
-		var target_ratio = 256.0 / 224.0 # Aspect ratio of the original game
-		var game_w = vp_size.y * target_ratio
-		var total_extra = max(vp_size.x - game_w, 0.0)
-		var side_width = floor(total_extra / 2.0)
-		
-		var h_sep = 2.0 # matches GridContainer h_separation
-		var v_sep = 2.0 # matches GridContainer v_separation
-		var card_w = floor(max((side_width - h_sep * 2.0) / 3.0, 8.0))
-		# 6 rows of players + 2 rows of height for the Stat Headers = 8 total rows
-		var card_h = floor(max((vp_size.y - v_sep * 7.0) / 8.0, 8.0))
-		current_card_size = Vector2(card_w, card_h)
-		
-		if %LeftPanel:
-			%LeftPanel.visible = side_width >= 30.0
-			%LeftPanel.custom_minimum_size.x = side_width
-			%LeftPanel.size = Vector2(side_width, floor(vp_size.y))
-			%LeftPanel.position = Vector2.ZERO
-			var vbox = %LeftPanel.get_node_or_null("VBox")
-			if vbox:
-				vbox.size = Vector2(side_width, floor(vp_size.y))
-				vbox.position = Vector2.ZERO
-				
-		if %RightPanel:
-			%RightPanel.visible = side_width >= 30.0
-			%RightPanel.custom_minimum_size.x = side_width
-			%RightPanel.size = Vector2(side_width, floor(vp_size.y))
-			%RightPanel.position.x = floor(vp_size.x - side_width)
-			%RightPanel.position.y = 0
-			var vbox = %RightPanel.get_node_or_null("VBox")
-			if vbox:
-				vbox.size = Vector2(side_width, floor(vp_size.y))
-				vbox.position = Vector2.ZERO
-		
 	# --- Sync Players (Throttled to 10 FPS) ---
 	_sync_timer += delta
 	if _sync_timer >= 0.1:
@@ -105,9 +115,15 @@ func sync_players() -> void:
 		if not id in display_ids:
 			cards[id].queue_free()
 			cards.erase(id)
+			_last_card_data_hashes.erase(id)
 			
 	if not left_grid or not right_grid:
 		return
+
+	# Determine if the player order has changed — avoids costly move_child/reparent every sync
+	var layout_changed: bool = (display_ids != _last_layout_ids)
+	if layout_changed:
+		_last_layout_ids = display_ids.duplicate()
 
 	# --- Layout Injection ---
 	# Left: 0, 1, [LEVEL], 2, 3...
@@ -127,17 +143,23 @@ func sync_players() -> void:
 		var level_stat = stat_cards["LevelStat"]
 		if not level_stat.get_parent():
 			left_vbox.add_child(level_stat)
+			layout_changed = true
 		elif level_stat.get_parent() != left_vbox:
 			level_stat.reparent(left_vbox)
-		left_vbox.move_child(level_stat, 0) # Top of sidebar
+			layout_changed = true
+		if layout_changed:
+			left_vbox.move_child(level_stat, 0) # Top of sidebar
 		
 	if right_vbox:
 		var alive_stat = stat_cards["AliveStat"]
 		if not alive_stat.get_parent():
 			right_vbox.add_child(alive_stat)
+			layout_changed = true
 		elif alive_stat.get_parent() != right_vbox:
 			alive_stat.reparent(right_vbox)
-		right_vbox.move_child(alive_stat, 0) # Top of sidebar
+			layout_changed = true
+		if layout_changed:
+			right_vbox.move_child(alive_stat, 0) # Top of sidebar
 	
 	# Update Stats
 	var level_name = Mario35Handler.current_level_display
@@ -171,11 +193,18 @@ func sync_players() -> void:
 			local_mega = p.has_mega_mushroom
 			break
 	
-	stat_cards["LevelStat"].setup_as_stat(game_name, level_name, local_power, local_coins, local_star, local_hammer, local_mega, sub_name)
-	
 	var alive_count = Mario35Handler.alive_count
 	var total_count = Mario35Handler.player_statuses.size()
-	stat_cards["AliveStat"].setup_as_stat("", "%d/%d" % [alive_count, total_count], 0, 0, false, false, false, "")
+
+	# Only call setup_as_stat when the displayed data actually changes
+	var new_stat_key = "%s|%s|%d|%d|%s|%s|%s|%s|%d|%d" % [
+		game_name, level_name, local_power, local_coins,
+		str(local_star), str(local_hammer), str(local_mega), sub_name,
+		alive_count, total_count]
+	if new_stat_key != _last_stat_key:
+		_last_stat_key = new_stat_key
+		stat_cards["LevelStat"].setup_as_stat(game_name, level_name, local_power, local_coins, local_star, local_hammer, local_mega, sub_name)
+		stat_cards["AliveStat"].setup_as_stat("", "%d/%d" % [alive_count, total_count], 0, 0, false, false, false, "")
 
 	# Placement Logic
 	# Explicit height/size updates for top-level Stat cards
@@ -196,18 +225,17 @@ func sync_players() -> void:
 			target_node = _get_or_create_player_card(pid)
 		
 		if target_node:
-			var parent = target_node.get_parent()
-			if not parent:
-				left_grid.add_child(target_node)
-			elif parent != left_grid:
-				target_node.reparent(left_grid)
-			
-			if target_node.get_parent() == left_grid and target_node.get_index() != i:
-				left_grid.move_child(target_node, i)
-			
-			if target_node.custom_minimum_size != current_card_size:
-				target_node.custom_minimum_size = current_card_size
-				
+			# Only reparent/reorder when layout has changed — avoids expensive UI tree ops
+			if layout_changed:
+				var parent = target_node.get_parent()
+				if not parent:
+					left_grid.add_child(target_node)
+				elif parent != left_grid:
+					target_node.reparent(left_grid)
+				if target_node.get_parent() == left_grid and target_node.get_index() != i:
+					left_grid.move_child(target_node, i)
+				if target_node.custom_minimum_size != current_card_size:
+					target_node.custom_minimum_size = current_card_size
 			_update_card_data(target_node, target_node.get_meta("player_id", 0) if target_node.has_meta("player_id") else 0)
 
 	for i in range(17): # Right Grid (AliveStat removed, capacity is just players)
@@ -218,18 +246,17 @@ func sync_players() -> void:
 			target_node = _get_or_create_player_card(pid)
 		
 		if target_node:
-			var parent = target_node.get_parent()
-			if not parent:
-				right_grid.add_child(target_node)
-			elif parent != right_grid:
-				target_node.reparent(right_grid)
-				
-			if target_node.get_parent() == right_grid and target_node.get_index() != i:
-				right_grid.move_child(target_node, i)
-				
-			if target_node.custom_minimum_size != current_card_size:
-				target_node.custom_minimum_size = current_card_size
-				
+			# Only reparent/reorder when layout has changed — avoids expensive UI tree ops
+			if layout_changed:
+				var parent = target_node.get_parent()
+				if not parent:
+					right_grid.add_child(target_node)
+				elif parent != right_grid:
+					target_node.reparent(right_grid)
+				if target_node.get_parent() == right_grid and target_node.get_index() != i:
+					right_grid.move_child(target_node, i)
+				if target_node.custom_minimum_size != current_card_size:
+					target_node.custom_minimum_size = current_card_size
 			_update_card_data(target_node, target_node.get_meta("player_id", 0) if target_node.has_meta("player_id") else 0)
 
 func _get_or_create_player_card(pid: int) -> Control:
@@ -256,7 +283,16 @@ func _update_card_data(card: Control, pid: int) -> void:
 		var stats = Mario35Handler.last_known_stats.get(pid, {})
 		data.merge(stats) # Add theme, world, level, power_state, etc.
 		is_targeting_me = data.get("target", 0) == my_id
-	
+
+	# Skip update if nothing visible has changed since last sync
+	var data_key = "%s|%s|%d|%s|%d|%d" % [
+		data.get("name", ""), str(data.get("alive", true)),
+		data.get("coins", 0), str(is_targeting_me),
+		data.get("power_state", 0), data.get("character", 0)]
+	if _last_card_data_hashes.get(pid, "") == data_key:
+		return
+	_last_card_data_hashes[pid] = data_key
+
 	if card.has_method("setup"): card.setup(data)
 	if card.has_method("update_state"): 
 		card.update_state(data.get("alive", true), data.get("coins", 0), is_targeting_me, data.get("theme", "Overworld"), data.get("power_state", 0))

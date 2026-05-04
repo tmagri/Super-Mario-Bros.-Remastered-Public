@@ -38,6 +38,11 @@ var _cached_font_size := 4
 var _last_bg_color := Color.TRANSPARENT
 var _last_text_color := Color.TRANSPARENT
 
+# Performance caches for _process
+var _last_process_size := Vector2.ZERO
+var _was_star := false
+var _was_mega := false
+
 func _ready() -> void:
 	# Create coin icon programmatically (same pattern as GameHUD.gd)
 	coin_icon = AnimatedSprite2D.new()
@@ -121,46 +126,55 @@ func _update_icon(chara_idx: int = 0, power_idx: int = 0) -> void:
 	mario_sprite.visible = true
 
 func _process(delta: float) -> void:
-	# Dynamic Scaling for any screen size (especially Ultrawide)
+	# Only redo size-dependent work when the card's size actually changes
+	var size_changed := (size != _last_process_size)
+	if size_changed:
+		_last_process_size = size
+
 	if mario_sprite:
-		var sprite_margin = 2.0
-		var sprite_target_w = size.x - sprite_margin * 2.0
-		var sprite_target_h = size.y * 0.3
-		
-		# Base size in pixels (not scale!) — this is the target dimension for the sprite
-		var base_w = clamp(sprite_target_w, 8, sprite_target_w)
-		var base_h = clamp(sprite_target_h, 8, sprite_target_h)
-		
-		var final_w = base_w
-		var final_h = base_h
-		
-		if has_mega or current_power_idx == 4: # Mega: blink effect (no size change to keep text stable)
+		if has_mega or current_power_idx == 4: # Mega: per-frame alpha pulse
 			time_passed += delta
-			
 			# Smooth alpha pulse instead of size change — keeps VBox layout stable
-			var alpha = 0.65 + 0.35 * abs(sin(time_passed * 3.0))
-			mario_sprite.modulate.a = alpha
-		elif has_star: # Star: palette cycle
+			mario_sprite.modulate.a = 0.65 + 0.35 * abs(sin(time_passed * 3.0))
+			_was_star = false
+			_was_mega = true
+		elif has_star: # Star: per-frame palette cycle
 			time_passed += delta
 			# The shader overrides modulate, so we cycle the palette index to blink!
-			var cycle_idx = int(time_passed * 15.0) % 4
-			mario_sprite.material.set_shader_parameter("palette_idx", cycle_idx)
+			mario_sprite.material.set_shader_parameter("palette_idx", int(time_passed * 15.0) % 4)
 			blink_timer = 0.0
 			mario_sprite.modulate = Color.WHITE
+			_was_mega = false
+			_was_star = true
 		else:
-			mario_sprite.modulate = Color.WHITE
-			blink_timer = 0.0
-			mario_sprite.material.set_shader_parameter("palette_idx", current_power_idx)
-		
-		# Drive size via custom_minimum_size — .scale is ignored by VBoxContainer layout
-		var new_size = Vector2(final_w, final_h)
-		if mario_sprite.custom_minimum_size != new_size:
-			mario_sprite.custom_minimum_size = new_size
-		# Save base size for icon positioning so they don't pulse and move around
-		mario_sprite.set_meta("base_scale", base_w / 32.0)
-	
-	if (coin_icon and coin_icon.visible) or (hammer_icon and hammer_icon.visible):
-		_position_icons()
+			# Only reset modulate/shader when transitioning OUT of a star or mega state
+			if _was_star or _was_mega:
+				mario_sprite.modulate = Color.WHITE
+				mario_sprite.material.set_shader_parameter("palette_idx", current_power_idx)
+				blink_timer = 0.0
+				_was_star = false
+				_was_mega = false
+
+		# Sprite sizing and icon positioning are only needed when size changes
+		if size_changed:
+			var sprite_margin = 2.0
+			var sprite_target_w = size.x - sprite_margin * 2.0
+			var sprite_target_h = size.y * 0.3
+			# Base size in pixels (not scale!) — this is the target dimension for the sprite
+			var base_w = clamp(sprite_target_w, 8, sprite_target_w)
+			var base_h = clamp(sprite_target_h, 8, sprite_target_h)
+			var final_w = base_w
+			var final_h = base_h
+			# Drive size via custom_minimum_size — .scale is ignored by VBoxContainer layout
+			var new_size = Vector2(final_w, final_h)
+			if mario_sprite.custom_minimum_size != new_size:
+				mario_sprite.custom_minimum_size = new_size
+			# Save base size for icon positioning so they don't pulse and move around
+			mario_sprite.set_meta("base_scale", base_w / 32.0)
+
+	if size_changed:
+		if (coin_icon and coin_icon.visible) or (hammer_icon and hammer_icon.visible):
+			_position_icons()
 
 	# Snapshot injected sizes from WidescreenHUD before mathematical alterations
 	if custom_minimum_size.x > size.x and size != custom_minimum_size:

@@ -408,7 +408,7 @@ uppercase = true
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-text = "BATTLE ROYALE"
+text = "MENU_BATTLE_ROYALE"
 uppercase = true
 
 [node name="Buffer" type="Control" parent="CanvasLayer/Options2"]

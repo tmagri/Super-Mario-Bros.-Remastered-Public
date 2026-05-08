@@ -16,6 +16,7 @@ const EMPTY_BLOCK = ("res://Scenes/Prefabs/Blocks/EmptyBlock.tscn")
 @export var combo_meter_amount := 25
 @export var mushroom_if_small := false
 const SUPER_MUSHROOM = ("res://Scenes/Prefabs/Entities/Items/SuperMushroom.tscn")
+const FIRE_FLOWER = ("res://Scenes/Prefabs/Entities/Items/FireFlower.tscn")
 var can_hit := true
 var bouncing := false
 
@@ -75,8 +76,12 @@ func dispense_item() -> void:
 		spawn_empty_block()
 
 func player_mushroom_check(player = null) -> PackedScene:
+	if player == null:
+		return item
 	if player.power_state.hitbox_size == "Small" and mushroom_if_small:
 		return load(SUPER_MUSHROOM)
+	if Global.current_game_mode == Global.GameMode.MARIO_35 and item != null and item.resource_path == SUPER_MUSHROOM:
+		return load(FIRE_FLOWER)
 	return item
 
 func spawn_empty_block() -> void:

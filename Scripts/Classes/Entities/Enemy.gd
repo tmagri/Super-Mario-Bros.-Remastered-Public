@@ -83,11 +83,11 @@ func die_from_object(obj: Node2D, time_reward: int = 2) -> void:
 	var dir = sign(global_position.x - obj.global_position.x)
 	# If killed by a shell or player stomp, time is handled by the attacker to allow combos
 	last_killer = obj
-	# Special case: Star kills don't have combos, so they award time directly in Mario 35
+	# Special case: star/mega contact kills don't have stomp combos, so they award time directly in Mario 35
 	var reward = time_reward
 	if (obj is Shell or obj is Player):
 		reward = 0
-		if obj is Player and obj.is_invincible and Global.current_game_mode == Global.GameMode.MARIO_35:
+		if obj is Player and Global.current_game_mode == Global.GameMode.MARIO_35 and (obj.is_invincible or obj.has_mega_mushroom):
 			reward = time_reward
 			
 	_check_br_kill(reward)

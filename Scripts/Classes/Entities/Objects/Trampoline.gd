@@ -24,6 +24,7 @@ func _physics_process(_delta: float) -> void:
 func bounce_players() -> void:
 	for player in players:
 		player.has_spring_jumped = true
+		player.velocity.x = player.velocity_x_jump_stored
 		var speed_mult = 0.5 if player.has_mega_mushroom else 1.0
 		if Global.player_action_pressed("jump", player.player_id):
 			player.velocity.y = -player.physics_params(trampoline_type + "_SPEED") * speed_mult
